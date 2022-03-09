@@ -1,0 +1,4 @@
+settings:
+  base:
+    DEVELOPMENT_TEAM: xxxxx
+    PRODUCT_BUNDLE_IDENTIFIER: cs3217.Annotato.sampleIdentifier
