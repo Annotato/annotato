@@ -6,8 +6,8 @@ protocol Navigable where Self: UIViewController {
 
 extension Navigable {
     func goToGallery() {
-        guard let viewController = GalleryViewController.instantiateFullScreenFromStoryboard(
-            .gallery
+        guard let viewController = DocumentListViewController.instantiateFullScreenFromStoryboard(
+            .document
         ) else {
             return
         }
