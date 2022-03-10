@@ -2,7 +2,6 @@ import UIKit
 
 // MARK: Navigation
 extension UIViewController {
-
     // Each view controller storyboardID should be set to its class name
     class var storyboardId: String {
         "\(self)"
@@ -27,5 +26,4 @@ extension UIViewController {
 
         return viewController
     }
-
 }
