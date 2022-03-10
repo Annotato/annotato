@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Annotato
-//
-//  Created by Sivayogasubramanian on 10/3/22.
-//
-
 import UIKit
 
 class ViewController: UIViewController {

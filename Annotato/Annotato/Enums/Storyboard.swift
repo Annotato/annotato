@@ -1,6 +1,5 @@
 import UIKit
 enum Storyboard: String {
-
     case main = "Main"
 
     var instance: UIStoryboard {
@@ -11,5 +10,4 @@ enum Storyboard: String {
         let storyboardId = viewControllerClass.storyboardId
         return instance.instantiateViewController(withIdentifier: storyboardId) as? T
     }
-
 }
