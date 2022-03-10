@@ -23,7 +23,8 @@ class LogInViewController: UIViewController, Navigable {
         view.addSubview(loginButton)
     }
 
-    @objc private func didTapLoginButton() {
+    @objc
+    private func didTapLoginButton() {
         goToGallery()
     }
 }
