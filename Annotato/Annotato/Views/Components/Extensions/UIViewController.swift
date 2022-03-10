@@ -11,7 +11,7 @@ extension UIViewController {
         storyboard.viewController(viewControllerClass: self)
     }
 
-    static func instantiateFullScreenFromStoryboard(storyboard: Storyboard) -> Self? {
+    static func instantiateFullScreenFromStoryboard(_ storyboard: Storyboard) -> Self? {
         let viewController = instantiateFromStoryboard(storyboard)
 
         viewController?.modalPresentationStyle = .fullScreen
