@@ -8,11 +8,10 @@ class LogInViewController: UIViewController, Navigable {
     }
 
     private func initializeSubviews() {
-        let loginButton = makeLoginButton()
-        view.addSubview(loginButton)
+        initializeLoginButton()
     }
 
-    private func makeLoginButton() -> UIButton {
+    private func initializeLoginButton() {
         let loginButton = FilledButton(
             title: "Log In",
             frame: CGRect(x: .zero, y: .zero, width: 240, height: 40)
@@ -20,7 +19,8 @@ class LogInViewController: UIViewController, Navigable {
 
         loginButton.center = view.center
         loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
-        return loginButton
+
+        view.addSubview(loginButton)
     }
 
     @objc private func didTapLoginButton() {

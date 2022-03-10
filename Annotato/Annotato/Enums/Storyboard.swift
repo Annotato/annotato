@@ -1,6 +1,7 @@
 import UIKit
+
 enum Storyboard: String {
-    case gallery = "Gallery"
+    case document = "Document"
     case main = "Main"
 
     var instance: UIStoryboard {
