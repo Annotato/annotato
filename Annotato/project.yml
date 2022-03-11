@@ -46,9 +46,14 @@ settings:
       SDKROOT: iphoneos
       SWIFT_COMPILATION_MODE: wholemodule
       SWIFT_OPTIMIZATION_LEVEL: -O
+packages:
+  AnnotatoSharedLibrary:
+    path: ../AnnotatoSharedLibrary
 targets:
   Annotato:
     platform: iOS
+    dependencies:
+      - package: AnnotatoSharedLibrary
     postbuildScripts:
       - runOnlyWhenInstalling: false
         script:
