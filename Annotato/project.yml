@@ -47,6 +47,8 @@ settings:
       SWIFT_COMPILATION_MODE: wholemodule
       SWIFT_OPTIMIZATION_LEVEL: -O
 packages:
+  AnnotatoBackend:
+    path: ../AnnotatoBackend
   AnnotatoSharedLibrary:
     path: ../AnnotatoSharedLibrary
 targets:
