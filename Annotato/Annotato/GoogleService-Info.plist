@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>940685713552-rcn9lt58oer4m2utjr75ch55pnvfcr2m.apps.googleusercontent.com</string>
+	<string>940685713552-jl5uutbdu4tei1vqr83qqbv42q7e56tl.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.940685713552-rcn9lt58oer4m2utjr75ch55pnvfcr2m</string>
+	<string>com.googleusercontent.apps.940685713552-jl5uutbdu4tei1vqr83qqbv42q7e56tl</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDPEFgzxiEeev9DY2maWzQm7hfLTqHO5Ps</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>cs3217.Annotato.Annotato</string>
+	<string>cs3217.Annotato.AnnotatoApp</string>
 	<key>PROJECT_ID</key>
 	<string>annotato-ba051</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:940685713552:ios:49cf501fe9069f934cf815</string>
+	<string>1:940685713552:ios:1c3ce1c0ec49c8ff4cf815</string>
 </dict>
 </plist>
