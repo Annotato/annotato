@@ -9,6 +9,8 @@ public func configure(_ app: Application) throws {
 
     connectDatabase(app: app)
 
+    app.migrations.add(CreateDocuments())
+
     // register routes
     try routes(app)
 }
