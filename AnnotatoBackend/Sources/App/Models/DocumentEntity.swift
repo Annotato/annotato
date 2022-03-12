@@ -1,10 +1,3 @@
-//
-//  DocumentEntity.swift
-//  
-//
-//  Created by Hong Yao on 12/3/22.
-//
-
 import FluentKit
 
 final class DocumentEntity: Model {
