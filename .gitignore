@@ -1,3 +1,6 @@
+**/.env.*
+!**/.env.template
+
 # From https://github.com/github/gitignore/blob/master/Swift.gitignore 
 #
 # Xcode
