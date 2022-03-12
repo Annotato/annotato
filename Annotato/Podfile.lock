@@ -44,9 +44,11 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - PromisesObjC (2.0.0)
+  - SwiftyBeaver (1.9.5)
 
 DEPENDENCIES:
   - Firebase/Auth
+  - SwiftyBeaver
 
 SPEC REPOS:
   trunk:
@@ -59,6 +61,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - SwiftyBeaver
 
 SPEC CHECKSUMS:
   Firebase: 580d09e8edafc3073ebf09c03fd42e4d80d35fe9
@@ -70,7 +73,8 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  SwiftyBeaver: 84069991dd5dca07d7069100985badaca7f0ce82
 
-PODFILE CHECKSUM: dc42a0a161e60a806f35aba0ccc77acb176102d0
+PODFILE CHECKSUM: 9d68f446cb073a58d587e11a35a6d0d59789aceb
 
 COCOAPODS: 1.11.2
