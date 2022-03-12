@@ -6,8 +6,8 @@ class AnnotatoAuth {
 
     private init() {}
 
-    static var authUser: AnnotatoUser? {
-        AnnotatoAuth.shared.authProvider.annotatoAuthUser
+    static var currentUser: AnnotatoUser? {
+        AnnotatoAuth.shared.authProvider.currentUser
     }
 
     static var delegate: AnnotatoAuthDelegate? {
@@ -19,8 +19,8 @@ class AnnotatoAuth {
         AnnotatoAuth.shared.authProvider.signUp(email: email, password: password, displayName: displayName)
     }
 
-    static func signIn(email: String, password: String) {
-        AnnotatoAuth.shared.authProvider.signIn(email: email, password: password)
+    static func logIn(email: String, password: String) {
+        AnnotatoAuth.shared.authProvider.logIn(email: email, password: password)
     }
 
     static func configure() {

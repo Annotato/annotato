@@ -1,6 +1,6 @@
 protocol AnnotatoAuthDelegate: AnyObject {
-    func signInDidFail(_ error: Error)
+    func logInDidFail(_ error: Error)
     func signUpDidFail(_ error: Error)
-    func signInDidSucceed()
+    func logInDidSucceed()
     func signUpDidSucceed()
 }
