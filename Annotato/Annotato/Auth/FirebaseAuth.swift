@@ -29,7 +29,7 @@ class FirebaseAuth: AnnotatoAuthAdapter {
     }
 
     func signIn(email: String, password: String) {
-        Auth.auth().signIn(withEmail: email, password: password) { [self] _, error in
+        Auth.auth().signIn(withEmail: email, password: password) { _, error in
             guard error == nil else {
                 self.delegate?.signInDidFail(error!)
                 return
