@@ -80,28 +80,6 @@ class ViewController: UIViewController {
         lastPage?.addAnnotation(annotation)
     }
 
-//    private func addAnnotationButton() {
-//        let annotateButton = UIButton(frame: CGRect(x: 10, y: 10, width: 100, height: 40))
-//        annotateButton.center = .init(x: 55, y: 25)
-//
-//        annotateButton.setTitle("Annotate last page", for: .normal)
-//        annotateButton.configuration = .filled()
-//        annotateButton.titleLabel?.adjustsFontSizeToFitWidth = true
-//        annotateButton.addTarget(self, action: #selector(addAnnotation), for: .touchUpInside)
-//        view.addSubview(annotateButton)
-//    }
-
-//    private func addImportFileButton() {
-//        let importFileButton = UIButton(frame: .init(x: 120, y: 20, width: 100, height: 40))
-//        importFileButton.center = .init(x: 100, y: 25)
-//
-//        importFileButton.setTitle("Import File", for: .normal)
-//        importFileButton.configuration = .filled()
-//        importFileButton.titleLabel?.adjustsFontSizeToFitWidth = true
-//        importFileButton.addTarget(self, action: #selector(importFiles), for: .touchUpInside)
-//        view.addSubview(importFileButton)
-//    }
-
     @IBAction private func importFiles(_ sender: Any) {
         print("importing files")
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.pdf], asCopy: true)
@@ -128,5 +106,10 @@ extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate {
         }
         print("dir = \(dir)")
         print("selected file url = \(selectedFileUrl)")
+        guard let document = PDFDocument(url: selectedFileUrl) else {
+            print("No such document")
+            return
+        }
+        pdfView.document = document
     }
 }
