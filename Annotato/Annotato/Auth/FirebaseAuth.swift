@@ -19,6 +19,7 @@ class FirebaseAuth: AnnotatoAuthAdapter {
     func signUp(email: String, password: String, displayName: String) {
         Auth.auth().createUser(withEmail: email, password: password) { _, error in
             guard error == nil else {
+                AnnotatoLogger.error("When trying to sign up new user. \(error!.localizedDescription)")
                 self.delegate?.signUpDidFail(error!)
                 return
             }
@@ -31,6 +32,7 @@ class FirebaseAuth: AnnotatoAuthAdapter {
     func signIn(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             guard error == nil else {
+                AnnotatoLogger.error("When trying to log in \(email). \(error!.localizedDescription)")
                 self.delegate?.signInDidFail(error!)
                 return
             }
