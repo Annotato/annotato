@@ -1,6 +1,5 @@
 import Firebase
 import AnnotatoSharedLibrary
-import os
 
 class FirebaseAuth: AnnotatoAuthAdapter {
     weak var delegate: AnnotatoAuthDelegate?

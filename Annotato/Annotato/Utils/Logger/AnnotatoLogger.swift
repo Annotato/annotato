@@ -1,5 +1,3 @@
-import os
-
 class AnnotatoLogger {
     private static let shared = AnnotatoLogger()
     private var logProvider: AnnotatoLoggerAdapter = Logger()

@@ -1,5 +1,3 @@
-import os
-
 protocol AnnotatoLoggerAdapter {
     func verbose(_ message: String)
     func debug(_ message: String)
