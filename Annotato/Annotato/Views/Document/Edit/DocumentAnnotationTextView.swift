@@ -13,3 +13,13 @@ class DocumentAnnotationTextView: UITextView {
         isScrollEnabled = false
     }
 }
+
+extension DocumentAnnotationTextView: DocumentAnnotationSectionView {
+    func enterEditMode() {
+        isEditable = true
+    }
+
+    func enterViewMode() {
+        isEditable = false
+    }
+}

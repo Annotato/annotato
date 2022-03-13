@@ -12,7 +12,6 @@ class DocumentEditToolbarView: UIToolbar {
         super.init(frame: frame)
 
         let backButton = makeBackButton()
-        let flexibleSpace = makeFlexibleSpace()
         self.items = [backButton, flexibleSpace]
     }
 

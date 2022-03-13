@@ -2,7 +2,7 @@ import UIKit
 
 class DocumentAnnotationView: UIView {
     private var viewModel: DocumentAnnotationViewModel
-    private var sections: [UIView] = []
+    private var sections: [DocumentAnnotationSectionView] = []
     let toolbarHeight = 50.0
     let newSectionHeight = 50.0
     let minHeight: Double
@@ -42,6 +42,10 @@ class DocumentAnnotationView: UIView {
     private func initializeSubviews() {
         initializeToolbar()
         initializeScrollView()
+    }
+
+    private func makeToolbar() {
+
     }
 
     private func makeSectionViews() {
@@ -102,8 +106,11 @@ class DocumentAnnotationView: UIView {
 
     private func initializeToolbar() {
         let toolbar = DocumentAnnotationToolbarView(
-            frame: CGRect(x: .zero, y: .zero, width: frame.width, height: toolbarHeight))
+            frame: CGRect(x: .zero, y: .zero, width: frame.width, height: toolbarHeight),
+            isEditable: viewModel.parts.isEmpty
+        )
         toolbar.translatesAutoresizingMaskIntoConstraints = true
+        toolbar.actionDelegate = self
         addSubview(toolbar)
     }
 
@@ -144,5 +151,19 @@ extension DocumentAnnotationView: UITextViewDelegate {
 
         resizeStackView()
         resize()
+    }
+}
+
+extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
+    func enterEditMode() {
+        for section in sections {
+            section.enterEditMode()
+        }
+    }
+
+    func enterViewMode() {
+        for section in sections {
+            section.enterViewMode()
+        }
     }
 }

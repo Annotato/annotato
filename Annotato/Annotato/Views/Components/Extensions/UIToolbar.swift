@@ -1,7 +1,7 @@
 import UIKit
 
 extension UIToolbar {
-    func makeFlexibleSpace() -> UIBarButtonItem {
+    var flexibleSpace: UIBarButtonItem {
         UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
     }
 }

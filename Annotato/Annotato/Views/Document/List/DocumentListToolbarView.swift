@@ -11,7 +11,6 @@ class DocumentListToolbarView: UIToolbar {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let flexibleSpace = makeFlexibleSpace()
         let addButton = makeAddButton()
         self.items = [flexibleSpace, addButton]
     }
