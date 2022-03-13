@@ -2,7 +2,7 @@ import Firebase
 import AnnotatoSharedLibrary
 
 class FirebaseAuth: AnnotatoAuthService {
-    static var isAlreadyConfigured = false
+    private static var isAlreadyConfigured = false
 
     init () {
         guard !FirebaseAuth.isAlreadyConfigured else {
