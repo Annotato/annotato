@@ -43,8 +43,25 @@ class DocumentListViewController: UIViewController {
     }
 }
 
-extension DocumentListViewController: DocumentListToolbarDelegate, Navigable {
+extension DocumentListViewController: DocumentListToolbarDelegate, UIDocumentPickerDelegate, Navigable {
+
     func didTapAddButton() {
         goToDocumentEdit()
+    }
+
+    func didTapImportFileButton() {
+        goToImportingFiles()
+    }
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let selectedFileUrl = urls.first else {
+            return
+        }
+        guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return
+        }
+        print("selected file url = \(selectedFileUrl)")
+        let newlyLoadedDocumentPdfViewModel = DocumentPdfViewModel(url: selectedFileUrl)
+        goToDocumentEdit(documentPdfViewModel: newlyLoadedDocumentPdfViewModel)
     }
 }

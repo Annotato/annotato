@@ -4,11 +4,11 @@ import Foundation
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
         [
-            DocumentListViewModel(name: "Test A"),
-            DocumentListViewModel(name: "Test B"),
-            DocumentListViewModel(name: "Test C"),
-            DocumentListViewModel(name: "Test D"),
-            DocumentListViewModel(name: "Test E")
+            DocumentListViewModel(name: "Test A", url: exampleUrlLab01Qns()),
+            DocumentListViewModel(name: "Test B", url: exampleUrlL0Overview()),
+            DocumentListViewModel(name: "Test C", url: exampleUrlL1Intro()),
+            DocumentListViewModel(name: "Test D", url: exampleUrlLab01Qns()),
+            DocumentListViewModel(name: "Test E", url: exampleUrlL0Overview())
         ]
     }
 
@@ -18,7 +18,7 @@ class SampleData {
             pdfDocument: SampleData().examplePdfDocument())
     }
 
-    private func exampleAnnotations() -> [DocumentAnnotationViewModel] {
+    func exampleAnnotations() -> [DocumentAnnotationViewModel] {
         [
             DocumentAnnotationViewModel(
                 center: CGPoint(x: 450.0, y: 150.0),
@@ -33,12 +33,28 @@ class SampleData {
     }
 
     private func examplePdfDocument() -> DocumentPdfViewModel {
-        DocumentPdfViewModel(url: SampleData().exampleUrl())
+        DocumentPdfViewModel(url: SampleData().exampleUrlLab01Qns())
     }
 
-    private func exampleUrl() -> URL {
+    private func exampleUrlLab01Qns() -> URL {
         guard let url = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {
-            print("No such pdf")
+            fatalError("example url not valid")
+        }
+        return url
+    }
+
+    private func exampleUrlL0Overview() -> URL {
+        guard let url = Bundle.main.url(
+            forResource: "L0 - Course Overview",
+            withExtension: "pdf"
+        ) else {
+            fatalError("example url not valid")
+        }
+        return url
+    }
+
+    private func exampleUrlL1Intro() -> URL {
+        guard let url = Bundle.main.url(forResource: "L1 - Introduction", withExtension: "pdf") else {
             fatalError("example url not valid")
         }
         return url

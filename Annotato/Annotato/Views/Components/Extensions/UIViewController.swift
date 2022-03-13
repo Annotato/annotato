@@ -19,6 +19,24 @@ extension UIViewController {
         return viewController
     }
 
+    static func instantiateFullScreenFromStoryboard(
+        _ storyboard: Storyboard,
+        documentPdfViewModel: DocumentPdfViewModel
+    ) -> Self? {
+        let viewController = instantiateFromStoryboard(storyboard)
+        viewController?.modalPresentationStyle = .fullScreen
+
+        if let viewController = viewController as? DocumentEditViewController {
+            let currentDocumentViewModel = DocumentViewModel(
+                annotations: SampleData().exampleAnnotations(),
+                pdfDocument: documentPdfViewModel
+            )
+            viewController.currentDocumentViewModel = currentDocumentViewModel
+        }
+
+        return viewController
+    }
+
     static func instantiatePartialScreenFromStoryboard(storyboard: Storyboard) -> Self? {
         let viewController = instantiateFromStoryboard(storyboard)
 
