@@ -4,7 +4,6 @@ class DocumentAnnotationView: UIView {
     private var viewModel: DocumentAnnotationViewModel
     private var sections: [DocumentAnnotationSectionView] = []
     let toolbarHeight = 50.0
-    let newSectionHeight = 50.0
     let minHeight: Double
     let maxHeight: Double
     let scrollViewMinHeight = 50.0
@@ -25,14 +24,14 @@ class DocumentAnnotationView: UIView {
             width: annotationViewModel.width,
             height: annotationViewModel.height + toolbarHeight
         )
-        self.minHeight = toolbarHeight + newSectionHeight
+        self.minHeight = toolbarHeight
         self.maxHeight = 200.0
 
         super.init(frame: frame)
+        self.sections = viewModel.parts.map({ $0.toView(in: self) })
         self.center = annotationViewModel.center
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.blue.cgColor
-        makeSectionViews()
         makeScrollView()
         makeStackView()
         addPanGestureRecognizer()
@@ -42,23 +41,6 @@ class DocumentAnnotationView: UIView {
     private func initializeSubviews() {
         initializeToolbar()
         initializeScrollView()
-    }
-
-    private func makeToolbar() {
-
-    }
-
-    private func makeSectionViews() {
-        sections = viewModel.parts.map({ $0.toView(in: self) })
-
-        if sections.isEmpty {
-            let newSection = DocumentAnnotationTextView(
-                frame: CGRect(x: .zero, y: .zero, width: frame.width, height: 50))
-            newSection.delegate = self
-            newSection.becomeFirstResponder()
-            sections.append(newSection)
-            resize()
-        }
     }
 
     private func makeScrollView() {
@@ -96,7 +78,6 @@ class DocumentAnnotationView: UIView {
         scrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         scrollView.addSubview(stackView)
-
         stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
         stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
@@ -107,7 +88,7 @@ class DocumentAnnotationView: UIView {
     private func initializeToolbar() {
         let toolbar = DocumentAnnotationToolbarView(
             frame: CGRect(x: .zero, y: .zero, width: frame.width, height: toolbarHeight),
-            isEditable: viewModel.parts.isEmpty
+            annotationViewModel: viewModel
         )
         toolbar.translatesAutoresizingMaskIntoConstraints = true
         toolbar.actionDelegate = self
@@ -165,5 +146,43 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
         for section in sections {
             section.enterViewMode()
         }
+    }
+
+    func addOrReplaceSection(with annotationType: AnnotationType) {
+        guard let lastSection = sections.last else {
+            return
+        }
+
+        if lastSection.annotationType == annotationType {
+            return
+        }
+
+        if lastSection.isEmpty {
+            let lastSection = sections.last
+            lastSection?.removeFromSuperview()
+            sections.removeLast()
+        }
+
+        if sections.last?.annotationType == annotationType {
+            resizeStackView()
+            resize()
+            return
+        }
+
+        switch annotationType {
+        case .plainText:
+            let newTextViewModel = DocumentAnnotationTextViewModel(content: "", height: 50.0)
+            let newSection = newTextViewModel.toView(in: self)
+            sections.append(newSection)
+            stackView.addArrangedSubview(newSection)
+        case .markdown:
+            let newMarkdownViewModel = DocumentAnnotationMarkdownViewModel(content: "", height: 50.0)
+            let newSection = newMarkdownViewModel.toView(in: self)
+            sections.append(newSection)
+            stackView.addArrangedSubview(newSection)
+        }
+
+        resizeStackView()
+        resize()
     }
 }
