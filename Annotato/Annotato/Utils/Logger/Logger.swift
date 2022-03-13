@@ -6,7 +6,7 @@ class Logger: AnnotatoLoggerService {
     init() {
         let console = ConsoleDestination()
         // See https://docs.swiftybeaver.com/article/20-custom-format
-        console.format = "LOG($DHH:mm:ss$d) $C$L:$c $M"
+        console.format = "TIME: $DHH:mm:ss$d LOG -> $C$L:$c $M"
         log = SwiftyBeaver.self
         log.addDestination(console)
     }
