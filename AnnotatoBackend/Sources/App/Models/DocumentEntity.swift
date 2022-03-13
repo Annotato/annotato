@@ -1,4 +1,5 @@
 import FluentKit
+import AnnotatoSharedLibrary
 
 final class DocumentEntity: Model {
     static let schema = "documents"
@@ -25,4 +26,19 @@ final class DocumentEntity: Model {
     var deletedAt: Date?
 
     init() { }
+
+    init(name: String, ownerId: UUID, baseFileUrl: String, id: UUID? = nil) {
+        self.name = name
+        self.ownerId = ownerId
+        self.baseFileUrl = baseFileUrl
+        self.id = id
+    }
+}
+
+extension DocumentEntity: PersistedEntity {
+    typealias PersistableModel = Document
+
+    static func fromModel(_ model: Document) -> Self {
+        Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
+    }
 }

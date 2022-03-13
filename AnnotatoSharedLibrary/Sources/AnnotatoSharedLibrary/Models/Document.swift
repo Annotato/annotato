@@ -7,16 +7,16 @@
 
 import Foundation
 
-class Document {
-    let id: UUID
+public class Document {
+    public var id: UUID?
 
-    private(set) var name: String
+    public private(set) var name: String
 
-    let ownerId: UUID
+    public let ownerId: UUID
 
-    let baseFileUrl: String
+    public let baseFileUrl: String
 
-    init(name: String, ownerId: UUID, baseFileUrl: String, id: UUID = UUID()) {
+    public required init(name: String, ownerId: UUID, baseFileUrl: String, id: UUID? = nil) {
         self.id = id
         self.name = name
         self.ownerId = ownerId
