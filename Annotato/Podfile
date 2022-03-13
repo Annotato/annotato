@@ -6,5 +6,7 @@ target 'Annotato' do
   use_frameworks!
 
   # Pods for Annotato
-
+  pod 'Firebase/Auth'
+  pod 'SwiftyBeaver'
+  pod 'RichTextView'
 end
