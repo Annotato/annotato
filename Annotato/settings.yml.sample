@@ -1,4 +1,4 @@
 settings:
   base:
-    DEVELOPMENT_TEAM: xxxxx
-    PRODUCT_BUNDLE_IDENTIFIER: cs3217.Annotato.sampleIdentifier
+    DEVELOPMENT_TEAM: P8V8AQ67ST
+    PRODUCT_BUNDLE_IDENTIFIER: cs3217.Annotato.AnnotatoApp
