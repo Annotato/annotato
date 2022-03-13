@@ -7,4 +7,5 @@ target 'Annotato' do
 
   # Pods for Annotato
   pod 'Firebase/Auth'
+  pod 'SwiftyBeaver'
 end
