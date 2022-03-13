@@ -5,10 +5,12 @@ class FirebaseAuth: AnnotatoAuthService {
     static var isAlreadyConfigured = false
 
     init () {
-        if !FirebaseAuth.isAlreadyConfigured {
-            FirebaseApp.configure()
-            FirebaseAuth.isAlreadyConfigured = true
+        guard !FirebaseAuth.isAlreadyConfigured else {
+            return
         }
+
+        FirebaseApp.configure()
+        FirebaseAuth.isAlreadyConfigured = true
     }
 
     weak var delegate: AnnotatoAuthDelegate?
