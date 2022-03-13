@@ -2,18 +2,23 @@ import Firebase
 import AnnotatoSharedLibrary
 
 class FirebaseAuth: AnnotatoAuthService {
+    static var isAlreadyConfigured = false
+
+    init () {
+        if !FirebaseAuth.isAlreadyConfigured {
+            FirebaseApp.configure()
+            FirebaseAuth.isAlreadyConfigured = true
+        }
+    }
+
     weak var delegate: AnnotatoAuthDelegate?
 
-    private var firebaseAuthUser: User? {
+    private var currentFirebaseUser: User? {
         Auth.auth().currentUser
     }
 
     var currentUser: AnnotatoUser? {
-        firebaseAuthUser?.toAnnotatoAuthUser()
-    }
-
-    func configure() {
-        FirebaseApp.configure()
+        currentFirebaseUser?.toAnnotatoUser()
     }
 
     func signUp(email: String, password: String, displayName: String) {
@@ -43,7 +48,7 @@ class FirebaseAuth: AnnotatoAuthService {
     }
 
     private func setDisplayName(to displayName: String, email: String) {
-        let changeRequest = self.firebaseAuthUser?.createProfileChangeRequest()
+        let changeRequest = self.currentFirebaseUser?.createProfileChangeRequest()
         changeRequest?.displayName = displayName
         changeRequest?.commitChanges(completion: { error in
             if let error = error {
@@ -58,7 +63,7 @@ class FirebaseAuth: AnnotatoAuthService {
 }
 
 extension User {
-    func toAnnotatoAuthUser() -> AnnotatoUser {
+    func toAnnotatoUser() -> AnnotatoUser {
         guard let email = email, let displayName = displayName else {
             fatalError("Unable to get user account info!")
         }

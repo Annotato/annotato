@@ -1,29 +1,26 @@
 import AnnotatoSharedLibrary
 
 class AnnotatoAuth {
-    private static let shared = AnnotatoAuth()
-    private var authService: AnnotatoAuthService = FirebaseAuth()
+    private var authService: AnnotatoAuthService
 
-    private init() {}
-
-    static var currentUser: AnnotatoUser? {
-        AnnotatoAuth.shared.authService.currentUser
+    init() {
+        authService = FirebaseAuth()
     }
 
-    static var delegate: AnnotatoAuthDelegate? {
-        get { AnnotatoAuth.shared.authService.delegate }
-        set { AnnotatoAuth.shared.authService.delegate = newValue }
+    var currentUser: AnnotatoUser? {
+        authService.currentUser
     }
 
-    static func signUp(email: String, password: String, displayName: String) {
-        AnnotatoAuth.shared.authService.signUp(email: email, password: password, displayName: displayName)
+    var delegate: AnnotatoAuthDelegate? {
+        get { authService.delegate }
+        set { authService.delegate = newValue }
     }
 
-    static func logIn(email: String, password: String) {
-        AnnotatoAuth.shared.authService.logIn(email: email, password: password)
+    func signUp(email: String, password: String, displayName: String) {
+        authService.signUp(email: email, password: password, displayName: displayName)
     }
 
-    static func configure() {
-        AnnotatoAuth.shared.authService.configure()
+    func logIn(email: String, password: String) {
+        authService.logIn(email: email, password: password)
     }
 }

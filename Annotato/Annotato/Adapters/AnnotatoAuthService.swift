@@ -5,5 +5,4 @@ protocol AnnotatoAuthService {
     var currentUser: AnnotatoUser? { get }
     func signUp(email: String, password: String, displayName: String)
     func logIn(email: String, password: String)
-    func configure()
 }
