@@ -1,4 +1,4 @@
-protocol AnnotatoLoggerAdapter {
+protocol AnnotatoLoggerService {
     func verbose(_ message: String)
     func debug(_ message: String)
     func info(_ message: String)

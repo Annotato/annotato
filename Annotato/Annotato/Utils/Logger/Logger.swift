@@ -1,6 +1,6 @@
 import SwiftyBeaver
 
-class Logger: AnnotatoLoggerAdapter {
+class Logger: AnnotatoLoggerService {
     let log: SwiftyBeaver.Type
 
     init() {

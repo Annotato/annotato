@@ -1,7 +1,7 @@
 import Firebase
 import AnnotatoSharedLibrary
 
-class FirebaseAuth: AnnotatoAuthAdapter {
+class FirebaseAuth: AnnotatoAuthService {
     weak var delegate: AnnotatoAuthDelegate?
 
     private var firebaseAuthUser: User? {
