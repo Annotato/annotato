@@ -1,4 +1,5 @@
 import CoreGraphics
+import Foundation
 
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
@@ -12,7 +13,9 @@ class SampleData {
     }
 
     func exampleDocument() -> DocumentViewModel {
-        DocumentViewModel(annotations: SampleData().exampleAnnotations())
+        DocumentViewModel(
+            annotations: SampleData().exampleAnnotations(),
+            pdfDocument: SampleData().examplePdfDocument())
     }
 
     private func exampleAnnotations() -> [DocumentAnnotationViewModel] {
@@ -27,6 +30,18 @@ class SampleData {
                 width: 250.0,
                 parts: exampleAnnotationParts2())
         ]
+    }
+
+    private func examplePdfDocument() -> DocumentPdfViewModel {
+        DocumentPdfViewModel(url: SampleData().exampleUrl())
+    }
+
+    private func exampleUrl() -> URL {
+        guard let url = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {
+            print("No such pdf")
+            fatalError("example url not valid")
+        }
+        return url
     }
 
     private func exampleAnnotationParts1() -> [DocumentAnnotationPartViewModel] {

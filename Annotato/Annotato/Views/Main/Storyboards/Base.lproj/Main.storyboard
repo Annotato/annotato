@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="aXk-3p-y1R">
-    <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="ipad7_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -17,50 +17,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <gestureRecognizers/>
-                        <constraints>
-                            <constraint firstItem="lb0-kS-LUJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="a8U-11-gCZ"/>
-                            <constraint firstItem="lb0-kS-LUJ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="i7e-CY-p5v"/>
-                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="0MO-GA-ZkS">
-                        <barButtonItem key="leftBarButtonItem" title="Import Files" id="b3S-A8-GQG">
-                            <connections>
-                                <action selector="importFiles:" destination="BYZ-38-t0r" id="XZP-kF-Xpr"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Next" id="LN1-3T-Mef">
-                            <connections>
-                                <action selector="handleNextButtonTapped:" destination="BYZ-38-t0r" id="DXT-dY-Mrl"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="importFilesButton" destination="b3S-A8-GQG" id="HS9-wL-VGe"/>
-                        <outlet property="nextButton" destination="LN1-3T-Mef" id="lyb-ux-Dmc"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="888.29268292682923" y="116.94915254237289"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="nZH-Lt-D4x">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aXk-3p-y1R" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Dm4-eP-0uz">
-                        <rect key="frame" x="0.0" y="24" width="820" height="50"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="Kvh-jF-qJ7"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="a9I-oC-qA9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="131.70731707317074" y="116.94915254237289"/>
+            <point key="canvasLocation" x="132" y="117"/>
         </scene>
     </scenes>
     <resources>

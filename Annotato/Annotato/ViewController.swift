@@ -17,19 +17,25 @@ class ViewController: UIViewController {
     @IBOutlet private var importFilesButton: UIBarButtonItem!
 
     let buttonHeight = 50.0
-    var margins: UILayoutGuide {
-        view.layoutMarginsGuide
-    }
-
-    var frame: CGRect {
-        margins.layoutFrame
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         addPdfView()
         addObservers()
         addTripleTapGestureAddAnnotation()
+        initializeGoToDocumentViewButton()
+    }
+
+    private func initializeGoToDocumentViewButton() {
+        let documentViewButton = FilledButton(
+            title: "Doc List",
+            frame: CGRect(x: .zero, y: .zero, width: 100, height: 100)
+        )
+        documentViewButton.titleLabel?.adjustsFontSizeToFitWidth = true
+
+        documentViewButton.center = .init(x: 100, y: 100)
+        documentViewButton.addTarget(self, action: #selector(didTapDocumentButton), for: .touchUpInside)
+        view.addSubview(documentViewButton)
     }
 
     private func addPdfView() {
@@ -117,7 +123,6 @@ class ViewController: UIViewController {
         print(pdfView.scaleFactor)
         print(pdfView.autoScales)
         print(pdfView.scaleFactorForSizeToFit)
-        print(pdfView.currentDestination)
 
         let newX = tapLocation.x / pdfView.scaleFactor
         let newY = (pdfView.bounds.height - tapLocation.y) / pdfView.scaleFactor
@@ -128,7 +133,8 @@ class ViewController: UIViewController {
 }
 
 // MARK: Extension
-extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate, UIGestureRecognizerDelegate {
+extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate,
+                            UIGestureRecognizerDelegate, Navigable {
     func pdfViewWillClick(onLink sender: PDFView, with url: URL) {
         print(url)
     }
@@ -166,5 +172,10 @@ extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate, UIGestureRe
             return true
         }
         return false
+    }
+
+    @objc
+    func didTapDocumentButton() {
+        goToDocumentEdit()
     }
 }
