@@ -1,12 +1,22 @@
 import UIKit
 
 protocol Navigable where Self: UIViewController {
-    func goToGallery()
+    func goToDocumentList()
 }
 
 extension Navigable {
-    func goToGallery() {
+    func goToDocumentList() {
         guard let viewController = DocumentListViewController.instantiateFullScreenFromStoryboard(
+            .document
+        ) else {
+            return
+        }
+
+        present(viewController, animated: true, completion: nil)
+    }
+
+    func goToDocumentEdit() {
+        guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
             return
