@@ -27,3 +27,14 @@ extension UIViewController {
         return viewController
     }
 }
+
+// MARK: Safe Area
+extension UIViewController {
+    var margins: UILayoutGuide {
+        view.layoutMarginsGuide
+    }
+
+    var frame: CGRect {
+        margins.layoutFrame
+    }
+}

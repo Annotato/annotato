@@ -1,22 +1,8 @@
 import UIKit
 
 class DocumentListViewController: UIViewController {
-    private var documents = [
-        DocumentListViewModel(name: "Test A"),
-        DocumentListViewModel(name: "Test B"),
-        DocumentListViewModel(name: "Test C"),
-        DocumentListViewModel(name: "Test D"),
-        DocumentListViewModel(name: "Test E")
-    ]
+    private var documents = SampleData().exampleDocumentsInList()
     let toolbarHeight = 50.0
-
-    var margins: UILayoutGuide {
-        view.layoutMarginsGuide
-    }
-
-    var frame: CGRect {
-        margins.layoutFrame
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +19,7 @@ class DocumentListViewController: UIViewController {
         let toolbar = DocumentListToolbarView(
             frame: CGRect(x: .zero, y: .zero, width: frame.width, height: toolbarHeight)
         )
+        toolbar.actionDelegate = self
 
         view.addSubview(toolbar)
 
@@ -53,5 +40,11 @@ class DocumentListViewController: UIViewController {
         collectionView.heightAnchor.constraint(equalToConstant: frame.height * 0.9).isActive = true
         collectionView.topAnchor.constraint(equalTo: margins.topAnchor, constant: toolbarHeight + 10.0).isActive = true
         collectionView.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
+    }
+}
+
+extension DocumentListViewController: DocumentListToolbarDelegate, Navigable {
+    func didTapAddButton() {
+        goToDocumentEdit()
     }
 }
