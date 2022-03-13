@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Document {
+public class Document: Codable {
     public var id: UUID?
 
     public private(set) var name: String
