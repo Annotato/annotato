@@ -25,24 +25,18 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="lb0-kS-LUJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="a8U-11-gCZ"/>
                             <constraint firstItem="lb0-kS-LUJ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="i7e-CY-p5v"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="0MO-GA-ZkS">
-                        <leftBarButtonItems>
-                            <barButtonItem title="Annotate" id="BCo-xE-ZdD">
-                                <connections>
-                                    <action selector="addAnnotation:" destination="BYZ-38-t0r" id="75r-Xm-Rm6"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Import Files" id="b3S-A8-GQG">
-                                <connections>
-                                    <action selector="importFiles:" destination="BYZ-38-t0r" id="XZP-kF-Xpr"/>
-                                </connections>
-                            </barButtonItem>
-                        </leftBarButtonItems>
+                        <barButtonItem key="leftBarButtonItem" title="Import Files" id="b3S-A8-GQG">
+                            <connections>
+                                <action selector="importFiles:" destination="BYZ-38-t0r" id="XZP-kF-Xpr"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Next" id="LN1-3T-Mef">
                             <connections>
                                 <action selector="handleNextButtonTapped:" destination="BYZ-38-t0r" id="DXT-dY-Mrl"/>
@@ -50,7 +44,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="annotateButton" destination="BCo-xE-ZdD" id="cB5-tw-fqV"/>
                         <outlet property="importFilesButton" destination="b3S-A8-GQG" id="HS9-wL-VGe"/>
                         <outlet property="nextButton" destination="LN1-3T-Mef" id="lyb-ux-Dmc"/>
                     </connections>

@@ -11,12 +11,12 @@ import UniformTypeIdentifiers
 
 class ViewController: UIViewController {
     let pdfView = PDFView()
+    var pdfTapGestures: [UITapGestureRecognizer] = []
+    var tripleTapAnnotateGesture = UITapGestureRecognizer()
     @IBOutlet private var nextButton: UIBarButtonItem!
-    @IBOutlet private var annotateButton: UIBarButtonItem!
     @IBOutlet private var importFilesButton: UIBarButtonItem!
 
     let buttonHeight = 50.0
-
     var margins: UILayoutGuide {
         view.layoutMarginsGuide
     }
@@ -29,6 +29,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         addPdfView()
         addObservers()
+        addTripleTapGestureAddAnnotation()
     }
 
     private func addPdfView() {
@@ -42,6 +43,7 @@ class ViewController: UIViewController {
             return
         }
         pdfView.document = document
+        pdfView.autoScales = true
         pdfView.delegate = self
     }
 
@@ -64,20 +66,18 @@ class ViewController: UIViewController {
         nextButton.isEnabled = pdfView.canGoToNextPage
     }
 
-    @IBAction private func addAnnotation(_ sender: Any) {
-        print("function called")
-        guard let document = pdfView.document else {
+    private func addAnnotationAtLocation(location: CGPoint, text: String) {
+        print("add annotation at location")
+        guard let currentPage = pdfView.currentPage else {
             return
         }
-        let lastPage = document.page(at: document.pageCount - 1)
-        let annotation = PDFAnnotation(
-            bounds: CGRect(x: 100, y: 100, width: 100, height: 20),
-            forType: .freeText, withProperties: nil)
-        annotation.contents = "Hello, world!"
-        annotation.font = UIFont.systemFont(ofSize: 15.0)
-        annotation.fontColor = .blue
-        annotation.color = .clear
-        lastPage?.addAnnotation(annotation)
+        let textAnnotation = PDFAnnotation(
+            bounds: CGRect(x: location.x, y: location.y, width: 20, height: 20),
+            forType: .text, withProperties: nil
+        )
+        textAnnotation.contents = text
+        textAnnotation.color = .clear
+        currentPage.addAnnotation(textAnnotation)
     }
 
     @IBAction private func importFiles(_ sender: Any) {
@@ -89,9 +89,46 @@ class ViewController: UIViewController {
         present(documentPicker, animated: true, completion: nil)
     }
 
+    private func addTripleTapGestureAddAnnotation() {
+        guard let pdfDefaultGestures = pdfView.gestureRecognizers else {
+            print("no gestures in pdfview")
+            return
+        }
+        for gesture in pdfDefaultGestures where gesture is UITapGestureRecognizer {
+            if let gesture = gesture as? UITapGestureRecognizer {
+                self.pdfTapGestures.append(gesture)
+            }
+        }
+        let tripleTapGestureRecognizer = UITapGestureRecognizer(
+            target: self, action: #selector(didTripleTap))
+        tripleTapGestureRecognizer.numberOfTapsRequired = 3
+        tripleTapGestureRecognizer.delegate = self
+        pdfView.addGestureRecognizer(tripleTapGestureRecognizer)
+        self.tripleTapAnnotateGesture = tripleTapGestureRecognizer
+    }
+
+    @objc func didTripleTap(_ sender: UILongPressGestureRecognizer) {
+        guard sender.state == .ended else {
+            return
+        }
+        print("triple tapped")
+        let tapLocation = sender.location(in: pdfView)
+        print(tapLocation)
+        print(pdfView.scaleFactor)
+        print(pdfView.autoScales)
+        print(pdfView.scaleFactorForSizeToFit)
+        print(pdfView.currentDestination)
+
+        let newX = tapLocation.x / pdfView.scaleFactor
+        let newY = (pdfView.bounds.height - tapLocation.y) / pdfView.scaleFactor
+        let annotateLocation = CGPoint(x: newX, y: newY)
+        print(annotateLocation)
+        addAnnotationAtLocation(location: annotateLocation, text: "Hi everybody")
+    }
 }
 
-extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate {
+// MARK: Extension
+extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate, UIGestureRecognizerDelegate {
     func pdfViewWillClick(onLink sender: PDFView, with url: URL) {
         print(url)
     }
@@ -111,5 +148,23 @@ extension ViewController: PDFViewDelegate, UIDocumentPickerDelegate {
             return
         }
         pdfView.document = document
+    }
+
+    func gestureRecognizer(
+    _ gestureRecognizer: UIGestureRecognizer,
+    shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        guard let gestureRecognizer: UITapGestureRecognizer = gestureRecognizer as? UITapGestureRecognizer else {
+            return false
+        }
+        guard let otherGestureRecognizer: UITapGestureRecognizer = otherGestureRecognizer as? UITapGestureRecognizer
+        else {
+            return false
+        }
+        if gestureRecognizer == tripleTapAnnotateGesture &&
+            self.pdfTapGestures.contains(otherGestureRecognizer) {
+            return true
+        }
+        return false
     }
 }
