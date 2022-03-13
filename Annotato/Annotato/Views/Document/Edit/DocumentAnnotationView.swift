@@ -116,7 +116,7 @@ class DocumentAnnotationView: UIView {
         stackView.frame = newStackViewFrame
     }
 
-    private func resize() {
+    private func resizeAnnotationView() {
         var newAnnotationFrame = self.frame
         let targetAnnotationHeight = toolbarHeight + sectionsHeight
         newAnnotationFrame.size.height = min(maxHeight, max(minHeight, targetAnnotationHeight))
@@ -125,12 +125,16 @@ class DocumentAnnotationView: UIView {
 }
 
 extension DocumentAnnotationView: UITextViewDelegate {
+    func resize() {
+        resizeStackView()
+        resizeAnnotationView()
+    }
+
     func textViewDidChange(_ textView: UITextView) {
         let fixedWidth = textView.frame.size.width
         let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         textView.frame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
 
-        resizeStackView()
         resize()
     }
 }
@@ -164,7 +168,6 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
         }
 
         if sections.last?.annotationType == annotationType {
-            resizeStackView()
             resize()
             return
         }
@@ -182,7 +185,6 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
             stackView.addArrangedSubview(newSection)
         }
 
-        resizeStackView()
         resize()
     }
 }

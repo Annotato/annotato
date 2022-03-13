@@ -1,6 +1,6 @@
 import UIKit
 
-class DocumentAnnotationTextView: UITextView {
+class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
     private(set) var annotationType: AnnotationType
 
     var isEmpty: Bool {
@@ -25,9 +25,7 @@ class DocumentAnnotationTextView: UITextView {
         translatesAutoresizingMaskIntoConstraints = false
         isScrollEnabled = false
     }
-}
 
-extension DocumentAnnotationTextView: DocumentAnnotationSectionView {
     func enterEditMode() {
         isEditable = true
     }
