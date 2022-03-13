@@ -1,10 +1,3 @@
-//
-//  Document.swift
-//
-//
-//  Created by Hong Yao on 12/3/22.
-//
-
 import Foundation
 
 public class Document: Codable {
