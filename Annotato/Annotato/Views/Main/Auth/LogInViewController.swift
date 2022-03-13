@@ -25,6 +25,6 @@ class LogInViewController: UIViewController, Navigable {
 
     @objc
     private func didTapLoginButton() {
-        goToGallery()
+        goToDocumentList()
     }
 }

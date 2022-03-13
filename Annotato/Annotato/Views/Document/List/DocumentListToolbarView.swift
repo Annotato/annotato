@@ -1,6 +1,8 @@
 import UIKit
 
 class DocumentListToolbarView: UIToolbar {
+    weak var actionDelegate: DocumentListToolbarDelegate?
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -9,13 +11,8 @@ class DocumentListToolbarView: UIToolbar {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let flexibleSpace = makeFlexibleSpace()
         let addButton = makeAddButton()
         self.items = [flexibleSpace, addButton]
-    }
-
-    private func makeFlexibleSpace() -> UIBarButtonItem {
-        UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
     }
 
     private func makeAddButton() -> UIBarButtonItem {
@@ -24,6 +21,6 @@ class DocumentListToolbarView: UIToolbar {
 
     @objc
     private func didTapAddButton() {
-        print("tapped add button")
+        actionDelegate?.didTapAddButton()
     }
 }
