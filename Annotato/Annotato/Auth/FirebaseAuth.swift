@@ -24,7 +24,8 @@ class FirebaseAuth: AnnotatoAuthService {
     func signUp(email: String, password: String, displayName: String) {
         Auth.auth().createUser(withEmail: email, password: password) { _, error in
             if let error = error {
-                AnnotatoLogger.error("When trying to sign up new user. \(error.localizedDescription)")
+                AnnotatoLogger.error("When trying to sign up new user. \(error.localizedDescription)",
+                                     context: "FirebaseAuth::signUp")
                 self.delegate?.signUpDidFail(error)
                 return
             }
@@ -37,7 +38,8 @@ class FirebaseAuth: AnnotatoAuthService {
     func logIn(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             if let error = error {
-                AnnotatoLogger.error("When trying to log in \(email). \(error.localizedDescription)")
+                AnnotatoLogger.error("When trying to log in \(email). \(error.localizedDescription)",
+                                     context: "FirebaseAuth::logIn")
                 self.delegate?.logInDidFail(error)
                 return
             }
@@ -53,7 +55,8 @@ class FirebaseAuth: AnnotatoAuthService {
         changeRequest?.commitChanges(completion: { error in
             if let error = error {
                 AnnotatoLogger.error(
-                    "Unable to set display name for \(email). \(error.localizedDescription)"
+                    "Unable to set display name for \(email). \(error.localizedDescription)",
+                    context: "FirebaseAuth::setDisplayName"
                 )
                 return
             }
