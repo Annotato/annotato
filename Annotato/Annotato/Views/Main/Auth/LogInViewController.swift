@@ -84,7 +84,7 @@ extension LogInViewController: AnnotatoAuthDelegate, AlertPresentable {
 
     func signUpDidSucceed() {
         presentTimedAlert(title: "Sign Up Successful!", message: "Please log in to use the application.")
-        formSegmentedControl.selectedSegmentIndex = 0
+        formSegmentedControl.selectedSegmentIndex = Segment.logIn.rawValue
         updateFormViews()
     }
 }
