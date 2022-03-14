@@ -26,9 +26,10 @@ class DocumentAnnotationToolbarView: UIToolbar {
 
         textButton = makeTextButton()
         markdownButton = makeMarkdownButton()
+        let deleteButton = makeDeleteButton()
         initializeEditButton(isEditable: annotationViewModel.isNew)
         initializePalette(startingAnnotationType: annotationViewModel.startingAnnotationType)
-        self.items = [textButton, markdownButton, flexibleSpace, editButton]
+        self.items = [textButton, markdownButton, flexibleSpace, editButton, deleteButton]
     }
 
     private func makeTextButton() -> UIBarButtonItem {
@@ -52,6 +53,15 @@ class DocumentAnnotationToolbarView: UIToolbar {
         button.tintColor = .darkGray
         button.delegate = self
         return button
+    }
+
+    private func makeDeleteButton() -> UIBarButtonItem {
+        let button = UIButton()
+        let imageName = "trash"
+        button.setImage(UIImage(systemName: imageName), for: .normal)
+        button.sizeToFit()
+        button.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
+        return UIBarButtonItem(customView: button)
     }
 
     private func initializeEditButton(isEditable: Bool) {
@@ -91,7 +101,48 @@ class DocumentAnnotationToolbarView: UIToolbar {
         button.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
         editButton.customView = button
     }
+}
 
+// MARK: Palette
+extension DocumentAnnotationToolbarView: ToggleableButtonDelegate {
+    func didSelect(button: ToggleableButton) {
+        for paletteButton in paletteButtons.values where paletteButton != button {
+            paletteButton.isSelected = false
+        }
+    }
+
+    func tapButton(of annotationType: AnnotationType) {
+        switch annotationType {
+        case .plainText:
+            guard let plainTextButton = paletteButtons[.plainText] else {
+                return
+            }
+            plainTextButton.select()
+        case .markdown:
+            guard let markdownButton = paletteButtons[.markdown] else {
+                return
+            }
+            markdownButton.select()
+        }
+    }
+
+    @objc
+    private func didTapTextButton(_ sender: ToggleableButton) {
+        if sender.isSelected {
+            actionDelegate?.addOrReplaceSection(with: .plainText)
+        }
+    }
+
+    @objc
+    private func didTapMarkdownButton(_ sender: ToggleableButton) {
+        if sender.isSelected {
+            actionDelegate?.addOrReplaceSection(with: .markdown)
+        }
+    }
+}
+
+// MARK: Edit
+extension DocumentAnnotationToolbarView {
     @objc
     private func didTapEditButton() {
         editButton.isSelected.toggle()
@@ -129,39 +180,10 @@ class DocumentAnnotationToolbarView: UIToolbar {
     }
 }
 
-extension DocumentAnnotationToolbarView: ToggleableButtonDelegate {
-    func didSelect(button: ToggleableButton) {
-        for paletteButton in paletteButtons.values where paletteButton != button {
-            paletteButton.isSelected = false
-        }
-    }
-
-    func tapButton(of annotationType: AnnotationType) {
-        switch annotationType {
-        case .plainText:
-            guard let plainTextButton = paletteButtons[.plainText] else {
-                return
-            }
-            plainTextButton.select()
-        case .markdown:
-            guard let markdownButton = paletteButtons[.markdown] else {
-                return
-            }
-            markdownButton.select()
-        }
-    }
-
+// MARK: Delete
+extension DocumentAnnotationToolbarView {
     @objc
-    private func didTapTextButton(_ sender: ToggleableButton) {
-        if sender.isSelected {
-            actionDelegate?.addOrReplaceSection(with: .plainText)
-        }
-    }
-
-    @objc
-    private func didTapMarkdownButton(_ sender: ToggleableButton) {
-        if sender.isSelected {
-            actionDelegate?.addOrReplaceSection(with: .markdown)
-        }
+    func didTapDeleteButton() {
+        actionDelegate?.didDelete()
     }
 }

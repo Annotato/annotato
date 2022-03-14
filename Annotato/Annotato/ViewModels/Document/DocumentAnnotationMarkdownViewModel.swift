@@ -13,7 +13,6 @@ class DocumentAnnotationMarkdownViewModel: DocumentAnnotationTextViewModel {
             viewModel: self
         )
         view.text = content
-        view.delegate = parentView as? DocumentAnnotationView
         view.actionDelegate = parentView as? DocumentAnnotationView
         return view
     }

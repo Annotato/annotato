@@ -25,6 +25,7 @@ class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
         self.viewModel = viewModel
         super.init(frame: frame, textContainer: textContainer)
 
+        delegate = self
         translatesAutoresizingMaskIntoConstraints = false
         isScrollEnabled = false
         addTapGestureRecognizer()
@@ -52,12 +53,6 @@ class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
             actionDelegate?.didSelect(section: self)
         }
     }
-
-    @objc private func didEdit() {
-        if isEmpty {
-            actionDelegate?.didBecomeEmpty(section: self)
-        }
-    }
 }
 
 extension DocumentAnnotationTextView: UIGestureRecognizerDelegate {
@@ -66,5 +61,27 @@ extension DocumentAnnotationTextView: UIGestureRecognizerDelegate {
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
         true
+    }
+}
+
+extension DocumentAnnotationTextView: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let fixedWidth = frame.size.width
+        let newSize = sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        frame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+
+        viewModel.setContent(to: text)
+        viewModel.setHeight(to: frame.size.height)
+        actionDelegate?.frameDidChange()
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        actionDelegate?.didBeginEditing(annotationType: annotationType)
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if isEmpty {
+            actionDelegate?.didBecomeEmpty(section: self)
+        }
     }
 }

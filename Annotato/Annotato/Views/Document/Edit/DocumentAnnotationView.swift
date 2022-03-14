@@ -111,44 +111,19 @@ class DocumentAnnotationView: UIView {
         newAnnotationFrame.size.height = min(maxHeight, max(minHeight, targetAnnotationHeight))
         self.frame = newAnnotationFrame
     }
-}
 
-extension DocumentAnnotationView: UITextViewDelegate {
-    func resize() {
+    private func resize() {
         resizeStackView()
         resizeAnnotationView()
-    }
-
-    func textViewDidChange(_ textView: UITextView) {
-        let fixedWidth = textView.frame.size.width
-        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-        textView.frame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-
-        resize()
-    }
-
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        guard let textView = textView as? DocumentAnnotationTextView else {
-            return
-        }
-
-        toolbar?.tapButton(of: textView.annotationType)
-    }
-
-    func textViewDidEndEditing(_ textView: UITextView) {
-        guard let textView = textView as? DocumentAnnotationTextView else {
-            return
-        }
-
-        if textView.isEmpty {
-            didBecomeEmpty(section: textView)
-        }
     }
 }
 
 // MARK: Gestures
 extension DocumentAnnotationView {
     func didResignFocus() {
+        if viewModel.isNew {
+            didDelete()
+        }
         toolbar?.disableEdit()
     }
 
@@ -184,6 +159,10 @@ extension DocumentAnnotationView {
 }
 
 extension DocumentAnnotationView: DocumentAnnotationSectionDelegate {
+    func didBeginEditing(annotationType: AnnotationType) {
+        toolbar?.tapButton(of: annotationType)
+    }
+
     func didSelect(section: DocumentAnnotationSectionView) {
         selectedSection = section
     }
@@ -201,6 +180,10 @@ extension DocumentAnnotationView: DocumentAnnotationSectionDelegate {
         sections.removeAll(where: { $0 == section })
         resize()
         selectedSection = nil
+    }
+
+    func frameDidChange() {
+        resize()
     }
 }
 
@@ -255,5 +238,9 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
         newSection.becomeFirstResponder()
         sections.append(newSection)
         stackView.addArrangedSubview(newSection)
+    }
+
+    func didDelete() {
+        self.removeFromSuperview()
     }
 }
