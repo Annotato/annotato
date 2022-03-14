@@ -1,4 +1,5 @@
 import CoreGraphics
+import Foundation
 
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
@@ -31,17 +32,21 @@ class SampleData {
 
     private func exampleAnnotationParts1() -> [DocumentAnnotationPartViewModel] {
         [
-            DocumentAnnotationTextViewModel(content: "I am hungry", height: 30.0),
-            DocumentAnnotationTextViewModel(content: "ABC\nDEF", height: 60.0)
+            DocumentAnnotationTextViewModel(id: UUID(), content: "I am hungry", height: 30.0),
+            DocumentAnnotationTextViewModel(id: UUID(), content: "ABC\nDEF", height: 60.0)
         ]
     }
 
     private func exampleAnnotationParts2() -> [DocumentAnnotationPartViewModel] {
         [
             DocumentAnnotationTextViewModel(
+                id: UUID(),
                 content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                 height: 44.0),
-            DocumentAnnotationTextViewModel(content: "Hello\nHello\nHello", height: 60.0)
+            DocumentAnnotationTextViewModel(
+                id: UUID(),
+                content: "Hello\nHello\nHello",
+                height: 60.0)
         ]
     }
 }

@@ -2,6 +2,7 @@ import CoreGraphics
 import UIKit
 
 class DocumentAnnotationTextViewModel: DocumentAnnotationPartViewModel {
+    private(set) var id: UUID
     private(set) var annotationType: AnnotationType
     private(set) var content: String
     private(set) var height: Double
@@ -10,7 +11,8 @@ class DocumentAnnotationTextViewModel: DocumentAnnotationPartViewModel {
         content.isEmpty
     }
 
-    init(content: String, height: Double, annotationType: AnnotationType = .plainText) {
+    init(id: UUID, content: String, height: Double, annotationType: AnnotationType = .plainText) {
+        self.id = id
         self.annotationType = annotationType
         self.content = content
         self.height = height

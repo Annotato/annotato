@@ -176,8 +176,7 @@ extension DocumentAnnotationView: DocumentAnnotationSectionDelegate {
             return
         }
 
-        section.removeFromSuperview()
-        sections.removeAll(where: { $0 == section })
+        removeSection(section: section)
         resize()
         selectedSection = nil
     }
@@ -210,9 +209,7 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
         }
 
         if lastSection.isEmpty {
-            let lastSection = sections.last
-            lastSection?.removeFromSuperview()
-            sections.removeLast()
+            removeSection(section: lastSection)
         }
 
         if sections.last?.annotationType == annotationType {
@@ -225,19 +222,17 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
     }
 
     private func addNewSection(basedOn annotationType: AnnotationType) {
-        let newViewModel: DocumentAnnotationPartViewModel
-
-        switch annotationType {
-        case .plainText:
-            newViewModel = DocumentAnnotationTextViewModel(content: "", height: 50.0)
-        case .markdown:
-            newViewModel = DocumentAnnotationMarkdownViewModel(content: "", height: 50.0)
-        }
-
+        let newViewModel = viewModel.addPart(for: annotationType)
         let newSection = newViewModel.toView(in: self)
         newSection.becomeFirstResponder()
         sections.append(newSection)
         stackView.addArrangedSubview(newSection)
+    }
+
+    private func removeSection(section: DocumentAnnotationSectionView) {
+        viewModel.removePart(part: section.partViewModel)
+        section.removeFromSuperview()
+        sections.removeAll(where: { $0 == section })
     }
 
     func didDelete() {
