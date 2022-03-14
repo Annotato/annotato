@@ -172,7 +172,7 @@ extension DocumentAnnotationView: DocumentAnnotationSectionDelegate {
             return
         }
 
-        if section == lastSection {
+        if section == lastSection && sections.count == 1 {
             return
         }
 
@@ -205,6 +205,7 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
         }
 
         if lastSection.annotationType == annotationType {
+            lastSection.becomeFirstResponder()
             return
         }
 
