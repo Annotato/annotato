@@ -25,9 +25,14 @@ class DocumentAnnotationMarkdownView: DocumentAnnotationTextView {
         isEditable = false
 
         let annotatoMarkdown = AnnotatoMarkdown()
+        let widthOffset = 5.0
+        let heightOffset = textContainerInset.top
         let markdownFrame = CGRect(
-            origin: .zero,
-            size: self.frame.size
+            origin: CGPoint(x: widthOffset, y: heightOffset),
+            size: CGSize(
+                width: self.frame.width - widthOffset * 2,
+                height: self.frame.height - heightOffset * 2
+            )
         )
         let markdownView = annotatoMarkdown.renderMarkdown(from: text, frame: markdownFrame)
         markdownView.backgroundColor = UIColor.white
