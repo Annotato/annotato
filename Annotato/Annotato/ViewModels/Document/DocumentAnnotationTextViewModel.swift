@@ -18,9 +18,14 @@ class DocumentAnnotationTextViewModel: DocumentAnnotationPartViewModel {
 
     func toView<T>(in parentView: T) -> DocumentAnnotationSectionView where T: UIView {
         let frame = CGRect(x: .zero, y: .zero, width: parentView.frame.width, height: height)
-        let view = DocumentAnnotationTextView(frame: frame, textContainer: nil)
+        let view = DocumentAnnotationTextView(
+            frame: frame,
+            textContainer: nil,
+            viewModel: self
+        )
         view.text = content
         view.delegate = parentView as? DocumentAnnotationView
+        view.actionDelegate = parentView as? DocumentAnnotationView
         return view
     }
 }

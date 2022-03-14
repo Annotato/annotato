@@ -1,7 +1,12 @@
 import UIKit
 
 class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
-    private(set) var annotationType: AnnotationType
+    weak var actionDelegate: DocumentAnnotationSectionDelegate?
+    private(set) var viewModel: DocumentAnnotationTextViewModel
+
+    var annotationType: AnnotationType {
+        viewModel.annotationType
+    }
 
     var isEmpty: Bool {
         text.isEmpty
@@ -15,15 +20,16 @@ class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
     init(
         frame: CGRect,
         textContainer: NSTextContainer?,
-        annotationType: AnnotationType = .plainText
+        viewModel: DocumentAnnotationTextViewModel
     ) {
-        self.annotationType = annotationType
+        self.viewModel = viewModel
         super.init(frame: frame, textContainer: textContainer)
 
         self.layer.borderColor = UIColor.black.cgColor
         self.layer.borderWidth = 2.0
         translatesAutoresizingMaskIntoConstraints = false
         isScrollEnabled = false
+        addTapGestureRecognizer()
     }
 
     func enterEditMode() {
@@ -32,5 +38,34 @@ class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
 
     func enterViewMode() {
         isEditable = false
+    }
+
+    private func addTapGestureRecognizer() {
+        let gestureRecognizer = UITapGestureRecognizer(
+            target: self, action: #selector(didTap)
+        )
+        gestureRecognizer.delegate = self
+        addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc private func didTap() {
+        if isEditable {
+            actionDelegate?.didSelect(section: self)
+        }
+    }
+
+    @objc private func didEdit() {
+        if isEmpty {
+            actionDelegate?.didBecomeEmpty(section: self)
+        }
+    }
+}
+
+extension DocumentAnnotationTextView: UIGestureRecognizerDelegate {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
     }
 }

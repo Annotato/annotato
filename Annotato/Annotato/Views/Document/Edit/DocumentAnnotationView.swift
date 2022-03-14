@@ -3,6 +3,7 @@ import UIKit
 class DocumentAnnotationView: UIView {
     private var viewModel: DocumentAnnotationViewModel
     private var sections: [DocumentAnnotationSectionView] = []
+    private var selectedSection: DocumentAnnotationSectionView?
     let toolbarHeight = 50.0
     let minHeight: Double
     let maxHeight: Double
@@ -97,21 +98,6 @@ class DocumentAnnotationView: UIView {
         self.toolbar = toolbar
     }
 
-    private func addPanGestureRecognizer() {
-        isUserInteractionEnabled = true
-        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
-        addGestureRecognizer(gestureRecognizer)
-    }
-
-    @objc
-    private func didPan(_ sender: UIPanGestureRecognizer) {
-        let touchPoint = sender.location(in: superview)
-
-        if sender.state != .cancelled {
-            sender.view?.center = touchPoint
-        }
-    }
-
     private func resizeStackView() {
         var newStackViewFrame = stackView.frame
         newStackViewFrame.size.height = sectionsHeight
@@ -146,6 +132,55 @@ extension DocumentAnnotationView: UITextViewDelegate {
         }
 
         toolbar?.tapButton(of: textView.annotationType)
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        guard let textView = textView as? DocumentAnnotationTextView else {
+            return
+        }
+
+        if textView.isEmpty {
+            didBecomeEmpty(section: textView)
+        }
+    }
+}
+
+// MARK: Gestures
+extension DocumentAnnotationView {
+    private func addPanGestureRecognizer() {
+        isUserInteractionEnabled = true
+        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc
+    private func didPan(_ sender: UIPanGestureRecognizer) {
+        let touchPoint = sender.location(in: superview)
+
+        if sender.state != .cancelled {
+            sender.view?.center = touchPoint
+        }
+    }
+}
+
+extension DocumentAnnotationView: DocumentAnnotationSectionDelegate {
+    func didSelect(section: DocumentAnnotationSectionView) {
+        selectedSection = section
+    }
+
+    func didBecomeEmpty(section: DocumentAnnotationSectionView) {
+        guard let lastSection = sections.last else {
+            return
+        }
+
+        if section == lastSection {
+            return
+        }
+
+        section.removeFromSuperview()
+        sections.removeAll(where: { $0 == section })
+        resize()
+        selectedSection = nil
     }
 }
 
@@ -182,19 +217,22 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
             return
         }
 
+        addNewSection(basedOn: annotationType)
+        resize()
+    }
+
+    private func addNewSection(basedOn annotationType: AnnotationType) {
+        let newViewModel: DocumentAnnotationPartViewModel
+
         switch annotationType {
         case .plainText:
-            let newTextViewModel = DocumentAnnotationTextViewModel(content: "", height: 50.0)
-            let newSection = newTextViewModel.toView(in: self)
-            sections.append(newSection)
-            stackView.addArrangedSubview(newSection)
+            newViewModel = DocumentAnnotationTextViewModel(content: "", height: 50.0)
         case .markdown:
-            let newMarkdownViewModel = DocumentAnnotationMarkdownViewModel(content: "", height: 50.0)
-            let newSection = newMarkdownViewModel.toView(in: self)
-            sections.append(newSection)
-            stackView.addArrangedSubview(newSection)
+            newViewModel = DocumentAnnotationMarkdownViewModel(content: "", height: 50.0)
         }
 
-        resize()
+        let newSection = newViewModel.toView(in: self)
+        sections.append(newSection)
+        stackView.addArrangedSubview(newSection)
     }
 }

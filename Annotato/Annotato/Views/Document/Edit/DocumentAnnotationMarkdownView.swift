@@ -4,8 +4,12 @@ class DocumentAnnotationMarkdownView: DocumentAnnotationTextView {
     private var markdownView: UIView?
     let frameHeightMultiplier: Double = 2
 
-    init(frame: CGRect, textContainer: NSTextContainer?) {
-        super.init(frame: frame, textContainer: textContainer, annotationType: .markdown)
+    init(
+        frame: CGRect,
+        textContainer: NSTextContainer?,
+        viewModel: DocumentAnnotationMarkdownViewModel
+    ) {
+        super.init(frame: frame, textContainer: textContainer, viewModel: viewModel)
     }
 
     override func enterEditMode() {
