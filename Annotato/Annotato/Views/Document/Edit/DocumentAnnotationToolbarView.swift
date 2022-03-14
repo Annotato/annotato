@@ -99,6 +99,12 @@ class DocumentAnnotationToolbarView: UIToolbar {
         enterEditOrViewMode()
     }
 
+    func disableEdit() {
+        editButton.isSelected = false
+        setEditButtonView()
+        enterEditOrViewMode()
+    }
+
     private func enterEditOrViewMode() {
         if editButton.isSelected {
             enablePalette()

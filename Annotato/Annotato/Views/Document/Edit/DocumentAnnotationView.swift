@@ -1,6 +1,7 @@
 import UIKit
 
 class DocumentAnnotationView: UIView {
+    weak var delegate: DocumentAnnotationDelegate?
     private var viewModel: DocumentAnnotationViewModel
     private var sections: [DocumentAnnotationSectionView] = []
     private var selectedSection: DocumentAnnotationSectionView?
@@ -36,7 +37,7 @@ class DocumentAnnotationView: UIView {
         self.layer.borderColor = UIColor.blue.cgColor
         makeScrollView()
         makeStackView()
-        addPanGestureRecognizer()
+        addGestureRecognizers()
         initializeSubviews()
     }
 
@@ -147,6 +148,25 @@ extension DocumentAnnotationView: UITextViewDelegate {
 
 // MARK: Gestures
 extension DocumentAnnotationView {
+    func didResignFocus() {
+        toolbar?.disableEdit()
+    }
+
+    func addGestureRecognizers() {
+        addTapGestureRecognizer()
+        addPanGestureRecognizer()
+    }
+
+    private func addTapGestureRecognizer() {
+        isUserInteractionEnabled = true
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc private func didTap() {
+        delegate?.didSelect(selected: self)
+    }
+
     private func addPanGestureRecognizer() {
         isUserInteractionEnabled = true
         let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
