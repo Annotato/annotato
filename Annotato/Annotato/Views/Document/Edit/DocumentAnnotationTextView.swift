@@ -3,6 +3,9 @@ import UIKit
 class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
     weak var actionDelegate: DocumentAnnotationSectionDelegate?
     private(set) var viewModel: DocumentAnnotationTextViewModel
+    var partViewModel: DocumentAnnotationPartViewModel {
+        viewModel
+    }
 
     var annotationType: AnnotationType {
         viewModel.annotationType
