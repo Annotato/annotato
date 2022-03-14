@@ -4,9 +4,9 @@ import Foundation
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
         [
-            DocumentListViewModel(name: "Test A", url: exampleUrlLab01Qns()),
-            DocumentListViewModel(name: "Test B", url: exampleUrlL0Overview()),
-            DocumentListViewModel(name: "Test C", url: exampleUrlL1Intro()),
+            DocumentListViewModel(name: "Lab01 Qns", url: exampleUrlLab01Qns()),
+            DocumentListViewModel(name: "L0 Overview", url: exampleUrlL0Overview()),
+            DocumentListViewModel(name: "L1 Intro", url: exampleUrlL1Intro()),
             DocumentListViewModel(name: "Test D", url: exampleUrlLab01Qns()),
             DocumentListViewModel(name: "Test E", url: exampleUrlL0Overview())
         ]
