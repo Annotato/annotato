@@ -7,9 +7,14 @@ class DocumentAnnotationMarkdownViewModel: DocumentAnnotationTextViewModel {
 
     override func toView<T>(in parentView: T) -> DocumentAnnotationSectionView where T: UIView {
         let frame = CGRect(x: .zero, y: .zero, width: parentView.frame.width, height: height)
-        let view = DocumentAnnotationMarkdownView(frame: frame, textContainer: nil)
+        let view = DocumentAnnotationMarkdownView(
+            frame: frame,
+            textContainer: nil,
+            viewModel: self
+        )
         view.text = content
         view.delegate = parentView as? DocumentAnnotationView
+        view.actionDelegate = parentView as? DocumentAnnotationView
         return view
     }
 }
