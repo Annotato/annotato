@@ -9,8 +9,8 @@ public class Annotation: Codable {
     public var width: Double
     public var parts: [AnnotationPart]
 
-    public required init(id: UUID? = nil, ownerId: UUID, document: Document,
-                         center: CGPoint, width: Double, parts: [AnnotationPart]) {
+    public required init(ownerId: UUID, document: Document, center: CGPoint,
+                         width: Double, parts: [AnnotationPart], id: UUID? = nil) {
         self.id = id
         self.ownerId = ownerId
         self.document = document
