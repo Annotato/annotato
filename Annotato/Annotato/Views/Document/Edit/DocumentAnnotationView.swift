@@ -252,6 +252,7 @@ extension DocumentAnnotationView: DocumentAnnotationToolbarDelegate {
         }
 
         let newSection = newViewModel.toView(in: self)
+        newSection.becomeFirstResponder()
         sections.append(newSection)
         stackView.addArrangedSubview(newSection)
     }

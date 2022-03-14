@@ -25,8 +25,6 @@ class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
         self.viewModel = viewModel
         super.init(frame: frame, textContainer: textContainer)
 
-        self.layer.borderColor = UIColor.black.cgColor
-        self.layer.borderWidth = 2.0
         translatesAutoresizingMaskIntoConstraints = false
         isScrollEnabled = false
         addTapGestureRecognizer()
@@ -50,6 +48,7 @@ class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
 
     @objc private func didTap() {
         if isEditable {
+            showSelected()
             actionDelegate?.didSelect(section: self)
         }
     }
