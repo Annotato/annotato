@@ -24,8 +24,15 @@ class DocumentAnnotationTextViewModel: DocumentAnnotationPartViewModel {
             viewModel: self
         )
         view.text = content
-        view.delegate = parentView as? DocumentAnnotationView
         view.actionDelegate = parentView as? DocumentAnnotationView
         return view
+    }
+
+    func setContent(to newContent: String) {
+        self.content = newContent
+    }
+
+    func setHeight(to newHeight: Double) {
+        self.height = newHeight
     }
 }
