@@ -10,6 +10,7 @@ class DocumentAnnotationView: UIView {
     let scrollViewMaxHeight = 200.0
     private var scrollView = UIScrollView()
     private var stackView = UIStackView()
+    private var toolbar: DocumentAnnotationToolbarView?
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -93,6 +94,7 @@ class DocumentAnnotationView: UIView {
         toolbar.translatesAutoresizingMaskIntoConstraints = true
         toolbar.actionDelegate = self
         addSubview(toolbar)
+        self.toolbar = toolbar
     }
 
     private func addPanGestureRecognizer() {
@@ -136,6 +138,14 @@ extension DocumentAnnotationView: UITextViewDelegate {
         textView.frame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
 
         resize()
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        guard let textView = textView as? DocumentAnnotationTextView else {
+            return
+        }
+
+        toolbar?.tapButton(of: textView.annotationType)
     }
 }
 

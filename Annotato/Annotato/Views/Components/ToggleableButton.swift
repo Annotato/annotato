@@ -27,6 +27,14 @@ class ToggleableButton: UIButton {
 
     @objc
     private func didTap() {
-        isSelected.toggle()
+        select()
+    }
+
+    func select() {
+        isSelected = true
+    }
+
+    func unselect() {
+        isSelected = false
     }
 }

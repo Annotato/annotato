@@ -74,14 +74,12 @@ class DocumentAnnotationToolbarView: UIToolbar {
             guard let button = paletteButtons[.plainText] else {
                 return
             }
-            button.isSelected = true
-            didTapTextButton(button)
+            button.select()
         case .markdown:
             guard let button = paletteButtons[.markdown] else {
                 return
             }
-            button.isSelected = true
-            didTapMarkdownButton(button)
+            button.select()
         }
     }
 
@@ -119,6 +117,7 @@ class DocumentAnnotationToolbarView: UIToolbar {
 
     private func disablePalette() {
         for paletteButton in paletteButtons.values {
+            paletteButton.unselect()
             paletteButton.isEnabled = false
         }
     }
@@ -128,6 +127,21 @@ extension DocumentAnnotationToolbarView: ToggleableButtonDelegate {
     func didSelect(button: ToggleableButton) {
         for paletteButton in paletteButtons.values where paletteButton != button {
             paletteButton.isSelected = false
+        }
+    }
+
+    func tapButton(of annotationType: AnnotationType) {
+        switch annotationType {
+        case .plainText:
+            guard let plainTextButton = paletteButtons[.plainText] else {
+                return
+            }
+            plainTextButton.select()
+        case .markdown:
+            guard let markdownButton = paletteButtons[.markdown] else {
+                return
+            }
+            markdownButton.select()
         }
     }
 
