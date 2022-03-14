@@ -52,7 +52,6 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     }
 
     private func addTapGestureRecognizer() {
-        print(isUserInteractionEnabled)
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnCellView))
         addGestureRecognizer(gestureRecognizer)
     }

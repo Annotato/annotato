@@ -47,8 +47,7 @@ class DocumentListViewController: UIViewController {
     }
 }
 
-extension DocumentListViewController:
-    DocumentListToolbarDelegate,
+extension DocumentListViewController: DocumentListToolbarDelegate,
         UIDocumentPickerDelegate,
         DocumentListCollectionCellViewDelegate,
         Navigable {
