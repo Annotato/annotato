@@ -29,10 +29,12 @@ class AnnotationPaletteViewModel {
 
     func enterEditMode() {
         isEditing = true
+        parentViewModel?.enterEditMode()
     }
 
     func enterViewMode() {
         isEditing = false
+        parentViewModel?.enterViewMode()
     }
 }
 

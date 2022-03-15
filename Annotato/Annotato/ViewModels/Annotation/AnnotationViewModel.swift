@@ -8,6 +8,8 @@ class AnnotationViewModel {
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
 
+    private(set) var isEditing = false
+
     init(
         id: UUID,
         origin: CGPoint,
@@ -20,6 +22,7 @@ class AnnotationViewModel {
         self.width = width
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
+        self.palette.parentViewModel = self
     }
 }
 
@@ -51,5 +54,21 @@ extension AnnotationViewModel {
     // Note: partsFrame is with respect to scrollFrame
     var partsFrame: CGRect {
         CGRect(x: .zero, y: .zero, width: width, height: partHeights)
+    }
+}
+
+extension AnnotationViewModel {
+    func enterEditMode() {
+        isEditing = true
+        for part in parts {
+            part.enterEditMode()
+        }
+    }
+
+    func enterViewMode() {
+        isEditing = false
+        for part in parts {
+            part.enterViewMode()
+        }
     }
 }

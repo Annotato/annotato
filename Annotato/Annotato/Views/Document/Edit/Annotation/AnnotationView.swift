@@ -19,22 +19,26 @@ class AnnotationView: UIView {
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
         initializeSubviews()
+        self.layer.borderWidth = 1.0
+        self.layer.borderColor = UIColor.systemBlue.cgColor
     }
 
     func initializeSubviews() {
         addSubview(palette)
-        addSubview(scroll)
-        scroll.addSubview(parts)
-        setScrollViewConstraints()
+        setUpScrollAndParts()
         populateParts()
     }
 
-    private func setScrollViewConstraints() {
+    private func setUpScrollAndParts() {
+        addSubview(scroll)
         scroll.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         scroll.topAnchor.constraint(equalTo: palette.bottomAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         scroll.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
+        parts.axis = .vertical
+        parts.distribution = .fillProportionally
+        scroll.addSubview(parts)
         parts.leadingAnchor.constraint(equalTo: scroll.leadingAnchor).isActive = true
         parts.trailingAnchor.constraint(equalTo: scroll.trailingAnchor).isActive = true
         parts.bottomAnchor.constraint(equalTo: scroll.bottomAnchor).isActive = true
@@ -44,7 +48,7 @@ class AnnotationView: UIView {
 
     func populateParts() {
         for partViewModel in viewModel.parts {
-            parts.addSubview(partViewModel.toView())
+            parts.addArrangedSubview(partViewModel.toView())
         }
     }
 }

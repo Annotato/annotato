@@ -3,13 +3,6 @@ import UIKit
 class EditOrViewButton: UIButton {
     weak var delegate: EditOrViewButtonDelegate?
 
-    override var isSelected: Bool {
-        didSet {
-            setImage()
-            delegate?.changeMode()
-        }
-    }
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -28,14 +21,18 @@ class EditOrViewButton: UIButton {
 
     @objc
     private func didTap() {
-        isSelected.toggle()
+        isSelected ? unselect() : select()
     }
 
     func select() {
         isSelected = true
+        setImage()
+        delegate?.changeMode()
     }
 
     func unselect() {
         isSelected = false
+        setImage()
+        delegate?.changeMode()
     }
 }

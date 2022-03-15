@@ -33,13 +33,19 @@ class SampleData {
                 id: UUID(),
                 content: "hello world",
                 width: 300.0,
-                height: 22.0
+                height: 30.0
             ),
             AnnotationMarkdownViewModel(
                 id: UUID(),
                 content: "some markdown",
                 width: 300.0,
-                height: 22.0
+                height: 30.0
+            ),
+            AnnotationTextViewModel(
+                id: UUID(),
+                content: "more text",
+                width: 300.0,
+                height: 30.0
             )
         ]
     }

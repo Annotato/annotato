@@ -5,6 +5,8 @@ protocol AnnotationPartViewModel {
     var width: Double { get }
     var height: Double { get }
     func toView() -> AnnotationPartView
+    func enterEditMode()
+    func enterViewMode()
 }
 
 extension AnnotationPartViewModel {
