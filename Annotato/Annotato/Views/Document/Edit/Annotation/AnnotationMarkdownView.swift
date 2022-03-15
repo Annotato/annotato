@@ -34,7 +34,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     private func setUpStyle() {
         heightConstraint = self.heightAnchor.constraint(equalToConstant: self.frame.height)
         self.heightConstraint.isActive = true
-        self.layer.borderWidth = 1.0
+        self.layer.borderWidth = 0.3
         self.layer.borderColor = UIColor.lightGray.cgColor
     }
 
