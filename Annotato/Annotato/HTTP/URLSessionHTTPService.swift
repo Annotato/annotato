@@ -5,7 +5,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
 
     weak var delegate: AnnotatoHTTPDelegate?
 
-    func get(url: String, params: [String : String]) {
+    func get(url: String, params: [String: String]) {
         let urlWithParams = makeURLWithParams(url: url, params: params)
         guard let urlWithParams = urlWithParams else {
             delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
@@ -60,7 +60,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         task.resume()
     }
 
-    private func makeURLWithParams(url: String, params: [String:String]) -> URL? {
+    private func makeURLWithParams(url: String, params: [String: String]) -> URL? {
         guard var urlComponents = URLComponents(string: url) else {
             return nil
         }
@@ -75,7 +75,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
     }
 
     private func makeCompletionHandler(httpMethod: String) -> (Data?, URLResponse?, Error?) -> Void {
-        return { data, response, error in
+        { data, response, error in
             if let error = error {
                 AnnotatoLogger.error(
                     "Client error occurred during \(httpMethod) request: \(error.localizedDescription)",
