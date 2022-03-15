@@ -1,7 +1,7 @@
 import CoreGraphics
 import Foundation
 
-class AnnotationViewModel {
+class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
     private(set) var origin: CGPoint
     private(set) var width: Double
@@ -9,6 +9,7 @@ class AnnotationViewModel {
     private(set) var palette: AnnotationPaletteViewModel
 
     private(set) var isEditing = false
+    @Published private(set) var isResizing = false
 
     init(
         id: UUID,
@@ -23,6 +24,9 @@ class AnnotationViewModel {
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
         self.palette.parentViewModel = self
+        for part in self.parts {
+            part.parentViewModel = self
+        }
     }
 }
 
@@ -70,5 +74,9 @@ extension AnnotationViewModel {
         for part in parts {
             part.enterViewMode()
         }
+    }
+
+    func resize() {
+        isResizing = true
     }
 }

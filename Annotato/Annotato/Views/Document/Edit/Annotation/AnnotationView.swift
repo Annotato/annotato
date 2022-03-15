@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 class AnnotationView: UIView {
     private(set) var viewModel: AnnotationViewModel
@@ -6,6 +7,7 @@ class AnnotationView: UIView {
     private var palette: AnnotationPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
+    private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -19,11 +21,12 @@ class AnnotationView: UIView {
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
         initializeSubviews()
+        setUpSubscriber()
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
 
-    func initializeSubviews() {
+    private func initializeSubviews() {
         addSubview(palette)
         setUpScrollAndParts()
         populateParts()
@@ -31,13 +34,13 @@ class AnnotationView: UIView {
 
     private func setUpScrollAndParts() {
         addSubview(scroll)
+        scroll.translatesAutoresizingMaskIntoConstraints = false
         scroll.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         scroll.topAnchor.constraint(equalTo: palette.bottomAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         scroll.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
 
         parts.axis = .vertical
-        parts.distribution = .fillProportionally
         scroll.addSubview(parts)
         parts.leadingAnchor.constraint(equalTo: scroll.leadingAnchor).isActive = true
         parts.trailingAnchor.constraint(equalTo: scroll.trailingAnchor).isActive = true
@@ -46,9 +49,20 @@ class AnnotationView: UIView {
         parts.widthAnchor.constraint(equalTo: scroll.widthAnchor).isActive = true
     }
 
-    func populateParts() {
+    private func populateParts() {
         for partViewModel in viewModel.parts {
             parts.addArrangedSubview(partViewModel.toView())
         }
+    }
+
+    private func setUpSubscriber() {
+        viewModel.$isResizing.sink(receiveValue: { [weak self] _ in
+            self?.resize()
+        }).store(in: &cancellables)
+    }
+
+    private func resize() {
+        parts.frame = viewModel.partsFrame
+        self.frame = viewModel.frame
     }
 }

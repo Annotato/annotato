@@ -3,11 +3,13 @@ import CoreGraphics
 import Combine
 
 class AnnotationTextViewModel: AnnotationPartViewModel, ObservableObject {
+    weak var parentViewModel: AnnotationViewModel?
+
     private(set) var id: UUID
     private(set) var content: String
     private(set) var origin: CGPoint
     private(set) var width: Double
-    private(set) var height: Double
+    internal var height: Double
 
     @Published private(set) var isEditing = false
 
@@ -29,5 +31,9 @@ class AnnotationTextViewModel: AnnotationPartViewModel, ObservableObject {
 
     func enterViewMode() {
         isEditing = false
+    }
+
+    func setContent(to newContent: String) {
+        self.content = newContent
     }
 }

@@ -1,9 +1,10 @@
 import CoreGraphics
 
-protocol AnnotationPartViewModel {
+protocol AnnotationPartViewModel: AnyObject {
+    var parentViewModel: AnnotationViewModel? { get set }
     var origin: CGPoint { get }
     var width: Double { get }
-    var height: Double { get }
+    var height: Double { get set }
     func toView() -> AnnotationPartView
     func enterEditMode()
     func enterViewMode()
@@ -16,5 +17,10 @@ extension AnnotationPartViewModel {
 
     var frame: CGRect {
         CGRect(origin: origin, size: size)
+    }
+
+    func setHeight(to newHeight: Double) {
+        self.height = newHeight
+        parentViewModel?.resize()
     }
 }
