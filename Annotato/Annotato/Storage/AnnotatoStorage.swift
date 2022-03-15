@@ -12,8 +12,8 @@ class AnnotatoStorage {
         set { storageService.delegate = newValue }
     }
 
-    func uploadPdf(baseFileUrl: URL, withName name: String) {
-        storageService.uploadPdf(baseFileUrl: baseFileUrl, withName: name)
+    func uploadPdf(fileSystemUrl: URL, withName name: String) {
+        storageService.uploadPdf(fileSystemUrl: fileSystemUrl, withName: name)
 
     }
 

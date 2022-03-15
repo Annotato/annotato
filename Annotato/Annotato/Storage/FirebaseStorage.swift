@@ -6,19 +6,19 @@ class FirebaseStorage: AnnotatoStorageService {
 
     weak var delegate: AnnotatoStorageDelegate?
 
-    func uploadPdf(baseFileUrl: URL, withName name: String) {
+    func uploadPdf(fileSystemUrl: URL, withName name: String) {
         let storageRef = storage.reference()
         let pdfRef = storageRef.child("\(name)")
-        _ = pdfRef.putFile(from: baseFileUrl, metadata: nil) { _, error in
+        _ = pdfRef.putFile(from: fileSystemUrl, metadata: nil) { _, error in
             if let error = error {
                 AnnotatoLogger.error(
-                    "When trying to upload PDF with baseFileUrl: \(baseFileUrl). \(error.localizedDescription)",
+                    "When trying to upload PDF with baseFileUrl: \(fileSystemUrl). \(error.localizedDescription)",
                     context: "FirebaseStorage::uploadPdf"
                 )
                 self.delegate?.uploadDidFail(error)
                 return
             }
-            AnnotatoLogger.info("Uploaded PDF with baseFileUrl: \(baseFileUrl)")
+            AnnotatoLogger.info("Uploaded PDF with baseFileUrl: \(fileSystemUrl)")
             self.delegate?.uploadDidSucceed()
         }
     }
