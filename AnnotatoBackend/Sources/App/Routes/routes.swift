@@ -1,4 +1,6 @@
 import Vapor
+import Fluent
+import AnnotatoSharedLibrary
 
 func routes(_ app: Application) throws {
     app.get { _ in
@@ -8,4 +10,6 @@ func routes(_ app: Application) throws {
     app.get("hello") { _ -> String in
         "Hello, world!"
     }
+
+    app.group("documents", configure: documentsRouter)
 }
