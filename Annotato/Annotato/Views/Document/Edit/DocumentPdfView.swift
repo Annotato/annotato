@@ -1,10 +1,3 @@
-//
-//  DocumentPdfView.swift
-//  Annotato
-//
-//  Created by Darren Heng on 14/3/22.
-//
-
 import UIKit
 import PDFKit
 
