@@ -24,4 +24,8 @@ extension Navigable {
 
         present(viewController, animated: true, completion: nil)
     }
+
+    func goBack() {
+        self.dismiss(animated: true, completion: nil)
+    }
 }

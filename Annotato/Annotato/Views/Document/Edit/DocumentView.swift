@@ -2,7 +2,7 @@ import UIKit
 
 class DocumentView: UIView {
     private var documentViewModel: DocumentViewModel
-    private var annotations: [DocumentAnnotationView] = []
+//    private var annotations: [DocumentAnnotationView] = []
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -16,56 +16,61 @@ class DocumentView: UIView {
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.black.cgColor
 
-        addTapGestureRecognizer()
+//        addTapGestureRecognizer()
         initializeAnnotationViews()
     }
 
     private func initializeAnnotationViews() {
         for annotation in documentViewModel.annotations {
-            addNewAnnotation(annotationViewModel: annotation)
+            renderNewAnnotation(viewModel: annotation)
         }
     }
 
-    private func addTapGestureRecognizer() {
-        isUserInteractionEnabled = true
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        addGestureRecognizer(gestureRecognizer)
-    }
+//    private func addTapGestureRecognizer() {
+//        isUserInteractionEnabled = true
+//        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+//        addGestureRecognizer(gestureRecognizer)
+//    }
 
-    @objc
-    private func didTap(_ sender: UITapGestureRecognizer) {
-        let touchPoint = sender.location(in: self)
-        let newAnnotationWidth = 200.0
-        addNewAnnotation(
-            annotationViewModel: DocumentAnnotationViewModel(center: touchPoint, width: newAnnotationWidth, parts: [])
-        )
-    }
+//    @objc
+//    private func didTap(_ sender: UITapGestureRecognizer) {
+//        let touchPoint = sender.location(in: self)
+//        let newAnnotationWidth = 200.0
+//        addNewAnnotation(
+//            annotationViewModel: DocumentAnnotationViewModel(center: touchPoint, width: newAnnotationWidth, parts: [])
+//        )
+//    }
 
-    private func addNewAnnotation(annotationViewModel: DocumentAnnotationViewModel) {
-        let annotation = DocumentAnnotationView(annotationViewModel: annotationViewModel)
-        annotation.delegate = self
-        annotations.append(annotation)
+    private func renderNewAnnotation(viewModel: AnnotationViewModel) {
+        let annotation = AnnotationView(viewModel: viewModel)
         addSubview(annotation)
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
+//    private func addNewAnnotation(annotationViewModel: DocumentAnnotationViewModel) {
+//        let annotation = DocumentAnnotationView(annotationViewModel: annotationViewModel)
+//        annotation.delegate = self
+//        annotations.append(annotation)
+//        addSubview(annotation)
+//    }
 
-        let touch = touches.first
-        guard let location = touch?.location(in: self) else {
-            return
-        }
-
-        for annotation in annotations where !annotation.frame.contains(location) {
-            annotation.didResignFocus()
-        }
-    }
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        super.touchesBegan(touches, with: event)
+//
+//        let touch = touches.first
+//        guard let location = touch?.location(in: self) else {
+//            return
+//        }
+//
+//        for annotation in annotations where !annotation.frame.contains(location) {
+//            annotation.didResignFocus()
+//        }
+//    }
 }
 
-extension DocumentView: DocumentAnnotationDelegate {
-    func didSelect(selected: DocumentAnnotationView) {
-        for annotation in annotations where annotation != selected {
-            annotation.didResignFocus()
-        }
-    }
-}
+// extension DocumentView: DocumentAnnotationDelegate {
+//    func didSelect(selected: DocumentAnnotationView) {
+//        for annotation in annotations where annotation != selected {
+//            annotation.didResignFocus()
+//        }
+//    }
+// }
