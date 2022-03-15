@@ -6,6 +6,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     private(set) var editView: UITextView
     private var cancellables: Set<AnyCancellable> = []
     private var heightConstraint = NSLayoutConstraint()
+    private var isEditable: Bool
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -15,12 +16,14 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     init(viewModel: AnnotationMarkdownViewModel) {
         self.viewModel = viewModel
         self.editView = UITextView(frame: viewModel.editFrame)
+        self.isEditable = false
         super.init(frame: viewModel.frame)
 
         switchView(basedOn: viewModel.isEditing)
         setUpEditView()
         setUpSubscriber()
         setUpStyle()
+        addGestureRecognizers()
     }
 
     private func setUpEditView() {
@@ -37,9 +40,11 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
 
     private func switchView(basedOn isEditing: Bool) {
         if isEditing {
+            isEditable = true
             editView.text = viewModel.content
             addSubview(editView)
         } else {
+            isEditable = false
             editView.removeFromSuperview()
         }
     }
@@ -47,6 +52,12 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     private func setUpSubscriber() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
             self?.switchView(basedOn: isEditing)
+        }).store(in: &cancellables)
+
+        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+            if isRemoved {
+                self?.removeFromSuperview()
+            }
         }).store(in: &cancellables)
     }
 }
@@ -63,3 +74,18 @@ extension AnnotationMarkdownView: UITextViewDelegate {
         viewModel.setHeight(to: frame.height)
     }
 }
+
+// MARK: Gestures
+ extension AnnotationMarkdownView {
+    private func addGestureRecognizers() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    @objc
+    private func didTap() {
+        if isEditable {
+            viewModel.didSelect()
+        }
+    }
+ }

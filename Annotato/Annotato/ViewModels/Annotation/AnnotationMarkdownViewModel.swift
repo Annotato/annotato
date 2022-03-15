@@ -12,6 +12,10 @@ class AnnotationMarkdownViewModel: AnnotationPartViewModel, ObservableObject {
     internal var height: Double
 
     @Published private(set) var isEditing = false
+    @Published private(set) var isRemoved = false
+    var isEmpty: Bool {
+        content.isEmpty
+    }
 
     init(id: UUID, content: String, width: Double, height: Double, origin: CGPoint = .zero) {
         self.id = id
@@ -35,6 +39,10 @@ class AnnotationMarkdownViewModel: AnnotationPartViewModel, ObservableObject {
 
     func setContent(to newContent: String) {
         self.content = newContent
+    }
+
+    func remove() {
+        isRemoved = true
     }
 }
 

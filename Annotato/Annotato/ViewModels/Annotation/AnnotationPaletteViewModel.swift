@@ -1,6 +1,7 @@
 import CoreGraphics
+import Combine
 
-class AnnotationPaletteViewModel {
+class AnnotationPaletteViewModel: ObservableObject {
     weak var parentViewModel: AnnotationViewModel?
 
     private(set) var origin: CGPoint
@@ -8,8 +9,8 @@ class AnnotationPaletteViewModel {
     private(set) var height: Double
 
     private(set) var isEditing = false
-    private(set) var textIsSelected = false
-    private(set) var markdownIsSelected = false
+    @Published private(set) var textIsSelected = false
+    @Published private(set) var markdownIsSelected = false
 
     init(origin: CGPoint, width: Double, height: Double) {
         self.origin = origin
@@ -20,11 +21,13 @@ class AnnotationPaletteViewModel {
     func didSelectTextButton() {
         textIsSelected = true
         markdownIsSelected = false
+        parentViewModel?.appendTextPartIfNecessary()
     }
 
     func didSelectMarkdownButton() {
         textIsSelected = false
         markdownIsSelected = true
+        parentViewModel?.appendMarkdownPartIfNecessary()
     }
 
     func enterEditMode() {

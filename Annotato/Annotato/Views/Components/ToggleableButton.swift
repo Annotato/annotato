@@ -3,6 +3,16 @@ import UIKit
 class ToggleableButton: UIButton {
     weak var delegate: ToggleableButtonDelegate?
 
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                self.tintColor = .systemBlue
+            } else {
+                self.tintColor = .systemGray
+            }
+        }
+    }
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -21,12 +31,10 @@ class ToggleableButton: UIButton {
 
     func select() {
         isSelected = true
-        self.tintColor = .systemBlue
         delegate?.didSelect(button: self)
     }
 
     func unselect() {
         isSelected = false
-        self.tintColor = .systemGray
     }
 }

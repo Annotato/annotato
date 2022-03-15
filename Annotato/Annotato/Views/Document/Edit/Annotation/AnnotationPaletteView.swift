@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 class AnnotationPaletteView: UIToolbar {
     private(set) var viewModel: AnnotationPaletteViewModel
@@ -6,6 +7,8 @@ class AnnotationPaletteView: UIToolbar {
     private(set) var markdownButton: ToggleableButton
     private(set) var editOrViewButton: EditOrViewButton
     private(set) var deleteButton: UIButton
+
+    private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -23,6 +26,7 @@ class AnnotationPaletteView: UIToolbar {
         super.init(frame: viewModel.frame)
 
         setUpButtons()
+        setUpSubscriber()
     }
 
     private func setUpButtons() {
@@ -49,6 +53,16 @@ class AnnotationPaletteView: UIToolbar {
         let imageName = "trash"
         button.setImage(UIImage(systemName: imageName), for: .normal)
         return button
+    }
+
+    private func setUpSubscriber() {
+        viewModel.$textIsSelected.sink(receiveValue: { [weak self] textIsSelected in
+            self?.textButton.isSelected = textIsSelected
+        }).store(in: &cancellables)
+
+        viewModel.$markdownIsSelected.sink(receiveValue: { [weak self] markdownIsSelected in
+            self?.markdownButton.isSelected = markdownIsSelected
+        }).store(in: &cancellables)
     }
 }
 

@@ -10,6 +10,8 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var isEditing = false
     @Published private(set) var isResizing = false
+    @Published private(set) var partToAppend: AnnotationPartViewModel?
+    private(set) var selectedPart: AnnotationPartViewModel?
 
     init(
         id: UUID,
@@ -67,6 +69,7 @@ extension AnnotationViewModel {
         for part in parts {
             part.enterEditMode()
         }
+        selectedPart = parts.last
     }
 
     func enterViewMode() {
@@ -78,5 +81,71 @@ extension AnnotationViewModel {
 
     func resize() {
         isResizing = true
+    }
+
+    func setSelectedPart(to selectedPart: AnnotationPartViewModel) {
+        self.selectedPart = selectedPart
+    }
+
+    func appendTextPartIfNecessary() {
+        guard let lastPart = parts.last else {
+            return
+        }
+
+        // If the last part is empty, remove it
+        if lastPart.isEmpty {
+            remove(part: lastPart)
+        }
+
+        // The last part is already what we want
+        if let nextLastPart = parts.last {
+            if nextLastPart is AnnotationTextViewModel {
+                setSelectedPart(to: lastPart)
+                resize()
+                return
+            }
+        }
+
+        let newPart = AnnotationTextViewModel(
+            id: UUID(), content: "", width: width, height: 30.0)
+        newPart.enterEditMode()
+        parts.append(newPart)
+        partToAppend = newPart
+        setSelectedPart(to: newPart)
+        resize()
+    }
+
+    func appendMarkdownPartIfNecessary() {
+        guard let lastPart = parts.last else {
+            return
+        }
+
+        // If the last part is empty, remove it
+        if lastPart.isEmpty {
+            remove(part: lastPart)
+        }
+
+        // The last part is already what we want
+        if let nextLastPart = parts.last {
+            if nextLastPart is AnnotationMarkdownViewModel {
+                setSelectedPart(to: lastPart)
+                resize()
+                return
+            }
+        }
+
+        let newPart = AnnotationMarkdownViewModel(
+            id: UUID(), content: "", width: width, height: 30.0)
+        newPart.enterEditMode()
+        parts.append(newPart)
+        partToAppend = newPart
+        setSelectedPart(to: newPart)
+        resize()
+    }
+
+    func remove(part: AnnotationPartViewModel) {
+        part.remove()
+        parts.removeAll(where: { $0.id == part.id })
+        resize()
     }
 }

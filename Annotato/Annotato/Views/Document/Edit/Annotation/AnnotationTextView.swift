@@ -18,6 +18,7 @@ class AnnotationTextView: UITextView, AnnotationPartView {
         self.isScrollEnabled = false
         self.delegate = self
         setUpSubscriber()
+        addGestureRecognizers()
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.lightGray.cgColor
     }
@@ -25,6 +26,12 @@ class AnnotationTextView: UITextView, AnnotationPartView {
     private func setUpSubscriber() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
             self?.isEditable = isEditing
+        }).store(in: &cancellables)
+
+        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+            if isRemoved {
+                self?.removeFromSuperview()
+            }
         }).store(in: &cancellables)
     }
 }
@@ -38,5 +45,30 @@ extension AnnotationTextView: UITextViewDelegate {
         resizeFrameToFitContent()
         viewModel.setContent(to: text)
         viewModel.setHeight(to: frame.height)
+    }
+}
+
+// MARK: Gestures
+extension AnnotationTextView {
+    private func addGestureRecognizers() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        tapGestureRecognizer.delegate = self
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    @objc
+    private func didTap() {
+        if isEditable {
+            viewModel.didSelect()
+        }
+    }
+}
+
+extension AnnotationTextView: UIGestureRecognizerDelegate {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
     }
 }

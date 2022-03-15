@@ -59,6 +59,13 @@ class AnnotationView: UIView {
         viewModel.$isResizing.sink(receiveValue: { [weak self] _ in
             self?.resize()
         }).store(in: &cancellables)
+
+        viewModel.$partToAppend.sink(receiveValue: { [weak self] partViewModel in
+            guard let partViewModel = partViewModel else {
+                return
+            }
+            self?.parts.addArrangedSubview(partViewModel.toView())
+        }).store(in: &cancellables)
     }
 
     private func resize() {
