@@ -31,11 +31,9 @@ struct DocumentsController {
         return DocumentsDataAccess.update(db: req.db, document: document)
     }
 
-    static func delete(req: Request) throws -> HTTPResponseStatus {
+    static func delete(req: Request) throws -> EventLoopFuture<Document> {
         let documentId = try ControllersUtil.getIdFromParams(request: req)
 
-        DocumentsDataAccess.delete(db: req.db, documentId: documentId)
-
-        return .ok
+        return DocumentsDataAccess.delete(db: req.db, documentId: documentId)
     }
 }
