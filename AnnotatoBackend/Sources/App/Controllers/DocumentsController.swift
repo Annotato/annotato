@@ -19,16 +19,20 @@ struct DocumentsController {
         return DocumentsDataAccess.create(db: req.db, document: document)
     }
 
-    static func delete(req: Request) throws -> HTTPResponseStatus {
-        guard let param = req.parameters.get("id") else {
-            req.application.logger.error("Failed to get expected param: id")
-            throw Abort(.internalServerError)
-        }
+    static func read(req: Request) throws -> EventLoopFuture<Document> {
+        let documentId = try ControllersUtil.getIdFromParams(request: req)
 
-        guard let documentId = UUID(uuidString: param) else {
-            req.application.logger.notice("Could not initialise UUID from param")
-            throw Abort(.badRequest)
-        }
+        return DocumentsDataAccess.read(db: req.db, documentId: documentId)
+    }
+
+    static func update(req: Request) throws -> EventLoopFuture<Document> {
+        let document = try req.content.decode(Document.self)
+
+        return DocumentsDataAccess.update(db: req.db, document: document)
+    }
+
+    static func delete(req: Request) throws -> HTTPResponseStatus {
+        let documentId = try ControllersUtil.getIdFromParams(request: req)
 
         DocumentsDataAccess.delete(db: req.db, documentId: documentId)
 

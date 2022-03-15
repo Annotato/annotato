@@ -6,6 +6,10 @@ func documentsRouter(documents: RoutesBuilder) {
     documents.post(use: DocumentsController.create)
 
     documents.group(":id") { document in
+        document.get(use: DocumentsController.read)
+
+        document.put(use: DocumentsController.update)
+
         document.delete(use: DocumentsController.delete)
     }
 }
