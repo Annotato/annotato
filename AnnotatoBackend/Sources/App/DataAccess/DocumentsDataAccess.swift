@@ -38,6 +38,7 @@ struct DocumentsDataAccess {
     }
 
     static func delete(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
+        // swiftlint:disable:next first_where
         db.query(DocumentEntity.self)
             .filter(\.$id == documentId)
             .first()
