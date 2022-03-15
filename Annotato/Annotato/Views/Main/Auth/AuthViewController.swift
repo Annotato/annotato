@@ -1,6 +1,6 @@
 import UIKit
 
-class LogInViewController: UIViewController, Navigable {
+class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
 
     // Storyboard UI Elements
@@ -39,9 +39,10 @@ class LogInViewController: UIViewController, Navigable {
                 return
             }
 
-            auth.signUp(email: emailTextField.text ?? "",
-                        password: passwordTextField.text ?? "",
-                        displayName: displayNameTextField.text ?? ""
+            auth.signUp(
+                email: emailTextField.text ?? "",
+                password: passwordTextField.text ?? "",
+                displayName: displayNameTextField.text ?? ""
             )
         default:
             fatalError("Invalid Segment")
@@ -69,7 +70,7 @@ class LogInViewController: UIViewController, Navigable {
     }
 }
 
-extension LogInViewController: AnnotatoAuthDelegate, AlertPresentable {
+extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
     func logInDidFail(_ error: Error) {
         presentErrorAlert(errorMessage: error.localizedDescription)
     }
