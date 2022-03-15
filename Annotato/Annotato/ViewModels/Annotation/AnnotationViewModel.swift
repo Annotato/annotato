@@ -25,12 +25,14 @@ class AnnotationViewModel {
 
 // MARK: Position, Size
 extension AnnotationViewModel {
-    var height: Double {
-        let totalPartHeights = parts.reduce(0, {acc, part in
+    var partHeights: Double {
+        parts.reduce(0, {acc, part in
             acc + part.height
         })
+    }
 
-        return palette.height + totalPartHeights
+    var height: Double {
+        palette.height + partHeights
     }
 
     var size: CGSize {
@@ -39,5 +41,15 @@ extension AnnotationViewModel {
 
     var frame: CGRect {
         CGRect(origin: origin, size: size)
+    }
+
+    // Note: scrollFrame is with respect to this frame
+    var scrollFrame: CGRect {
+        CGRect(x: .zero, y: palette.height, width: width, height: partHeights)
+    }
+
+    // Note: partsFrame is with respect to scrollFrame
+    var partsFrame: CGRect {
+        CGRect(x: .zero, y: .zero, width: width, height: partHeights)
     }
 }

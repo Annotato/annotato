@@ -22,7 +22,24 @@ class SampleData {
                 id: UUID(),
                 origin: CGPoint(x: 100.0, y: 150.0),
                 width: 300.0,
-                parts: []
+                parts: exampleAnnotationParts1()
+            )
+        ]
+    }
+
+    private func exampleAnnotationParts1() -> [AnnotationPartViewModel] {
+        [
+            AnnotationTextViewModel(
+                id: UUID(),
+                content: "hello world",
+                width: 300.0,
+                height: 22.0
+            ),
+            AnnotationMarkdownViewModel(
+                id: UUID(),
+                content: "some markdown",
+                width: 300.0,
+                height: 22.0
             )
         ]
     }
