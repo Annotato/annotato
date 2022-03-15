@@ -91,7 +91,13 @@ extension AnnotationViewModel {
     }
 
     func deselectSelectedPart() {
-        self.selectedPart?.isSelected = false
+        guard let selectedPart = selectedPart else {
+            return
+        }
+        selectedPart.isSelected = false
+        if selectedPart.isEmpty {
+            remove(part: selectedPart)
+        }
         self.selectedPart = nil
     }
 
@@ -116,6 +122,7 @@ extension AnnotationViewModel {
 
         let newPart = AnnotationTextViewModel(
             id: UUID(), content: "", width: width, height: 30.0)
+        newPart.parentViewModel = self
         newPart.enterEditMode()
         parts.append(newPart)
         partToAppend = newPart
@@ -144,6 +151,7 @@ extension AnnotationViewModel {
 
         let newPart = AnnotationMarkdownViewModel(
             id: UUID(), content: "", width: width, height: 30.0)
+        newPart.parentViewModel = self
         newPart.enterEditMode()
         parts.append(newPart)
         partToAppend = newPart
@@ -154,9 +162,6 @@ extension AnnotationViewModel {
     func remove(part: AnnotationPartViewModel) {
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
-        if selectedPart?.id == part.id {
-            deselectSelectedPart()
-        }
         resize()
     }
 }

@@ -90,6 +90,7 @@ extension AnnotationMarkdownView: UITextViewDelegate {
         addGestureRecognizer(tapGestureRecognizer)
         let editViewTapGestureRecognizer = UITapGestureRecognizer(
             target: self, action: #selector(didTap))
+        editViewTapGestureRecognizer.delegate = self
         editView.addGestureRecognizer(editViewTapGestureRecognizer)
     }
 
@@ -100,3 +101,12 @@ extension AnnotationMarkdownView: UITextViewDelegate {
         }
     }
  }
+
+extension AnnotationMarkdownView: UIGestureRecognizerDelegate {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
+    }
+}
