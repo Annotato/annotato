@@ -1,5 +1,6 @@
 import CoreGraphics
 import UIKit
+import AnnotatoSharedLibrary
 
 class DocumentAnnotationTextViewModel: DocumentAnnotationPartViewModel {
     private(set) var annotationType: AnnotationType

@@ -1,4 +1,5 @@
 import CoreGraphics
+import AnnotatoSharedLibrary
 
 class DocumentAnnotationViewModel {
     private(set) var center: CGPoint

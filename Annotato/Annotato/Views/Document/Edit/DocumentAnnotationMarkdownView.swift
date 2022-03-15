@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class DocumentAnnotationMarkdownView: DocumentAnnotationTextView {
     private var markdownView: UIView?

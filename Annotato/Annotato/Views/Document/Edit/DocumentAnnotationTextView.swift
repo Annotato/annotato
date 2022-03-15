@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class DocumentAnnotationTextView: UITextView, DocumentAnnotationSectionView {
     private(set) var annotationType: AnnotationType

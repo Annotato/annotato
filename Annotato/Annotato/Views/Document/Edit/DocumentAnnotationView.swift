@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class DocumentAnnotationView: UIView {
     private var viewModel: DocumentAnnotationViewModel

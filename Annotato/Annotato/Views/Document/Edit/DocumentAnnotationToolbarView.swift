@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class DocumentAnnotationToolbarView: UIToolbar {
     weak var actionDelegate: DocumentAnnotationToolbarDelegate? {
