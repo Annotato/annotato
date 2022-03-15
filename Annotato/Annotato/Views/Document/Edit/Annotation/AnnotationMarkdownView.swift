@@ -59,6 +59,13 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
                 self?.removeFromSuperview()
             }
         }).store(in: &cancellables)
+
+        viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
+            if isSelected {
+                self?.editView.becomeFirstResponder()
+                self?.editView.showSelected()
+            }
+        }).store(in: &cancellables)
     }
 }
 
@@ -78,8 +85,12 @@ extension AnnotationMarkdownView: UITextViewDelegate {
 // MARK: Gestures
  extension AnnotationMarkdownView {
     private func addGestureRecognizers() {
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        let tapGestureRecognizer = UITapGestureRecognizer(
+            target: self, action: #selector(didTap))
         addGestureRecognizer(tapGestureRecognizer)
+        let editViewTapGestureRecognizer = UITapGestureRecognizer(
+            target: self, action: #selector(didTap))
+        editView.addGestureRecognizer(editViewTapGestureRecognizer)
     }
 
     @objc

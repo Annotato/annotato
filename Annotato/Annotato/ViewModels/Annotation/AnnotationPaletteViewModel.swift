@@ -19,12 +19,18 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 
     func didSelectTextButton() {
+        guard parentViewModel?.isEditing ?? false else {
+            return
+        }
         textIsSelected = true
         markdownIsSelected = false
         parentViewModel?.appendTextPartIfNecessary()
     }
 
     func didSelectMarkdownButton() {
+        guard parentViewModel?.isEditing ?? false else {
+            return
+        }
         textIsSelected = false
         markdownIsSelected = true
         parentViewModel?.appendMarkdownPartIfNecessary()

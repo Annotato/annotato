@@ -11,11 +11,12 @@ class AnnotationTextViewModel: AnnotationPartViewModel, ObservableObject {
     private(set) var width: Double
     internal var height: Double
 
-    @Published private(set) var isEditing = false
-    @Published private(set) var isRemoved = false
     var isEmpty: Bool {
         content.isEmpty
     }
+    @Published private(set) var isEditing = false
+    @Published private(set) var isRemoved = false
+    @Published internal var isSelected = false
 
     init(id: UUID, content: String, width: Double, height: Double, origin: CGPoint = .zero) {
         self.id = id

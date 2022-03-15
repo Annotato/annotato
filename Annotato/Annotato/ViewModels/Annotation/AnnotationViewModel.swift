@@ -74,6 +74,7 @@ extension AnnotationViewModel {
 
     func enterViewMode() {
         isEditing = false
+        deselectSelectedPart()
         for part in parts {
             part.enterViewMode()
         }
@@ -84,7 +85,14 @@ extension AnnotationViewModel {
     }
 
     func setSelectedPart(to selectedPart: AnnotationPartViewModel) {
+        deselectSelectedPart()
         self.selectedPart = selectedPart
+        self.selectedPart?.isSelected = true
+    }
+
+    func deselectSelectedPart() {
+        self.selectedPart?.isSelected = false
+        self.selectedPart = nil
     }
 
     func appendTextPartIfNecessary() {
@@ -100,7 +108,7 @@ extension AnnotationViewModel {
         // The last part is already what we want
         if let nextLastPart = parts.last {
             if nextLastPart is AnnotationTextViewModel {
-                setSelectedPart(to: lastPart)
+                setSelectedPart(to: nextLastPart)
                 resize()
                 return
             }
@@ -146,6 +154,9 @@ extension AnnotationViewModel {
     func remove(part: AnnotationPartViewModel) {
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
+        if selectedPart?.id == part.id {
+            deselectSelectedPart()
+        }
         resize()
     }
 }

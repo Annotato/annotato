@@ -1,8 +1,6 @@
 import UIKit
 
 class ToggleableButton: UIButton {
-    weak var delegate: ToggleableButtonDelegate?
-
     override var isSelected: Bool {
         didSet {
             if isSelected {
@@ -20,21 +18,5 @@ class ToggleableButton: UIButton {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        addTarget(self, action: #selector(didTap), for: .touchUpInside)
-    }
-
-    @objc
-    private func didTap() {
-        select()
-    }
-
-    func select() {
-        isSelected = true
-        delegate?.didSelect(button: self)
-    }
-
-    func unselect() {
-        isSelected = false
     }
 }

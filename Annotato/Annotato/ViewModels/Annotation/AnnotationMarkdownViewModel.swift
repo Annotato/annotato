@@ -13,6 +13,7 @@ class AnnotationMarkdownViewModel: AnnotationPartViewModel, ObservableObject {
 
     @Published private(set) var isEditing = false
     @Published private(set) var isRemoved = false
+    @Published internal var isSelected = false
     var isEmpty: Bool {
         content.isEmpty
     }

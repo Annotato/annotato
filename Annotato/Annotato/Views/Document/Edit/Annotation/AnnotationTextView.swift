@@ -33,6 +33,13 @@ class AnnotationTextView: UITextView, AnnotationPartView {
                 self?.removeFromSuperview()
             }
         }).store(in: &cancellables)
+
+        viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
+            if isSelected {
+                self?.becomeFirstResponder()
+                self?.showSelected()
+            }
+        }).store(in: &cancellables)
     }
 }
 
