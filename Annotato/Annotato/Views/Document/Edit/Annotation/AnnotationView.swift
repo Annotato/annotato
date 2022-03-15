@@ -66,6 +66,12 @@ class AnnotationView: UIView {
             }
             self?.parts.addArrangedSubview(partViewModel.toView())
         }).store(in: &cancellables)
+
+        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+            if isRemoved {
+                self?.removeFromSuperview()
+            }
+        }).store(in: &cancellables)
     }
 
     private func resize() {

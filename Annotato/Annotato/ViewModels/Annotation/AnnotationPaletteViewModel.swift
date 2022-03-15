@@ -45,6 +45,10 @@ class AnnotationPaletteViewModel: ObservableObject {
         isEditing = false
         parentViewModel?.enterViewMode()
     }
+
+    func didSelectDeleteButton() {
+        parentViewModel?.didDelete()
+    }
 }
 
 // MARK: Position, Size

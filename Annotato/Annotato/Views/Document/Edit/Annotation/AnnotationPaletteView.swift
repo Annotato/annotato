@@ -33,6 +33,7 @@ class AnnotationPaletteView: UIToolbar {
         textButton.addTarget(self, action: #selector(didTap(toggleableButton: )), for: .touchUpInside)
         markdownButton.addTarget(self, action: #selector(didTap(toggleableButton: )), for: .touchUpInside)
         editOrViewButton.delegate = self
+        deleteButton.addTarget(self, action: #selector(didTapDeleteButton(_: )), for: .touchUpInside)
 
         let textBarButton = UIBarButtonItem(customView: textButton)
         let markdownBarButton = UIBarButtonItem(customView: markdownButton)
@@ -80,6 +81,11 @@ extension AnnotationPaletteView {
         if toggleableButton == markdownButton {
             viewModel.didSelectMarkdownButton()
         }
+    }
+
+    @objc
+    private func didTapDeleteButton(_ button: UIButton) {
+        viewModel.didSelectDeleteButton()
     }
 
     var annotationTypeButtons: [ToggleableButton] {

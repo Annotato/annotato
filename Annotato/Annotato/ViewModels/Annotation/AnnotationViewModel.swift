@@ -9,9 +9,10 @@ class AnnotationViewModel: ObservableObject {
     private(set) var palette: AnnotationPaletteViewModel
 
     private(set) var isEditing = false
+    private(set) var selectedPart: AnnotationPartViewModel?
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
-    private(set) var selectedPart: AnnotationPartViewModel?
+    @Published private(set) var isRemoved = false
 
     init(
         id: UUID,
@@ -63,6 +64,7 @@ extension AnnotationViewModel {
     }
 }
 
+// MARK: Parts
 extension AnnotationViewModel {
     func enterEditMode() {
         isEditing = true
@@ -163,5 +165,11 @@ extension AnnotationViewModel {
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
         resize()
+    }
+}
+
+extension AnnotationViewModel {
+    func didDelete() {
+        isRemoved = true
     }
 }
