@@ -2,7 +2,6 @@ import UIKit
 import PDFKit
 
 class DocumentPdfViewModel {
-
     let autoScales = true
     let document: PDFDocument
 

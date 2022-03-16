@@ -60,7 +60,6 @@ extension DocumentListViewController: DocumentListToolbarDelegate, UIDocumentPic
         guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
             return
         }
-        print("selected file's baseFileUrl = \(selectedFileUrl)")
         let newlyLoadedDocumentPdfViewModel = DocumentPdfViewModel(baseFileUrl: selectedFileUrl)
         goToDocumentEdit(documentPdfViewModel: newlyLoadedDocumentPdfViewModel)
     }
