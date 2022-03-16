@@ -92,6 +92,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
                           context: "URLSessionHTTPService::\(httpMethod.lowercased())"
                       )
                       delegate?.requestDidFail(AnnotatoHTTPError.serverError)
+                      return
                   }
 
             DispatchQueue.main.async {
