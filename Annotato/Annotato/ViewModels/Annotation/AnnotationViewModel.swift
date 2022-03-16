@@ -30,13 +30,21 @@ class AnnotationViewModel: ObservableObject {
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
         self.palette.parentViewModel = self
 
-        if self.parts.isEmpty {
-            let newPart = makeNewTextPart()
-            addNewPart(newPart: newPart)
-        }
         for part in self.parts {
             part.parentViewModel = self
         }
+        if self.parts.isEmpty {
+            addInitialPartIfNew()
+        }
+    }
+
+    private func addInitialPartIfNew() {
+        let newPart = makeNewTextPart()
+        newPart.parentViewModel = self
+        newPart.enterEditMode()
+        parts.append(newPart)
+        setSelectedPart(to: newPart)
+        resize()
     }
 }
 
@@ -154,8 +162,6 @@ extension AnnotationViewModel {
                 return
             }
         }
-
-        print(parts.count)
 
         let newPart = makeNewTextPart()
         addNewPart(newPart: newPart)
