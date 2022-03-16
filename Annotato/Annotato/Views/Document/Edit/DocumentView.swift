@@ -1,8 +1,9 @@
 import UIKit
+import Combine
 
 class DocumentView: UIView {
     private var documentViewModel: DocumentViewModel
-//    private var annotations: [DocumentAnnotationView] = []
+    private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -16,7 +17,8 @@ class DocumentView: UIView {
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.black.cgColor
 
-//        addTapGestureRecognizer()
+        setUpSubscriber()
+        addGestureRecognizers()
         initializeAnnotationViews()
     }
 
@@ -26,32 +28,31 @@ class DocumentView: UIView {
         }
     }
 
-//    private func addTapGestureRecognizer() {
-//        isUserInteractionEnabled = true
-//        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
-//        addGestureRecognizer(gestureRecognizer)
-//    }
+    private func addGestureRecognizers() {
+        isUserInteractionEnabled = true
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(tapGestureRecognizer)
+    }
 
-//    @objc
-//    private func didTap(_ sender: UITapGestureRecognizer) {
-//        let touchPoint = sender.location(in: self)
-//        let newAnnotationWidth = 200.0
-//        addNewAnnotation(
-//            annotationViewModel: DocumentAnnotationViewModel(center: touchPoint, width: newAnnotationWidth, parts: [])
-//        )
-//    }
+    @objc
+    private func didTap(_ sender: UITapGestureRecognizer) {
+        let touchPoint = sender.location(in: self)
+        documentViewModel.addAnnotation(at: touchPoint)
+    }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotation = AnnotationView(viewModel: viewModel)
         addSubview(annotation)
     }
 
-//    private func addNewAnnotation(annotationViewModel: DocumentAnnotationViewModel) {
-//        let annotation = DocumentAnnotationView(annotationViewModel: annotationViewModel)
-//        annotation.delegate = self
-//        annotations.append(annotation)
-//        addSubview(annotation)
-//    }
+    private func setUpSubscriber() {
+        documentViewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
+            guard let annotationViewModel = annotationViewModel else {
+                return
+            }
+            self?.renderNewAnnotation(viewModel: annotationViewModel)
+        }).store(in: &cancellables)
+    }
 
 //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        super.touchesBegan(touches, with: event)

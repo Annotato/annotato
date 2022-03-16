@@ -43,6 +43,8 @@ class AnnotationPaletteViewModel: ObservableObject {
 
     func enterViewMode() {
         isEditing = false
+        textIsSelected = false
+        markdownIsSelected = false
         parentViewModel?.enterViewMode()
     }
 

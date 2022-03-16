@@ -3,7 +3,7 @@ import Foundation
 
 class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
-    private(set) var origin: CGPoint
+    @Published private(set) var origin: CGPoint
     private(set) var width: Double
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
@@ -27,6 +27,11 @@ class AnnotationViewModel: ObservableObject {
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
         self.palette.parentViewModel = self
+
+        if self.parts.isEmpty {
+            let newPart = makeNewTextPart()
+            addNewPart(newPart: newPart)
+        }
         for part in self.parts {
             part.parentViewModel = self
         }
@@ -35,6 +40,15 @@ class AnnotationViewModel: ObservableObject {
 
 // MARK: Position, Size
 extension AnnotationViewModel {
+    var center: CGPoint {
+        get {
+            CGPoint(x: origin.x + width / 2, y: origin.y + height / 2)
+        }
+        set(newCenter) {
+            origin = CGPoint(x: newCenter.x - width / 2, y: newCenter.y - height / 2)
+        }
+    }
+
     var partHeights: Double {
         parts.reduce(0, {acc, part in
             acc + part.height
@@ -97,9 +111,7 @@ extension AnnotationViewModel {
             return
         }
         selectedPart.isSelected = false
-        if selectedPart.isEmpty {
-            remove(part: selectedPart)
-        }
+        removeIfPossible(part: selectedPart)
         self.selectedPart = nil
     }
 
@@ -108,28 +120,25 @@ extension AnnotationViewModel {
             return
         }
 
-        // If the last part is empty, remove it
-        if lastPart.isEmpty {
-            remove(part: lastPart)
+        // If last part is what we want, return
+        if lastPart is AnnotationTextViewModel {
+            setSelectedPart(to: lastPart)
+            return
         }
 
-        // The last part is already what we want
+        removeIfPossible(part: lastPart)
+
+        // The next last part is what we want, return
         if let nextLastPart = parts.last {
             if nextLastPart is AnnotationTextViewModel {
-                setSelectedPart(to: nextLastPart)
+                setSelectedPart(to: lastPart)
                 resize()
                 return
             }
         }
 
-        let newPart = AnnotationTextViewModel(
-            id: UUID(), content: "", width: width, height: 30.0)
-        newPart.parentViewModel = self
-        newPart.enterEditMode()
-        parts.append(newPart)
-        partToAppend = newPart
-        setSelectedPart(to: newPart)
-        resize()
+        let newPart = makeNewTextPart()
+        addNewPart(newPart: newPart)
     }
 
     func appendMarkdownPartIfNecessary() {
@@ -137,12 +146,16 @@ extension AnnotationViewModel {
             return
         }
 
-        // If the last part is empty, remove it
-        if lastPart.isEmpty {
-            remove(part: lastPart)
+        // If last part is what we want, return
+        if lastPart is AnnotationMarkdownViewModel {
+            setSelectedPart(to: lastPart)
+            return
         }
 
-        // The last part is already what we want
+        // If the last part is empty and there are other parts, remove it
+        removeIfPossible(part: lastPart)
+
+        // The next last part is what we want, return
         if let nextLastPart = parts.last {
             if nextLastPart is AnnotationMarkdownViewModel {
                 setSelectedPart(to: lastPart)
@@ -151,8 +164,19 @@ extension AnnotationViewModel {
             }
         }
 
-        let newPart = AnnotationMarkdownViewModel(
-            id: UUID(), content: "", width: width, height: 30.0)
+        let newPart = makeNewMarkdownPart()
+        addNewPart(newPart: newPart)
+    }
+
+    private func makeNewTextPart() -> AnnotationTextViewModel {
+        AnnotationTextViewModel(id: UUID(), content: "", width: width, height: 30.0)
+    }
+
+    private func makeNewMarkdownPart() -> AnnotationMarkdownViewModel {
+        AnnotationMarkdownViewModel(id: UUID(), content: "", width: width, height: 30.0)
+    }
+
+    private func addNewPart(newPart: AnnotationPartViewModel) {
         newPart.parentViewModel = self
         newPart.enterEditMode()
         parts.append(newPart)
@@ -161,7 +185,15 @@ extension AnnotationViewModel {
         resize()
     }
 
-    func remove(part: AnnotationPartViewModel) {
+    // Each presented annotation should have at least 1 part
+    private func canRemovePart(part: AnnotationPartViewModel) -> Bool {
+        part.isEmpty && parts.count > 1
+    }
+
+    func removeIfPossible(part: AnnotationPartViewModel) {
+        guard canRemovePart(part: part) else {
+            return
+        }
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
         resize()
