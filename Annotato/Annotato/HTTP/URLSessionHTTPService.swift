@@ -3,39 +3,34 @@ import Foundation
 struct URLSessionHTTPService: AnnotatoHTTPService {
     private let sharedSession = URLSession.shared
 
-    var delegate: AnnotatoHTTPDelegate?
-
-    func get(url: String, params: [String: String]) {
+    func get(url: String, params: [String: String]) async throws -> Data {
         let urlWithParams = makeURLWithParams(url: url, params: params)
         guard let urlWithParams = urlWithParams else {
-            delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
-            return
+            throw AnnotatoHTTPError.invalidURL
         }
 
         var request = URLRequest(url: urlWithParams)
         request.httpMethod = AnnotatoHTTPMethod.get.rawValue
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .get))
-        task.resume()
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
     }
 
-    func get(url: String) {
+    func get(url: String) async throws -> Data {
         guard let url = URL(string: url) else {
-            delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
-            return
+            throw AnnotatoHTTPError.invalidURL
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = AnnotatoHTTPMethod.get.rawValue
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .get))
-        task.resume()
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
     }
 
-    func post(url: String, data: Data) {
+    func post(url: String, data: Data) async throws -> Data {
         guard let url = URL(string: url) else {
-            delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
-            return
+            throw AnnotatoHTTPError.invalidURL
         }
 
         var request = URLRequest(url: url)
@@ -43,14 +38,13 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         request.httpBody = data
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .post))
-        task.resume()
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
     }
 
-    func put(url: String, data: Data) {
+    func put(url: String, data: Data) async throws -> Data {
         guard let url = URL(string: url) else {
-            delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
-            return
+            throw AnnotatoHTTPError.invalidURL
         }
 
         var request = URLRequest(url: url)
@@ -58,21 +52,20 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         request.httpBody = data
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .put))
-        task.resume()
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
     }
 
-    func delete(url: String) {
+    func delete(url: String) async throws -> Data {
         guard let url = URL(string: url) else {
-            delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
-            return
+            throw AnnotatoHTTPError.invalidURL
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = AnnotatoHTTPMethod.delete.rawValue
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .delete))
-        task.resume()
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
     }
 
     private func makeURLWithParams(url: String, params: [String: String]) -> URL? {
@@ -87,32 +80,5 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         urlComponents.queryItems = queryItems
 
         return urlComponents.url
-    }
-
-    private func makeCompletionHandler(httpMethod: AnnotatoHTTPMethod) -> (Data?, URLResponse?, Error?) -> Void {
-        { data, response, error in
-            if let error = error {
-                AnnotatoLogger.error(
-                    "Client error occurred during \(httpMethod) request: \(error.localizedDescription)",
-                    context: "URLSessionHTTPService::\(httpMethod.rawValue.lowercased())"
-                )
-                delegate?.requestDidFail(error)
-                return
-            }
-
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                      AnnotatoLogger.error(
-                          "Server error occurred during \(httpMethod) request",
-                          context: "URLSessionHTTPService::\(httpMethod.rawValue.lowercased())"
-                      )
-                      delegate?.requestDidFail(AnnotatoHTTPError.serverError)
-                      return
-                  }
-
-            DispatchQueue.main.async {
-                delegate?.requestDidSucceed(data: data)
-            }
-        }
     }
 }

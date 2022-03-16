@@ -29,27 +29,13 @@ class AuthViewController: UIViewController, Navigable {
         heightConstraint.constant = 50
     }
 
-    private func dummyRequest() {
-        var documentsAPI = DocumentsAPI()
-        documentsAPI.delegate = DummyDelegate()
-        documentsAPI.getDocuments(userId: UUID(uuidString: "1e959847-f7a5-4a6f-8e33-de7555ea03d2")!)
-    }
-
-    private func dummyPostRequest() {
-        var documentsAPI = DocumentsAPI()
-        documentsAPI.delegate = DummyDelegate()
-        documentsAPI.createDocument(document: Document(name: "Test from auth", ownerId: UUID(), baseFileUrl: "path/to/auth/document"))
-    }
-
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
 
         let segment = Segment(rawValue: formSegmentedControl.selectedSegmentIndex)
         switch segment {
         case .logIn:
-            dummyRequest()
             auth.logIn(email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
         case .signUp:
-            dummyPostRequest()
             guard !(displayNameTextField.text ?? "").isEmpty else {
                 presentErrorAlert(errorMessage: "Display Name cannot be empty.")
                 return

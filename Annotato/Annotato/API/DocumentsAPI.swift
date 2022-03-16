@@ -10,37 +10,68 @@ struct DocumentsAPI {
         httpService = URLSessionHTTPService()
     }
 
-    var delegate: AnnotatoHTTPDelegate? {
-        get { httpService.delegate }
-        set { httpService.delegate = newValue }
+    func getDocuments(userId: UUID) async -> [Document] {
+        do {
+            let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
+                                             params: ["userId": userId.uuidString])
+            return try JSONDecoder().decode([Document].self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When fetching documents: \(error.localizedDescription)")
+            return []
+        }
     }
 
-    func getDocuments(userId: UUID) {
-        httpService.get(url: DocumentsAPI.documentsUrl, params: ["userId": userId.uuidString])
+    func getDocument(documentId: UUID) async -> Document? {
+        do {
+            let responseData = try await httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
+            return try JSONDecoder().decode(Document.self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When fetching document: \(error.localizedDescription)")
+            return nil
+        }
     }
 
-    func getDocument(documentId: UUID) {
-        httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
-    }
-
-    func createDocument(document: Document) {
-        guard let data = encodeDocument(document) else {
-            return
+    func createDocument(document: Document) async -> Document? {
+        guard let requestData = encodeDocument(document) else {
+            AnnotatoLogger.error("Document was not created",
+                                 context: "DocumentsAPI::createDocument")
+            return nil
         }
 
-        httpService.post(url: DocumentsAPI.documentsUrl, data: data)
+        do {
+            let responseData = try await httpService.post(url: DocumentsAPI.documentsUrl, data: requestData)
+            return try JSONDecoder().decode(Document.self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When fetching document: \(error.localizedDescription)")
+            return nil
+        }
     }
 
-    func updateDocument(document: Document) {
-        guard let data = encodeDocument(document) else {
-            return
+    func updateDocument(document: Document) async -> Document? {
+        guard let requestData = encodeDocument(document) else {
+            AnnotatoLogger.error("Document was not updated",
+                                 context: "DocumentsAPI::createDocument")
+            return nil
         }
 
-        httpService.put(url: DocumentsAPI.documentsUrl, data: data)
+        do {
+            let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(document.id)",
+                                                         data: requestData)
+            return try JSONDecoder().decode(Document.self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When updating document: \(error.localizedDescription)")
+            return nil
+        }
     }
 
-    func deleteDocument(documentId: UUID) {
-        httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
+    func deleteDocument(documentId: UUID) async -> Document? {
+        do {
+            let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
+            return try JSONDecoder().decode(Document.self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When deleting document: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     private func encodeDocument(_ document: Document) -> Data? {
