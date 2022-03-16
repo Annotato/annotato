@@ -14,4 +14,3 @@ public class Annotation: Codable {
         self.ownerId = ownerId
     }
 }
-
