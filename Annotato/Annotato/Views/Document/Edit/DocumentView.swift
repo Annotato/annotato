@@ -16,6 +16,7 @@ class DocumentView: UIView {
         self.layer.borderColor = UIColor.black.cgColor
 
         addTapGestureRecognizer()
+        initializePdfView()
         initializeAnnotationViews()
     }
 
@@ -24,6 +25,14 @@ class DocumentView: UIView {
             let view = DocumentAnnotationView(annotationViewModel: annotation)
             addSubview(view)
         }
+    }
+
+    private func initializePdfView() {
+        let view = DocumentPdfView(
+            frame: self.frame,
+            documentPdfViewModel: documentViewModel.pdfDocument
+        )
+        addSubview(view)
     }
 
     private func addTapGestureRecognizer() {
