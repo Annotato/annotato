@@ -41,6 +41,12 @@ final class AnnotationTextEntity: Model {
 
 extension AnnotationTextEntity: PersistedEntity {
     static func fromModel(_ model: AnnotationText) -> Self {
-        Self(type: model.type, content: model.content, height: model.height, annotationId: model.annotationId, id: model.id)
+        Self(
+            type: model.type,
+            content: model.content,
+            height: model.height,
+            annotationId: model.annotationId,
+            id: model.id
+        )
     }
 }
