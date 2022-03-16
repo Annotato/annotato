@@ -136,6 +136,7 @@ extension AnnotationViewModel {
         deselectSelectedPart()
         self.selectedPart = selectedPart
         self.selectedPart?.isSelected = true
+        palette.updatePalette(basedOn: selectedPart)
     }
 
     func deselectSelectedPart() {

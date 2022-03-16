@@ -16,8 +16,20 @@ class AnnotationPaletteViewModel: ObservableObject {
             }
         }
     }
-    @Published private(set) var textIsSelected = false
-    @Published private(set) var markdownIsSelected = false
+    @Published private(set) var textIsSelected = false {
+        didSet {
+            if textIsSelected {
+                markdownIsSelected = false
+            }
+        }
+    }
+    @Published private(set) var markdownIsSelected = false {
+        didSet {
+            if markdownIsSelected {
+                textIsSelected = false
+            }
+        }
+    }
 
     init(origin: CGPoint, width: Double, height: Double) {
         self.origin = origin
@@ -30,7 +42,6 @@ class AnnotationPaletteViewModel: ObservableObject {
             return
         }
         textIsSelected = true
-        markdownIsSelected = false
         parentViewModel?.appendTextPartIfNecessary()
     }
 
@@ -38,7 +49,6 @@ class AnnotationPaletteViewModel: ObservableObject {
         guard parentViewModel?.isEditing ?? false else {
             return
         }
-        textIsSelected = false
         markdownIsSelected = true
         parentViewModel?.appendMarkdownPartIfNecessary()
     }
@@ -63,6 +73,16 @@ class AnnotationPaletteViewModel: ObservableObject {
 
     func enterMaximizedMode() {
         parentViewModel?.enterMaximizedMode()
+    }
+
+    func updatePalette(basedOn selectedPart: AnnotationPartViewModel) {
+        if selectedPart is AnnotationTextViewModel {
+            textIsSelected = true
+        }
+
+        if selectedPart is AnnotationMarkdownViewModel {
+            markdownIsSelected = true
+        }
     }
 }
 
