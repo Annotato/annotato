@@ -3,8 +3,12 @@ import Vapor
 import AnnotatoSharedLibrary
 
 struct DocumentsController {
+    private enum QueryParams: String {
+        case userId
+    }
+
     static func list(req: Request) throws -> EventLoopFuture<[Document]> {
-        let userId: UUID? = req.query["userId"]
+        let userId: UUID? = req.query[QueryParams.userId.rawValue]
 
         guard let userId = userId else {
             throw Abort(.badRequest)
