@@ -53,25 +53,4 @@ class DocumentView: UIView {
             self?.renderNewAnnotation(viewModel: annotationViewModel)
         }).store(in: &cancellables)
     }
-
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        super.touchesBegan(touches, with: event)
-//
-//        let touch = touches.first
-//        guard let location = touch?.location(in: self) else {
-//            return
-//        }
-//
-//        for annotation in annotations where !annotation.frame.contains(location) {
-//            annotation.didResignFocus()
-//        }
-//    }
 }
-
-// extension DocumentView: DocumentAnnotationDelegate {
-//    func didSelect(selected: DocumentAnnotationView) {
-//        for annotation in annotations where annotation != selected {
-//            annotation.didResignFocus()
-//        }
-//    }
-// }
