@@ -1,7 +1,7 @@
 import Foundation
 import CoreGraphics
 
-public class Annotation: Codable {
+public final class Annotation: Codable {
     public let id: UUID?
     public private(set) var origin: CGPoint
     public private(set) var width: Double
