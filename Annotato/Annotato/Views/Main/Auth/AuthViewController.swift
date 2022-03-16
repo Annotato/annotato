@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
@@ -36,13 +37,23 @@ class AuthViewController: UIViewController, Navigable {
         print("End of dummyRequest")
     }
 
+    private func dummyPostRequest() {
+        print("Start of dummyPostRequest")
+        var documentsAPI = DocumentsAPI()
+        documentsAPI.delegate = DummyDelegate()
+        documentsAPI.createDocument(document: Document(name: "Test from auth", ownerId: UUID(), baseFileUrl: "path/to/auth/document"))
+        print("End of dummyPostRequest")
+    }
+
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
-        dummyRequest()
+
         let segment = Segment(rawValue: formSegmentedControl.selectedSegmentIndex)
         switch segment {
         case .logIn:
+            dummyRequest()
             auth.logIn(email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
         case .signUp:
+            dummyPostRequest()
             guard !(displayNameTextField.text ?? "").isEmpty else {
                 presentErrorAlert(errorMessage: "Display Name cannot be empty.")
                 return
