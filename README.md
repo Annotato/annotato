@@ -32,7 +32,7 @@ Warning: The following commands will overwrite whatever githooks you previously 
 Assuming you are at the root directory of the repository, execute the following commands:
 
 ```sh
-echo -e '#!/bin/sh\nxcodegen --spec Annotato/project.yml --use-cache' > .git/hooks/post-checkout
+echo -e '#!/bin/sh\ncd Annotato\nxcodegen --use-cache\npod install' > .git/hooks/post-checkout
 ```
 
 ```sh
@@ -40,7 +40,7 @@ chmod +x .git/hooks/post-checkout
 ```
 
 ```sh
-echo -e '#!/bin/sh\nxcodegen --spec Annotato/project.yml --use-cache' > .git/hooks/post-merge
+echo -e '#!/bin/sh\ncd Annotato\nxcodegen --use-cache\npod install' > .git/hooks/post-merge
 ```
 
 ```sh

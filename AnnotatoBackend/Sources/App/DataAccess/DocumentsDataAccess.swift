@@ -20,6 +20,7 @@ struct DocumentsDataAccess {
     }
 
     static func read(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
+        // swiftlint:disable:next first_where
         db.query(DocumentEntity.self)
             .filter(\.$id == documentId)
             .first()
@@ -36,9 +37,17 @@ struct DocumentsDataAccess {
             .map { Document.fromManagedEntity(documentEntity) }
     }
 
-    static func delete(db: Database, documentId: UUID) {
+    static func delete(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
+        // swiftlint:disable:next first_where
         db.query(DocumentEntity.self)
             .filter(\.$id == documentId)
-            .delete()
+            .first()
+            .unwrap(or: AnnotatoError.modelNotFound(requestType: .delete,
+                                                    modelType: String(describing: Document.self),
+                                                    modelId: documentId))
+            .flatMap { documentEntity in
+                documentEntity.delete(on: db)
+                    .map { Document.fromManagedEntity(documentEntity) }
+            }
     }
 }

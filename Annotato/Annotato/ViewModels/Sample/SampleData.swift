@@ -4,11 +4,11 @@ import Foundation
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
         [
-            DocumentListViewModel(name: "Lab01 Qns", url: exampleUrlLab01Qns()),
-            DocumentListViewModel(name: "L0 Overview", url: exampleUrlL0Overview()),
-            DocumentListViewModel(name: "L1 Intro", url: exampleUrlL1Intro()),
-            DocumentListViewModel(name: "Test D", url: exampleUrlLab01Qns()),
-            DocumentListViewModel(name: "Test E", url: exampleUrlL0Overview())
+            DocumentListViewModel(name: "Lab01 Qns", baseFileUrl: exampleUrlLab01Qns()),
+            DocumentListViewModel(name: "L0 Overview", baseFileUrl: exampleUrlL0Overview()),
+            DocumentListViewModel(name: "L1 Intro", baseFileUrl: exampleUrlL1Intro()),
+            DocumentListViewModel(name: "Firebase Clean Code", baseFileUrl: exampleUrlFirebase()),
+            DocumentListViewModel(name: "Test E", baseFileUrl: exampleUrlL0Overview())
         ]
     }
 
@@ -33,31 +33,43 @@ class SampleData {
     }
 
     private func examplePdfDocument() -> DocumentPdfViewModel {
-        DocumentPdfViewModel(url: SampleData().exampleUrlLab01Qns())
+        DocumentPdfViewModel(baseFileUrl: SampleData().exampleUrlLab01Qns())
     }
 
     private func exampleUrlLab01Qns() -> URL {
-        guard let url = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {
-            fatalError("example url not valid")
+        guard let baseFileUrl = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {
+            fatalError("example baseFileUrl not valid")
         }
-        return url
+        return baseFileUrl
     }
 
     private func exampleUrlL0Overview() -> URL {
-        guard let url = Bundle.main.url(
+        guard let baseFileUrl = Bundle.main.url(
             forResource: "L0 - Course Overview",
             withExtension: "pdf"
         ) else {
-            fatalError("example url not valid")
+            fatalError("example baseFileUrl not valid")
         }
-        return url
+        return baseFileUrl
     }
 
     private func exampleUrlL1Intro() -> URL {
-        guard let url = Bundle.main.url(forResource: "L1 - Introduction", withExtension: "pdf") else {
-            fatalError("example url not valid")
+        guard let baseFileUrl = Bundle.main.url(forResource: "L1 - Introduction", withExtension: "pdf") else {
+            fatalError("example baseFileUrl not valid")
         }
-        return url
+        return baseFileUrl
+    }
+
+    private func exampleUrlFirebase() -> URL {
+        let firebaseUrlString = "https://firebasestorage.googleapis.com" +
+            ":443/v0/b/annotato" + "-ba051.appspot.com/o/clean-cod" +
+            "e.pdf?alt=media&token=513532aa-9c96-42ce-9a62-b4a49a8ec37c"
+        let firebaseUrl = URL(string: firebaseUrlString)
+        guard let firebaseUrl = firebaseUrl else {
+            fatalError("firebase url not valid")
+        }
+
+        return firebaseUrl
     }
 
     private func exampleAnnotationParts1() -> [DocumentAnnotationPartViewModel] {

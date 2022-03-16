@@ -29,10 +29,15 @@ extension Navigable {
 
     func goToDocumentEdit(documentPdfViewModel: DocumentPdfViewModel) {
         guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
-            .document, documentPdfViewModel: documentPdfViewModel
+            .document
         ) else {
             return
         }
+        let currentDocumentViewModel = DocumentViewModel(
+            annotations: SampleData().exampleAnnotations(),
+            pdfDocument: documentPdfViewModel
+        )
+        viewController.currentDocumentViewModel = currentDocumentViewModel
         present(viewController, animated: true, completion: nil)
     }
 

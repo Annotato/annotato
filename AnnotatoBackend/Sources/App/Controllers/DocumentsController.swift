@@ -3,8 +3,12 @@ import Vapor
 import AnnotatoSharedLibrary
 
 struct DocumentsController {
+    private enum QueryParams: String {
+        case userId
+    }
+
     static func list(req: Request) throws -> EventLoopFuture<[Document]> {
-        let userId: UUID? = req.query["userId"]
+        let userId: UUID? = req.query[QueryParams.userId.rawValue]
 
         guard let userId = userId else {
             throw Abort(.badRequest)
@@ -31,11 +35,9 @@ struct DocumentsController {
         return DocumentsDataAccess.update(db: req.db, document: document)
     }
 
-    static func delete(req: Request) throws -> HTTPResponseStatus {
+    static func delete(req: Request) throws -> EventLoopFuture<Document> {
         let documentId = try ControllersUtil.getIdFromParams(request: req)
 
-        DocumentsDataAccess.delete(db: req.db, documentId: documentId)
-
-        return .ok
+        return DocumentsDataAccess.delete(db: req.db, documentId: documentId)
     }
 }

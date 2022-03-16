@@ -52,23 +52,18 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         DocumentListCollectionCellViewDelegate,
         Navigable {
 
-    func didTapAddButton() {
-        goToDocumentEdit()
-    }
-
     func didTapImportFileButton() {
         goToImportingFiles()
     }
 
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        guard let selectedFileUrl = urls.first else {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt baseFileUrls: [URL]) {
+        guard let selectedFileUrl = baseFileUrls.first else {
             return
         }
         guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
             return
         }
-        print("selected file url = \(selectedFileUrl)")
-        let newlyLoadedDocumentPdfViewModel = DocumentPdfViewModel(url: selectedFileUrl)
+        let newlyLoadedDocumentPdfViewModel = DocumentPdfViewModel(baseFileUrl: selectedFileUrl)
         goToDocumentEdit(documentPdfViewModel: newlyLoadedDocumentPdfViewModel)
     }
 
