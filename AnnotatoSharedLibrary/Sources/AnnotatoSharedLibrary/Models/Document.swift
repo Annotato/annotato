@@ -1,6 +1,6 @@
 import Foundation
 
-public class Document: Codable {
+public final class Document: Codable {
     public var id: UUID?
     public private(set) var name: String
     public let ownerId: UUID

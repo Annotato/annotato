@@ -6,7 +6,7 @@ struct CreateDocuments: Migration {
         database.schema(DocumentEntity.schema)
             .id()
             .field("name", .string, .required)
-            .field("owner_id", .string, .required)
+            .field("owner_id", .uuid, .required)
             .field("base_file_url", .string, .required)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)

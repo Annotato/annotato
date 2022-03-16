@@ -54,9 +54,9 @@ PODS:
   - SwiftyBeaver (1.9.5)
 
 DEPENDENCIES:
-  - Firebase/Auth
-  - RichTextView
-  - SwiftyBeaver
+  - Firebase/Auth (= 8.12.1)
+  - RichTextView (= 3.2.1)
+  - SwiftyBeaver (= 1.9.5)
 
 SPEC REPOS:
   trunk:
@@ -91,6 +91,6 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftyBeaver: 84069991dd5dca07d7069100985badaca7f0ce82
 
-PODFILE CHECKSUM: aefbb86142ca6eb29b677372f3d08ca191b839b1
+PODFILE CHECKSUM: 9e0c746c60e15351da8a5ae109c98e9e8d0c1001
 
 COCOAPODS: 1.11.2
