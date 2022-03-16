@@ -5,6 +5,6 @@ enum ImageName: String {
 }
 
 enum SystemImageName: String {
-    case eye = "eye"
-    case pencil = "pencil"
+    case eye
+    case pencil
 }
