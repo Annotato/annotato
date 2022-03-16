@@ -45,10 +45,6 @@ class DocumentListViewController: UIViewController {
 
 extension DocumentListViewController: DocumentListToolbarDelegate, UIDocumentPickerDelegate, Navigable {
 
-    func didTapAddButton() {
-        goToDocumentEdit()
-    }
-
     func didTapImportFileButton() {
         goToImportingFiles()
     }

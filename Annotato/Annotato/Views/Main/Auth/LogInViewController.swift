@@ -1,7 +1,6 @@
 import UIKit
 
 class LogInViewController: UIViewController, Navigable {
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

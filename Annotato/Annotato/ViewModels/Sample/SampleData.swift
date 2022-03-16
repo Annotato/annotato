@@ -60,6 +60,18 @@ class SampleData {
         return baseFileUrl
     }
 
+    private func exampleUrlFirebase() -> URL {
+        let firebaseUrlString = "https://firebasestorage.googleapis.com" +
+            ":443/v0/b/annotato" + "-ba051.appspot.com/o/clean-cod" +
+            "e.pdf?alt=media&token=513532aa-9c96-42ce-9a62-b4a49a8ec37c"
+        let firebaseUrl = URL(string: firebaseUrlString)
+        guard let firebaseUrl = firebaseUrl else {
+            fatalError("firebase url not valid")
+        }
+
+        return firebaseUrl
+    }
+
     private func exampleAnnotationParts1() -> [DocumentAnnotationPartViewModel] {
         [
             DocumentAnnotationTextViewModel(content: "I am hungry", height: 30.0),

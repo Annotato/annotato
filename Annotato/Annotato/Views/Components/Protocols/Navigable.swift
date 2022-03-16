@@ -33,13 +33,11 @@ extension Navigable {
         ) else {
             return
         }
-        if let viewController = viewController as? DocumentEditViewController {
-            let currentDocumentViewModel = DocumentViewModel(
-                annotations: SampleData().exampleAnnotations(),
-                pdfDocument: documentPdfViewModel
-            )
-            viewController.currentDocumentViewModel = currentDocumentViewModel
-        }
+        let currentDocumentViewModel = DocumentViewModel(
+            annotations: SampleData().exampleAnnotations(),
+            pdfDocument: documentPdfViewModel
+        )
+        viewController.currentDocumentViewModel = currentDocumentViewModel
         present(viewController, animated: true, completion: nil)
     }
 

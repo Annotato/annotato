@@ -11,22 +11,12 @@ class DocumentListToolbarView: UIToolbar {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let addButton = makeAddButton()
         let importFileButton = makeImportFileButton()
-        self.items = [flexibleSpace, addButton, importFileButton]
-    }
-
-    private func makeAddButton() -> UIBarButtonItem {
-        UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        self.items = [flexibleSpace, importFileButton]
     }
 
     private func makeImportFileButton() -> UIBarButtonItem {
-        UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(didTapImportFileButton))
-    }
-
-    @objc
-    private func didTapAddButton() {
-        actionDelegate?.didTapAddButton()
+        UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapImportFileButton))
     }
 
     @objc
