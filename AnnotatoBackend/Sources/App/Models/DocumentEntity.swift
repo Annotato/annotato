@@ -33,6 +33,14 @@ final class DocumentEntity: Model {
         self.baseFileUrl = baseFileUrl
         self.id = id
     }
+
+    func copyPropertiesOf(otherEntity: DocumentEntity) {
+        precondition(id == otherEntity.id)
+
+        name = otherEntity.name
+        ownerId = otherEntity.ownerId
+        baseFileUrl = otherEntity.baseFileUrl
+    }
 }
 
 extension DocumentEntity: PersistedEntity {

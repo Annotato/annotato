@@ -30,9 +30,10 @@ struct DocumentsController {
     }
 
     static func update(req: Request) throws -> EventLoopFuture<Document> {
+        let documentId = try ControllersUtil.getIdFromParams(request: req)
         let document = try req.content.decode(Document.self)
 
-        return DocumentsDataAccess.update(db: req.db, document: document)
+        return DocumentsDataAccess.update(db: req.db, documentId: documentId, document: document)
     }
 
     static func delete(req: Request) throws -> EventLoopFuture<Document> {

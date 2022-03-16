@@ -48,6 +48,12 @@ struct DocumentsAPI {
     }
 
     func updateDocument(document: Document) async -> Document? {
+        guard let documentId = document.id else {
+            AnnotatoLogger.error("\(document) has a nil ID and cannot be updated",
+                                 context: "DocumentsAPI::updateDocument")
+            return nil
+        }
+
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not updated",
                                  context: "DocumentsAPI::createDocument")
@@ -55,7 +61,7 @@ struct DocumentsAPI {
         }
 
         do {
-            let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(document.id)",
+            let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(documentId)",
                                                          data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
