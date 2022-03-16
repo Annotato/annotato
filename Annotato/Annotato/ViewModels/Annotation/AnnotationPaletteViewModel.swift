@@ -8,7 +8,14 @@ class AnnotationPaletteViewModel: ObservableObject {
     private(set) var width: Double
     private(set) var height: Double
 
-    @Published var isEditing = false
+    @Published var isEditing = false {
+        didSet {
+            if !isEditing {
+                textIsSelected = false
+                markdownIsSelected = false
+            }
+        }
+    }
     @Published private(set) var textIsSelected = false
     @Published private(set) var markdownIsSelected = false
 
@@ -43,13 +50,19 @@ class AnnotationPaletteViewModel: ObservableObject {
 
     func enterViewMode() {
         isEditing = false
-        textIsSelected = false
-        markdownIsSelected = false
         parentViewModel?.enterViewMode()
     }
 
     func didSelectDeleteButton() {
         parentViewModel?.didDelete()
+    }
+
+    func enterMinimizedMode() {
+        parentViewModel?.enterMinimizedMode()
+    }
+
+    func enterMaximizedMode() {
+        parentViewModel?.enterMaximizedMode()
     }
 }
 

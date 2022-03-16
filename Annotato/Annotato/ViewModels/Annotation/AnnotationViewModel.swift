@@ -1,5 +1,6 @@
 import CoreGraphics
 import Foundation
+import CoreImage
 
 class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
@@ -13,6 +14,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
+    @Published private(set) var isMinimized = false
 
     init(
         id: UUID,
@@ -55,16 +57,36 @@ extension AnnotationViewModel {
         })
     }
 
+    var firstPartHeight: Double {
+        parts.isEmpty ? 0 : parts[0].height
+    }
+
     var height: Double {
         palette.height + partHeights
+    }
+
+    var minimizedHeight: Double {
+        palette.height + firstPartHeight
     }
 
     var size: CGSize {
         CGSize(width: width, height: height)
     }
 
-    var frame: CGRect {
+    var minimizedSize: CGSize {
+        CGSize(width: width, height: minimizedHeight)
+    }
+
+    private var maximizedFrame: CGRect {
         CGRect(origin: origin, size: size)
+    }
+
+    private var minimizedFrame: CGRect {
+        CGRect(origin: origin, size: minimizedSize)
+    }
+
+    var frame: CGRect {
+        isMinimized ? minimizedFrame : maximizedFrame
     }
 
     // Note: scrollFrame is with respect to this frame
@@ -122,22 +144,18 @@ extension AnnotationViewModel {
             return
         }
 
-        // If last part is what we want, return
-        if lastPart is AnnotationTextViewModel {
-            setSelectedPart(to: lastPart)
-            return
-        }
-
         removeIfPossible(part: lastPart)
 
         // The next last part is what we want, return
         if let nextLastPart = parts.last {
             if nextLastPart is AnnotationTextViewModel {
-                setSelectedPart(to: lastPart)
+                setSelectedPart(to: nextLastPart)
                 resize()
                 return
             }
         }
+
+        print(parts.count)
 
         let newPart = makeNewTextPart()
         addNewPart(newPart: newPart)
@@ -148,19 +166,12 @@ extension AnnotationViewModel {
             return
         }
 
-        // If last part is what we want, return
-        if lastPart is AnnotationMarkdownViewModel {
-            setSelectedPart(to: lastPart)
-            return
-        }
-
-        // If the last part is empty and there are other parts, remove it
         removeIfPossible(part: lastPart)
 
         // The next last part is what we want, return
         if let nextLastPart = parts.last {
             if nextLastPart is AnnotationMarkdownViewModel {
-                setSelectedPart(to: lastPart)
+                setSelectedPart(to: nextLastPart)
                 resize()
                 return
             }
@@ -198,6 +209,17 @@ extension AnnotationViewModel {
         }
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
+        resize()
+    }
+
+    func enterMinimizedMode() {
+        isMinimized = true
+        enterViewMode()
+        resize()
+    }
+
+    func enterMaximizedMode() {
+        isMinimized = false
         resize()
     }
 }

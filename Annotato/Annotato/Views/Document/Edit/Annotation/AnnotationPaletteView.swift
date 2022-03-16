@@ -127,6 +127,12 @@ extension AnnotationPaletteView {
 
     @objc
     private func didTapMinimizeOrMaximizeButton(_ button: UIButton) {
-        button.isSelected.toggle()
+        if minimizeOrMaximizeButton.isSelected {
+            minimizeOrMaximizeButton.isSelected = false
+            viewModel.enterMaximizedMode()
+        } else {
+            minimizeOrMaximizeButton.isSelected = true
+            viewModel.enterMinimizedMode()
+        }
     }
 }
