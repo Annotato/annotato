@@ -46,7 +46,6 @@ struct DocumentsAPI {
     private func encodeDocument(_ document: Document) -> Data? {
         do {
             let data = try JSONEncoder().encode(document)
-            print(String(data: data, encoding: .utf8))
             return data
         } catch {
             AnnotatoLogger.error("Could not encode Document into JSON",
@@ -58,14 +57,12 @@ struct DocumentsAPI {
 
 class DummyDelegate: AnnotatoHTTPDelegate {
     func requestDidFail(_ error: Error) {
-        print("Request Failed")
-
-        print(error)
+        AnnotatoLogger.info("Request failed")
+        AnnotatoLogger.info("Error: \(error)")
     }
 
     func requestDidSucceed(data: Data?) {
-        print("Request Succeeded")
-
-        print(data)
+        AnnotatoLogger.info("Request succeeded")
+        AnnotatoLogger.info("Data: \(data)")
     }
 }

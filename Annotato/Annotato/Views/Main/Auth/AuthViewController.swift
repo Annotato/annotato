@@ -30,19 +30,15 @@ class AuthViewController: UIViewController, Navigable {
     }
 
     private func dummyRequest() {
-        print("Start of dummyRequest")
         var documentsAPI = DocumentsAPI()
         documentsAPI.delegate = DummyDelegate()
         documentsAPI.getDocuments(userId: UUID(uuidString: "1e959847-f7a5-4a6f-8e33-de7555ea03d2")!)
-        print("End of dummyRequest")
     }
 
     private func dummyPostRequest() {
-        print("Start of dummyPostRequest")
         var documentsAPI = DocumentsAPI()
         documentsAPI.delegate = DummyDelegate()
         documentsAPI.createDocument(document: Document(name: "Test from auth", ownerId: UUID(), baseFileUrl: "path/to/auth/document"))
-        print("End of dummyPostRequest")
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
