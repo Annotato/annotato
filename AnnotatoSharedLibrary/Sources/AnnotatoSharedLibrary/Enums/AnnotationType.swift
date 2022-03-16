@@ -1,4 +1,4 @@
-public enum AnnotationType: Codable {
+public enum AnnotationType: Int, Codable {
     case plainText
     case markdown
 }
