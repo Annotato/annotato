@@ -13,9 +13,9 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         }
 
         var request = URLRequest(url: urlWithParams)
-        request.httpMethod = "GET"
+        request.httpMethod = AnnotatoHTTPMethod.get.rawValue
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: "GET"))
+        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .get))
         task.resume()
     }
 
@@ -26,10 +26,10 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         }
 
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = AnnotatoHTTPMethod.post.rawValue
         request.httpBody = data
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: "POST"))
+        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .post))
         task.resume()
     }
 
@@ -40,10 +40,10 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         }
 
         var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
+        request.httpMethod = AnnotatoHTTPMethod.put.rawValue
         request.httpBody = data
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: "PUT"))
+        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .put))
         task.resume()
     }
 
@@ -54,9 +54,9 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         }
 
         var request = URLRequest(url: url)
-        request.httpMethod = "DELETE"
+        request.httpMethod = AnnotatoHTTPMethod.delete.rawValue
 
-        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: "DELETE"))
+        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .delete))
         task.resume()
     }
 
@@ -74,12 +74,12 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         return urlComponents.url
     }
 
-    private func makeCompletionHandler(httpMethod: String) -> (Data?, URLResponse?, Error?) -> Void {
+    private func makeCompletionHandler(httpMethod: AnnotatoHTTPMethod) -> (Data?, URLResponse?, Error?) -> Void {
         { data, response, error in
             if let error = error {
                 AnnotatoLogger.error(
                     "Client error occurred during \(httpMethod) request: \(error.localizedDescription)",
-                    context: "URLSessionHTTPService::\(httpMethod.lowercased())"
+                    context: "URLSessionHTTPService::\(httpMethod.rawValue.lowercased())"
                 )
                 delegate?.requestDidFail(error)
                 return
@@ -89,7 +89,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
                   (200...299).contains(httpResponse.statusCode) else {
                       AnnotatoLogger.error(
                           "Server error occurred during \(httpMethod) request",
-                          context: "URLSessionHTTPService::\(httpMethod.lowercased())"
+                          context: "URLSessionHTTPService::\(httpMethod.rawValue.lowercased())"
                       )
                       delegate?.requestDidFail(AnnotatoHTTPError.serverError)
                       return
