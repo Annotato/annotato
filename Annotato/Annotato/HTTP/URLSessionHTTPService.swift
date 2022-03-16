@@ -3,7 +3,7 @@ import Foundation
 struct URLSessionHTTPService: AnnotatoHTTPService {
     private let sharedSession = URLSession.shared
 
-    weak var delegate: AnnotatoHTTPDelegate?
+    var delegate: AnnotatoHTTPDelegate?
 
     func get(url: String, params: [String: String]) {
         let urlWithParams = makeURLWithParams(url: url, params: params)
