@@ -31,7 +31,11 @@ class DocumentListViewController: UIViewController {
     }
 
     private func initializeDocumentsCollectionView() {
-        let collectionView = DocumentListCollectionView(documents: documents, frame: .zero)
+        let collectionView = DocumentListCollectionView(
+            documents: documents,
+            frame: .zero,
+            documentListCollectionCellViewDelegate: self
+        )
 
         view.addSubview(collectionView)
 
@@ -43,8 +47,33 @@ class DocumentListViewController: UIViewController {
     }
 }
 
-extension DocumentListViewController: DocumentListToolbarDelegate, Navigable {
+extension DocumentListViewController: DocumentListToolbarDelegate,
+        UIDocumentPickerDelegate,
+        DocumentListCollectionCellViewDelegate,
+        Navigable {
+
     func didTapAddButton() {
         goToDocumentEdit()
+    }
+
+    func didTapImportFileButton() {
+        goToImportingFiles()
+    }
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let selectedFileUrl = urls.first else {
+            return
+        }
+        guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
+            return
+        }
+        print("selected file url = \(selectedFileUrl)")
+        let newlyLoadedDocumentPdfViewModel = DocumentPdfViewModel(url: selectedFileUrl)
+        goToDocumentEdit(documentPdfViewModel: newlyLoadedDocumentPdfViewModel)
+    }
+
+    func didSelectCellView(document: DocumentListViewModel) {
+        let selectedDocumentPdfViewModel = DocumentPdfViewModel(url: document.url)
+        goToDocumentEdit(documentPdfViewModel: selectedDocumentPdfViewModel)
     }
 }
