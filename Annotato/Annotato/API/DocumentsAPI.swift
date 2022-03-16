@@ -18,19 +18,41 @@ struct DocumentsAPI {
     func getDocuments(userId: UUID) {
         httpService.get(url: DocumentsAPI.documentsUrl, params: ["userId": userId.uuidString])
     }
-}
 
-class DocumentsHTTPDelegate: AnnotatoHTTPDelegate {
-    func requestDidFail(_ error: Error) {
-        print("Request Failed")
-
-        print(error)
+    func getDocument(documentId: UUID) {
+        httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
     }
 
-    func requestDidSucceed(data: Data?) {
-        print("Request Succeeded")
+    func createDocument(document: Document) {
+        guard let data = encodeDocument(document) else {
+            return
+        }
 
-        print(data)
+        httpService.post(url: DocumentsAPI.documentsUrl, data: data)
+    }
+
+    func updateDocument(document: Document) {
+        guard let data = encodeDocument(document) else {
+            return
+        }
+
+        httpService.put(url: DocumentsAPI.documentsUrl, data: data)
+    }
+
+    func deleteDocument(documentId: UUID) {
+        httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
+    }
+
+    private func encodeDocument(_ document: Document) -> Data? {
+        do {
+            let data = try JSONEncoder().encode(document)
+            print(String(data: data, encoding: .utf8))
+            return data
+        } catch {
+            AnnotatoLogger.error("Could not encode Document into JSON",
+                                 context: "DocumentsAPI::encodeDocument")
+            return nil
+        }
     }
 }
 
@@ -46,5 +68,4 @@ class DummyDelegate: AnnotatoHTTPDelegate {
 
         print(data)
     }
-
 }

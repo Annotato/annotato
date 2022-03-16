@@ -5,6 +5,8 @@ protocol AnnotatoHTTPService {
 
     func get(url: String, params: [String: String])
 
+    func get(url: String)
+
     func post(url: String, data: Data)
 
     func put(url: String, data: Data)

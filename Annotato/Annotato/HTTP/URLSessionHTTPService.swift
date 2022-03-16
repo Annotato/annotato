@@ -19,6 +19,19 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         task.resume()
     }
 
+    func get(url: String) {
+        guard let url = URL(string: url) else {
+            delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = AnnotatoHTTPMethod.get.rawValue
+
+        let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .get))
+        task.resume()
+    }
+
     func post(url: String, data: Data) {
         guard let url = URL(string: url) else {
             delegate?.requestDidFail(AnnotatoHTTPError.invalidURL)
@@ -95,9 +108,9 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
                       return
                   }
 
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 delegate?.requestDidSucceed(data: data)
-            }
+//            }
         }
     }
 }
