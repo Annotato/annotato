@@ -1,5 +1,4 @@
 import UIKit
-import AnnotatoSharedLibrary
 
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
@@ -30,7 +29,6 @@ class AuthViewController: UIViewController, Navigable {
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
-
         let segment = Segment(rawValue: formSegmentedControl.selectedSegmentIndex)
         switch segment {
         case .logIn:

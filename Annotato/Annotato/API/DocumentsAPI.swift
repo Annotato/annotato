@@ -13,7 +13,7 @@ struct DocumentsAPI {
     func getDocuments(userId: UUID) async -> [Document] {
         do {
             let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
-                                             params: ["userId": userId.uuidString])
+                                                         params: ["userId": userId.uuidString])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching documents: \(error.localizedDescription)")
@@ -83,17 +83,5 @@ struct DocumentsAPI {
                                  context: "DocumentsAPI::encodeDocument")
             return nil
         }
-    }
-}
-
-class DummyDelegate: AnnotatoHTTPDelegate {
-    func requestDidFail(_ error: Error) {
-        AnnotatoLogger.info("Request failed")
-        AnnotatoLogger.info("Error: \(error)")
-    }
-
-    func requestDidSucceed(data: Data?) {
-        AnnotatoLogger.info("Request succeeded")
-        AnnotatoLogger.info("Data: \(data)")
     }
 }
