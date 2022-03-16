@@ -21,7 +21,6 @@ class FirebaseStorage: AnnotatoStorageService {
                 return
             }
             AnnotatoLogger.info("Uploaded PDF with fileSystemUrl: \(fileSystemUrl)")
-            self.delegate?.uploadDidSucceed()
 
             pdfRef.downloadURL { url, error in
                 if let error = error {
@@ -30,7 +29,16 @@ class FirebaseStorage: AnnotatoStorageService {
                         context: "FirebaseStorage::uploadPdf")
                     return
                 }
-                completion(url!)
+
+                guard let url = url else {
+                    AnnotatoLogger.error(
+                        "Missing URL for PDF with fileSystemUrl: \(fileSystemUrl).",
+                        context: "FirebaseStorage::uploadPdf")
+                    return
+                }
+
+                completion(url)
+                self.delegate?.uploadDidSucceed(url)
             }
         }
     }
