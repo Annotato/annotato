@@ -68,7 +68,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     }
 
     func didSelectCellView(document: DocumentListViewModel) {
-        let selectedDocumentPdfViewModel = DocumentPdfViewModel(url: document.url)
+        let selectedDocumentPdfViewModel = DocumentPdfViewModel(baseFileUrl: document.baseFileUrl)
         goToDocumentEdit(documentPdfViewModel: selectedDocumentPdfViewModel)
     }
 }
