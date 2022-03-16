@@ -28,7 +28,16 @@ class AuthViewController: UIViewController, Navigable {
         heightConstraint.constant = 50
     }
 
+    private func dummyRequest() {
+        print("Start of dummyRequest")
+        var documentsAPI = DocumentsAPI()
+        documentsAPI.delegate = DummyDelegate()
+        documentsAPI.getDocuments(userId: UUID(uuidString: "1e959847-f7a5-4a6f-8e33-de7555ea03d2")!)
+        print("End of dummyRequest")
+    }
+
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
+        dummyRequest()
         let segment = Segment(rawValue: formSegmentedControl.selectedSegmentIndex)
         switch segment {
         case .logIn:
