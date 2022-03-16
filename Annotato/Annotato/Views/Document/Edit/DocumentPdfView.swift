@@ -2,7 +2,7 @@ import UIKit
 import PDFKit
 
 class DocumentPdfView: PDFView {
-    private var viewModel: DocumentPdfViewModel
+    private(set) var viewModel: DocumentPdfViewModel
 
     @available(*, unavailable)
     required init(coder: NSCoder) {

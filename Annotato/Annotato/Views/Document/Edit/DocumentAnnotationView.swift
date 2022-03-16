@@ -29,7 +29,7 @@ class DocumentAnnotationView: UIView {
 
         super.init(frame: frame)
         self.sections = viewModel.parts.map({ $0.toView(in: self) })
-        self.center = annotationViewModel.center
+        self.center = annotationViewModel.coordinatesInPageSpace
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.blue.cgColor
         makeScrollView()
@@ -104,9 +104,9 @@ class DocumentAnnotationView: UIView {
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
         let touchPoint = sender.location(in: superview)
-
         if sender.state != .cancelled {
             sender.view?.center = touchPoint
+            viewModel.updateLocation(documentViewPoint: touchPoint, parentView: superview)
         }
     }
 

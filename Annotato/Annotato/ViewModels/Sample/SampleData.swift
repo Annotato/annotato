@@ -12,28 +12,34 @@ class SampleData {
         ]
     }
 
-    func exampleDocument() -> DocumentViewModel {
-        DocumentViewModel(
-            annotations: SampleData().exampleAnnotations(),
-            pdfDocument: SampleData().examplePdfDocument())
-    }
-
     func exampleAnnotations() -> [DocumentAnnotationViewModel] {
-        [
+        guard let firstPage = examplePdfViewModelLab01Qns().document.page(at: 0) else {
+            return []
+        }
+        return [
             DocumentAnnotationViewModel(
-                center: CGPoint(x: 450.0, y: 150.0),
+                associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
+                associatedPage: firstPage,
+                coordinatesInPageSpace: .init(x: 100, y: 100),
                 width: 300.0,
                 parts: exampleAnnotationParts1()
             ),
             DocumentAnnotationViewModel(
-                center: CGPoint(x: 600.0, y: 300.0),
+                associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
+                associatedPage: firstPage,
+                coordinatesInPageSpace: .init(x: 200, y: 200),
                 width: 250.0,
-                parts: exampleAnnotationParts2())
+                parts: exampleAnnotationParts2()
+            )
         ]
     }
 
-    private func examplePdfDocument() -> DocumentPdfViewModel {
-        DocumentPdfViewModel(baseFileUrl: SampleData().exampleUrlLab01Qns())
+    private func examplePdfViewModelLab01Qns() -> DocumentPdfViewModel {
+        DocumentPdfViewModel(baseFileUrl: exampleUrlLab01Qns())
+    }
+
+    private func examplePdfViewModelL0Overview() -> DocumentPdfViewModel {
+        DocumentPdfViewModel(baseFileUrl: exampleUrlL0Overview())
     }
 
     private func exampleUrlLab01Qns() -> URL {
