@@ -35,8 +35,8 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
 
         var request = URLRequest(url: url)
         request.httpMethod = AnnotatoHTTPMethod.post.rawValue
-        request.httpBody = data
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = data
 
         let (data, _) = try await URLSession.shared.data(for: request)
         return data
@@ -49,8 +49,8 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
 
         var request = URLRequest(url: url)
         request.httpMethod = AnnotatoHTTPMethod.put.rawValue
-        request.httpBody = data
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = data
 
         let (data, _) = try await URLSession.shared.data(for: request)
         return data
