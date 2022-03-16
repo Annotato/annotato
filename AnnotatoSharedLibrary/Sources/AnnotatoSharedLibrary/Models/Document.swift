@@ -13,3 +13,9 @@ public final class Document: Codable {
         self.baseFileUrl = baseFileUrl
     }
 }
+
+extension Document: CustomStringConvertible {
+    public var description: String {
+        "Document(id: \(String(describing: id)), name: \(name), ownerId: \(ownerId), baseFileUrl: \(baseFileUrl))"
+    }
+}
