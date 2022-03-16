@@ -82,6 +82,7 @@ extension AnnotationViewModel {
 extension AnnotationViewModel {
     func enterEditMode() {
         isEditing = true
+        palette.isEditing = true
         for part in parts {
             part.enterEditMode()
         }
@@ -90,6 +91,7 @@ extension AnnotationViewModel {
 
     func enterViewMode() {
         isEditing = false
+        palette.isEditing = false
         deselectSelectedPart()
         for part in parts {
             part.enterViewMode()

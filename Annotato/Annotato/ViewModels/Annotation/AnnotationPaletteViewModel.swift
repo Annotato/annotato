@@ -8,7 +8,7 @@ class AnnotationPaletteViewModel: ObservableObject {
     private(set) var width: Double
     private(set) var height: Double
 
-    private(set) var isEditing = false
+    @Published var isEditing = false
     @Published private(set) var textIsSelected = false
     @Published private(set) var markdownIsSelected = false
 
