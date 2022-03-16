@@ -3,6 +3,7 @@ import UIKit
 class DocumentListCollectionCellView: UICollectionViewCell {
     var document: DocumentListViewModel?
     let nameLabelHeight = 30.0
+    weak var actionDelegate: DocumentListCollectionCellViewDelegate?
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -14,6 +15,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     }
 
     func initializeSubviews() {
+        addTapGestureRecognizer()
         initializeIconImageView()
         initializeNameLabel()
     }
@@ -47,5 +49,19 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         label.heightAnchor.constraint(equalToConstant: nameLabelHeight).isActive = true
         label.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         label.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+    }
+
+    private func addTapGestureRecognizer() {
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnCellView))
+        addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc
+    private func didTapOnCellView() {
+        guard let document = document else {
+            print("No document in this cell view")
+            return
+        }
+        actionDelegate?.didSelectCellView(document: document)
     }
 }
