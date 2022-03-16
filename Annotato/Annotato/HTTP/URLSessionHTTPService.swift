@@ -41,6 +41,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         var request = URLRequest(url: url)
         request.httpMethod = AnnotatoHTTPMethod.post.rawValue
         request.httpBody = data
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .post))
         task.resume()
@@ -55,6 +56,7 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         var request = URLRequest(url: url)
         request.httpMethod = AnnotatoHTTPMethod.put.rawValue
         request.httpBody = data
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let task = sharedSession.dataTask(with: request, completionHandler: makeCompletionHandler(httpMethod: .put))
         task.resume()
@@ -108,9 +110,9 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
                       return
                   }
 
-//            DispatchQueue.main.async {
+            DispatchQueue.main.async {
                 delegate?.requestDidSucceed(data: data)
-//            }
+            }
         }
     }
 }
