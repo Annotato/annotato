@@ -81,6 +81,10 @@ extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
 
     func logInDidSucceed() {
         goToDocumentList()
+
+        let storage = AnnotatoPdfStorageManager()
+        let fileUrl = Bundle.main.url(forResource: "random", withExtension: ".pdf")!
+        storage.uploadPdf(fileSystemUrl: fileUrl, withName: "random.pdf")
     }
 
     func signUpDidSucceed() {
