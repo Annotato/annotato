@@ -7,6 +7,7 @@ extension Annotation: Persistable {
             origin: CGPoint(x: managedEntity.originX, y: managedEntity.originY),
             width: managedEntity.width,
             ownerId: managedEntity.ownerId,
+            documentId: managedEntity.documentId,
             id: managedEntity.id
         )
     }

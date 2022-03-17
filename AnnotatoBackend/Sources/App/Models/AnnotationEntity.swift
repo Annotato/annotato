@@ -17,7 +17,10 @@ final class AnnotationEntity: Model {
     var width: Double
 
     @Field(key: "owner_id")
-    var ownerId: UUID
+    var ownerId: String
+
+    @Field(key: "document_id")
+    var documentId: UUID
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -30,16 +33,23 @@ final class AnnotationEntity: Model {
 
     init() { }
 
-    init(originX: Double, originY: Double, ownerId: UUID, id: UUID? = nil) {
+    init(originX: Double, originY: Double, ownerId: String, documentId: UUID, id: UUID? = nil) {
         self.originX = originX
         self.originY = originY
         self.ownerId = ownerId
+        self.documentId = documentId
         self.id = id
     }
 }
 
 extension AnnotationEntity: PersistedEntity {
     static func fromModel(_ model: Annotation) -> Self {
-        Self(originX: model.origin.x, originY: model.origin.y, ownerId: model.ownerId, id: model.id)
+        Self(
+            originX: model.origin.x,
+            originY: model.origin.y,
+            ownerId: model.ownerId,
+            documentId: model.documentId,
+            id: model.id
+        )
     }
 }
