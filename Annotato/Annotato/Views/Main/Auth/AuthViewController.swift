@@ -54,7 +54,7 @@ class AuthViewController: UIViewController, Navigable {
     // TODO: Remove after testing
     private func testHttpRequests() {
         // Change these for testing
-        let anExistingDocumentId = "ca67240a-469d-4901-8931-d16258f9dfcc"
+        let anExistingDocumentId = "d691bee0-0ddd-4ff8-a3d9-34ae69f850b6"
         let ownerIdOfExistingDocument = "owner1"
 
         Task {
@@ -77,7 +77,8 @@ class AuthViewController: UIViewController, Navigable {
             AnnotatoLogger.info("POST \(createdDocument)")
 
             let deletedDocument = await DocumentsAPI()
-                .deleteDocument(documentId: UUID(uuidString: "60d8cb78-95c6-4bd7-8392-d64fb0ce3f15")!)
+                .deleteDocument(document: Document(name: "", ownerId: "", baseFileUrl: "",
+                                                   id: UUID(uuidString: anExistingDocumentId)!))
             AnnotatoLogger.info("DELETE \(deletedDocument)")
         }
     }

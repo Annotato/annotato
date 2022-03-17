@@ -42,7 +42,7 @@ struct DocumentsAPI {
             let responseData = try await httpService.post(url: DocumentsAPI.documentsUrl, data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When creating document: \(error.localizedDescription)")
             return nil
         }
     }
@@ -70,7 +70,13 @@ struct DocumentsAPI {
         }
     }
 
-    func deleteDocument(documentId: UUID) async -> Document? {
+    func deleteDocument(document: Document) async -> Document? {
+        guard let documentId = document.id else {
+            AnnotatoLogger.error("\(document) has a nil ID and cannot be deleted",
+                                 context: "DocumentsAPI::deleteDocument")
+            return nil
+        }
+
         do {
             let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
             return try JSONDecoder().decode(Document.self, from: responseData)
