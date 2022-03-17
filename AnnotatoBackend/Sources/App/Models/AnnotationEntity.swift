@@ -19,8 +19,11 @@ final class AnnotationEntity: Model {
     @Field(key: "owner_id")
     var ownerId: String
 
-    @Field(key: "document_id")
-    var documentId: UUID
+    @Parent(key: "document_id")
+    var document: DocumentEntity
+
+    @Children(for: \.$annotation)
+    var annotationTextEntities: [AnnotationTextEntity]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -33,11 +36,11 @@ final class AnnotationEntity: Model {
 
     init() { }
 
-    init(originX: Double, originY: Double, ownerId: String, documentId: UUID, id: UUID? = nil) {
+    init(originX: Double, originY: Double, ownerId: String, documentId: DocumentEntity.IDValue, id: UUID? = nil) {
         self.originX = originX
         self.originY = originY
         self.ownerId = ownerId
-        self.documentId = documentId
+        self.$document.id = documentId
         self.id = id
     }
 }

@@ -1,4 +1,5 @@
 import CoreGraphics
+import Foundation
 import AnnotatoSharedLibrary
 
 extension AnnotationText: Persistable {
@@ -7,7 +8,7 @@ extension AnnotationText: Persistable {
             type: AnnotationType(rawValue: managedEntity.type) ?? .plainText,
             content: managedEntity.content,
             height: managedEntity.height,
-            annotationId: managedEntity.annotationId,
+            annotationId: managedEntity.annotation.id ?? UUID(),
             id: managedEntity.id
         )
     }

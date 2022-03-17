@@ -8,4 +8,8 @@ func routes(_ app: Application) throws {
     }
 
     app.group("documents", configure: documentsRouter)
+
+//    app.get { "test"
+//        
+//    }
 }

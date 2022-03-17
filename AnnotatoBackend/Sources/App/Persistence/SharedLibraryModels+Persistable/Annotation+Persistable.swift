@@ -1,4 +1,5 @@
 import CoreGraphics
+import Foundation
 import AnnotatoSharedLibrary
 
 extension Annotation: Persistable {
@@ -7,7 +8,7 @@ extension Annotation: Persistable {
             origin: CGPoint(x: managedEntity.originX, y: managedEntity.originY),
             width: managedEntity.width,
             ownerId: managedEntity.ownerId,
-            documentId: managedEntity.documentId,
+            documentId: managedEntity.document.id ?? UUID(),
             id: managedEntity.id
         )
     }

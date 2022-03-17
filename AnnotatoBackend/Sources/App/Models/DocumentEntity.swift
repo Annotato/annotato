@@ -16,6 +16,9 @@ final class DocumentEntity: Model {
     @Field(key: "base_file_url")
     var baseFileUrl: String
 
+    @Children(for: \.$document)
+    var annotations: [AnnotationEntity]
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

@@ -16,8 +16,8 @@ final class AnnotationTextEntity: Model {
     @Field(key: "height")
     var height: Double
 
-    @Field(key: "annotation_id")
-    var annotationId: UUID
+    @Parent(key: "annotation_id")
+    var annotation: AnnotationEntity
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -30,11 +30,11 @@ final class AnnotationTextEntity: Model {
 
     init() { }
 
-    init(type: AnnotationType, content: String, height: Double, annotationId: UUID, id: UUID? = nil) {
+    init(type: AnnotationType, content: String, height: Double, annotationId: AnnotationEntity.IDValue, id: UUID? = nil) {
         self.type = type.rawValue
         self.content = content
         self.height = height
-        self.annotationId = annotationId
+        self.$annotation.id = annotationId
         self.id = id
     }
 }
