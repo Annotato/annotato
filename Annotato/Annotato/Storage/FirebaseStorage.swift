@@ -12,28 +12,31 @@ class FirebaseStorage: AnnotatoStorageService {
 
     func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (URL) -> Void) {
         let pdfRef = storageRef.child("\(name)")
+
+        // swiftlint:disable closure_body_length
         _ = pdfRef.putFile(from: fileSystemUrl, metadata: nil) { _, error in
             if let error = error {
                 AnnotatoLogger.error(
-                    "When trying to upload PDF with fileSystemUrl: \(fileSystemUrl) to firebase. \(error.localizedDescription)",
+                    "When uploading PDF with fileSystemUrl: \(fileSystemUrl) to FB. \(error.localizedDescription)",
                     context: "FirebaseStorage::uploadPdf"
                 )
                 self.delegate?.uploadDidFail(error)
                 return
             }
-            AnnotatoLogger.info("Uploaded PDF with fileSystemUrl: \(fileSystemUrl) to firebase")
+            AnnotatoLogger.info("Uploaded PDF with fileSystemUrl: \(fileSystemUrl) to FB")
 
             pdfRef.downloadURL { url, error in
                 if let error = error {
                     AnnotatoLogger.error(
-                        "When getting firebase URL of PDF with fileSystemUrl: \(fileSystemUrl). \(error.localizedDescription)",
+                        "When getting FB URL of PDF with fileSystemUrl: \(fileSystemUrl)." +
+                        "\(error.localizedDescription)",
                         context: "FirebaseStorage::uploadPdf")
                     return
                 }
 
                 guard let url = url else {
                     AnnotatoLogger.error(
-                        "Missing firebase URL for PDF with fileSystemUrl: \(fileSystemUrl).",
+                        "Missing FB URL for PDF with fileSystemUrl: \(fileSystemUrl).",
                         context: "FirebaseStorage::uploadPdf")
                     return
                 }
@@ -55,8 +58,8 @@ class FirebaseStorage: AnnotatoStorageService {
                 self.delegate?.deleteDidFail(error)
                 return
             }
-            
-            AnnotatoLogger.info("Deleted PDF: \(document) from firebase.")
+
+            AnnotatoLogger.info("Deleted PDF: \(document) from FB.")
             completion()
         }
     }
