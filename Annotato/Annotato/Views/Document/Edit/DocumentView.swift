@@ -126,10 +126,11 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        testFunc(mainViewTouchPoint: touchPoint)
+        addAnnoToViewAndViewModel(mainViewTouchPoint: touchPoint)
+//        testFunc()
     }
 
-    private func testFunc(mainViewTouchPoint: CGPoint) {
+    private func addAnnoToViewAndViewModel(mainViewTouchPoint: CGPoint) {
         guard let pdfView = self.pdfView else {
             return
         }
@@ -156,5 +157,16 @@ class DocumentView: UIView {
             annotationViewModel: docAnnoViewModel
         )
         pdfView.documentView?.addSubview(annotation)
+    }
+
+    private func testFunc() {
+        print("\n\n\n----------------------")
+        let currSelection = pdfView?.currentSelection
+        print(currSelection)
+        if let gr = pdfView?.gestureRecognizers {
+            for r in gr {
+                print(r)
+            }
+        }
     }
 }
