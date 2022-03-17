@@ -29,7 +29,7 @@ class DocumentAnnotationView: UIView {
 
         super.init(frame: frame)
         self.sections = viewModel.parts.map({ $0.toView(in: self) })
-        self.center = annotationViewModel.coordinatesInPageSpace
+        self.center = annotationViewModel.coordinatesInDocumentSpace
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.blue.cgColor
         makeScrollView()

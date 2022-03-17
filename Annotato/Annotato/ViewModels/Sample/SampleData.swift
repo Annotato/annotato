@@ -19,6 +19,7 @@ class SampleData {
         return [
             DocumentAnnotationViewModel(
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
+                coordinatesInDocumentSpace: .init(x: 100, y: 100),
                 associatedPage: firstPage,
                 coordinatesInPageSpace: .init(x: 100, y: 100),
                 width: 300.0,
@@ -26,6 +27,7 @@ class SampleData {
             ),
             DocumentAnnotationViewModel(
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
+                coordinatesInDocumentSpace: .init(x: 200, y: 200),
                 associatedPage: firstPage,
                 coordinatesInPageSpace: .init(x: 200, y: 200),
                 width: 250.0,

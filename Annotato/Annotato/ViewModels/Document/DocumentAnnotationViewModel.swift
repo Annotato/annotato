@@ -7,11 +7,13 @@ class DocumentAnnotationViewModel {
 
     unowned var associatedDocumentPdfViewModel: DocumentPdfViewModel?
     var associatedDocument: PDFDocument
+    var coordinatesInDocumentSpace: CGPoint
     var associatedPage: PDFPage
     var coordinatesInPageSpace: CGPoint
 
     init(
         associatedDocumentPdfViewModel: DocumentPdfViewModel,
+        coordinatesInDocumentSpace: CGPoint,
         associatedPage: PDFPage,
         coordinatesInPageSpace: CGPoint,
         width: Double,
@@ -19,6 +21,7 @@ class DocumentAnnotationViewModel {
     ) {
         self.associatedDocumentPdfViewModel = associatedDocumentPdfViewModel
         self.associatedDocument = associatedDocumentPdfViewModel.document
+        self.coordinatesInDocumentSpace = coordinatesInDocumentSpace
         self.associatedPage = associatedPage
         self.coordinatesInPageSpace = coordinatesInPageSpace
 
