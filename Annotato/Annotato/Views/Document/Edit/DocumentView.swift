@@ -32,7 +32,6 @@ class DocumentView: UIView {
 
     @objc
     private func handleVisiblePageChange(notification: Notification) {
-        print("visible pages changed")
         initializeAnnotationViewsForVisiblePages()
     }
 
@@ -60,7 +59,6 @@ class DocumentView: UIView {
                 continue
             }
             if annoSubview.viewModel === anno {
-                print("same instance of view model is already in view")
                 return true
             }
         }
@@ -76,7 +74,6 @@ class DocumentView: UIView {
             }
             if annoSubview.viewModel === anno {
                 guard let documentViewParent = annoSubview.superview else {
-                    print("this annotation has no parent view")
                     return
                 }
                 documentViewParent.bringSubviewToFront(annoSubview)
@@ -115,7 +112,6 @@ class DocumentView: UIView {
                 }
             }
         }
-        print("-------------------------------------")
     }
 
     private func initializePdfView() {
@@ -136,7 +132,6 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        print("touch coordinates in view: \(touchPoint)")
         testFunc(mainViewTouchPoint: touchPoint)
     }
 
@@ -146,7 +141,6 @@ class DocumentView: UIView {
         }
         // This returns the page that the click occurred
         guard let pageClicked: PDFPage = pdfView.page(for: mainViewTouchPoint, nearest: true) else {
-            print("no page")
             return
         }
 

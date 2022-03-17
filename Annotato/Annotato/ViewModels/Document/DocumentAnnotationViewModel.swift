@@ -68,10 +68,5 @@ class DocumentAnnotationViewModel {
         // Assign all the new values to update
         self.associatedPage = currPage
         self.coordinatesInPageSpace = pageSpaceCoordinates
-        print("document view coord: \(documentViewPoint)")
-        print("visible view coord: \(visibleViewCoordinates)")
-        print("currPage: \(currPage)")
-        print("coord in page space: \(pageSpaceCoordinates)")
-        print("----------------------------------")
     }
 }
