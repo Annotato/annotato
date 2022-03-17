@@ -1,5 +1,5 @@
 class DocumentViewModel {
-    private(set) var annotations: [DocumentAnnotationViewModel]
+    var annotations: [DocumentAnnotationViewModel]
     private(set) var pdfDocument: DocumentPdfViewModel
 
     init(annotations: [DocumentAnnotationViewModel], pdfDocument: DocumentPdfViewModel) {

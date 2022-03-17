@@ -82,12 +82,7 @@ class DocumentView: UIView {
     }
 
     private func initializeAnnotationViewsForVisiblePages() {
-        guard let pdfSubView = subviews.first(where: { subview in
-            subview is DocumentPdfView
-        }) else {
-            return
-        }
-        guard let pdfSubView = pdfSubView as? DocumentPdfView else {
+        guard let pdfSubView = pdfView else {
             return
         }
         let visiblePages = pdfSubView.visiblePages
@@ -105,7 +100,6 @@ class DocumentView: UIView {
                 if !annoIsAlreadyInSubview {
                     pdfSubView.documentView?.addSubview(view)
                 } else {
-                    // simply bring it to the front
                     bringAnnoToFront(
                         anno: annotation, subviews: documentView.subviews
                     )
@@ -160,10 +154,11 @@ class DocumentView: UIView {
             width: newAnnotationWidth,
             parts: []
         )
+        documentViewModel.annotations.append(docAnnoViewModel)
         let annotation = DocumentAnnotationView(
             annotationViewModel: docAnnoViewModel
         )
         pdfView.documentView?.addSubview(annotation)
-        print("-------------------------------------")
+        print("-------------------------------------\n\n\n\n")
     }
 }
