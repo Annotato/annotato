@@ -67,7 +67,7 @@ class DocumentView: UIView {
         return false
     }
 
-    private func checkIfAnnoIsBlocked(
+    private func bringAnnoToFront(
         anno: DocumentAnnotationViewModel, subviews: [UIView]
     ) {
         for subview in subviews {
@@ -75,8 +75,11 @@ class DocumentView: UIView {
                 continue
             }
             if annoSubview.viewModel === anno {
-                let isBlocked = annoSubview.isHidden
-                print("isBlocked: \(isBlocked)")
+                guard let documentViewParent = annoSubview.superview else {
+                    print("this annotation has no parent view")
+                    return
+                }
+                documentViewParent.bringSubviewToFront(annoSubview)
             }
         }
     }
@@ -106,25 +109,9 @@ class DocumentView: UIView {
                     pdfSubView.documentView?.addSubview(view)
                 } else {
                     // simply bring it to the front
-
-                }
-            } else {
-                // The annotation should not be visible
-                let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
-                    anno: annotation, subviews: documentView.subviews
-                )
-                let annoIsHidden = checkIfAnnoIsBlocked(
-                    anno: annotation, subviews: documentView.subviews
-                )
-                // Remove it from the subview if it is there
-                if annoIsAlreadyInSubview {
-                    print("anno should not be visible but is in subview")
-                    // TODO: Implement removing subviews if they are out of view.
-                    // It needs to be done from the annotation view itself I think
-                    // by calling removeFromSuperView()
-
-                } else {
-                    print("anno is not in subview and is not visible")
+                    bringAnnoToFront(
+                        anno: annotation, subviews: documentView.subviews
+                    )
                 }
             }
         }
