@@ -1,5 +1,4 @@
 import UIKit
-import AnnotatoSharedLibrary
 
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
@@ -30,7 +29,6 @@ class AuthViewController: UIViewController, Navigable {
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
-        testHttpRequests() // TODO: Remove after testing
         let segment = Segment(rawValue: formSegmentedControl.selectedSegmentIndex)
         switch segment {
         case .logIn:
@@ -48,38 +46,6 @@ class AuthViewController: UIViewController, Navigable {
             )
         default:
             fatalError("Invalid Segment")
-        }
-    }
-
-    // TODO: Remove after testing
-    private func testHttpRequests() {
-        // Change these for testing
-        let anExistingDocumentId = "d691bee0-0ddd-4ff8-a3d9-34ae69f850b6"
-        let ownerIdOfExistingDocument = "owner1"
-
-        Task {
-            let documentsFetched = await DocumentsAPI()
-                .getDocuments(userId: ownerIdOfExistingDocument)
-            AnnotatoLogger.info("LIST \(documentsFetched)")
-
-            let documentFetched = await DocumentsAPI()
-                .getDocument(documentId: UUID(uuidString: anExistingDocumentId)!)
-            AnnotatoLogger.info("GET \(documentFetched)")
-
-            let documentToUpdate = Document(name: "Updated name", ownerId: ownerIdOfExistingDocument,
-                                            baseFileUrl: "updated/path", id: UUID(uuidString: anExistingDocumentId)!)
-            let updatedDocument = await DocumentsAPI().updateDocument(document: documentToUpdate)
-            AnnotatoLogger.info("PUT \(updatedDocument)")
-
-            let documentToCreate = Document(name: "Newly created document", ownerId: ownerIdOfExistingDocument,
-                                            baseFileUrl: "path/to/new/document")
-            let createdDocument = await DocumentsAPI().createDocument(document: documentToCreate)
-            AnnotatoLogger.info("POST \(createdDocument)")
-
-            let deletedDocument = await DocumentsAPI()
-                .deleteDocument(document: Document(name: "", ownerId: "", baseFileUrl: "",
-                                                   id: UUID(uuidString: anExistingDocumentId)!))
-            AnnotatoLogger.info("DELETE \(deletedDocument)")
         }
     }
 
