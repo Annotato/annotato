@@ -10,14 +10,14 @@ struct DocumentsAPI {
         httpService = URLSessionHTTPService()
     }
 
-    func getDocuments(userId: UUID) async -> [Document] {
+    func getDocuments(userId: String) async -> [Document]? {
         do {
             let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
-                                                         params: ["userId": userId.uuidString])
+                                                         params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching documents: \(error.localizedDescription)")
-            return []
+            return nil
         }
     }
 

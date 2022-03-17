@@ -8,7 +8,7 @@ struct DocumentsController {
     }
 
     static func list(req: Request) throws -> EventLoopFuture<[Document]> {
-        let userId: UUID? = req.query[QueryParams.userId.rawValue]
+        let userId: String? = req.query[QueryParams.userId.rawValue]
 
         guard let userId = userId else {
             throw Abort(.badRequest)

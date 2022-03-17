@@ -3,7 +3,7 @@ import Fluent
 import AnnotatoSharedLibrary
 
 struct DocumentsDataAccess {
-    static func list(db: Database, userId: UUID) -> EventLoopFuture<[Document]> {
+    static func list(db: Database, userId: String) -> EventLoopFuture<[Document]> {
         db.query(DocumentEntity.self)
             .filter(\.$ownerId == userId)
             .all()

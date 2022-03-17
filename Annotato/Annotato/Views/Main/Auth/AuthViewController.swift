@@ -55,23 +55,23 @@ class AuthViewController: UIViewController, Navigable {
     private func testHttpRequests() {
         // Change these for testing
         let anExistingDocumentId = "ca67240a-469d-4901-8931-d16258f9dfcc"
-        let ownerIdOfExistingDocument = "1e959847-f7a5-4a6f-8e33-de7555ea03d2"
+        let ownerIdOfExistingDocument = "owner1"
 
         Task {
             let documentsFetched = await DocumentsAPI()
-                .getDocuments(userId: UUID(uuidString: ownerIdOfExistingDocument)!)
+                .getDocuments(userId: ownerIdOfExistingDocument)
             AnnotatoLogger.info("LIST \(documentsFetched)")
 
             let documentFetched = await DocumentsAPI()
                 .getDocument(documentId: UUID(uuidString: anExistingDocumentId)!)
             AnnotatoLogger.info("GET \(documentFetched)")
 
-            let documentToUpdate = Document(name: "Updated name", ownerId: UUID(uuidString: ownerIdOfExistingDocument)!,
+            let documentToUpdate = Document(name: "Updated name", ownerId: ownerIdOfExistingDocument,
                                             baseFileUrl: "updated/path", id: UUID(uuidString: anExistingDocumentId)!)
             let updatedDocument = await DocumentsAPI().updateDocument(document: documentToUpdate)
             AnnotatoLogger.info("PUT \(updatedDocument)")
 
-            let documentToCreate = Document(name: "Newly created document", ownerId: UUID(),
+            let documentToCreate = Document(name: "Newly created document", ownerId: ownerIdOfExistingDocument,
                                             baseFileUrl: "path/to/new/document")
             let createdDocument = await DocumentsAPI().createDocument(document: documentToCreate)
             AnnotatoLogger.info("POST \(createdDocument)")
