@@ -71,5 +71,6 @@ class DocumentAnnotationViewModel {
         // Assign all the new values to update
         self.associatedPage = currPage
         self.coordinatesInPageSpace = pageSpaceCoordinates
+        self.coordinatesInDocumentSpace = documentViewPoint
     }
 }

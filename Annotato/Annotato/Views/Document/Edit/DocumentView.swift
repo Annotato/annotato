@@ -137,13 +137,10 @@ class DocumentView: UIView {
         guard let pageClicked: PDFPage = pdfView.page(for: mainViewTouchPoint, nearest: true) else {
             return
         }
-        print("pageClicked: \(pageClicked)")
 
         let pageSpacePoint = pdfView.convert(mainViewTouchPoint, to: pageClicked)
-        print("page space point: \(pageSpacePoint)")
 
         let docViewSpacePoint = self.convert(mainViewTouchPoint, to: pdfView.documentView)
-        print("entire pdfview space point: \(docViewSpacePoint)")
 
         let newAnnotationWidth = 200.0
         let docAnnoViewModel = DocumentAnnotationViewModel(
@@ -159,6 +156,5 @@ class DocumentView: UIView {
             annotationViewModel: docAnnoViewModel
         )
         pdfView.documentView?.addSubview(annotation)
-        print("-------------------------------------\n\n\n\n")
     }
 }
