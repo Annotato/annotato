@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary // TODO: TO REMOVE AFTER TEST
 
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
@@ -82,9 +83,15 @@ extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
     func logInDidSucceed() {
         goToDocumentList()
 
+        // TODO: REMOVE THESE TEST LINES
         let storage = AnnotatoPdfStorageManager()
         let fileUrl = Bundle.main.url(forResource: "random", withExtension: ".pdf")!
-        storage.uploadPdf(fileSystemUrl: fileUrl, withName: "random.pdf")
+        storage.uploadPdf(fileSystemUrl: fileUrl, withName: "random.pdf") { document in
+            print("Uploaded document", document)
+            storage.deletePdf(document: document, completion: { document in
+                print("Deleted document", document)
+            })
+        }
     }
 
     func signUpDidSucceed() {

@@ -3,6 +3,7 @@ import AnnotatoSharedLibrary
 
 class AnnotatoPdfStorageManager {
     private var storageService: AnnotatoStorageService
+    private let api = DocumentsAPI()
 
     init() {
         storageService = FirebaseStorage()
@@ -13,7 +14,7 @@ class AnnotatoPdfStorageManager {
         set { storageService.delegate = newValue }
     }
 
-    func uploadPdf(fileSystemUrl: URL, withName name: String) {
+    func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (Document) -> Void) {
         storageService.uploadPdf(fileSystemUrl: fileSystemUrl, withName: name) { url in
             guard let userId = AnnotatoAuth().currentUser?.uid else {
                 AnnotatoLogger.error("When getting current user's ID", context: "AnnotatoPdfStorageManager::uploadPdf")
@@ -21,8 +22,28 @@ class AnnotatoPdfStorageManager {
             }
 
             let document = Document(name: name, ownerId: userId, baseFileUrl: url.absoluteString)
-            print(document.baseFileUrl)
-            // TODO: ADD API CALL TO FLUENT
+
+            Task {
+                guard let document = await self.api.createDocument(document: document) else {
+                    return
+                }
+
+                AnnotatoLogger.info("Created backend document entry: \(document)")
+                completion(document)
+            }
+        }
+    }
+
+    func deletePdf(document: Document, completion: @escaping (Document) -> Void) {
+        storageService.deletePdf(document: document) {
+            Task {
+                guard let document = await self.api.deleteDocument(document: document) else {
+                    return
+                }
+
+                AnnotatoLogger.info("Deleted backend document entry: \(document)")
+                completion(document)
+            }
         }
     }
 }

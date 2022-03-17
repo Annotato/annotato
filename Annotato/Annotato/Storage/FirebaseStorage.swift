@@ -1,5 +1,6 @@
 import Firebase
 import FirebaseStorage
+import AnnotatoSharedLibrary
 
 class FirebaseStorage: AnnotatoStorageService {
     private let storage = Storage.storage()
@@ -38,8 +39,25 @@ class FirebaseStorage: AnnotatoStorageService {
                 }
 
                 completion(url)
-                self.delegate?.uploadDidSucceed(url)
+                self.delegate?.uploadDidSucceed()
             }
+        }
+    }
+
+    func deletePdf(document: Document, completion: @escaping () -> Void) {
+        let pdfRef = storageRef.child("\(document.name)")
+        pdfRef.delete { error in
+            if let error = error {
+                AnnotatoLogger.error(
+                    "When trying to delete PDF: \(document). \(error.localizedDescription)",
+                    context: "FirebaseStorage::deletePdf"
+                )
+                self.delegate?.deleteDidFail(error)
+                return
+            }
+
+            AnnotatoLogger.info("Deleted PDF: \(document)")
+            completion()
         }
     }
 }

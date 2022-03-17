@@ -2,5 +2,7 @@ import Foundation
 
 protocol AnnotatoStorageDelegate: AnyObject {
     func uploadDidFail(_ error: Error)
-    func uploadDidSucceed(_ url: URL)
+    func deleteDidFail(_ error: Error)
+    func uploadDidSucceed()
+    func deleteDidSucceed()
 }
