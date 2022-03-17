@@ -36,7 +36,14 @@ final class AnnotationEntity: Model {
 
     init() { }
 
-    init(originX: Double, originY: Double, width: Double, ownerId: String, documentId: DocumentEntity.IDValue, id: UUID? = nil) {
+    init(
+        originX: Double,
+        originY: Double,
+        width: Double,
+        ownerId: String,
+        documentId: DocumentEntity.IDValue,
+        id: UUID? = nil
+    ) {
         self.originX = originX
         self.originY = originY
         self.width = width

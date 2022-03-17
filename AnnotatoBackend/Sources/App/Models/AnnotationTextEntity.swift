@@ -30,7 +30,13 @@ final class AnnotationTextEntity: Model {
 
     init() { }
 
-    init(type: AnnotationType, content: String, height: Double, annotationId: AnnotationEntity.IDValue, id: UUID? = nil) {
+    init(
+        type: AnnotationType,
+        content: String,
+        height: Double,
+        annotationId: AnnotationEntity.IDValue,
+        id: UUID? = nil
+    ) {
         self.type = type.rawValue
         self.content = content
         self.height = height
