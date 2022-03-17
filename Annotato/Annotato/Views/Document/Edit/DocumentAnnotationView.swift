@@ -1,7 +1,7 @@
 import UIKit
 
 class DocumentAnnotationView: UIView {
-    private var viewModel: DocumentAnnotationViewModel
+    private(set) var viewModel: DocumentAnnotationViewModel
     private var sections: [DocumentAnnotationSectionView] = []
     let toolbarHeight = 50.0
     let minHeight: Double

@@ -25,14 +25,60 @@ class DocumentView: UIView {
 
     private func addObservers() {
         NotificationCenter.default.addObserver(
-            self, selector: #selector(handlePageChange(notification:)),
-            name: Notification.Name.PDFViewPageChanged, object: nil
+            self, selector: #selector(handleVisiblePageChange(notification:)),
+            name: Notification.Name.PDFViewVisiblePagesChanged, object: nil
         )
     }
 
     @objc
-    private func handlePageChange(notification: Notification) {
-        print("changed pages")
+    private func handleVisiblePageChange(notification: Notification) {
+        print("visible pages changed")
+        initializeAnnotationViewsForVisiblePages()
+    }
+
+    private func checkIfAnnotationIsInVisiblePages(
+        anno: DocumentAnnotationViewModel,
+        visiblePages: [PDFPage]
+    ) -> Bool {
+        guard let pageNumForAnnotation = anno.associatedPage.label else {
+            return false
+        }
+        let visiblePagesIndex = visiblePages.map({ pdfPage -> String in
+            guard let label = pdfPage.label else {
+                return "-1"
+            }
+            return label
+        })
+        return visiblePagesIndex.contains(pageNumForAnnotation)
+    }
+
+    private func checkIfAnnoIsAlreadyInSubview(
+        anno: DocumentAnnotationViewModel, subviews: [UIView]
+    ) -> Bool {
+        for subview in subviews {
+            guard let annoSubview = subview as? DocumentAnnotationView else {
+                continue
+            }
+            if annoSubview.viewModel === anno {
+                print("same instance of view model is already in view")
+                return true
+            }
+        }
+        return false
+    }
+
+    private func checkIfAnnoIsBlocked(
+        anno: DocumentAnnotationViewModel, subviews: [UIView]
+    ) {
+        for subview in subviews {
+            guard let annoSubview = subview as? DocumentAnnotationView else {
+                continue
+            }
+            if annoSubview.viewModel === anno {
+                let isBlocked = annoSubview.isHidden
+                print("isBlocked: \(isBlocked)")
+            }
+        }
     }
 
     private func initializeAnnotationViewsForVisiblePages() {
@@ -45,49 +91,44 @@ class DocumentView: UIView {
             return
         }
         let visiblePages = pdfSubView.visiblePages
-        print(visiblePages)
-        print("-------------------------------------")
         for annotation in documentViewModel.annotations {
             let view = DocumentAnnotationView(annotationViewModel: annotation)
-            print(annotation.associatedPage)
-            // MARK: Bug here. Need to find a way to compare PDFPages accurately.
-            // Different instances of the same file will have different memory
-            // locations
-            if visiblePages.contains(annotation.associatedPage) {
-                // Then we should add it to the subview
-                pdfSubView.documentView?.addSubview(view)
+            let annoShouldBeVisible = checkIfAnnotationIsInVisiblePages(anno: annotation, visiblePages: visiblePages)
+            guard let documentView = pdfSubView.documentView else {
+                continue
+            }
+
+            if annoShouldBeVisible {
+                let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
+                    anno: annotation, subviews: documentView.subviews
+                )
+                if !annoIsAlreadyInSubview {
+                    pdfSubView.documentView?.addSubview(view)
+                } else {
+                    // simply bring it to the front
+
+                }
             } else {
-                // we should remove it from the subview if it is there, to avoid
-                // memory leak
-                if subviews.contains(view) {
-                    print("removing a view that is out of the visible pages")
+                // The annotation should not be visible
+                let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
+                    anno: annotation, subviews: documentView.subviews
+                )
+                let annoIsHidden = checkIfAnnoIsBlocked(
+                    anno: annotation, subviews: documentView.subviews
+                )
+                // Remove it from the subview if it is there
+                if annoIsAlreadyInSubview {
+                    print("anno should not be visible but is in subview")
                     // TODO: Implement removing subviews if they are out of view.
                     // It needs to be done from the annotation view itself I think
                     // by calling removeFromSuperView()
+
                 } else {
-                    print("subviews doesn't contain it, but it is not visible so not added")
+                    print("anno is not in subview and is not visible")
                 }
             }
         }
-    }
-
-    /*
-     Might not be needed in the future
-     */
-    private func initializeAnnotationViews() {
-        guard let pdfSubView = subviews.first(where: { subview in
-            subview is DocumentPdfView
-        }) else {
-            return
-        }
-        guard let pdfSubView = pdfSubView as? DocumentPdfView else {
-            return
-        }
-
-        for annotation in documentViewModel.annotations {
-            let view = DocumentAnnotationView(annotationViewModel: annotation)
-            pdfSubView.documentView?.addSubview(view)
-        }
+        print("-------------------------------------")
     }
 
     private func initializePdfView() {
