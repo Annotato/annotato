@@ -36,9 +36,10 @@ final class AnnotationEntity: Model {
 
     init() { }
 
-    init(originX: Double, originY: Double, ownerId: String, documentId: DocumentEntity.IDValue, id: UUID? = nil) {
+    init(originX: Double, originY: Double, width: Double, ownerId: String, documentId: DocumentEntity.IDValue, id: UUID? = nil) {
         self.originX = originX
         self.originY = originY
+        self.width = width
         self.ownerId = ownerId
         self.$document.id = documentId
         self.id = id
@@ -50,6 +51,7 @@ extension AnnotationEntity: PersistedEntity {
         Self(
             originX: model.origin.x,
             originY: model.origin.y,
+            width: model.width,
             ownerId: model.ownerId,
             documentId: model.documentId,
             id: model.id
