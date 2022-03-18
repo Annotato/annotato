@@ -25,8 +25,32 @@ class DocumentView: UIView {
         addGestureRecognizers()
         addObservers()
         initializePdfView()
-        setUpSubscriber()
+        setUpSubscribers()
         initializeInitialAnnotationViews()
+    }
+
+    private func initializeInitialAnnotationViews() {
+        for annotation in documentViewModel.annotations {
+            renderNewAnnotation(viewModel: annotation)
+        }
+    }
+
+    private func initializePdfView() {
+        let view = DocumentPdfView(
+            frame: self.frame,
+            documentPdfViewModel: documentViewModel.pdfDocument
+        )
+        self.pdfView = view
+        addSubview(view)
+    }
+
+    private func setUpSubscribers() {
+        documentViewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
+            guard let annotationViewModel = annotationViewModel else {
+                return
+            }
+            self?.renderNewAnnotation(viewModel: annotationViewModel)
+        }).store(in: &cancellables)
     }
 
     private func addObservers() {
@@ -49,9 +73,7 @@ class DocumentView: UIView {
         return visiblePageNumbers.contains(annotation.pageNumber)
     }
 
-    private func bringAnnotationToFront(
-        annotation: AnnotationView
-    ) {
+    private func bringAnnotationToFront(annotation: AnnotationView) {
         annotation.superview?.bringSubviewToFront(annotation)
     }
 
@@ -68,21 +90,6 @@ class DocumentView: UIView {
                 bringAnnotationToFront(annotation: annotationView)
             }
         }
-    }
-
-    func initializeInitialAnnotationViews() {
-        for annotation in documentViewModel.annotations {
-            renderNewAnnotation(viewModel: annotation)
-        }
-    }
-
-    private func initializePdfView() {
-        let view = DocumentPdfView(
-            frame: self.frame,
-            documentPdfViewModel: documentViewModel.pdfDocument
-        )
-        self.pdfView = view
-        addSubview(view)
     }
 
     private func addGestureRecognizers() {
@@ -115,14 +122,5 @@ class DocumentView: UIView {
         let annotationView = AnnotationView(viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView?.documentView?.addSubview(annotationView)
-    }
-
-    private func setUpSubscriber() {
-        documentViewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
-            guard let annotationViewModel = annotationViewModel else {
-                return
-            }
-            self?.renderNewAnnotation(viewModel: annotationViewModel)
-        }).store(in: &cancellables)
     }
 }
