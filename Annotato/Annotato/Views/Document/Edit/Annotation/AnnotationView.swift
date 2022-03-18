@@ -104,10 +104,10 @@ class AnnotationView: UIView {
             return
         }
         let currPage = pdfView.page(for: pointInPdfDocument, nearest: true)
-        guard let pageNum = currPage?.label else {
+        guard let pageLabel = currPage?.label else {
             return
         }
-        viewModel.updateLocation(to: documentViewPoint, pageLabel: pageNum)
+        viewModel.updateLocation(to: documentViewPoint, pageLabel: pageLabel)
     }
 
     private func resize() {

@@ -101,7 +101,6 @@ class DocumentView: UIView {
         guard let pdfView = self.pdfView else {
             return
         }
-        // This returns the page that the click occurred
         guard let pageClicked: PDFPage = pdfView.page(for: touchPoint, nearest: true) else {
             return
         }
