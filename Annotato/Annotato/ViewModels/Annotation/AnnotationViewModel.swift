@@ -18,29 +18,23 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = false
 
-    unowned var associatedDocumentPdfViewModel: PdfViewModel?
     private(set) var associatedPageNum: String
 
     init(
         id: UUID,
-        centerInDocumentSpace: CGPoint,
-        associatedDocumentPdfViewModel: PdfViewModel,
+        origin: CGPoint,
         pageNum: String,
         width: Double,
         parts: [AnnotationPartViewModel],
         palette: AnnotationPaletteViewModel? = nil
     ) {
         self.id = id
-        // Set to zero first. It will be reassigned below as part of
-        // center's didSet
-        self.originInDocumentSpace = .zero
-        self.associatedDocumentPdfViewModel = associatedDocumentPdfViewModel
+        self.originInDocumentSpace = origin
         self.associatedPageNum = pageNum
 
         self.width = width
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
-        self.center = centerInDocumentSpace
         self.palette.parentViewModel = self
 
         for part in self.parts {
@@ -67,7 +61,7 @@ class AnnotationViewModel: ObservableObject {
     ) {
         // Assign all the new values to update
         self.associatedPageNum = pageNum
-        self.originInDocumentSpace = documentViewPoint
+        self.center = documentViewPoint
     }
 }
 

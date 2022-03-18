@@ -63,8 +63,8 @@ class AnnotationView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$originInDocumentSpace.sink(receiveValue: { [weak self] originInDocumentSpace in
-            self?.frame.origin = originInDocumentSpace
+        viewModel.$originInDocumentSpace.sink(receiveValue: { [weak self] origin in
+            self?.frame.origin = origin
         }).store(in: &cancellables)
 
         viewModel.$isResizing.sink(receiveValue: { [weak self] _ in

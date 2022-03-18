@@ -28,16 +28,14 @@ class SampleData {
         [
             AnnotationViewModel(
                 id: UUID(),
-                centerInDocumentSpace: CGPoint(x: 300.0, y: 300.0),
-                associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
+                origin: CGPoint(x: 100, y: 100),
                 pageNum: "1",
                 width: 300.0,
                 parts: exampleAnnotationParts1()
             ),
             AnnotationViewModel(
                 id: UUID(),
-                centerInDocumentSpace: CGPoint(x: 100.0, y: 150.0),
-                associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
+                origin: CGPoint(x: 200, y: 200),
                 pageNum: "0",
                 width: 250.0,
                 parts: exampleAnnotationParts1()

@@ -13,9 +13,20 @@ class DocumentViewModel: ObservableObject {
 }
 
 extension DocumentViewModel {
-    func addAnnotation(viewModel: AnnotationViewModel) {
-        viewModel.enterEditMode()
-        annotations.append(viewModel)
-        annotationToAdd = viewModel
+    func addAnnotation(
+        center: CGPoint,
+        pageNum: String
+    ) {
+        let newAnnotationWidth = 300.0
+        let documentAnnotationViewModel = AnnotationViewModel(
+            id: UUID(), origin: .zero,
+            pageNum: pageNum,
+            width: newAnnotationWidth,
+            parts: []
+        )
+        documentAnnotationViewModel.center = center
+        documentAnnotationViewModel.enterEditMode()
+        annotations.append(documentAnnotationViewModel)
+        annotationToAdd = documentAnnotationViewModel
     }
 }

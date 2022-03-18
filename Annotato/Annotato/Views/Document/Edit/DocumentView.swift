@@ -126,23 +126,16 @@ class DocumentView: UIView {
             return
         }
         let docViewSpacePoint = self.convert(mainViewTouchPoint, to: pdfView.documentView)
-
-        let newAnnotationWidth = 300.0
-        let docAnnoViewModel = AnnotationViewModel(
-            id: UUID(), centerInDocumentSpace: docViewSpacePoint,
-            associatedDocumentPdfViewModel: pdfView.viewModel,
-            pageNum: pageNum,
-            width: newAnnotationWidth,
-            parts: []
+        documentViewModel.addAnnotation(
+            center: docViewSpacePoint,
+            pageNum: pageNum
         )
-        renderNewAnnotation(viewModel: docAnnoViewModel)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotationView = AnnotationView(viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView?.documentView?.addSubview(annotationView)
-        print("added new annotation")
     }
 
     private func setUpSubscriber() {
