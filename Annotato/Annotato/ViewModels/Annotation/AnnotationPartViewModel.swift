@@ -9,6 +9,7 @@ protocol AnnotationPartViewModel: AnyObject {
     var height: Double { get set }
     var isEmpty: Bool { get }
     var isSelected: Bool { get set }
+
     func toView() -> AnnotationPartView
     func enterEditMode()
     func enterViewMode()

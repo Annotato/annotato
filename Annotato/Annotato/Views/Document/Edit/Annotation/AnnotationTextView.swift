@@ -17,13 +17,13 @@ class AnnotationTextView: UITextView, AnnotationPartView {
         self.isEditable = viewModel.isEditing
         self.isScrollEnabled = false
         self.delegate = self
-        setUpSubscriber()
+        setUpSubscribers()
         addGestureRecognizers()
         self.layer.borderWidth = 0.3
         self.layer.borderColor = UIColor.lightGray.cgColor
     }
 
-    private func setUpSubscriber() {
+    private func setUpSubscribers() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
             self?.isEditable = isEditing
         }).store(in: &cancellables)

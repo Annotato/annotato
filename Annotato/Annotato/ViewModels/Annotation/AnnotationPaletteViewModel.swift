@@ -86,7 +86,6 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 }
 
-// MARK: Position, Size
 extension AnnotationPaletteViewModel {
     var size: CGSize {
         CGSize(width: width, height: height)

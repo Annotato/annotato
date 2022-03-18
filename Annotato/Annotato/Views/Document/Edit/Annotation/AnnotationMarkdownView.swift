@@ -21,7 +21,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
 
         switchView(basedOn: viewModel.isEditing)
         setUpEditView()
-        setUpSubscriber()
+        setUpSubscribers()
         setUpStyle()
         addGestureRecognizers()
     }
@@ -49,7 +49,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
         }
     }
 
-    private func setUpSubscriber() {
+    private func setUpSubscribers() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
             self?.switchView(basedOn: isEditing)
         }).store(in: &cancellables)

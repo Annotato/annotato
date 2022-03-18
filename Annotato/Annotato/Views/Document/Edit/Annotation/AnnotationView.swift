@@ -21,7 +21,7 @@ class AnnotationView: UIView {
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
         initializeSubviews()
-        setUpSubscriber()
+        setUpSubscribers()
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
@@ -55,7 +55,7 @@ class AnnotationView: UIView {
         }
     }
 
-    private func setUpSubscriber() {
+    private func setUpSubscribers() {
         viewModel.$origin.sink(receiveValue: { [weak self] origin in
             self?.frame.origin = origin
         }).store(in: &cancellables)

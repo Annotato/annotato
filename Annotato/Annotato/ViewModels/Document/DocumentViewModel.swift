@@ -13,7 +13,7 @@ class DocumentViewModel: ObservableObject {
 extension DocumentViewModel {
     func addAnnotation(at point: CGPoint) {
         let newAnnotation = AnnotationViewModel(
-            id: UUID(), origin: .zero, width: 200.0, parts: [])
+            id: UUID(), origin: .zero, width: 300.0, parts: [])
         newAnnotation.center = point
         newAnnotation.enterEditMode()
         annotations.append(newAnnotation)

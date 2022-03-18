@@ -19,9 +19,9 @@ class AnnotationPaletteView: UIToolbar {
     init(viewModel: AnnotationPaletteViewModel) {
         self.viewModel = viewModel
         self.textButton = AnnotationPaletteView.makeToggleableSystemButton(
-            systemName: "textformat", color: .darkGray)
+            systemName: SystemImageName.textformat.rawValue, color: .darkGray)
         self.markdownButton = AnnotationPaletteView.makeToggleableSystemButton(
-            systemName: "m.square", color: .darkGray)
+            systemName: SystemImageName.mSquare.rawValue, color: .darkGray)
         self.editOrViewButton = ImageToggleableButton(
             selectedImage: UIImage(systemName: SystemImageName.eye.rawValue),
             unselectedImage: UIImage(systemName: SystemImageName.pencil.rawValue))
@@ -32,7 +32,7 @@ class AnnotationPaletteView: UIToolbar {
         super.init(frame: viewModel.frame)
 
         setUpButtons()
-        setUpSubscriber()
+        setUpSubscribers()
     }
 
     private func setUpButtons() {
@@ -52,29 +52,18 @@ class AnnotationPaletteView: UIToolbar {
         minimizeOrMaximizeButton.widthAnchor.constraint(equalToConstant: 20.0).isActive = true
         self.items = [
             textBarButton,
+            spaceBetween,
             markdownBarButton,
             flexibleSpace,
             editOrViewBarButton,
+            spaceBetween,
             deleteBarButton,
+            spaceBetween,
             minimizeOrMaximizeBarButton
         ]
     }
 
-    class func makeToggleableSystemButton(systemName: String, color: UIColor) -> ToggleableButton {
-        let button = ToggleableButton()
-        button.setImage(UIImage(systemName: systemName), for: .normal)
-        button.tintColor = color
-        return button
-    }
-
-    class func makeDeleteButton() -> UIButton {
-        let button = UIButton()
-        let imageName = "trash"
-        button.setImage(UIImage(systemName: imageName), for: .normal)
-        return button
-    }
-
-    private func setUpSubscriber() {
+    private func setUpSubscribers() {
         viewModel.$textIsSelected.sink(receiveValue: { [weak self] textIsSelected in
             self?.textButton.isSelected = textIsSelected
         }).store(in: &cancellables)

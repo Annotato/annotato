@@ -4,13 +4,14 @@ import CoreImage
 
 class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
-    @Published private(set) var origin: CGPoint
     private(set) var width: Double
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
-
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
+    private var maxHeight = 300.0
+
+    @Published private(set) var origin: CGPoint
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
@@ -48,7 +49,6 @@ class AnnotationViewModel: ObservableObject {
     }
 }
 
-// MARK: Position, Size
 extension AnnotationViewModel {
     var center: CGPoint {
         get {
@@ -70,11 +70,11 @@ extension AnnotationViewModel {
     }
 
     var height: Double {
-        palette.height + partHeights
+        min(palette.height + partHeights, maxHeight)
     }
 
     var minimizedHeight: Double {
-        palette.height + firstPartHeight
+        min(palette.height + firstPartHeight, maxHeight)
     }
 
     var size: CGSize {
@@ -155,10 +155,10 @@ extension AnnotationViewModel {
 
         removeIfPossible(part: lastPart)
 
-        // The next last part is what we want, return
-        if let nextLastPart = parts.last {
-            if nextLastPart is AnnotationTextViewModel {
-                setSelectedPart(to: nextLastPart)
+        // The current last part is what we want, return
+        if let currentLastPart = parts.last {
+            if currentLastPart is AnnotationTextViewModel {
+                setSelectedPart(to: currentLastPart)
                 resize()
                 return
             }
@@ -175,10 +175,10 @@ extension AnnotationViewModel {
 
         removeIfPossible(part: lastPart)
 
-        // The next last part is what we want, return
-        if let nextLastPart = parts.last {
-            if nextLastPart is AnnotationMarkdownViewModel {
-                setSelectedPart(to: nextLastPart)
+        // The current last part is what we want, return
+        if let currentLastPart = parts.last {
+            if currentLastPart is AnnotationMarkdownViewModel {
+                setSelectedPart(to: currentLastPart)
                 resize()
                 return
             }

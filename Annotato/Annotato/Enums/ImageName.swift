@@ -6,5 +6,8 @@ enum ImageName: String {
 
 enum SystemImageName: String {
     case eye
+    case mSquare = "m.square"
     case pencil
+    case textformat
+    case trash
 }
