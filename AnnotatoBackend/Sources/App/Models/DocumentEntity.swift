@@ -25,9 +25,6 @@ final class DocumentEntity: Model {
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
-    @Timestamp(key: "deleted_at", on: .delete)
-    var deletedAt: Date?
-
     init() { }
 
     init(id: UUID? = nil, name: String, ownerId: String, baseFileUrl: String) {

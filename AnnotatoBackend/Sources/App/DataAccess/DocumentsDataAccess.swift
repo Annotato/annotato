@@ -56,7 +56,7 @@ struct DocumentsDataAccess {
             .flatMap { documentEntity in
                 documentEntity.$annotations.load(on: db)
                     .flatMap({
-                        return documentEntity.delete(force: true, on: db).map{ Document.fromManagedEntity(documentEntity) }
+                        return documentEntity.delete(on: db).map{ Document.fromManagedEntity(documentEntity) }
                     })
             }
     }

@@ -63,10 +63,10 @@ class AuthViewController: UIViewController, Navigable {
         testDocument.addAnnotation(annotation: annotation2)
 
         // CREATE
-         Task {
-             let resp = await DocumentsAPI().createDocument(document: testDocument)
-             print("CREATE", resp)
-         }
+//         Task {
+//             let resp = await DocumentsAPI().createDocument(document: testDocument)
+//             print("CREATE", resp)
+//         }
 
         // READ
 //        Task {
