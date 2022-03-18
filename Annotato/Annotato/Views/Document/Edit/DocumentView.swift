@@ -4,8 +4,10 @@ import Combine
 
 class DocumentView: UIView {
     private var documentViewModel: DocumentViewModel
-    private var pdfView: DocumentPdfView?
     private var cancellables: Set<AnyCancellable> = []
+
+    private var pdfView: DocumentPdfView?
+    private var annotationViews: [AnnotationView]
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -14,8 +16,9 @@ class DocumentView: UIView {
 
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
         self.documentViewModel = documentViewModel
-        super.init(frame: frame)
+        self.annotationViews = []
 
+        super.init(frame: frame)
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.black.cgColor
 
@@ -24,7 +27,6 @@ class DocumentView: UIView {
         initializePdfView()
         setUpSubscriber()
         initializeInitialAnnotationViews()
-        initializeAnnotationViewsForVisiblePages()
     }
 
     private func addObservers() {
@@ -36,79 +38,41 @@ class DocumentView: UIView {
 
     @objc
     private func handleVisiblePageChange(notification: Notification) {
-        initializeAnnotationViewsForVisiblePages()
+        print("visible pages changed")
+        showAnnotationViewsOfVisiblePages()
     }
 
     private func annotationIsInVisiblePages(
-        annotation: AnnotationViewModel,
+        annotation: AnnotationView,
         visiblePages: [PDFPage]
     ) -> Bool {
-        guard let pageNumForAnnotation = annotation.associatedPage.label else {
-            return false
-        }
         let visiblePagesIndex = visiblePages.map({ pdfPage -> String in
             guard let label = pdfPage.label else {
                 return "-1"
             }
             return label
         })
-        return visiblePagesIndex.contains(pageNumForAnnotation)
-    }
-
-    private func annotationIsAlreadyInSubview(
-        annotation: AnnotationViewModel, subviews: [UIView]
-    ) -> Bool {
-        for subview in subviews {
-            guard let annotationSubview = subview as? AnnotationView else {
-                continue
-            }
-            if annotationSubview.viewModel === annotation {
-                return true
-            }
-        }
-        return false
+        return visiblePagesIndex.contains(annotation.pageNum)
     }
 
     private func bringAnnotationToFront(
-        annotation: AnnotationViewModel, subviews: [UIView]
+        annotation: AnnotationView
     ) {
-        for subview in subviews {
-            guard let annotationSubview = subview as? AnnotationView else {
-                continue
-            }
-            if annotationSubview.viewModel === annotation {
-                guard let documentViewParent = annotationSubview.superview else {
-                    return
-                }
-                documentViewParent.bringSubviewToFront(annotationSubview)
-            }
-        }
+        annotation.superview?.bringSubviewToFront(annotation)
     }
 
-    private func initializeAnnotationViewsForVisiblePages() {
+    private func showAnnotationViewsOfVisiblePages() {
         guard let pdfSubView = pdfView else {
             return
         }
-        guard let documentView = pdfSubView.documentView else {
-            return
-        }
         let visiblePages = pdfSubView.visiblePages
-        for annotation in documentViewModel.annotations {
-            let annotationShouldBeVisible = annotationIsInVisiblePages(annotation: annotation, visiblePages: visiblePages)
-
+        print("There are \(annotationViews.count) annotation views.")
+        for annotationView in annotationViews {
+            let annotationShouldBeVisible = annotationIsInVisiblePages(
+                annotation: annotationView, visiblePages: visiblePages
+            )
             if annotationShouldBeVisible {
-                let annotationIsAlreadyInSubview = annotationIsAlreadyInSubview(
-                    annotation: annotation, subviews: documentView.subviews
-                )
-                if !annotationIsAlreadyInSubview {
-                    documentViewModel.addAnnotation(
-                        viewModel: annotation
-                    )
-                } else {
-                    bringAnnotationToFront(
-                        annotation: annotation, subviews: documentView.subviews
-                    )
-                }
+                bringAnnotationToFront(annotation: annotationView)
             }
         }
     }
@@ -123,19 +87,9 @@ class DocumentView: UIView {
      potentially run into a cycle, depending on how we call it.
      */
     func initializeInitialAnnotationViews() {
-        guard let pdfSubView = pdfView else {
-            return
-        }
-        guard let documentView = pdfSubView.documentView else {
-            return
-        }
         for annotation in documentViewModel.annotations {
-            let annoIsAlreadyInSubview = annotationIsAlreadyInSubview(
-                annotation: annotation, subviews: documentView.subviews
-            )
-            if !annoIsAlreadyInSubview {
-                renderNewAnnotation(viewModel: annotation)
-            }
+            print("an annotation")
+            renderNewAnnotation(viewModel: annotation)
         }
     }
 
@@ -168,17 +122,16 @@ class DocumentView: UIView {
         guard let pageClicked: PDFPage = pdfView.page(for: mainViewTouchPoint, nearest: true) else {
             return
         }
-
-        let pageSpacePoint = pdfView.convert(mainViewTouchPoint, to: pageClicked)
-
+        guard let pageNum: String = pageClicked.label else {
+            return
+        }
         let docViewSpacePoint = self.convert(mainViewTouchPoint, to: pdfView.documentView)
 
         let newAnnotationWidth = 300.0
         let docAnnoViewModel = AnnotationViewModel(
-            id: UUID(), originInDocumentSpace: docViewSpacePoint,
+            id: UUID(), centerInDocumentSpace: docViewSpacePoint,
             associatedDocumentPdfViewModel: pdfView.viewModel,
-            associatedPage: pageClicked,
-            originInPageSpace: pageSpacePoint,
+            pageNum: pageNum,
             width: newAnnotationWidth,
             parts: []
         )
@@ -186,8 +139,10 @@ class DocumentView: UIView {
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annoView = AnnotationView(viewModel: viewModel)
-        pdfView?.documentView?.addSubview(annoView)
+        let annotationView = AnnotationView(viewModel: viewModel)
+        annotationViews.append(annotationView)
+        pdfView?.documentView?.addSubview(annotationView)
+        print("added new annotation")
     }
 
     private func setUpSubscriber() {

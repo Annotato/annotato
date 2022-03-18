@@ -12,6 +12,11 @@ class SampleData {
         ]
     }
 
+    func exampleDocument(from listViewModel: DocumentListViewModel) -> DocumentViewModel {
+        let pdfDocument = PdfViewModel(baseFileUrl: listViewModel.baseFileUrl)
+        return DocumentViewModel(annotations: [], pdfDocument: pdfDocument)
+    }
+
     func exampleDocument() -> DocumentViewModel {
         DocumentViewModel(
             annotations: SampleData().exampleAnnotations(),
@@ -20,25 +25,20 @@ class SampleData {
     }
 
     func exampleAnnotations() -> [AnnotationViewModel] {
-        guard let firstPage = examplePdfViewModelLab01Qns().document.page(at: 0) else {
-            return []
-        }
-        return [
+        [
             AnnotationViewModel(
                 id: UUID(),
-                originInDocumentSpace: CGPoint(x: 600.0, y: 300.0),
+                centerInDocumentSpace: CGPoint(x: 300.0, y: 300.0),
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
-                associatedPage: firstPage,
-                originInPageSpace: .init(x: 100, y: 100),
+                pageNum: "1",
                 width: 300.0,
                 parts: exampleAnnotationParts1()
             ),
             AnnotationViewModel(
                 id: UUID(),
-                originInDocumentSpace: CGPoint(x: 100.0, y: 150.0),
+                centerInDocumentSpace: CGPoint(x: 100.0, y: 150.0),
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
-                associatedPage: firstPage,
-                originInPageSpace: .init(x: 200, y: 200),
+                pageNum: "0",
                 width: 250.0,
                 parts: exampleAnnotationParts1()
             )

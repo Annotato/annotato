@@ -9,6 +9,10 @@ class AnnotationView: UIView {
     private var parts: UIStackView
     private var cancellables: Set<AnyCancellable> = []
 
+    var pageNum: String {
+        viewModel.associatedPageNum
+    }
+
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -59,8 +63,8 @@ class AnnotationView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$originInDocumentSpace.sink(receiveValue: { [weak self] origin in
-            self?.frame.origin = origin
+        viewModel.$originInDocumentSpace.sink(receiveValue: { [weak self] originInDocumentSpace in
+            self?.frame.origin = originInDocumentSpace
         }).store(in: &cancellables)
 
         viewModel.$isResizing.sink(receiveValue: { [weak self] _ in
@@ -89,11 +93,32 @@ class AnnotationView: UIView {
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        let touchPoint = sender.location(in: superview)
+        let documentViewPoint = sender.location(in: superview)
         guard sender.state != .cancelled else {
             return
         }
-        viewModel.updateLocation(documentViewPoint: touchPoint, parentView: superview)
+        guard let pdfView = superview?.superview?.superview
+        as? DocumentPdfView else {
+            return
+        }
+        // Get coordinates in terms of the visible view page space
+        guard let visibleViewPoint = superview?.convert(
+            documentViewPoint, to: pdfView
+        ) else {
+            return
+        }
+        // Get the current page that this annotation is at
+        let currPage = pdfView.page(
+            for: visibleViewPoint, nearest: true
+        )
+        guard let pageNum = currPage?.label else {
+            return
+        }
+        viewModel.updateLocation(
+            documentViewPoint: documentViewPoint,
+            visibleViewPoint: visibleViewPoint,
+            pageNum: pageNum
+        )
     }
 
     private func resize() {

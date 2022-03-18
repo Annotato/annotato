@@ -63,12 +63,18 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
             return
         }
-        let newlyLoadedDocumentPdfViewModel = PdfViewModel(baseFileUrl: selectedFileUrl)
-        goToDocumentEdit(documentPdfViewModel: newlyLoadedDocumentPdfViewModel)
+        let newDocumentViewModel = DocumentViewModel(
+            annotations: [],
+            pdfDocument: PdfViewModel(baseFileUrl: selectedFileUrl)
+        )
+        goToDocumentEdit(documentViewModel: newDocumentViewModel)
     }
 
     func didSelectCellView(document: DocumentListViewModel) {
-        let selectedDocumentPdfViewModel = PdfViewModel(baseFileUrl: document.baseFileUrl)
-        goToDocumentEdit(documentPdfViewModel: selectedDocumentPdfViewModel)
+        // Note: this is supposed to be an api call to fetch the documentViewModel
+        // based on the id of documentListViewModel once integration is done
+        // The document list view model in this pr does not have id yet
+
+        goToDocumentEdit(documentViewModel: SampleData().exampleDocument(from: document))
     }
 }

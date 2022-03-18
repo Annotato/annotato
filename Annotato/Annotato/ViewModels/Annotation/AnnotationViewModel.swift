@@ -19,30 +19,28 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = false
 
     unowned var associatedDocumentPdfViewModel: PdfViewModel?
-    var associatedPage: PDFPage
-    var originInPageSpace: CGPoint
+    private(set) var associatedPageNum: String
 
     init(
         id: UUID,
-        originInDocumentSpace: CGPoint,
+        centerInDocumentSpace: CGPoint,
         associatedDocumentPdfViewModel: PdfViewModel,
-        associatedPage: PDFPage,
-        originInPageSpace: CGPoint,
+        pageNum: String,
         width: Double,
         parts: [AnnotationPartViewModel],
         palette: AnnotationPaletteViewModel? = nil
     ) {
         self.id = id
-        self.originInDocumentSpace = originInDocumentSpace
-
+        // Set to zero first. It will be reassigned below as part of
+        // center's didSet
+        self.originInDocumentSpace = .zero
         self.associatedDocumentPdfViewModel = associatedDocumentPdfViewModel
-        self.associatedPage = associatedPage
-        self.originInPageSpace = originInPageSpace
+        self.associatedPageNum = pageNum
 
         self.width = width
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
-
+        self.center = centerInDocumentSpace
         self.palette.parentViewModel = self
 
         for part in self.parts {
@@ -62,30 +60,13 @@ class AnnotationViewModel: ObservableObject {
         resize()
     }
 
-    func updateLocation(documentViewPoint: CGPoint, parentView: UIView?) {
-        guard let parentView = parentView else {
-            return
-        }
-        guard let pdfView = parentView.superview?.superview
-        as? DocumentPdfView else {
-            return
-        }
-
-        // Get coordinates in terms of the visible view page space
-        let visibleViewCoordinates = parentView.convert(
-            documentViewPoint, to: parentView.superview?.superview)
-
-        // Get the current page that this annotation is at
-        guard let currPage = pdfView.page(
-            for: visibleViewCoordinates, nearest: true) else {
-            return
-        }
-        // Get the page space coordinates
-        let pageSpaceCoordinates = pdfView.convert(visibleViewCoordinates, to: currPage)
-
+    func updateLocation(
+        documentViewPoint: CGPoint,
+        visibleViewPoint: CGPoint,
+        pageNum: String
+    ) {
         // Assign all the new values to update
-        self.associatedPage = currPage
-        self.originInPageSpace = pageSpaceCoordinates
+        self.associatedPageNum = pageNum
         self.originInDocumentSpace = documentViewPoint
     }
 }
