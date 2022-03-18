@@ -34,12 +34,12 @@ final class AnnotationEntity: Model {
     init() { }
 
     init(
-        id: UUID? = nil,
         originX: Double,
         originY: Double,
         width: Double,
         ownerId: String,
-        documentId: DocumentEntity.IDValue
+        documentId: DocumentEntity.IDValue,
+        id: UUID? = nil
     ) {
         self.id = id
         self.originX = originX

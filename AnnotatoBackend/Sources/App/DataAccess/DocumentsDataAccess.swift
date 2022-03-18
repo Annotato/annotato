@@ -29,7 +29,6 @@ struct DocumentsDataAccess {
     }
 
     static func read(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
-        // swiftlint:disable:next first_where
         db.query(DocumentEntity.self)
             .filter(\.$id == documentId)
             .with(\.$annotations)
@@ -41,8 +40,7 @@ struct DocumentsDataAccess {
     }
 
     static func update(db: Database, documentId: UUID, document: Document) -> EventLoopFuture<Document> {
-        return delete(db: db, documentId: documentId)
-            .flatMapAlways({ _ in create(db: db, document: document) })
+        delete(db: db, documentId: documentId).flatMapAlways({ _ in create(db: db, document: document) })
     }
 
     static func delete(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
@@ -56,7 +54,7 @@ struct DocumentsDataAccess {
             .flatMap { documentEntity in
                 documentEntity.$annotations.load(on: db)
                     .flatMap({
-                        return documentEntity.delete(on: db).map { Document.fromManagedEntity(documentEntity) }
+                        documentEntity.delete(on: db).map { Document.fromManagedEntity(documentEntity) }
                     })
             }
     }

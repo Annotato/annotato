@@ -8,7 +8,13 @@ public final class Annotation: Codable {
     public let ownerId: String
     public let documentId: UUID
 
-    public required init(id: UUID? = nil, origin: CGPoint, width: Double, ownerId: String, documentId: UUID) {
+    public required init(
+        origin: CGPoint,
+        width: Double,
+        ownerId: String,
+        documentId: UUID,
+        id: UUID? = nil
+    ) {
         self.id = id ?? UUID()
         self.origin = origin
         self.width = width

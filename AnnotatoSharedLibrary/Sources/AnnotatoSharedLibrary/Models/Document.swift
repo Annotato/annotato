@@ -7,7 +7,13 @@ public final class Document: Codable {
     public let baseFileUrl: String
     public private(set) var annotations: [Annotation]
 
-    public required init(id: UUID? = nil, name: String, ownerId: String, baseFileUrl: String, annotations: [Annotation] = []) {
+    public required init(
+        name: String,
+        ownerId: String,
+        baseFileUrl: String,
+        annotations: [Annotation] = [],
+        id: UUID? = nil
+    ) {
         self.id = id ?? UUID()
         self.name = name
         self.ownerId = ownerId
@@ -22,6 +28,7 @@ public final class Document: Codable {
 
 extension Document: CustomStringConvertible {
     public var description: String {
-        "Document(id: \(id), name: \(name), ownerId: \(ownerId), baseFileUrl: \(baseFileUrl), annotations: \(annotations)"
+        "Document(id: \(id), name: \(name), ownerId: \(ownerId), " +
+        "baseFileUrl: \(baseFileUrl), annotations: \(annotations)"
     }
 }

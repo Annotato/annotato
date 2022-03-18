@@ -27,7 +27,7 @@ final class DocumentEntity: Model {
 
     init() { }
 
-    init(id: UUID? = nil, name: String, ownerId: String, baseFileUrl: String) {
+    init(name: String, ownerId: String, baseFileUrl: String, id: UUID? = nil) {
         self.id = id
         self.name = name
         self.ownerId = ownerId

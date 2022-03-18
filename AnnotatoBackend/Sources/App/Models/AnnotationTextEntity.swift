@@ -28,11 +28,11 @@ final class AnnotationTextEntity: Model {
     init() { }
 
     init(
-        id: UUID? = nil,
         type: AnnotationType,
         content: String,
         height: Double,
-        annotationId: AnnotationEntity.IDValue
+        annotationId: AnnotationEntity.IDValue,
+        id: UUID? = nil
     ) {
         self.id = id
         self.type = type.rawValue
