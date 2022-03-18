@@ -30,11 +30,11 @@ final class DocumentEntity: Model {
 
     init() { }
 
-    init(name: String, ownerId: String, baseFileUrl: String, id: UUID? = nil) {
+    init(id: UUID? = nil, name: String, ownerId: String, baseFileUrl: String) {
+        self.id = id
         self.name = name
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl
-        self.id = id
     }
 
     func copyPropertiesOf(otherEntity: DocumentEntity) {
@@ -48,6 +48,6 @@ final class DocumentEntity: Model {
 
 extension DocumentEntity: PersistedEntity {
     static func fromModel(_ model: Document) -> Self {
-        Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
+        Self(id: model.id, name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl)
     }
 }

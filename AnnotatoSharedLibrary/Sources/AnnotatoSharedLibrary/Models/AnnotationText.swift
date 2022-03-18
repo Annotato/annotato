@@ -8,9 +8,9 @@ public final class AnnotationText: Codable {
     public let annotationId: UUID
 
     public required init(
-        id: UUID = UUID(), type: AnnotationType, content: String, height: Double, annotationId: UUID
+        id: UUID?, type: AnnotationType, content: String, height: Double, annotationId: UUID
     ) {
-        self.id = id
+        self.id = id ?? UUID()
         self.type = type
         self.content = content
         self.height = height

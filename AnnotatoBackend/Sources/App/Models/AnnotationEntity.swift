@@ -37,31 +37,31 @@ final class AnnotationEntity: Model {
     init() { }
 
     init(
+        id: UUID? = nil,
         originX: Double,
         originY: Double,
         width: Double,
         ownerId: String,
-        documentId: DocumentEntity.IDValue,
-        id: UUID? = nil
+        documentId: DocumentEntity.IDValue
     ) {
+        self.id = id
         self.originX = originX
         self.originY = originY
         self.width = width
         self.ownerId = ownerId
         self.$document.id = documentId
-        self.id = id
     }
 }
 
 extension AnnotationEntity: PersistedEntity {
     static func fromModel(_ model: Annotation) -> Self {
         Self(
+            id: model.id,
             originX: model.origin.x,
             originY: model.origin.y,
             width: model.width,
             ownerId: model.ownerId,
-            documentId: model.documentId,
-            id: model.id
+            documentId: model.documentId
         )
     }
 }

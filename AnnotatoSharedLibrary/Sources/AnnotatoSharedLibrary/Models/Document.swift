@@ -6,8 +6,8 @@ public final class Document: Codable {
     public let ownerId: String
     public let baseFileUrl: String
 
-    public required init(id: UUID = UUID(), name: String, ownerId: String, baseFileUrl: String) {
-        self.id = id
+    public required init(id: UUID? = nil, name: String, ownerId: String, baseFileUrl: String) {
+        self.id = id ?? UUID()
         self.name = name
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl

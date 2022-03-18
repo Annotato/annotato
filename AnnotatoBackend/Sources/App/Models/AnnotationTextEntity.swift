@@ -31,28 +31,28 @@ final class AnnotationTextEntity: Model {
     init() { }
 
     init(
+        id: UUID? = nil,
         type: AnnotationType,
         content: String,
         height: Double,
-        annotationId: AnnotationEntity.IDValue,
-        id: UUID? = nil
+        annotationId: AnnotationEntity.IDValue
     ) {
+        self.id = id
         self.type = type.rawValue
         self.content = content
         self.height = height
         self.$annotation.id = annotationId
-        self.id = id
     }
 }
 
 extension AnnotationTextEntity: PersistedEntity {
     static func fromModel(_ model: AnnotationText) -> Self {
         Self(
+            id: model.id,
             type: model.type,
             content: model.content,
             height: model.height,
-            annotationId: model.annotationId,
-            id: model.id
+            annotationId: model.annotationId
         )
     }
 }
