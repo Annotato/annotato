@@ -31,7 +31,11 @@ class DocumentListViewController: UIViewController {
     }
 
     private func initializeDocumentsCollectionView() {
-        let collectionView = DocumentListCollectionView(documents: documents, frame: .zero)
+        let collectionView = DocumentListCollectionView(
+            documents: documents,
+            frame: .zero,
+            documentListCollectionCellViewDelegate: self
+        )
 
         view.addSubview(collectionView)
 
@@ -43,8 +47,34 @@ class DocumentListViewController: UIViewController {
     }
 }
 
-extension DocumentListViewController: DocumentListToolbarDelegate, Navigable {
-    func didTapAddButton() {
-        goToDocumentEdit()
+extension DocumentListViewController: DocumentListToolbarDelegate,
+        UIDocumentPickerDelegate,
+        DocumentListCollectionCellViewDelegate,
+        Navigable {
+
+    func didTapImportFileButton() {
+        goToImportingFiles()
+    }
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt baseFileUrls: [URL]) {
+        guard let selectedFileUrl = baseFileUrls.first else {
+            return
+        }
+        guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
+            return
+        }
+        let newDocumentViewModel = DocumentViewModel(
+            annotations: [],
+            pdfDocument: DocumentPdfViewModel(baseFileUrl: selectedFileUrl)
+        )
+        goToDocumentEdit(documentViewModel: newDocumentViewModel)
+    }
+
+    func didSelectCellView(document: DocumentListViewModel) {
+        // Note: this is supposed to be an api call to fetch the documentViewModel
+        // based on the id of documentListViewModel once integration is done
+        // The document list view model in this pr does not have id yet
+
+        goToDocumentEdit(documentViewModel: SampleData().exampleDocument(from: document))
     }
 }

@@ -4,27 +4,79 @@ import Foundation
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
         [
-            DocumentListViewModel(name: "Test A"),
-            DocumentListViewModel(name: "Test B"),
-            DocumentListViewModel(name: "Test C"),
-            DocumentListViewModel(name: "Test D"),
-            DocumentListViewModel(name: "Test E")
+            DocumentListViewModel(name: "Lab01 Qns", baseFileUrl: exampleUrlLab01Qns()),
+            DocumentListViewModel(name: "L0 Overview", baseFileUrl: exampleUrlL0Overview()),
+            DocumentListViewModel(name: "L1 Intro", baseFileUrl: exampleUrlL1Intro()),
+            DocumentListViewModel(name: "Firebase Clean Code", baseFileUrl: exampleUrlFirebase()),
+            DocumentListViewModel(name: "Test E", baseFileUrl: exampleUrlL0Overview())
         ]
     }
 
-    func exampleDocument() -> DocumentViewModel {
-        DocumentViewModel(annotations: SampleData().exampleAnnotations())
+    func exampleDocument(from listViewModel: DocumentListViewModel) -> DocumentViewModel {
+        let pdfDocument = DocumentPdfViewModel(baseFileUrl: listViewModel.baseFileUrl)
+        return DocumentViewModel(annotations: [], pdfDocument: pdfDocument)
     }
 
-    private func exampleAnnotations() -> [AnnotationViewModel] {
+    func exampleDocument() -> DocumentViewModel {
+        DocumentViewModel(
+            annotations: SampleData().exampleAnnotations(),
+            pdfDocument: SampleData().examplePdfDocument())
+    }
+
+    func exampleAnnotations() -> [AnnotationViewModel] {
         [
             AnnotationViewModel(
                 id: UUID(),
                 origin: CGPoint(x: 100.0, y: 150.0),
                 width: 300.0,
                 parts: exampleAnnotationParts1()
-            )
+            ),
+            AnnotationViewModel(
+                id: UUID(),
+                origin: CGPoint(x: 600.0, y: 300.0),
+                width: 250.0,
+                parts: exampleAnnotationParts1())
         ]
+    }
+
+    private func examplePdfDocument() -> DocumentPdfViewModel {
+        DocumentPdfViewModel(baseFileUrl: SampleData().exampleUrlLab01Qns())
+    }
+
+    private func exampleUrlLab01Qns() -> URL {
+        guard let baseFileUrl = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {
+            fatalError("example baseFileUrl not valid")
+        }
+        return baseFileUrl
+    }
+
+    private func exampleUrlL0Overview() -> URL {
+        guard let baseFileUrl = Bundle.main.url(
+            forResource: "L0 - Course Overview",
+            withExtension: "pdf"
+        ) else {
+            fatalError("example baseFileUrl not valid")
+        }
+        return baseFileUrl
+    }
+
+    private func exampleUrlL1Intro() -> URL {
+        guard let baseFileUrl = Bundle.main.url(forResource: "L1 - Introduction", withExtension: "pdf") else {
+            fatalError("example baseFileUrl not valid")
+        }
+        return baseFileUrl
+    }
+
+    private func exampleUrlFirebase() -> URL {
+        let firebaseUrlString = "https://firebasestorage.googleapis.com" +
+            ":443/v0/b/annotato" + "-ba051.appspot.com/o/clean-cod" +
+            "e.pdf?alt=media&token=513532aa-9c96-42ce-9a62-b4a49a8ec37c"
+        let firebaseUrl = URL(string: firebaseUrlString)
+        guard let firebaseUrl = firebaseUrl else {
+            fatalError("firebase url not valid")
+        }
+
+        return firebaseUrl
     }
 
     private func exampleAnnotationParts1() -> [AnnotationPartViewModel] {
