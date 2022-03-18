@@ -7,6 +7,7 @@ target 'Annotato' do
 
   # Pods for Annotato
   pod 'Firebase/Auth', '8.12.1'
+  pod 'Firebase/Storage', '8.12.1'
   pod 'SwiftyBeaver', '1.9.5'
   pod 'RichTextView', '3.2.1'
 end

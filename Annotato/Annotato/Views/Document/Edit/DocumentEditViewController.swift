@@ -53,6 +53,6 @@ class DocumentEditViewController: UIViewController {
 
 extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
     func didTapBackButton() {
-        goToDocumentList()
+        goBack()
     }
 }

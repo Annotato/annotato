@@ -59,7 +59,6 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     @objc
     private func didTapOnCellView() {
         guard let document = document else {
-            print("No document in this cell view")
             return
         }
         actionDelegate?.didSelectCellView(document: document)

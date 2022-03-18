@@ -8,10 +8,7 @@ public func configure(_ app: Application) throws {
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     connectDatabase(app: app)
-
-    app.migrations.add(CreateDocuments())
-
-    try app.autoMigrate().wait()
+    try addAndRunMigrations(app: app)
 
     // register routes
     try routes(app)
@@ -30,4 +27,12 @@ private func connectDatabase(app: Application) {
                                                          password: dbPassword, database: dbName)
 
     app.databases.use(dbConfig, as: .psql)
+}
+
+private func addAndRunMigrations(app: Application) throws {
+    app.migrations.add(CreateDocuments())
+    app.migrations.add(CreateAnnotations())
+    app.migrations.add(CreateAnnotationText())
+
+    try app.autoMigrate().wait()
 }
