@@ -1,9 +1,13 @@
 import UIKit
+import PDFKit
 import Combine
 
 class DocumentView: UIView {
     private var documentViewModel: DocumentViewModel
     private var cancellables: Set<AnyCancellable> = []
+
+    private var pdfView: DocumentPdfView?
+    private var annotationViews: [AnnotationView]
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -12,18 +16,61 @@ class DocumentView: UIView {
 
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
         self.documentViewModel = documentViewModel
-        super.init(frame: frame)
+        self.annotationViews = []
 
+        super.init(frame: frame)
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.black.cgColor
 
+        addGestureRecognizers()
+        addObservers()
         initializePdfView()
         setUpSubscriber()
-        addGestureRecognizers()
-        initializeAnnotationViews()
+        initializeInitialAnnotationViews()
     }
 
-    private func initializeAnnotationViews() {
+    private func addObservers() {
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(didChangeVisiblePages(notification:)),
+            name: Notification.Name.PDFViewVisiblePagesChanged, object: nil
+        )
+    }
+
+    @objc
+    private func didChangeVisiblePages(notification: Notification) {
+        showAnnotationsOfVisiblePages()
+    }
+
+    private func annotationIsInVisiblePages(
+        annotation: AnnotationView,
+        visiblePages: [PDFPage]
+    ) -> Bool {
+        let visiblePageLabels = visiblePages.compactMap({ $0.label })
+        return visiblePageLabels.contains(annotation.pageLabel)
+    }
+
+    private func bringAnnotationToFront(
+        annotation: AnnotationView
+    ) {
+        annotation.superview?.bringSubviewToFront(annotation)
+    }
+
+    private func showAnnotationsOfVisiblePages() {
+        guard let pdfSubView = pdfView else {
+            return
+        }
+        let visiblePages = pdfSubView.visiblePages
+        for annotationView in annotationViews {
+            let annotationShouldBeVisible = annotationIsInVisiblePages(
+                annotation: annotationView, visiblePages: visiblePages
+            )
+            if annotationShouldBeVisible {
+                bringAnnotationToFront(annotation: annotationView)
+            }
+        }
+    }
+
+    func initializeInitialAnnotationViews() {
         for annotation in documentViewModel.annotations {
             renderNewAnnotation(viewModel: annotation)
         }
@@ -34,6 +81,7 @@ class DocumentView: UIView {
             frame: self.frame,
             documentPdfViewModel: documentViewModel.pdfDocument
         )
+        self.pdfView = view
         addSubview(view)
     }
 
@@ -46,12 +94,30 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        documentViewModel.addAnnotation(at: touchPoint)
+        addAnnotation(touchPoint: touchPoint)
+    }
+
+    private func addAnnotation(touchPoint: CGPoint) {
+        guard let pdfView = self.pdfView else {
+            return
+        }
+        guard let pageClicked: PDFPage = pdfView.page(for: touchPoint, nearest: true) else {
+            return
+        }
+        guard let pageLabel: String = pageClicked.label else {
+            return
+        }
+        let pointInPdf = self.convert(touchPoint, to: pdfView.documentView)
+        documentViewModel.addAnnotation(
+            center: pointInPdf,
+            pageLabel: pageLabel
+        )
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annotation = AnnotationView(viewModel: viewModel)
-        addSubview(annotation)
+        let annotationView = AnnotationView(viewModel: viewModel)
+        annotationViews.append(annotationView)
+        pdfView?.documentView?.addSubview(annotationView)
     }
 
     private func setUpSubscriber() {

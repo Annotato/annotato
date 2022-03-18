@@ -13,34 +13,42 @@ class SampleData {
     }
 
     func exampleDocument(from listViewModel: DocumentListViewModel) -> DocumentViewModel {
-        let pdfDocument = DocumentPdfViewModel(baseFileUrl: listViewModel.baseFileUrl)
+        let pdfDocument = PdfViewModel(baseFileUrl: listViewModel.baseFileUrl)
         return DocumentViewModel(annotations: [], pdfDocument: pdfDocument)
     }
 
     func exampleDocument() -> DocumentViewModel {
         DocumentViewModel(
             annotations: SampleData().exampleAnnotations(),
-            pdfDocument: SampleData().examplePdfDocument())
+            pdfDocument: examplePdfViewModelLab01Qns()
+        )
     }
 
     func exampleAnnotations() -> [AnnotationViewModel] {
         [
             AnnotationViewModel(
                 id: UUID(),
-                origin: CGPoint(x: 100.0, y: 150.0),
+                origin: CGPoint(x: 100, y: 100),
+                pageLabel: "1",
                 width: 300.0,
                 parts: exampleAnnotationParts1()
             ),
             AnnotationViewModel(
                 id: UUID(),
-                origin: CGPoint(x: 600.0, y: 300.0),
+                origin: CGPoint(x: 200, y: 200),
+                pageLabel: "0",
                 width: 250.0,
-                parts: exampleAnnotationParts1())
+                parts: exampleAnnotationParts1()
+            )
         ]
     }
 
-    private func examplePdfDocument() -> DocumentPdfViewModel {
-        DocumentPdfViewModel(baseFileUrl: SampleData().exampleUrlLab01Qns())
+    private func examplePdfViewModelLab01Qns() -> PdfViewModel {
+        PdfViewModel(baseFileUrl: exampleUrlLab01Qns())
+    }
+
+    private func examplePdfViewModelL0Overview() -> PdfViewModel {
+        PdfViewModel(baseFileUrl: exampleUrlL0Overview())
     }
 
     private func exampleUrlLab01Qns() -> URL {

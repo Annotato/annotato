@@ -9,6 +9,10 @@ class AnnotationView: UIView {
     private var parts: UIStackView
     private var cancellables: Set<AnyCancellable> = []
 
+    var pageLabel: String {
+        viewModel.pageLabel
+    }
+
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -20,8 +24,10 @@ class AnnotationView: UIView {
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
+
         initializeSubviews()
         setUpSubscribers()
+        addPanGestureRecognizer()
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
@@ -76,6 +82,32 @@ class AnnotationView: UIView {
                 self?.removeFromSuperview()
             }
         }).store(in: &cancellables)
+    }
+
+    private func addPanGestureRecognizer() {
+        isUserInteractionEnabled = true
+        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc
+    private func didPan(_ sender: UIPanGestureRecognizer) {
+        let documentViewPoint = sender.location(in: superview)
+        guard sender.state != .cancelled else {
+            return
+        }
+        guard let pdfView = superview?.superview?.superview
+        as? DocumentPdfView else {
+            return
+        }
+        guard let pointInPdfDocument = superview?.convert(documentViewPoint, to: pdfView) else {
+            return
+        }
+        let currPage = pdfView.page(for: pointInPdfDocument, nearest: true)
+        guard let pageLabel = currPage?.label else {
+            return
+        }
+        viewModel.updateLocation(to: documentViewPoint, pageLabel: pageLabel)
     }
 
     private func resize() {

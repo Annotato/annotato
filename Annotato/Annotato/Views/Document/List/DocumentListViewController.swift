@@ -65,7 +65,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         }
         let newDocumentViewModel = DocumentViewModel(
             annotations: [],
-            pdfDocument: DocumentPdfViewModel(baseFileUrl: selectedFileUrl)
+            pdfDocument: PdfViewModel(baseFileUrl: selectedFileUrl)
         )
         goToDocumentEdit(documentViewModel: newDocumentViewModel)
     }

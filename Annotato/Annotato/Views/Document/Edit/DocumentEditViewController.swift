@@ -1,6 +1,6 @@
 import UIKit
 
-class DocumentEditViewController: UIViewController {
+class DocumentEditViewController: UIViewController, AlertPresentable {
     let toolbarHeight = 50.0
     var currentDocumentViewModel: DocumentViewModel?
 
@@ -12,12 +12,11 @@ class DocumentEditViewController: UIViewController {
 
     func initializeSubviews() {
         initializeToolbar()
-
-        if let currentDocumentViewModel = currentDocumentViewModel {
-            initializeDocumentView(documentViewModel: currentDocumentViewModel)
-        } else {
-            initializeDocumentView()
+        guard let currentDocumentViewModel = currentDocumentViewModel else {
+            presentErrorAlert(errorMessage: "No document view model")
+            return
         }
+        initializeDocumentView(documentViewModel: currentDocumentViewModel)
     }
 
     private func initializeToolbar() {
@@ -40,22 +39,6 @@ class DocumentEditViewController: UIViewController {
             frame: self.view.safeAreaLayoutGuide.layoutFrame,
             documentViewModel: documentViewModel
         )
-        view.addSubview(documentView)
-
-        documentView.translatesAutoresizingMaskIntoConstraints = false
-        documentView.topAnchor.constraint(
-            equalTo: margins.topAnchor, constant: toolbarHeight).isActive = true
-        documentView.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
-        documentView.leftAnchor.constraint(equalTo: margins.leftAnchor).isActive = true
-        documentView.rightAnchor.constraint(equalTo: margins.rightAnchor).isActive = true
-    }
-
-    private func initializeDocumentView() {
-        let documentView = DocumentView(
-            frame: self.view.safeAreaLayoutGuide.layoutFrame,
-            documentViewModel: SampleData().exampleDocument()
-        )
-
         view.addSubview(documentView)
 
         documentView.translatesAutoresizingMaskIntoConstraints = false
