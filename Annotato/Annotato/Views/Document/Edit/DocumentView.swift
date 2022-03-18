@@ -39,11 +39,11 @@ class DocumentView: UIView {
         initializeAnnotationViewsForVisiblePages()
     }
 
-    private func checkIfAnnotationIsInVisiblePages(
-        anno: AnnotationViewModel,
+    private func annotationIsInVisiblePages(
+        annotation: AnnotationViewModel,
         visiblePages: [PDFPage]
     ) -> Bool {
-        guard let pageNumForAnnotation = anno.associatedPage.label else {
+        guard let pageNumForAnnotation = annotation.associatedPage.label else {
             return false
         }
         let visiblePagesIndex = visiblePages.map({ pdfPage -> String in
@@ -55,32 +55,32 @@ class DocumentView: UIView {
         return visiblePagesIndex.contains(pageNumForAnnotation)
     }
 
-    private func checkIfAnnoIsAlreadyInSubview(
-        anno: AnnotationViewModel, subviews: [UIView]
+    private func annotationIsAlreadyInSubview(
+        annotation: AnnotationViewModel, subviews: [UIView]
     ) -> Bool {
         for subview in subviews {
-            guard let annoSubview = subview as? AnnotationView else {
+            guard let annotationSubview = subview as? AnnotationView else {
                 continue
             }
-            if annoSubview.viewModel === anno {
+            if annotationSubview.viewModel === annotation {
                 return true
             }
         }
         return false
     }
 
-    private func bringAnnoToFront(
-        anno: AnnotationViewModel, subviews: [UIView]
+    private func bringAnnotationToFront(
+        annotation: AnnotationViewModel, subviews: [UIView]
     ) {
         for subview in subviews {
-            guard let annoSubview = subview as? AnnotationView else {
+            guard let annotationSubview = subview as? AnnotationView else {
                 continue
             }
-            if annoSubview.viewModel === anno {
-                guard let documentViewParent = annoSubview.superview else {
+            if annotationSubview.viewModel === annotation {
+                guard let documentViewParent = annotationSubview.superview else {
                     return
                 }
-                documentViewParent.bringSubviewToFront(annoSubview)
+                documentViewParent.bringSubviewToFront(annotationSubview)
             }
         }
     }
@@ -94,19 +94,19 @@ class DocumentView: UIView {
         }
         let visiblePages = pdfSubView.visiblePages
         for annotation in documentViewModel.annotations {
-            let annoShouldBeVisible = checkIfAnnotationIsInVisiblePages(anno: annotation, visiblePages: visiblePages)
+            let annotationShouldBeVisible = annotationIsInVisiblePages(annotation: annotation, visiblePages: visiblePages)
 
-            if annoShouldBeVisible {
-                let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
-                    anno: annotation, subviews: documentView.subviews
+            if annotationShouldBeVisible {
+                let annotationIsAlreadyInSubview = annotationIsAlreadyInSubview(
+                    annotation: annotation, subviews: documentView.subviews
                 )
-                if !annoIsAlreadyInSubview {
+                if !annotationIsAlreadyInSubview {
                     documentViewModel.addAnnotation(
                         viewModel: annotation
                     )
                 } else {
-                    bringAnnoToFront(
-                        anno: annotation, subviews: documentView.subviews
+                    bringAnnotationToFront(
+                        annotation: annotation, subviews: documentView.subviews
                     )
                 }
             }
@@ -130,8 +130,8 @@ class DocumentView: UIView {
             return
         }
         for annotation in documentViewModel.annotations {
-            let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
-                anno: annotation, subviews: documentView.subviews
+            let annoIsAlreadyInSubview = annotationIsAlreadyInSubview(
+                annotation: annotation, subviews: documentView.subviews
             )
             if !annoIsAlreadyInSubview {
                 renderNewAnnotation(viewModel: annotation)
@@ -178,7 +178,7 @@ class DocumentView: UIView {
             id: UUID(), originInDocumentSpace: docViewSpacePoint,
             associatedDocumentPdfViewModel: pdfView.viewModel,
             associatedPage: pageClicked,
-            coordinatesInPageSpace: pageSpacePoint,
+            originInPageSpace: pageSpacePoint,
             width: newAnnotationWidth,
             parts: []
         )

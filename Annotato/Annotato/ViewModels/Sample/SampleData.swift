@@ -29,7 +29,7 @@ class SampleData {
                 originInDocumentSpace: CGPoint(x: 600.0, y: 300.0),
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
                 associatedPage: firstPage,
-                coordinatesInPageSpace: .init(x: 100, y: 100),
+                originInPageSpace: .init(x: 100, y: 100),
                 width: 300.0,
                 parts: exampleAnnotationParts1()
             ),
@@ -38,7 +38,7 @@ class SampleData {
                 originInDocumentSpace: CGPoint(x: 100.0, y: 150.0),
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
                 associatedPage: firstPage,
-                coordinatesInPageSpace: .init(x: 200, y: 200),
+                originInPageSpace: .init(x: 200, y: 200),
                 width: 250.0,
                 parts: exampleAnnotationParts1()
             )

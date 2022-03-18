@@ -19,16 +19,15 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = false
 
     unowned var associatedDocumentPdfViewModel: PdfViewModel?
-    var associatedDocument: PDFDocument
     var associatedPage: PDFPage
-    var coordinatesInPageSpace: CGPoint
+    var originInPageSpace: CGPoint
 
     init(
         id: UUID,
         originInDocumentSpace: CGPoint,
         associatedDocumentPdfViewModel: PdfViewModel,
         associatedPage: PDFPage,
-        coordinatesInPageSpace: CGPoint,
+        originInPageSpace: CGPoint,
         width: Double,
         parts: [AnnotationPartViewModel],
         palette: AnnotationPaletteViewModel? = nil
@@ -37,9 +36,8 @@ class AnnotationViewModel: ObservableObject {
         self.originInDocumentSpace = originInDocumentSpace
 
         self.associatedDocumentPdfViewModel = associatedDocumentPdfViewModel
-        self.associatedDocument = associatedDocumentPdfViewModel.document
         self.associatedPage = associatedPage
-        self.coordinatesInPageSpace = coordinatesInPageSpace
+        self.originInPageSpace = originInPageSpace
 
         self.width = width
         self.parts = parts
@@ -87,7 +85,7 @@ class AnnotationViewModel: ObservableObject {
 
         // Assign all the new values to update
         self.associatedPage = currPage
-        self.coordinatesInPageSpace = pageSpaceCoordinates
+        self.originInPageSpace = pageSpaceCoordinates
         self.originInDocumentSpace = documentViewPoint
     }
 }
