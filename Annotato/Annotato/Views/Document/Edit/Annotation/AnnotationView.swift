@@ -10,7 +10,7 @@ class AnnotationView: UIView {
     private var cancellables: Set<AnyCancellable> = []
 
     var pageLabel: String {
-        viewModel.associatedPageNumber
+        viewModel.pageLabel
     }
 
     @available(*, unavailable)
@@ -107,7 +107,7 @@ class AnnotationView: UIView {
         guard let pageNum = currPage?.label else {
             return
         }
-        viewModel.updateLocation(to: documentViewPoint, pageNumber: pageNum)
+        viewModel.updateLocation(to: documentViewPoint, pageLabel: pageNum)
     }
 
     private func resize() {

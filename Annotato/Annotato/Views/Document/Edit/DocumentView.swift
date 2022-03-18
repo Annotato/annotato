@@ -105,13 +105,13 @@ class DocumentView: UIView {
         guard let pageClicked: PDFPage = pdfView.page(for: touchPoint, nearest: true) else {
             return
         }
-        guard let pageNumber: String = pageClicked.label else {
+        guard let pageLabel: String = pageClicked.label else {
             return
         }
         let pointInPdf = self.convert(touchPoint, to: pdfView.documentView)
         documentViewModel.addAnnotation(
             center: pointInPdf,
-            pageNumber: pageNumber
+            pageLabel: pageLabel
         )
     }
 
