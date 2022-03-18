@@ -15,9 +15,23 @@ class DocumentsWebSocketController {
         req.logger.info("Client connected from Document with ID \(documentId)")
         addToOpenConnections(documentId: documentId, webSocket: webSocket)
 
+        webSocket.onText(handleIncomingText(documentId: documentId))
+
         webSocket.onClose.whenComplete { [weak self] _ in
             req.logger.info("Client disconnected from Document with ID \(documentId)")
             self?.handleClosedConnection(documentId: documentId, webSocket: webSocket)
+        }
+    }
+
+    private func handleIncomingText(documentId: UUID) -> (WebSocket, String) -> Void {
+        { webSocket, text in
+            guard let currentOpenConnections = self.openConnections[documentId] else {
+                return
+            }
+
+            for socket in currentOpenConnections where socket !== webSocket {
+                socket.send(text)
+            }
         }
     }
 
