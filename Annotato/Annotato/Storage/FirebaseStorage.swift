@@ -10,8 +10,13 @@ class FirebaseStorage: AnnotatoStorageService {
 
     weak var delegate: AnnotatoStorageDelegate?
 
-    func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (URL) -> Void) {
-        let pdfRef = storageRef.child(name)
+    func uploadPdf(
+        fileSystemUrl: URL,
+        withName name: String,
+        withId documentId: UUID,
+        completion: @escaping (URL) -> Void
+    ) {
+        let pdfRef = storageRef.child(documentId.uuidString)
 
         // swiftlint:disable closure_body_length
         _ = pdfRef.putFile(from: fileSystemUrl, metadata: nil) { _, error in
@@ -48,7 +53,7 @@ class FirebaseStorage: AnnotatoStorageService {
     }
 
     func deletePdf(document: Document, completion: @escaping () -> Void) {
-        let pdfRef = storageRef.child(document.name)
+        let pdfRef = storageRef.child(document.id.uuidString)
         pdfRef.delete { error in
             if let error = error {
                 AnnotatoLogger.error(
