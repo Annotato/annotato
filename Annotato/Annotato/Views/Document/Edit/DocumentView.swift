@@ -45,8 +45,8 @@ class DocumentView: UIView {
         annotation: AnnotationView,
         visiblePages: [PDFPage]
     ) -> Bool {
-        let visiblePageLabels = visiblePages.compactMap({ $0.label })
-        return visiblePageLabels.contains(annotation.pageLabel)
+        let visiblePageNumbers = visiblePages.compactMap({ $0.pageRef?.pageNumber })
+        return visiblePageNumbers.contains(annotation.pageNumber)
     }
 
     private func bringAnnotationToFront(
@@ -101,17 +101,14 @@ class DocumentView: UIView {
         guard let pdfView = self.pdfView else {
             return
         }
-        guard let pageClicked: PDFPage = pdfView.page(for: touchPoint, nearest: true) else {
+        guard let pageClicked = pdfView.page(for: touchPoint, nearest: true) else {
             return
         }
-        guard let pageLabel: String = pageClicked.label else {
+        guard let pageNumber = pageClicked.pageRef?.pageNumber else {
             return
         }
         let pointInPdf = self.convert(touchPoint, to: pdfView.documentView)
-        documentViewModel.addAnnotation(
-            center: pointInPdf,
-            pageLabel: pageLabel
-        )
+        documentViewModel.addAnnotation(center: pointInPdf, pageNumber: pageNumber)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {

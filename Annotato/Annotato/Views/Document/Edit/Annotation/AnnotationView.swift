@@ -9,8 +9,8 @@ class AnnotationView: UIView {
     private var parts: UIStackView
     private var cancellables: Set<AnyCancellable> = []
 
-    var pageLabel: String {
-        viewModel.pageLabel
+    var pageNumber: Int {
+        viewModel.pageNumber
     }
 
     @available(*, unavailable)
@@ -104,10 +104,10 @@ class AnnotationView: UIView {
             return
         }
         let currPage = pdfView.page(for: pointInPdfDocument, nearest: true)
-        guard let pageLabel = currPage?.label else {
+        guard let pageNumber = currPage?.pageRef?.pageNumber else {
             return
         }
-        viewModel.updateLocation(to: documentViewPoint, pageLabel: pageLabel)
+        viewModel.updateLocation(to: documentViewPoint, pageNumber: pageNumber)
     }
 
     private func resize() {

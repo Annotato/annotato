@@ -6,7 +6,7 @@ import PDFKit
 class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
     private(set) var width: Double
-    private(set) var pageLabel: String
+    private(set) var pageNumber: Int
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
     private(set) var isEditing = false
@@ -22,14 +22,14 @@ class AnnotationViewModel: ObservableObject {
     init(
         id: UUID,
         origin: CGPoint,
-        pageLabel: String,
+        pageNumber: Int,
         width: Double,
         parts: [AnnotationPartViewModel],
         palette: AnnotationPaletteViewModel? = nil
     ) {
         self.id = id
         self.origin = origin
-        self.pageLabel = pageLabel
+        self.pageNumber = pageNumber
         self.width = width
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
@@ -52,9 +52,9 @@ class AnnotationViewModel: ObservableObject {
         resize()
     }
 
-    func updateLocation(to center: CGPoint, pageLabel: String) {
+    func updateLocation(to center: CGPoint, pageNumber: Int) {
         self.center = center
-        self.pageLabel = pageLabel
+        self.pageNumber = pageNumber
     }
 }
 
