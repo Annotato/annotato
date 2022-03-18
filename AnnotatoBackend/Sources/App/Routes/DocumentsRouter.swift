@@ -13,5 +13,8 @@ func documentsRouter(documents: RoutesBuilder) {
         document.put(use: DocumentsController.update)
 
         document.delete(use: DocumentsController.delete)
+
+        let webSocketController = DocumentsWebSocketController()
+        document.webSocket("edit", onUpgrade: webSocketController.handleIncomingConnection)
     }
 }
