@@ -72,13 +72,7 @@ class AuthViewController: UIViewController, Navigable {
 
 extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
     func logInDidFail(_ error: Error) {
-        /*
-         IMPORTANT!
-         I added this part here so that I can easily click one button and can enter the
-         application without needing to sign in each time I try to run
-         */
-        self.goToDocumentList()
-//        presentErrorAlert(errorMessage: error.localizedDescription)
+        presentErrorAlert(errorMessage: error.localizedDescription)
     }
 
     func signUpDidFail(_ error: Error) {

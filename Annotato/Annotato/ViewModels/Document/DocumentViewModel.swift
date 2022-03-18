@@ -15,12 +15,12 @@ class DocumentViewModel: ObservableObject {
 extension DocumentViewModel {
     func addAnnotation(
         center: CGPoint,
-        pageNum: String
+        pageNumber: String
     ) {
         let newAnnotationWidth = 300.0
         let documentAnnotationViewModel = AnnotationViewModel(
             id: UUID(), origin: .zero,
-            pageNum: pageNum,
+            pageNumber: pageNumber,
             width: newAnnotationWidth,
             parts: []
         )

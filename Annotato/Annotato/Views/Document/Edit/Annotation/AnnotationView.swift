@@ -9,8 +9,8 @@ class AnnotationView: UIView {
     private var parts: UIStackView
     private var cancellables: Set<AnyCancellable> = []
 
-    var pageNum: String {
-        viewModel.associatedPageNum
+    var pageLabel: String {
+        viewModel.associatedPageNumber
     }
 
     @available(*, unavailable)
@@ -25,7 +25,6 @@ class AnnotationView: UIView {
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
 
-        self.center = viewModel.center
         initializeSubviews()
         setUpSubscribers()
         addPanGestureRecognizer()
@@ -63,7 +62,7 @@ class AnnotationView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$originInDocumentSpace.sink(receiveValue: { [weak self] origin in
+        viewModel.$origin.sink(receiveValue: { [weak self] origin in
             self?.frame.origin = origin
         }).store(in: &cancellables)
 
@@ -101,24 +100,14 @@ class AnnotationView: UIView {
         as? DocumentPdfView else {
             return
         }
-        // Get coordinates in terms of the visible view page space
-        guard let visibleViewPoint = superview?.convert(
-            documentViewPoint, to: pdfView
-        ) else {
+        guard let pointInPdfDocument = superview?.convert(documentViewPoint, to: pdfView) else {
             return
         }
-        // Get the current page that this annotation is at
-        let currPage = pdfView.page(
-            for: visibleViewPoint, nearest: true
-        )
+        let currPage = pdfView.page(for: pointInPdfDocument, nearest: true)
         guard let pageNum = currPage?.label else {
             return
         }
-        viewModel.updateLocation(
-            documentViewPoint: documentViewPoint,
-            visibleViewPoint: visibleViewPoint,
-            pageNum: pageNum
-        )
+        viewModel.updateLocation(to: documentViewPoint, pageNumber: pageNum)
     }
 
     private func resize() {

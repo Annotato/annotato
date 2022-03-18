@@ -31,28 +31,22 @@ class DocumentView: UIView {
 
     private func addObservers() {
         NotificationCenter.default.addObserver(
-            self, selector: #selector(handleVisiblePageChange(notification:)),
+            self, selector: #selector(didChangeVisiblePages(notification:)),
             name: Notification.Name.PDFViewVisiblePagesChanged, object: nil
         )
     }
 
     @objc
-    private func handleVisiblePageChange(notification: Notification) {
-        print("visible pages changed")
-        showAnnotationViewsOfVisiblePages()
+    private func didChangeVisiblePages(notification: Notification) {
+        showAnnotationsOfVisiblePages()
     }
 
     private func annotationIsInVisiblePages(
         annotation: AnnotationView,
         visiblePages: [PDFPage]
     ) -> Bool {
-        let visiblePagesIndex = visiblePages.map({ pdfPage -> String in
-            guard let label = pdfPage.label else {
-                return "-1"
-            }
-            return label
-        })
-        return visiblePagesIndex.contains(annotation.pageNum)
+        let visiblePageLabels = visiblePages.compactMap({ $0.label })
+        return visiblePageLabels.contains(annotation.pageLabel)
     }
 
     private func bringAnnotationToFront(
@@ -61,12 +55,11 @@ class DocumentView: UIView {
         annotation.superview?.bringSubviewToFront(annotation)
     }
 
-    private func showAnnotationViewsOfVisiblePages() {
+    private func showAnnotationsOfVisiblePages() {
         guard let pdfSubView = pdfView else {
             return
         }
         let visiblePages = pdfSubView.visiblePages
-        print("There are \(annotationViews.count) annotation views.")
         for annotationView in annotationViews {
             let annotationShouldBeVisible = annotationIsInVisiblePages(
                 annotation: annotationView, visiblePages: visiblePages
@@ -77,18 +70,8 @@ class DocumentView: UIView {
         }
     }
 
-    /*
-     This function needs to be present so that we don't run into a cycle
-     when updating the view model using the addAnnotation function.
-     Which means initially we cannot add to the subview using the
-     addAnnotation function and must manually renderNewAnnotation directly
-     here.
-     Otherwise, there will be double of the initial objects, or could
-     potentially run into a cycle, depending on how we call it.
-     */
     func initializeInitialAnnotationViews() {
         for annotation in documentViewModel.annotations {
-            print("an annotation")
             renderNewAnnotation(viewModel: annotation)
         }
     }
@@ -111,24 +94,24 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        addAnnoToViewAndViewModel(mainViewTouchPoint: touchPoint)
+        addAnnotation(touchPoint: touchPoint)
     }
 
-    private func addAnnoToViewAndViewModel(mainViewTouchPoint: CGPoint) {
+    private func addAnnotation(touchPoint: CGPoint) {
         guard let pdfView = self.pdfView else {
             return
         }
         // This returns the page that the click occurred
-        guard let pageClicked: PDFPage = pdfView.page(for: mainViewTouchPoint, nearest: true) else {
+        guard let pageClicked: PDFPage = pdfView.page(for: touchPoint, nearest: true) else {
             return
         }
-        guard let pageNum: String = pageClicked.label else {
+        guard let pageNumber: String = pageClicked.label else {
             return
         }
-        let docViewSpacePoint = self.convert(mainViewTouchPoint, to: pdfView.documentView)
+        let pointInPdf = self.convert(touchPoint, to: pdfView.documentView)
         documentViewModel.addAnnotation(
-            center: docViewSpacePoint,
-            pageNum: pageNum
+            center: pointInPdf,
+            pageNumber: pageNumber
         )
     }
 

@@ -12,25 +12,25 @@ class AnnotationViewModel: ObservableObject {
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
-    @Published private(set) var originInDocumentSpace: CGPoint
+    @Published private(set) var origin: CGPoint
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = false
 
-    private(set) var associatedPageNum: String
+    private(set) var associatedPageNumber: String
 
     init(
         id: UUID,
         origin: CGPoint,
-        pageNum: String,
+        pageNumber: String,
         width: Double,
         parts: [AnnotationPartViewModel],
         palette: AnnotationPaletteViewModel? = nil
     ) {
         self.id = id
-        self.originInDocumentSpace = origin
-        self.associatedPageNum = pageNum
+        self.origin = origin
+        self.associatedPageNumber = pageNumber
 
         self.width = width
         self.parts = parts
@@ -55,23 +55,21 @@ class AnnotationViewModel: ObservableObject {
     }
 
     func updateLocation(
-        documentViewPoint: CGPoint,
-        visibleViewPoint: CGPoint,
-        pageNum: String
+        to center: CGPoint,
+        pageNumber: String
     ) {
-        // Assign all the new values to update
-        self.associatedPageNum = pageNum
-        self.center = documentViewPoint
+        self.center = center
+        self.associatedPageNumber = pageNumber
     }
 }
 
 extension AnnotationViewModel {
     var center: CGPoint {
         get {
-            CGPoint(x: originInDocumentSpace.x + width / 2, y: originInDocumentSpace.y + height / 2)
+            CGPoint(x: origin.x + width / 2, y: origin.y + height / 2)
         }
         set(newCenter) {
-            originInDocumentSpace = CGPoint(x: newCenter.x - width / 2, y: newCenter.y - height / 2)
+            origin = CGPoint(x: newCenter.x - width / 2, y: newCenter.y - height / 2)
         }
     }
 
@@ -102,11 +100,11 @@ extension AnnotationViewModel {
     }
 
     private var maximizedFrame: CGRect {
-        CGRect(origin: originInDocumentSpace, size: size)
+        CGRect(origin: origin, size: size)
     }
 
     private var minimizedFrame: CGRect {
-        CGRect(origin: originInDocumentSpace, size: minimizedSize)
+        CGRect(origin: origin, size: minimizedSize)
     }
 
     var frame: CGRect {

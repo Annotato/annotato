@@ -29,14 +29,14 @@ class SampleData {
             AnnotationViewModel(
                 id: UUID(),
                 origin: CGPoint(x: 100, y: 100),
-                pageNum: "1",
+                pageNumber: "1",
                 width: 300.0,
                 parts: exampleAnnotationParts1()
             ),
             AnnotationViewModel(
                 id: UUID(),
                 origin: CGPoint(x: 200, y: 200),
-                pageNum: "0",
+                pageNumber: "0",
                 width: 250.0,
                 parts: exampleAnnotationParts1()
             )
