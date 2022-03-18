@@ -12,23 +12,21 @@ class AnnotationViewModel: ObservableObject {
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
-    @Published private(set) var origin: CGPoint
+    @Published private(set) var originInDocumentSpace: CGPoint
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = false
 
-    unowned var associatedDocumentPdfViewModel: DocumentPdfViewModel?
+    unowned var associatedDocumentPdfViewModel: PdfViewModel?
     var associatedDocument: PDFDocument
-    var coordinatesInDocumentSpace: CGPoint
     var associatedPage: PDFPage
     var coordinatesInPageSpace: CGPoint
 
     init(
         id: UUID,
-        origin: CGPoint,
-        associatedDocumentPdfViewModel: DocumentPdfViewModel,
-        coordinatesInDocumentSpace: CGPoint,
+        originInDocumentSpace: CGPoint,
+        associatedDocumentPdfViewModel: PdfViewModel,
         associatedPage: PDFPage,
         coordinatesInPageSpace: CGPoint,
         width: Double,
@@ -36,11 +34,10 @@ class AnnotationViewModel: ObservableObject {
         palette: AnnotationPaletteViewModel? = nil
     ) {
         self.id = id
-        self.origin = origin
+        self.originInDocumentSpace = originInDocumentSpace
 
         self.associatedDocumentPdfViewModel = associatedDocumentPdfViewModel
         self.associatedDocument = associatedDocumentPdfViewModel.document
-        self.coordinatesInDocumentSpace = coordinatesInDocumentSpace
         self.associatedPage = associatedPage
         self.coordinatesInPageSpace = coordinatesInPageSpace
 
@@ -67,7 +64,7 @@ class AnnotationViewModel: ObservableObject {
         resize()
     }
 
-    private func updateLocation(documentViewPoint: CGPoint, parentView: UIView?) {
+    func updateLocation(documentViewPoint: CGPoint, parentView: UIView?) {
         guard let parentView = parentView else {
             return
         }
@@ -91,17 +88,17 @@ class AnnotationViewModel: ObservableObject {
         // Assign all the new values to update
         self.associatedPage = currPage
         self.coordinatesInPageSpace = pageSpaceCoordinates
-        self.coordinatesInDocumentSpace = documentViewPoint
+        self.originInDocumentSpace = documentViewPoint
     }
 }
 
 extension AnnotationViewModel {
     var center: CGPoint {
         get {
-            CGPoint(x: origin.x + width / 2, y: origin.y + height / 2)
+            CGPoint(x: originInDocumentSpace.x + width / 2, y: originInDocumentSpace.y + height / 2)
         }
         set(newCenter) {
-            origin = CGPoint(x: newCenter.x - width / 2, y: newCenter.y - height / 2)
+            originInDocumentSpace = CGPoint(x: newCenter.x - width / 2, y: newCenter.y - height / 2)
         }
     }
 
@@ -132,11 +129,11 @@ extension AnnotationViewModel {
     }
 
     private var maximizedFrame: CGRect {
-        CGRect(origin: origin, size: size)
+        CGRect(origin: originInDocumentSpace, size: size)
     }
 
     private var minimizedFrame: CGRect {
-        CGRect(origin: origin, size: minimizedSize)
+        CGRect(origin: originInDocumentSpace, size: minimizedSize)
     }
 
     var frame: CGRect {

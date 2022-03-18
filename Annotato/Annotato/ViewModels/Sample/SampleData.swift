@@ -26,9 +26,8 @@ class SampleData {
         return [
             AnnotationViewModel(
                 id: UUID(),
-                origin: CGPoint(x: 600.0, y: 300.0),
+                originInDocumentSpace: CGPoint(x: 600.0, y: 300.0),
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
-                coordinatesInDocumentSpace: .init(x: 100, y: 100),
                 associatedPage: firstPage,
                 coordinatesInPageSpace: .init(x: 100, y: 100),
                 width: 300.0,
@@ -36,9 +35,8 @@ class SampleData {
             ),
             AnnotationViewModel(
                 id: UUID(),
-                origin: CGPoint(x: 100.0, y: 150.0),
+                originInDocumentSpace: CGPoint(x: 100.0, y: 150.0),
                 associatedDocumentPdfViewModel: examplePdfViewModelLab01Qns(),
-                coordinatesInDocumentSpace: .init(x: 200, y: 200),
                 associatedPage: firstPage,
                 coordinatesInPageSpace: .init(x: 200, y: 200),
                 width: 250.0,
@@ -47,12 +45,12 @@ class SampleData {
         ]
     }
 
-    private func examplePdfViewModelLab01Qns() -> DocumentPdfViewModel {
-        DocumentPdfViewModel(baseFileUrl: exampleUrlLab01Qns())
+    private func examplePdfViewModelLab01Qns() -> PdfViewModel {
+        PdfViewModel(baseFileUrl: exampleUrlLab01Qns())
     }
 
-    private func examplePdfViewModelL0Overview() -> DocumentPdfViewModel {
-        DocumentPdfViewModel(baseFileUrl: exampleUrlL0Overview())
+    private func examplePdfViewModelL0Overview() -> PdfViewModel {
+        PdfViewModel(baseFileUrl: exampleUrlL0Overview())
     }
 
     private func exampleUrlLab01Qns() -> URL {

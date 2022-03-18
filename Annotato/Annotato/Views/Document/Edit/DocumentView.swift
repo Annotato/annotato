@@ -129,6 +129,7 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
+        print("tapped the screen")
         addAnnoToViewAndViewModel(mainViewTouchPoint: touchPoint)
     }
 
@@ -147,9 +148,8 @@ class DocumentView: UIView {
 
         let newAnnotationWidth = 300.0
         let docAnnoViewModel = AnnotationViewModel(
-            id: UUID(), origin: .zero,
+            id: UUID(), originInDocumentSpace: docViewSpacePoint,
             associatedDocumentPdfViewModel: pdfView.viewModel,
-            coordinatesInDocumentSpace: docViewSpacePoint,
             associatedPage: pageClicked,
             coordinatesInPageSpace: pageSpacePoint,
             width: newAnnotationWidth,

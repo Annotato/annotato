@@ -3,10 +3,10 @@ import Foundation
 
 class DocumentViewModel: ObservableObject {
     private(set) var annotations: [AnnotationViewModel]
+    private(set) var pdfDocument: PdfViewModel
     @Published private(set) var annotationToAdd: AnnotationViewModel?
-    private(set) var pdfDocument: DocumentPdfViewModel
 
-    init(annotations: [AnnotationViewModel], pdfDocument: DocumentPdfViewModel) {
+    init(annotations: [AnnotationViewModel], pdfDocument: PdfViewModel) {
         self.annotations = annotations
         self.pdfDocument = pdfDocument
     }

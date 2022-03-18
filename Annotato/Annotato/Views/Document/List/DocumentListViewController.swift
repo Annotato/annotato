@@ -63,12 +63,12 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
             return
         }
-        let newlyLoadedDocumentPdfViewModel = DocumentPdfViewModel(baseFileUrl: selectedFileUrl)
+        let newlyLoadedDocumentPdfViewModel = PdfViewModel(baseFileUrl: selectedFileUrl)
         goToDocumentEdit(documentPdfViewModel: newlyLoadedDocumentPdfViewModel)
     }
 
     func didSelectCellView(document: DocumentListViewModel) {
-        let selectedDocumentPdfViewModel = DocumentPdfViewModel(baseFileUrl: document.baseFileUrl)
+        let selectedDocumentPdfViewModel = PdfViewModel(baseFileUrl: document.baseFileUrl)
         goToDocumentEdit(documentPdfViewModel: selectedDocumentPdfViewModel)
     }
 }

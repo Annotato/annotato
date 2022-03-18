@@ -21,9 +21,10 @@ class AnnotationView: UIView {
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
 
-        self.center = viewModel.coordinatesInDocumentSpace
+        self.center = viewModel.center
         initializeSubviews()
         setUpSubscribers()
+        addPanGestureRecognizer()
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
@@ -58,7 +59,7 @@ class AnnotationView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$origin.sink(receiveValue: { [weak self] origin in
+        viewModel.$originInDocumentSpace.sink(receiveValue: { [weak self] origin in
             self?.frame.origin = origin
         }).store(in: &cancellables)
 

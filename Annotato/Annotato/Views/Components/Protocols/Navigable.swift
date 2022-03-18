@@ -5,7 +5,7 @@ protocol Navigable where Self: UIViewController {
     func goToDocumentList()
     func goToDocumentEdit()
     func goToImportingFiles()
-    func goToDocumentEdit(documentPdfViewModel: DocumentPdfViewModel)
+    func goToDocumentEdit(documentPdfViewModel: PdfViewModel)
 }
 
 extension Navigable {
@@ -27,7 +27,7 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
-    func goToDocumentEdit(documentPdfViewModel: DocumentPdfViewModel) {
+    func goToDocumentEdit(documentPdfViewModel: PdfViewModel) {
         guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
