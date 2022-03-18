@@ -23,6 +23,7 @@ class DocumentView: UIView {
         addObservers()
         initializePdfView()
         setUpSubscriber()
+        initializeInitialAnnotationViews()
         initializeAnnotationViewsForVisiblePages()
     }
 
@@ -88,25 +89,52 @@ class DocumentView: UIView {
         guard let pdfSubView = pdfView else {
             return
         }
+        guard let documentView = pdfSubView.documentView else {
+            return
+        }
         let visiblePages = pdfSubView.visiblePages
         for annotation in documentViewModel.annotations {
-            let view = AnnotationView(viewModel: annotation)
             let annoShouldBeVisible = checkIfAnnotationIsInVisiblePages(anno: annotation, visiblePages: visiblePages)
-            guard let documentView = pdfSubView.documentView else {
-                continue
-            }
 
             if annoShouldBeVisible {
                 let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
                     anno: annotation, subviews: documentView.subviews
                 )
                 if !annoIsAlreadyInSubview {
-                    pdfSubView.documentView?.addSubview(view)
+                    documentViewModel.addAnnotation(
+                        viewModel: annotation
+                    )
                 } else {
                     bringAnnoToFront(
                         anno: annotation, subviews: documentView.subviews
                     )
                 }
+            }
+        }
+    }
+
+    /*
+     This function needs to be present so that we don't run into a cycle
+     when updating the view model using the addAnnotation function.
+     Which means initially we cannot add to the subview using the
+     addAnnotation function and must manually renderNewAnnotation directly
+     here.
+     Otherwise, there will be double of the initial objects, or could
+     potentially run into a cycle, depending on how we call it.
+     */
+    func initializeInitialAnnotationViews() {
+        guard let pdfSubView = pdfView else {
+            return
+        }
+        guard let documentView = pdfSubView.documentView else {
+            return
+        }
+        for annotation in documentViewModel.annotations {
+            let annoIsAlreadyInSubview = checkIfAnnoIsAlreadyInSubview(
+                anno: annotation, subviews: documentView.subviews
+            )
+            if !annoIsAlreadyInSubview {
+                renderNewAnnotation(viewModel: annotation)
             }
         }
     }
@@ -129,7 +157,6 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        print("tapped the screen")
         addAnnoToViewAndViewModel(mainViewTouchPoint: touchPoint)
     }
 
@@ -155,18 +182,12 @@ class DocumentView: UIView {
             width: newAnnotationWidth,
             parts: []
         )
-        documentViewModel.addAnnotation(
-            viewModel: docAnnoViewModel
-        )
-        let annotation = AnnotationView(
-            viewModel: docAnnoViewModel
-        )
-        pdfView.documentView?.addSubview(annotation)
+        renderNewAnnotation(viewModel: docAnnoViewModel)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annotation = AnnotationView(viewModel: viewModel)
-        addSubview(annotation)
+        let annoView = AnnotationView(viewModel: viewModel)
+        pdfView?.documentView?.addSubview(annoView)
     }
 
     private func setUpSubscriber() {

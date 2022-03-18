@@ -91,7 +91,6 @@ class AnnotationView: UIView {
     private func didPan(_ sender: UIPanGestureRecognizer) {
         let touchPoint = sender.location(in: superview)
         if sender.state != .cancelled {
-            sender.view?.center = touchPoint
             viewModel.updateLocation(documentViewPoint: touchPoint, parentView: superview)
         }
     }
