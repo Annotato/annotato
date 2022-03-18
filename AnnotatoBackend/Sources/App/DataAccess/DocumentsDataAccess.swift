@@ -39,10 +39,10 @@ struct DocumentsDataAccess {
                                                     modelId: documentId))
             .map(Document.fromManagedEntity)
     }
-    
+
     static func update(db: Database, documentId: UUID, document: Document) -> EventLoopFuture<Document> {
         return delete(db: db, documentId: documentId)
-            .flatMapAlways({ _ in create(db: db, document: document)})
+            .flatMapAlways({ _ in create(db: db, document: document) })
     }
 
     static func delete(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
@@ -56,7 +56,7 @@ struct DocumentsDataAccess {
             .flatMap { documentEntity in
                 documentEntity.$annotations.load(on: db)
                     .flatMap({
-                        return documentEntity.delete(on: db).map{ Document.fromManagedEntity(documentEntity) }
+                        return documentEntity.delete(on: db).map { Document.fromManagedEntity(documentEntity) }
                     })
             }
     }

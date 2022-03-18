@@ -82,14 +82,19 @@ class AuthViewController: UIViewController, Navigable {
 
         // UPDATE (change document name and remove all annotations)
 //        Task {
-//            let updated = Document(id: uuid, name: "update test doc 3", ownerId: "user", baseFileUrl: "path/to/document")
+//            let updated = Document(id: uuid,
+//                                   name: "update test doc 3", ownerId: "user",
+//                                   baseFileUrl: "path/to/document")
 //            let resp = await DocumentsAPI().updateDocument(document: updated)
 //            print("UPDATE", resp)
 //        }
 
         // UPDATE (add annotation. should be 3 annotations)
 //        Task {
-//            testDocument.addAnnotation(annotation: Annotation(origin: .zero, width: 100, ownerId: "user", documentId: testDocument.id))
+//            testDocument.addAnnotation(
+//                annotation: Annotation(origin: .zero,
+//                                       width: 100, ownerId: "user",
+//                                       documentId: testDocument.id))
 //            let resp = await DocumentsAPI().updateDocument(document: testDocument)
 //            print("UPDATE", resp)
 //        }
