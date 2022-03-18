@@ -14,6 +14,10 @@ public final class Document: Codable {
         self.baseFileUrl = baseFileUrl
         self.annotations = annotations
     }
+
+    public func addAnnotation(annotation: Annotation) {
+        annotations.append(annotation)
+    }
 }
 
 extension Document: CustomStringConvertible {

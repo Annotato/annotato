@@ -1,5 +1,7 @@
 import UIKit
 
+import AnnotatoSharedLibrary // TODO: REMOVE THESE TEST LINES
+
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
 
@@ -47,6 +49,49 @@ class AuthViewController: UIViewController, Navigable {
         default:
             fatalError("Invalid Segment")
         }
+
+        // TODO: REMOVE THESE TEST LINES
+
+        let uuid = UUID(uuidString: "b156cee5-b26b-4c77-8fd8-b62cf2bb4de9")
+
+        let testDocument = Document(id: uuid, name: "test doc", ownerId: "user", baseFileUrl: "path/to/document")
+        let annotation1 = Annotation(origin: .zero, width: 100, ownerId: "user", documentId: testDocument.id)
+        let annotation2 = Annotation(origin: CGPoint(x: 100, y: 100), width: 100,
+                                     ownerId: "user", documentId: testDocument.id)
+
+        testDocument.addAnnotation(annotation: annotation1)
+        testDocument.addAnnotation(annotation: annotation2)
+
+        // CREATE
+//         Task {
+//             let resp = await DocumentsAPI().createDocument(document: testDocument)
+//             print("CREATE", resp)
+//         }
+
+        // READ
+//        Task {
+//            let resp = await DocumentsAPI().getDocument(documentId: testDocument.id)
+//            print("READ", resp)
+//        }
+
+        // LIST
+//        Task {
+//            let resp = await DocumentsAPI().getDocuments(userId: "user")
+//            print("LIST", resp)
+//        }
+
+        // UPDATE BY ADDING NEW ANNOTATION
+        Task {
+            let updated = Document(id: uuid, name: "update test doc", ownerId: "user", baseFileUrl: "path/to/document")
+            let resp = await DocumentsAPI().updateDocument(document: updated)
+            print("UPDATE", resp)
+        }
+
+        // DELETE
+//        Task {
+//            let resp = await DocumentsAPI().deleteDocument(document: testDocument)
+//            print("DELETE", resp)
+//        }
     }
 
     @IBAction private func onFormActionChanged(_ sender: UISegmentedControl) {

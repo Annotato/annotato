@@ -10,6 +10,7 @@ struct DocumentsAPI {
         httpService = URLSessionHTTPService()
     }
 
+    // MARK: LIST
     func getDocuments(userId: String) async -> [Document]? {
         do {
             let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
@@ -21,6 +22,7 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: READ
     func getDocument(documentId: UUID) async -> Document? {
         do {
             let responseData = try await httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
@@ -31,6 +33,7 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: CREATE
     func createDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not created",
@@ -47,6 +50,7 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: UPDATE
     func updateDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not updated",
@@ -64,6 +68,7 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: DELETE
     func deleteDocument(document: Document) async -> Document? {
         do {
             let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(document.id)")
@@ -79,7 +84,7 @@ struct DocumentsAPI {
             let data = try JSONEncoder().encode(document)
             return data
         } catch {
-            AnnotatoLogger.error("Could not encode Document into JSON",
+            AnnotatoLogger.error("Could not encode Document into JSON. \(error.localizedDescription)",
                                  context: "DocumentsAPI::encodeDocument")
             return nil
         }
