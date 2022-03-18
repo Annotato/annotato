@@ -11,10 +11,13 @@ final class DocumentEntity: Model {
     var name: String
 
     @Field(key: "owner_id")
-    var ownerId: UUID
+    var ownerId: String
 
     @Field(key: "base_file_url")
     var baseFileUrl: String
+
+    @Children(for: \.$document)
+    var annotations: [AnnotationEntity]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -27,11 +30,19 @@ final class DocumentEntity: Model {
 
     init() { }
 
-    init(name: String, ownerId: UUID, baseFileUrl: String, id: UUID? = nil) {
+    init(name: String, ownerId: String, baseFileUrl: String, id: UUID? = nil) {
         self.name = name
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl
         self.id = id
+    }
+
+    func copyPropertiesOf(otherEntity: DocumentEntity) {
+        precondition(id == otherEntity.id)
+
+        name = otherEntity.name
+        ownerId = otherEntity.ownerId
+        baseFileUrl = otherEntity.baseFileUrl
     }
 }
 

@@ -1,7 +1,9 @@
 import UIKit
+import Combine
 
 class DocumentView: UIView {
     private var documentViewModel: DocumentViewModel
+    private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -17,13 +19,14 @@ class DocumentView: UIView {
 
         addTapGestureRecognizer()
         initializePdfView()
+        setUpSubscriber()
+        addGestureRecognizers()
         initializeAnnotationViews()
     }
 
     private func initializeAnnotationViews() {
         for annotation in documentViewModel.annotations {
-            let view = DocumentAnnotationView(annotationViewModel: annotation)
-            addSubview(view)
+            renderNewAnnotation(viewModel: annotation)
         }
     }
 
@@ -35,18 +38,29 @@ class DocumentView: UIView {
         addSubview(view)
     }
 
-    private func addTapGestureRecognizer() {
+    private func addGestureRecognizers() {
         isUserInteractionEnabled = true
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        addGestureRecognizer(gestureRecognizer)
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(tapGestureRecognizer)
     }
 
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        let newAnnotationWidth = 200.0
-        let annotation = DocumentAnnotationView(
-            annotationViewModel: DocumentAnnotationViewModel(center: touchPoint, width: newAnnotationWidth, parts: []))
+        documentViewModel.addAnnotation(at: touchPoint)
+    }
+
+    private func renderNewAnnotation(viewModel: AnnotationViewModel) {
+        let annotation = AnnotationView(viewModel: viewModel)
         addSubview(annotation)
+    }
+
+    private func setUpSubscriber() {
+        documentViewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
+            guard let annotationViewModel = annotationViewModel else {
+                return
+            }
+            self?.renderNewAnnotation(viewModel: annotationViewModel)
+        }).store(in: &cancellables)
     }
 }

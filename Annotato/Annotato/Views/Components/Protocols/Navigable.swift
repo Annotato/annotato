@@ -48,4 +48,8 @@ extension Navigable {
         documentPicker.modalPresentationStyle = .fullScreen
         present(documentPicker, animated: true, completion: nil)
     }
+    
+    func goBack() {
+        self.dismiss(animated: true, completion: nil)
+    }
 }
