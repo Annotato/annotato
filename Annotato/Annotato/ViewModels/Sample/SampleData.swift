@@ -30,7 +30,7 @@ class SampleData {
                 id: UUID(),
                 origin: CGPoint(x: 600.0, y: 300.0),
                 width: 250.0,
-                parts: exampleAnnotationParts2())
+                parts: exampleAnnotationParts1())
         ]
     }
 

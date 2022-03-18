@@ -17,7 +17,6 @@ class DocumentView: UIView {
         self.layer.borderWidth = 2
         self.layer.borderColor = UIColor.black.cgColor
 
-        addTapGestureRecognizer()
         initializePdfView()
         setUpSubscriber()
         addGestureRecognizers()

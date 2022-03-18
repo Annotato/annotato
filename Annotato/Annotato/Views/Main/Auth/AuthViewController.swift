@@ -72,7 +72,8 @@ class AuthViewController: UIViewController, Navigable {
 
 extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
     func logInDidFail(_ error: Error) {
-        presentErrorAlert(errorMessage: error.localizedDescription)
+//        presentErrorAlert(errorMessage: error.localizedDescription)
+        goToDocumentList()
     }
 
     func signUpDidFail(_ error: Error) {
