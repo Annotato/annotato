@@ -4,11 +4,11 @@ import Foundation
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
         [
-            DocumentListViewModel(name: "Lab01 Qns", baseFileUrl: exampleUrlLab01Qns()),
-            DocumentListViewModel(name: "L0 Overview", baseFileUrl: exampleUrlL0Overview()),
-            DocumentListViewModel(name: "L1 Intro", baseFileUrl: exampleUrlL1Intro()),
-            DocumentListViewModel(name: "Firebase Clean Code", baseFileUrl: exampleUrlFirebase()),
-            DocumentListViewModel(name: "Test E", baseFileUrl: exampleUrlL0Overview())
+            DocumentListViewModel(id: UUID(), name: "Lab01 Qns", baseFileUrl: exampleUrlLab01Qns()),
+            DocumentListViewModel(id: UUID(), name: "L0 Overview", baseFileUrl: exampleUrlL0Overview()),
+            DocumentListViewModel(id: UUID(), name: "L1 Intro", baseFileUrl: exampleUrlL1Intro()),
+            DocumentListViewModel(id: UUID(), name: "Firebase Clean Code", baseFileUrl: exampleUrlFirebase()),
+            DocumentListViewModel(id: UUID(), name: "Test E", baseFileUrl: exampleUrlL0Overview())
         ]
     }
 
