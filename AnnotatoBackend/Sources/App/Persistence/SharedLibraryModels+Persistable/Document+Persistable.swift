@@ -1,3 +1,4 @@
+import Foundation
 import AnnotatoSharedLibrary
 
 extension Document: Persistable {
@@ -6,6 +7,7 @@ extension Document: Persistable {
             name: managedEntity.name,
             ownerId: managedEntity.ownerId,
             baseFileUrl: managedEntity.baseFileUrl,
+            annotations: managedEntity.annotations.map(Annotation.fromManagedEntity),
             id: managedEntity.id
         )
     }

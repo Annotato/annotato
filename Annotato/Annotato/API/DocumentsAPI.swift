@@ -10,6 +10,7 @@ struct DocumentsAPI {
         httpService = URLSessionHTTPService()
     }
 
+    // MARK: LIST
     func getDocuments(userId: String) async -> [Document]? {
         do {
             let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
@@ -21,6 +22,7 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: READ
     func getDocument(documentId: UUID) async -> Document? {
         do {
             let responseData = try await httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
@@ -31,6 +33,7 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: CREATE
     func createDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not created",
@@ -47,13 +50,8 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: UPDATE
     func updateDocument(document: Document) async -> Document? {
-        guard let documentId = document.id else {
-            AnnotatoLogger.error("\(document) has a nil ID and cannot be updated",
-                                 context: "DocumentsAPI::updateDocument")
-            return nil
-        }
-
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not updated",
                                  context: "DocumentsAPI::createDocument")
@@ -61,7 +59,7 @@ struct DocumentsAPI {
         }
 
         do {
-            let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(documentId)",
+            let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(document.id)",
                                                          data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
@@ -70,15 +68,10 @@ struct DocumentsAPI {
         }
     }
 
+    // MARK: DELETE
     func deleteDocument(document: Document) async -> Document? {
-        guard let documentId = document.id else {
-            AnnotatoLogger.error("\(document) has a nil ID and cannot be deleted",
-                                 context: "DocumentsAPI::deleteDocument")
-            return nil
-        }
-
         do {
-            let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
+            let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(document.id)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When deleting document: \(error.localizedDescription)")
@@ -91,7 +84,7 @@ struct DocumentsAPI {
             let data = try JSONEncoder().encode(document)
             return data
         } catch {
-            AnnotatoLogger.error("Could not encode Document into JSON",
+            AnnotatoLogger.error("Could not encode Document into JSON. \(error.localizedDescription)",
                                  context: "DocumentsAPI::encodeDocument")
             return nil
         }

@@ -25,9 +25,6 @@ final class AnnotationTextEntity: Model {
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
-    @Timestamp(key: "deleted_at", on: .delete)
-    var deletedAt: Date?
-
     init() { }
 
     init(
@@ -37,11 +34,11 @@ final class AnnotationTextEntity: Model {
         annotationId: AnnotationEntity.IDValue,
         id: UUID? = nil
     ) {
+        self.id = id
         self.type = type.rawValue
         self.content = content
         self.height = height
         self.$annotation.id = annotationId
-        self.id = id
     }
 }
 

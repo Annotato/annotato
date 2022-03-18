@@ -31,9 +31,6 @@ final class AnnotationEntity: Model {
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
 
-    @Timestamp(key: "deleted_at", on: .delete)
-    var deletedAt: Date?
-
     init() { }
 
     init(
@@ -44,12 +41,12 @@ final class AnnotationEntity: Model {
         documentId: DocumentEntity.IDValue,
         id: UUID? = nil
     ) {
+        self.id = id
         self.originX = originX
         self.originY = originY
         self.width = width
         self.ownerId = ownerId
         self.$document.id = documentId
-        self.id = id
     }
 }
 
