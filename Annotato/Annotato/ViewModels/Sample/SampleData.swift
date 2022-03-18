@@ -12,6 +12,11 @@ class SampleData {
         ]
     }
 
+    func exampleDocument(from listViewModel: DocumentListViewModel) -> DocumentViewModel {
+        let pdfDocument = DocumentPdfViewModel(baseFileUrl: listViewModel.baseFileUrl)
+        return DocumentViewModel(annotations: [], pdfDocument: pdfDocument)
+    }
+
     func exampleDocument() -> DocumentViewModel {
         DocumentViewModel(
             annotations: SampleData().exampleAnnotations(),

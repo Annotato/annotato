@@ -4,8 +4,8 @@ import UniformTypeIdentifiers
 protocol Navigable where Self: UIViewController {
     func goToDocumentList()
     func goToDocumentEdit()
+    func goToDocumentEdit(documentViewModel: DocumentViewModel)
     func goToImportingFiles()
-    func goToDocumentEdit(documentPdfViewModel: DocumentPdfViewModel)
 }
 
 extension Navigable {
@@ -27,17 +27,13 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
-    func goToDocumentEdit(documentPdfViewModel: DocumentPdfViewModel) {
+    func goToDocumentEdit(documentViewModel: DocumentViewModel) {
         guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
             return
         }
-        let currentDocumentViewModel = DocumentViewModel(
-            annotations: SampleData().exampleAnnotations(),
-            pdfDocument: documentPdfViewModel
-        )
-        viewController.currentDocumentViewModel = currentDocumentViewModel
+        viewController.currentDocumentViewModel = documentViewModel
         present(viewController, animated: true, completion: nil)
     }
 
