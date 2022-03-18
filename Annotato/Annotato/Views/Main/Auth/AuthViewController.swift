@@ -63,10 +63,10 @@ class AuthViewController: UIViewController, Navigable {
         testDocument.addAnnotation(annotation: annotation2)
 
         // CREATE
-//         Task {
-//             let resp = await DocumentsAPI().createDocument(document: testDocument)
-//             print("CREATE", resp)
-//         }
+         Task {
+             let resp = await DocumentsAPI().createDocument(document: testDocument)
+             print("CREATE", resp)
+         }
 
         // READ
 //        Task {
@@ -95,10 +95,10 @@ class AuthViewController: UIViewController, Navigable {
 //        }
 
         // DELETE
-        Task {
-            let resp = await DocumentsAPI().deleteDocument(document: testDocument)
-            print("DELETE", resp)
-        }
+//        Task {
+//            let resp = await DocumentsAPI().deleteDocument(document: testDocument)
+//            print("DELETE", resp)
+//        }
     }
 
     @IBAction private func onFormActionChanged(_ sender: UISegmentedControl) {
