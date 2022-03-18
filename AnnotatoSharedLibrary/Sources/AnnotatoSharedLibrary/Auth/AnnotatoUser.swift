@@ -9,3 +9,9 @@ public class AnnotatoUser {
         self.displayName = displayName
     }
 }
+
+extension AnnotatoUser: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "AnnotatoUser(uid: \(uid), email: \(email), displayName: \(displayName)"
+    }
+}
