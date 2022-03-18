@@ -70,5 +70,19 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     func didSelectCellView(document: DocumentListViewModel) {
         let selectedDocumentPdfViewModel = PdfViewModel(baseFileUrl: document.baseFileUrl)
         goToDocumentEdit(documentPdfViewModel: selectedDocumentPdfViewModel)
+        let newDocumentViewModel = DocumentViewModel(
+            annotations: [],
+            pdfDocument: DocumentPdfViewModel(baseFileUrl: selectedFileUrl)
+        )
+        goToDocumentEdit(documentViewModel: newDocumentViewModel)
+    }
+
+    func didSelectCellView(document: DocumentListViewModel) {
+        // Note: this is supposed to be an api call to fetch the documentViewModel
+        // based on the id of documentListViewModel once integration is done
+        // The document list view model in this pr does not have id yet
+        let selectedDocumentPdfViewModel = PdfViewModel(baseFileUrl: document.baseFileUrl)
+        goToDocumentEdit(documentPdfViewModel: selectedDocumentPdfViewModel)
+        goToDocumentEdit(documentViewModel: SampleData().exampleDocument(from: document))
     }
 }
