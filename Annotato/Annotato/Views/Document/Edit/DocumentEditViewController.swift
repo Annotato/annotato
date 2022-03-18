@@ -72,7 +72,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
 //    private func initializeDocumentView() {
 //        let documentView = DocumentView(
 //            frame: self.view.safeAreaLayoutGuide.layoutFrame,
-//            documentViewModel: SampleData().exampleDocument()
+//            documentViewModel: SampleData.exampleDocument()
 //        )
 //
 //        view.addSubview(documentView)

@@ -1,7 +1,7 @@
 import UIKit
 
 class DocumentListViewController: UIViewController {
-    private var documents = SampleData().exampleDocumentsInList()
+    private var documents = SampleData.exampleDocumentsInList
     let toolbarHeight = 50.0
 
     override func viewDidLoad() {
