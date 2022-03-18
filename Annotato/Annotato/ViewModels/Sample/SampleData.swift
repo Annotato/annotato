@@ -15,7 +15,8 @@ class SampleData {
     func exampleDocument() -> DocumentViewModel {
         DocumentViewModel(
             annotations: SampleData().exampleAnnotations(),
-            pdfDocument: SampleData().examplePdfDocument())
+            pdfDocument: examplePdfViewModelLab01Qns()
+        )
     }
 
     func exampleAnnotations() -> [AnnotationViewModel] {

@@ -39,7 +39,7 @@ class DocumentView: UIView {
     }
 
     private func checkIfAnnotationIsInVisiblePages(
-        anno: DocumentAnnotationViewModel,
+        anno: AnnotationViewModel,
         visiblePages: [PDFPage]
     ) -> Bool {
         guard let pageNumForAnnotation = anno.associatedPage.label else {
@@ -55,10 +55,10 @@ class DocumentView: UIView {
     }
 
     private func checkIfAnnoIsAlreadyInSubview(
-        anno: DocumentAnnotationViewModel, subviews: [UIView]
+        anno: AnnotationViewModel, subviews: [UIView]
     ) -> Bool {
         for subview in subviews {
-            guard let annoSubview = subview as? DocumentAnnotationView else {
+            guard let annoSubview = subview as? AnnotationView else {
                 continue
             }
             if annoSubview.viewModel === anno {
@@ -69,10 +69,10 @@ class DocumentView: UIView {
     }
 
     private func bringAnnoToFront(
-        anno: DocumentAnnotationViewModel, subviews: [UIView]
+        anno: AnnotationViewModel, subviews: [UIView]
     ) {
         for subview in subviews {
-            guard let annoSubview = subview as? DocumentAnnotationView else {
+            guard let annoSubview = subview as? AnnotationView else {
                 continue
             }
             if annoSubview.viewModel === anno {
@@ -90,7 +90,7 @@ class DocumentView: UIView {
         }
         let visiblePages = pdfSubView.visiblePages
         for annotation in documentViewModel.annotations {
-            let view = DocumentAnnotationView(annotationViewModel: annotation)
+            let view = AnnotationView(viewModel: annotation)
             let annoShouldBeVisible = checkIfAnnotationIsInVisiblePages(anno: annotation, visiblePages: visiblePages)
             guard let documentView = pdfSubView.documentView else {
                 continue
@@ -109,7 +109,6 @@ class DocumentView: UIView {
                 }
             }
         }
-        renderNewAnnotation(viewModel: annotation)
     }
 
     private func initializePdfView() {
@@ -131,7 +130,6 @@ class DocumentView: UIView {
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
         addAnnoToViewAndViewModel(mainViewTouchPoint: touchPoint)
-//        testFunc()
     }
 
     private func addAnnoToViewAndViewModel(mainViewTouchPoint: CGPoint) {
@@ -147,8 +145,9 @@ class DocumentView: UIView {
 
         let docViewSpacePoint = self.convert(mainViewTouchPoint, to: pdfView.documentView)
 
-        let newAnnotationWidth = 200.0
-        let docAnnoViewModel = DocumentAnnotationViewModel(
+        let newAnnotationWidth = 300.0
+        let docAnnoViewModel = AnnotationViewModel(
+            id: UUID(), origin: .zero,
             associatedDocumentPdfViewModel: pdfView.viewModel,
             coordinatesInDocumentSpace: docViewSpacePoint,
             associatedPage: pageClicked,
@@ -156,28 +155,18 @@ class DocumentView: UIView {
             width: newAnnotationWidth,
             parts: []
         )
-        documentViewModel.annotations.append(docAnnoViewModel)
-        let annotation = DocumentAnnotationView(
-            annotationViewModel: docAnnoViewModel
+        documentViewModel.addAnnotation(
+            viewModel: docAnnoViewModel
+        )
+        let annotation = AnnotationView(
+            viewModel: docAnnoViewModel
         )
         pdfView.documentView?.addSubview(annotation)
-        documentViewModel.addAnnotation(at: touchPoint)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotation = AnnotationView(viewModel: viewModel)
         addSubview(annotation)
-    }
-
-    private func testFunc() {
-        print("\n\n\n----------------------")
-        let currSelection = pdfView?.currentSelection
-        print(currSelection)
-        if let gr = pdfView?.gestureRecognizers {
-            for r in gr {
-                print(r)
-            }
-        }
     }
 
     private func setUpSubscriber() {

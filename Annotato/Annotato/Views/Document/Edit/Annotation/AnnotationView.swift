@@ -20,6 +20,8 @@ class AnnotationView: UIView {
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
         super.init(frame: viewModel.frame)
+
+        self.center = viewModel.coordinatesInDocumentSpace
         initializeSubviews()
         setUpSubscribers()
         self.layer.borderWidth = 1.0
@@ -76,6 +78,21 @@ class AnnotationView: UIView {
                 self?.removeFromSuperview()
             }
         }).store(in: &cancellables)
+    }
+
+    private func addPanGestureRecognizer() {
+        isUserInteractionEnabled = true
+        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc
+    private func didPan(_ sender: UIPanGestureRecognizer) {
+        let touchPoint = sender.location(in: superview)
+        if sender.state != .cancelled {
+            sender.view?.center = touchPoint
+            viewModel.updateLocation(documentViewPoint: touchPoint, parentView: superview)
+        }
     }
 
     private func resize() {

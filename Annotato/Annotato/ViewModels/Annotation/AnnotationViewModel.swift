@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import CoreImage
+import PDFKit
 
 class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
@@ -17,18 +18,36 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = false
 
+    unowned var associatedDocumentPdfViewModel: DocumentPdfViewModel?
+    var associatedDocument: PDFDocument
+    var coordinatesInDocumentSpace: CGPoint
+    var associatedPage: PDFPage
+    var coordinatesInPageSpace: CGPoint
+
     init(
         id: UUID,
         origin: CGPoint,
+        associatedDocumentPdfViewModel: DocumentPdfViewModel,
+        coordinatesInDocumentSpace: CGPoint,
+        associatedPage: PDFPage,
+        coordinatesInPageSpace: CGPoint,
         width: Double,
         parts: [AnnotationPartViewModel],
         palette: AnnotationPaletteViewModel? = nil
     ) {
         self.id = id
         self.origin = origin
+
+        self.associatedDocumentPdfViewModel = associatedDocumentPdfViewModel
+        self.associatedDocument = associatedDocumentPdfViewModel.document
+        self.coordinatesInDocumentSpace = coordinatesInDocumentSpace
+        self.associatedPage = associatedPage
+        self.coordinatesInPageSpace = coordinatesInPageSpace
+
         self.width = width
         self.parts = parts
         self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
+
         self.palette.parentViewModel = self
 
         for part in self.parts {
@@ -46,6 +65,33 @@ class AnnotationViewModel: ObservableObject {
         parts.append(newPart)
         setSelectedPart(to: newPart)
         resize()
+    }
+
+    private func updateLocation(documentViewPoint: CGPoint, parentView: UIView?) {
+        guard let parentView = parentView else {
+            return
+        }
+        guard let pdfView = parentView.superview?.superview
+        as? DocumentPdfView else {
+            return
+        }
+
+        // Get coordinates in terms of the visible view page space
+        let visibleViewCoordinates = parentView.convert(
+            documentViewPoint, to: parentView.superview?.superview)
+
+        // Get the current page that this annotation is at
+        guard let currPage = pdfView.page(
+            for: visibleViewCoordinates, nearest: true) else {
+            return
+        }
+        // Get the page space coordinates
+        let pageSpaceCoordinates = pdfView.convert(visibleViewCoordinates, to: currPage)
+
+        // Assign all the new values to update
+        self.associatedPage = currPage
+        self.coordinatesInPageSpace = pageSpaceCoordinates
+        self.coordinatesInDocumentSpace = documentViewPoint
     }
 }
 
