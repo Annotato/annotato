@@ -24,6 +24,6 @@ public final class AnnotationText: Codable {
 
 extension AnnotationText: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "AnnotationText(id: \(id), type: \(type), content: \(content), height: \(height), annotationId: \(annotationId)"
+        "AnnotationText(id: \(id), type: \(type), content: \(content), height: \(height), annotationId: \(annotationId))"
     }
 }
