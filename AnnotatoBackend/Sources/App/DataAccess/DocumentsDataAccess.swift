@@ -39,24 +39,10 @@ struct DocumentsDataAccess {
                                                     modelId: documentId))
             .map(Document.fromManagedEntity)
     }
-
+    
     static func update(db: Database, documentId: UUID, document: Document) -> EventLoopFuture<Document> {
-        let documentEntity = DocumentEntity.fromModel(document)
-
-        // swiftlint:disable:next first_where
-        return db.query(DocumentEntity.self)
-            .filter(\.$id == documentId)
-            .first()
-            .unwrap(or: AnnotatoError.modelNotFound(requestType: .update,
-                                                    modelType: String(describing: Document.self),
-                                                    modelId: documentId))
-            .flatMap { fetchedEntity in
-                fetchedEntity.copyPropertiesOf(otherEntity: documentEntity)
-                fetchedEntity.$annotations.load(on: db)
-
-                return fetchedEntity.update(on: db)
-                    .map { Document.fromManagedEntity(fetchedEntity) }
-            }
+        return delete(db: db, documentId: documentId)
+            .flatMapAlways({ _ in create(db: db, document: document)})
     }
 
     static func delete(db: Database, documentId: UUID) -> EventLoopFuture<Document> {
@@ -70,8 +56,7 @@ struct DocumentsDataAccess {
             .flatMap { documentEntity in
                 documentEntity.$annotations.load(on: db)
                     .flatMap({
-                        documentEntity.annotations.forEach({ $0.delete(on: db) })
-                        return documentEntity.delete(on: db).map{ Document.fromManagedEntity(documentEntity) }
+                        return documentEntity.delete(force: true, on: db).map{ Document.fromManagedEntity(documentEntity) }
                     })
             }
     }

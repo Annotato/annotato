@@ -80,18 +80,25 @@ class AuthViewController: UIViewController, Navigable {
 //            print("LIST", resp)
 //        }
 
-        // UPDATE BY ADDING NEW ANNOTATION
-        Task {
-            let updated = Document(id: uuid, name: "update test doc", ownerId: "user", baseFileUrl: "path/to/document")
-            let resp = await DocumentsAPI().updateDocument(document: updated)
-            print("UPDATE", resp)
-        }
+        // UPDATE (change document name and remove all annotations)
+//        Task {
+//            let updated = Document(id: uuid, name: "update test doc 3", ownerId: "user", baseFileUrl: "path/to/document")
+//            let resp = await DocumentsAPI().updateDocument(document: updated)
+//            print("UPDATE", resp)
+//        }
+
+        // UPDATE (add annotation. should be 3 annotations)
+//        Task {
+//            testDocument.addAnnotation(annotation: Annotation(origin: .zero, width: 100, ownerId: "user", documentId: testDocument.id))
+//            let resp = await DocumentsAPI().updateDocument(document: testDocument)
+//            print("UPDATE", resp)
+//        }
 
         // DELETE
-//        Task {
-//            let resp = await DocumentsAPI().deleteDocument(document: testDocument)
-//            print("DELETE", resp)
-//        }
+        Task {
+            let resp = await DocumentsAPI().deleteDocument(document: testDocument)
+            print("DELETE", resp)
+        }
     }
 
     @IBAction private func onFormActionChanged(_ sender: UISegmentedControl) {
