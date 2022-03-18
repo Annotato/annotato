@@ -52,15 +52,17 @@ class AuthViewController: UIViewController, Navigable {
 
         // TODO: REMOVE THESE TEST LINES
 
-        let uuid = UUID(uuidString: "b156cee5-b26b-4c77-8fd8-b62cf2bb4de9")
+        let uuid = UUID(uuidString: "b156cee5-b26b-4c77-8fd8-b62cf2bb4de9")!
+        let uuid1 = UUID(uuidString: "844f33f7-af8e-4679-af41-8d94dda8b9b8")!
+        let uuid2 = UUID(uuidString: "86bee4d0-dcee-48e4-b53a-850db69ecbdd")!
 
-        let testDocument = Document( name: "test doc", ownerId: "user", baseFileUrl: "path/to/document", id: uuid)
-        let annotation1 = Annotation(origin: .zero, width: 100, ownerId: "user", documentId: testDocument.id)
+        let annotation1 = Annotation(origin: .zero, width: 100, ownerId: "user",
+                                     documentId: uuid, id: uuid1)
         let annotation2 = Annotation(origin: CGPoint(x: 100, y: 100), width: 100,
-                                     ownerId: "user", documentId: testDocument.id)
-
-        testDocument.addAnnotation(annotation: annotation1)
-        testDocument.addAnnotation(annotation: annotation2)
+                                     ownerId: "user", documentId: uuid, id: uuid2)
+        let testDocument = Document( name: "test doc", ownerId: "user",
+                                     baseFileUrl: "path/to/document",
+                                     annotations: [annotation1, annotation2], id: uuid)
 
         // CREATE
 //         Task {
@@ -82,20 +84,22 @@ class AuthViewController: UIViewController, Navigable {
 
         // UPDATE (change document name and remove all annotations)
 //        Task {
-//            let updated = Document(id: uuid,
-//                                   name: "update test doc 3", ownerId: "user",
-//                                   baseFileUrl: "path/to/document")
+//            let updated = Document(name: "update test doc 3", ownerId: "user",
+//                                   baseFileUrl: "path/to/document", id: uuid)
 //            let resp = await DocumentsAPI().updateDocument(document: updated)
 //            print("UPDATE", resp)
 //        }
 
         // UPDATE (add annotation. should be 3 annotations)
 //        Task {
-//            testDocument.addAnnotation(
-//                annotation: Annotation(origin: .zero,
-//                                       width: 100, ownerId: "user",
-//                                       documentId: testDocument.id))
-//            let resp = await DocumentsAPI().updateDocument(document: testDocument)
+//            let newAnnotation = Annotation(origin: .zero, width: 100, ownerId: "user",
+//                                          documentId: uuid)
+//
+//            let newDocument = Document(name: "test doc", ownerId: "user",
+//                     baseFileUrl: "path/to/document",
+//                     annotations: [annotation1, annotation2, newAnnotation], id: uuid)
+//
+//            let resp = await DocumentsAPI().updateDocument(document: newDocument)
 //            print("UPDATE", resp)
 //        }
 
