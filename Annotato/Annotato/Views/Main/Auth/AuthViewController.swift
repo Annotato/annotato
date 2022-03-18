@@ -54,7 +54,7 @@ class AuthViewController: UIViewController, Navigable {
 
         let uuid = UUID(uuidString: "b156cee5-b26b-4c77-8fd8-b62cf2bb4de9")
 
-        let testDocument = Document(id: uuid, name: "test doc", ownerId: "user", baseFileUrl: "path/to/document")
+        let testDocument = Document( name: "test doc", ownerId: "user", baseFileUrl: "path/to/document", id: uuid)
         let annotation1 = Annotation(origin: .zero, width: 100, ownerId: "user", documentId: testDocument.id)
         let annotation2 = Annotation(origin: CGPoint(x: 100, y: 100), width: 100,
                                      ownerId: "user", documentId: testDocument.id)
