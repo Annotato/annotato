@@ -1,7 +1,6 @@
 import Vapor
 import Fluent
 import AnnotatoSharedLibrary
-import Foundation
 
 struct DocumentsDataAccess {
     static func list(db: Database, userId: String) -> EventLoopFuture<[Document]> {

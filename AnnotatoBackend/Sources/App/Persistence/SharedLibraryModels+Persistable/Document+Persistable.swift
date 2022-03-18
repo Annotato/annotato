@@ -4,10 +4,10 @@ import AnnotatoSharedLibrary
 extension Document: Persistable {
     static func fromManagedEntity(_ managedEntity: DocumentEntity) -> Self {
         let document = Self(
-            id: managedEntity.id,
             name: managedEntity.name,
             ownerId: managedEntity.ownerId,
-            baseFileUrl: managedEntity.baseFileUrl
+            baseFileUrl: managedEntity.baseFileUrl,
+            id: managedEntity.id
         )
 
         managedEntity.annotations.forEach { annotationEntity in

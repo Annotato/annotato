@@ -53,12 +53,12 @@ final class AnnotationEntity: Model {
 extension AnnotationEntity: PersistedEntity {
     static func fromModel(_ model: Annotation) -> Self {
         Self(
-            id: model.id,
             originX: model.origin.x,
             originY: model.origin.y,
             width: model.width,
             ownerId: model.ownerId,
-            documentId: model.documentId
+            documentId: model.documentId,
+            id: model.id
         )
     }
 }

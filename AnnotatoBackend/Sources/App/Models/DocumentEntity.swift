@@ -45,6 +45,6 @@ final class DocumentEntity: Model {
 
 extension DocumentEntity: PersistedEntity {
     static func fromModel(_ model: Document) -> Self {
-        Self(id: model.id, name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl)
+        Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
     }
 }
