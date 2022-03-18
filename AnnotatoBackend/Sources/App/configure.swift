@@ -24,8 +24,7 @@ private func connectDatabase(app: Application) {
           }
 
     let dbConfig = DatabaseConfigurationFactory.postgres(hostname: dbHostName, username: dbUserName,
-                                                         password: dbPassword, database: dbName,
-                                                         connectionPoolTimeout: .minutes(1))
+                                                         password: dbPassword, database: dbName)
 
     app.databases.use(dbConfig, as: .psql)
 }
