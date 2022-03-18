@@ -1,5 +1,6 @@
 import CoreGraphics
 import Foundation
+import AnnotatoSharedLibrary
 
 class SampleData {
     func exampleDocumentsInList() -> [DocumentListViewModel] {
@@ -7,7 +8,7 @@ class SampleData {
             DocumentListViewModel(id: UUID(), name: "Lab01 Qns", baseFileUrl: exampleUrlLab01Qns()),
             DocumentListViewModel(id: UUID(), name: "L0 Overview", baseFileUrl: exampleUrlL0Overview()),
             DocumentListViewModel(id: UUID(), name: "L1 Intro", baseFileUrl: exampleUrlL1Intro()),
-            DocumentListViewModel(id: UUID(), name: "Firebase Clean Code", baseFileUrl: exampleUrlFirebase()),
+            DocumentListViewModel(id: UUID(), name: "Firebase Clean Code", baseFileUrl: SampleData.exampleUrlFirebase),
             DocumentListViewModel(id: UUID(), name: "Test E", baseFileUrl: exampleUrlL0Overview())
         ]
     }
@@ -22,6 +23,10 @@ class SampleData {
             annotations: SampleData().exampleAnnotations(),
             pdfDocument: examplePdfViewModelLab01Qns()
         )
+    }
+
+    static var exampleDocument: Document {
+        Document(name: "Clean Code", ownerId: "owner123", baseFileUrl: SampleData.firebasePdfUrlString, id: UUID())
     }
 
     func exampleAnnotations() -> [AnnotationViewModel] {
@@ -73,7 +78,13 @@ class SampleData {
         return baseFileUrl
     }
 
-    private func exampleUrlFirebase() -> URL {
+    private static var firebasePdfUrlString: String {
+        "https://firebasestorage.googleapis.com" +
+        ":443/v0/b/annotato" + "-ba051.appspot.com/o/clean-cod" +
+        "e.pdf?alt=media&token=513532aa-9c96-42ce-9a62-b4a49a8ec37c"
+    }
+
+    private static var exampleUrlFirebase: URL {
         let firebaseUrlString = "https://firebasestorage.googleapis.com" +
             ":443/v0/b/annotato" + "-ba051.appspot.com/o/clean-cod" +
             "e.pdf?alt=media&token=513532aa-9c96-42ce-9a62-b4a49a8ec37c"

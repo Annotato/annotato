@@ -60,21 +60,22 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         guard let selectedFileUrl = baseFileUrls.first else {
             return
         }
+
         guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
             return
         }
-        let newDocumentViewModel = DocumentViewModel(
-            annotations: [],
-            pdfDocument: PdfViewModel(baseFileUrl: selectedFileUrl)
-        )
-        goToDocumentEdit(documentViewModel: newDocumentViewModel)
+
+        AnnotatoPdfStorageManager().uploadPdf(fileSystemUrl: selectedFileUrl,
+                                              withName: selectedFileUrl.lastPathComponent) { [weak self] document in
+            // TODO: Remove force-unwrapping once id is no longer optional
+            DispatchQueue.main.sync {
+                print(document)
+                self?.goToDocumentEdit(documentId: document.id!)
+            }
+        }
     }
 
     func didSelectCellView(document: DocumentListViewModel) {
-        // Note: this is supposed to be an api call to fetch the documentViewModel
-        // based on the id of documentListViewModel once integration is done
-        // The document list view model in this pr does not have id yet
-
-        goToDocumentEdit(documentViewModel: SampleData().exampleDocument(from: document))
+        goToDocumentEdit(documentId: document.id)
     }
 }

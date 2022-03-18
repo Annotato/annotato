@@ -1,7 +1,9 @@
 import CoreGraphics
 import Foundation
+import AnnotatoSharedLibrary
 
 class DocumentViewModel: ObservableObject {
+    private let document: Document
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
@@ -10,6 +12,17 @@ class DocumentViewModel: ObservableObject {
     init(annotations: [AnnotationViewModel], pdfDocument: PdfViewModel) {
         self.annotations = annotations
         self.pdfDocument = pdfDocument
+    }
+    
+    init?(document: Document) {
+        self.document = document
+        self.annotations = [] // TODO: Replace with document.annotations
+
+        guard let baseFileUrl = URL(string: document.baseFileUrl) else {
+            return nil
+        }
+
+        self.pdfDocument = DocumentPdfViewModel(baseFileUrl: baseFileUrl)
     }
 }
 
