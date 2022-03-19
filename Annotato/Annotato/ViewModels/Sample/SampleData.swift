@@ -5,11 +5,11 @@ import AnnotatoSharedLibrary
 class SampleData {
     static var exampleDocumentsInList: [DocumentListViewModel] =
         [
-            DocumentListViewModel(id: UUID(), name: "Lab01 Qns", baseFileUrl: exampleUrlLab01Qns),
-            DocumentListViewModel(id: UUID(), name: "L0 Overview", baseFileUrl: exampleUrlL0Overview),
-            DocumentListViewModel(id: UUID(), name: "L1 Intro", baseFileUrl: exampleUrlL1Intro),
-            DocumentListViewModel(id: UUID(), name: "Firebase Clean Code", baseFileUrl: exampleUrlFirebase),
-            DocumentListViewModel(id: UUID(), name: "Test E", baseFileUrl: exampleUrlL0Overview)
+            DocumentListViewModel(id: UUID(), name: "Lab01 Qns"),
+            DocumentListViewModel(id: UUID(), name: "L0 Overview"),
+            DocumentListViewModel(id: UUID(), name: "L1 Intro"),
+            DocumentListViewModel(id: UUID(), name: "Firebase Clean Code"),
+            DocumentListViewModel(id: UUID(), name: "Test E")
         ]
     }
 
