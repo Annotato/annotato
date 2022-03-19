@@ -36,7 +36,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
 
     private func initializeDocumentView(documentViewModel: DocumentViewModel) {
         let documentView = DocumentView(
-            frame: self.view.safeAreaLayoutGuide.layoutFrame,
+            frame: .zero,
             documentViewModel: documentViewModel
         )
         view.addSubview(documentView)

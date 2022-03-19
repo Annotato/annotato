@@ -6,7 +6,7 @@ class DocumentView: UIView {
     private var documentViewModel: DocumentViewModel
     private var cancellables: Set<AnyCancellable> = []
 
-    private var pdfView: DocumentPdfView?
+    private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
 
     @available(*, unavailable)
@@ -17,6 +17,10 @@ class DocumentView: UIView {
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
         self.documentViewModel = documentViewModel
         self.annotationViews = []
+        self.pdfView = DocumentPdfView(
+            frame: .zero,
+            documentPdfViewModel: documentViewModel.pdfDocument
+        )
 
         super.init(frame: frame)
         self.layer.borderWidth = 2
@@ -36,12 +40,12 @@ class DocumentView: UIView {
     }
 
     private func initializePdfView() {
-        let view = DocumentPdfView(
-            frame: self.frame,
-            documentPdfViewModel: documentViewModel.pdfDocument
-        )
-        self.pdfView = view
-        addSubview(view)
+        addSubview(pdfView)
+        pdfView.translatesAutoresizingMaskIntoConstraints = false
+        pdfView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        pdfView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        pdfView.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        pdfView.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
     }
 
     private func setUpSubscribers() {
@@ -78,9 +82,6 @@ class DocumentView: UIView {
     }
 
     private func addAnnotation(at pointInDocument: CGPoint) {
-        guard let pdfView = self.pdfView else {
-            return
-        }
         let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
         documentViewModel.addAnnotation(center: pointInPdf)
     }
@@ -88,7 +89,7 @@ class DocumentView: UIView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotationView = AnnotationView(viewModel: viewModel)
         annotationViews.append(annotationView)
-        pdfView?.documentView?.addSubview(annotationView)
+        pdfView.documentView?.addSubview(annotationView)
     }
 }
 
@@ -97,9 +98,6 @@ extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
     private func showAnnotationsOfVisiblePages() {
-        guard let pdfView = pdfView else {
-            return
-        }
         let visiblePages = pdfView.visiblePages
 
         let annotationsToShow = annotationViews.filter({
@@ -114,9 +112,6 @@ extension DocumentView {
         annotation: AnnotationView,
         visiblePages: [PDFPage]
     ) -> Bool {
-        guard let pdfView = pdfView else {
-            return false
-        }
         guard let centerInDocument = pdfView.documentView?.convert(annotation.center, to: self) else {
             return false
         }
