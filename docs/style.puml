@@ -7,6 +7,7 @@
 
 'T1 through T4 are shades of the original color from lightest to darkest
 
+' To be used for both views and view controllers
 !define VIEW_COLOR #1D8900
 !define VIEW_BACKGROUND_COLOR #83E769
 
@@ -19,8 +20,12 @@
 !define BACKEND_COLOR #A38300
 !define BACKEND_BACKGROUND_COLOR #FFE374
 
+' To be used for authentication and storage things
 !define FIREBASE_COLOR #7F5200
 !define FIREBASE_BACKGROUND_COLOR #E59400
+
+!define OTHER_COLOR #121f15
+!define OTHER_BACKGROUND_COLOR #569466
 
 !define USER_COLOR #000000
 
