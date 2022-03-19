@@ -6,10 +6,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     let toolbarHeight = 50.0
     var documentViewModel: DocumentViewModel?
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
