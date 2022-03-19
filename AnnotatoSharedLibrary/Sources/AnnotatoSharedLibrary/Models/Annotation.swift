@@ -1,5 +1,5 @@
 import Foundation
-import CoreGraphics
+import OpenCombine
 
 public final class Annotation: Codable, Timestampable, ObservableObject {
     public let id: UUID

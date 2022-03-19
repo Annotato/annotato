@@ -1,5 +1,6 @@
 import Foundation
-import PencilKit
+// import PencilKit
+import OpenCombine
 
 public final class AnnotationHandwriting: Codable, AnnotationPart {
     public var id: UUID
@@ -13,7 +14,9 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
     public private(set) var handwriting: Data
 
     public var isEmpty: Bool {
-        (try? PKDrawing(data: handwriting).bounds.isEmpty) ?? false
+	// Ok to comment out in the backend since this is only called in the frontend
+        // (try? PKDrawing(data: handwriting).bounds.isEmpty) ??
+	false
     }
 
     @Published public private(set) var isRemoved = false

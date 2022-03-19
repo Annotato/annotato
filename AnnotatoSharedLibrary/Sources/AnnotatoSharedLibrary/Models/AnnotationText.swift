@@ -1,4 +1,5 @@
 import Foundation
+import OpenCombine
 
 public final class AnnotationText: Codable, AnnotationPart {
     public let id: UUID

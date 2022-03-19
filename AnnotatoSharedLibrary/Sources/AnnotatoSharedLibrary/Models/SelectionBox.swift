@@ -1,6 +1,5 @@
 import Foundation
-import Combine
-import CoreGraphics
+import OpenCombine
 
 public final class SelectionBox: Codable, Timestampable, ObservableObject {
     public let id: UUID
