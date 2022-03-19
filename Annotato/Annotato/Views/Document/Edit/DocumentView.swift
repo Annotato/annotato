@@ -65,33 +65,6 @@ class DocumentView: UIView {
         showAnnotationsOfVisiblePages()
     }
 
-    private func annotationIsInVisiblePages(
-        annotation: AnnotationView,
-        visiblePages: [PDFPage]
-    ) -> Bool {
-        let visiblePageNumbers = visiblePages.compactMap({ $0.pageRef?.pageNumber })
-        return visiblePageNumbers.contains(annotation.pageNumber)
-    }
-
-    private func bringAnnotationToFront(annotation: AnnotationView) {
-        annotation.superview?.bringSubviewToFront(annotation)
-    }
-
-    private func showAnnotationsOfVisiblePages() {
-        guard let pdfSubView = pdfView else {
-            return
-        }
-        let visiblePages = pdfSubView.visiblePages
-        for annotationView in annotationViews {
-            let annotationShouldBeVisible = annotationIsInVisiblePages(
-                annotation: annotationView, visiblePages: visiblePages
-            )
-            if annotationShouldBeVisible {
-                bringAnnotationToFront(annotation: annotationView)
-            }
-        }
-    }
-
     private func addGestureRecognizers() {
         isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
@@ -101,26 +74,59 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        addAnnotation(touchPoint: touchPoint)
+        addAnnotation(at: touchPoint)
     }
 
-    private func addAnnotation(touchPoint: CGPoint) {
+    private func addAnnotation(at pointInDocument: CGPoint) {
         guard let pdfView = self.pdfView else {
             return
         }
-        guard let pageClicked = pdfView.page(for: touchPoint, nearest: true) else {
-            return
-        }
-        guard let pageNumber = pageClicked.pageRef?.pageNumber else {
-            return
-        }
-        let pointInPdf = self.convert(touchPoint, to: pdfView.documentView)
-        documentViewModel.addAnnotation(center: pointInPdf, pageNumber: pageNumber)
+        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
+        documentViewModel.addAnnotation(center: pointInPdf)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotationView = AnnotationView(viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView?.documentView?.addSubview(annotationView)
+    }
+}
+
+// MARK: Display annotations when visible pages of pdf change
+extension DocumentView {
+    // Note: Subviews in PdfView get shifted to the back after scrolling away
+    // for a certain distance, therefore they must be brought forward
+    private func showAnnotationsOfVisiblePages() {
+        guard let pdfView = pdfView else {
+            return
+        }
+        let visiblePages = pdfView.visiblePages
+
+        let annotationsToShow = annotationViews.filter({
+            annotationIsInVisiblePages(annotation: $0, visiblePages: visiblePages)
+        })
+        for annotation in annotationsToShow {
+            bringAnnotationToFront(annotation: annotation)
+        }
+    }
+
+    private func annotationIsInVisiblePages(
+        annotation: AnnotationView,
+        visiblePages: [PDFPage]
+    ) -> Bool {
+        guard let pdfView = pdfView else {
+            return false
+        }
+        guard let centerInDocument = pdfView.documentView?.convert(annotation.center, to: self) else {
+            return false
+        }
+        guard let pageContainingAnnotation = pdfView.page(for: centerInDocument, nearest: true) else {
+            return false
+        }
+        return visiblePages.contains(pageContainingAnnotation)
+    }
+
+    private func bringAnnotationToFront(annotation: AnnotationView) {
+        annotation.superview?.bringSubviewToFront(annotation)
     }
 }
