@@ -25,6 +25,6 @@ public final class Document: Codable {
 extension Document: CustomStringConvertible {
     public var description: String {
         "Document(id: \(id), name: \(name), ownerId: \(ownerId), " +
-        "baseFileUrl: \(baseFileUrl), annotations: \(annotations)"
+        "baseFileUrl: \(baseFileUrl), annotations: \(annotations))"
     }
 }

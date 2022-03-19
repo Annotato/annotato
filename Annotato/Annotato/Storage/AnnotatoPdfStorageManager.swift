@@ -15,13 +15,15 @@ class AnnotatoPdfStorageManager {
     }
 
     func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (Document) -> Void) {
-        storageService.uploadPdf(fileSystemUrl: fileSystemUrl, withName: name) { url in
+        let documentId = UUID()
+
+        storageService.uploadPdf(fileSystemUrl: fileSystemUrl, withName: name, withId: documentId) { url in
             guard let userId = AnnotatoAuth().currentUser?.uid else {
                 AnnotatoLogger.error("When getting current user's ID", context: "AnnotatoPdfStorageManager::uploadPdf")
                 return
             }
 
-            let document = Document(name: name, ownerId: userId, baseFileUrl: url.absoluteString)
+            let document = Document(name: name, ownerId: userId, baseFileUrl: url.absoluteString, id: documentId)
 
             Task {
                 guard let document = await self.api.createDocument(document: document) else {
