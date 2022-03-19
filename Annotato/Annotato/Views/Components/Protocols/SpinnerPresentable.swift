@@ -2,6 +2,7 @@ import UIKit
 
 protocol SpinnerPresentable where Self: UIViewController {
     var spinner: UIActivityIndicatorView { get }
+
     func initializeSpinner()
     func startSpinner()
     func stopSpinner()
@@ -9,8 +10,9 @@ protocol SpinnerPresentable where Self: UIViewController {
 
 extension SpinnerPresentable {
     func initializeSpinner() {
-        spinner.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(spinner)
+
+        spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
