@@ -1,18 +1,21 @@
 import UIKit
 
-class DocumentListViewController: UIViewController {
-    private var documents = SampleData().exampleDocumentsInList()
+class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    let spinner = UIActivityIndicatorView(style: .large)
+    private var documents: [DocumentListViewModel]?
     let toolbarHeight = 50.0
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        initializeDocumentsCollectionView()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        initializeSubviews()
-    }
-
-    private func initializeSubviews() {
+        initializeSpinner()
         initializeToolbar()
-        initializeDocumentsCollectionView()
     }
 
     private func initializeToolbar() {
@@ -31,13 +34,37 @@ class DocumentListViewController: UIViewController {
     }
 
     private func initializeDocumentsCollectionView() {
+        Task {
+            guard let userId = AnnotatoAuth().currentUser?.uid else {
+                AnnotatoLogger.info("Could not get current user. Sample documents will be used.",
+                                    context: "DocumentListViewController::initializeSubviews")
+
+                documents = SampleData.exampleDocumentsInList
+                addDocumentsSubview()
+                return
+            }
+
+            startSpinner()
+            documents = await DocumentController.loadAllDocuments(userId: userId)
+            stopSpinner()
+
+            addDocumentsSubview()
+        }
+    }
+
+    private func addDocumentsSubview() {
+        guard let documents = documents else {
+            presentErrorAlert(errorMessage: "Failed to load documents.")
+            return
+        }
+
         let collectionView = DocumentListCollectionView(
             documents: documents,
             frame: .zero,
             documentListCollectionCellViewDelegate: self
         )
 
-        view.addSubview(collectionView)
+        view.replaceSubview(newSubview: collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.widthAnchor.constraint(equalToConstant: frame.width * 0.9).isActive = true
@@ -60,21 +87,20 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         guard let selectedFileUrl = baseFileUrls.first else {
             return
         }
+
         guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
             return
         }
-        let newDocumentViewModel = DocumentViewModel(
-            annotations: [],
-            pdfDocument: PdfViewModel(baseFileUrl: selectedFileUrl)
-        )
-        goToDocumentEdit(documentViewModel: newDocumentViewModel)
+
+        AnnotatoPdfStorageManager().uploadPdf(fileSystemUrl: selectedFileUrl,
+                                              withName: selectedFileUrl.lastPathComponent) { [weak self] document in
+            DispatchQueue.main.async {
+                self?.goToDocumentEdit(documentId: document.id)
+            }
+        }
     }
 
     func didSelectCellView(document: DocumentListViewModel) {
-        // Note: this is supposed to be an api call to fetch the documentViewModel
-        // based on the id of documentListViewModel once integration is done
-        // The document list view model in this pr does not have id yet
-
-        goToDocumentEdit(documentViewModel: SampleData().exampleDocument(from: document))
+        goToDocumentEdit(documentId: document.id)
     }
 }

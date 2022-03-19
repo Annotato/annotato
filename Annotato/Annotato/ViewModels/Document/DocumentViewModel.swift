@@ -1,15 +1,23 @@
 import CoreGraphics
 import Foundation
+import AnnotatoSharedLibrary
 
 class DocumentViewModel: ObservableObject {
+    private let document: Document
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var annotationToAdd: AnnotationViewModel?
 
-    init(annotations: [AnnotationViewModel], pdfDocument: PdfViewModel) {
-        self.annotations = annotations
-        self.pdfDocument = pdfDocument
+    init?(document: Document) {
+        self.document = document
+        self.annotations = document.annotations.map { AnnotationViewModel(annotation: $0) }
+
+        guard let baseFileUrl = URL(string: document.baseFileUrl) else {
+            return nil
+        }
+
+        self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
     }
 }
 

@@ -1,10 +1,11 @@
+import Foundation
 import UIKit
 import UniformTypeIdentifiers
 
 protocol Navigable where Self: UIViewController {
     func goToDocumentList()
     func goToDocumentEdit()
-    func goToDocumentEdit(documentViewModel: DocumentViewModel)
+    func goToDocumentEdit(documentId: UUID)
     func goToImportingFiles()
 }
 
@@ -27,13 +28,13 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
-    func goToDocumentEdit(documentViewModel: DocumentViewModel) {
+    func goToDocumentEdit(documentId: UUID) {
         guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
             return
         }
-        viewController.documentViewModel = documentViewModel
+        viewController.documentId = documentId
         present(viewController, animated: true, completion: nil)
     }
 

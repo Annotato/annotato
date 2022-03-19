@@ -1,11 +1,16 @@
 import Foundation
+import AnnotatoSharedLibrary
 
 class DocumentListViewModel {
+    let id: UUID
     private(set) var name: String
-    private(set) var baseFileUrl: URL
 
-    init(name: String, baseFileUrl: URL) {
+    init(id: UUID, name: String) {
+        self.id = id
         self.name = name
-        self.baseFileUrl = baseFileUrl
+    }
+
+    convenience init(document: Document) {
+        self.init(id: document.id, name: document.name)
     }
 }

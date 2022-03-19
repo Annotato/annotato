@@ -1,6 +1,8 @@
 import UIKit
 
-class DocumentEditViewController: UIViewController, AlertPresentable {
+class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    let spinner = UIActivityIndicatorView(style: .large)
+    var documentId: UUID?
     let toolbarHeight = 50.0
     var documentViewModel: DocumentViewModel?
 
@@ -11,12 +13,26 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
     }
 
     func initializeSubviews() {
+        initializeSpinner()
+
         initializeToolbar()
-        guard let currentDocumentViewModel = documentViewModel else {
-            presentErrorAlert(errorMessage: "No document view model")
-            return
+
+        Task {
+            guard let documentId = documentId else {
+                AnnotatoLogger.info("Document ID not passed to DocumentEditViewController. " +
+                                    "Sample document will be used.",
+                                    context: "DocumentEditViewController::initializeSubviews")
+                documentViewModel = DocumentViewModel(document: SampleData.exampleDocument)
+                initializeDocumentView()
+                return
+            }
+
+            startSpinner()
+            documentViewModel = await DocumentController.loadDocument(documentId: documentId)
+            stopSpinner()
+
+            initializeDocumentView()
         }
-        initializeDocumentView(documentViewModel: currentDocumentViewModel)
     }
 
     private func initializeToolbar() {
@@ -34,11 +50,17 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
         toolbar.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
     }
 
-    private func initializeDocumentView(documentViewModel: DocumentViewModel) {
+    private func initializeDocumentView() {
+        guard let documentViewModel = documentViewModel else {
+            presentErrorAlert(errorMessage: "Failed to load document.")
+            return
+        }
+
         let documentView = DocumentView(
-            frame: .zero,
+            frame: self.view.safeAreaLayoutGuide.layoutFrame,
             documentViewModel: documentViewModel
         )
+
         view.addSubview(documentView)
 
         documentView.translatesAutoresizingMaskIntoConstraints = false
