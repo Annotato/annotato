@@ -1,31 +1,21 @@
 import UIKit
 
-class DocumentListViewController: UIViewController, AlertPresentable {
+class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    let spinner = UIActivityIndicatorView(style: .large)
     private var documents: [DocumentListViewModel]?
     let toolbarHeight = 50.0
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        initializeDocumentsCollectionView()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        initializeSubviews()
-    }
-
-    private func initializeSubviews() {
+        initializeSpinner()
         initializeToolbar()
-
-        Task {
-            guard let userId = AnnotatoAuth().currentUser?.uid else {
-                AnnotatoLogger.info("Could not get current user, sample documents will be used",
-                                    context: "DocumentListViewController::initializeSubviews")
-
-                documents = SampleData.exampleDocumentsInList
-                initializeDocumentsCollectionView()
-                return
-            }
-
-            documents = await DocumentController.loadAllDocuments(userId: userId)
-            initializeDocumentsCollectionView()
-        }
     }
 
     private func initializeToolbar() {
@@ -44,6 +34,25 @@ class DocumentListViewController: UIViewController, AlertPresentable {
     }
 
     private func initializeDocumentsCollectionView() {
+        Task {
+            guard let userId = AnnotatoAuth().currentUser?.uid else {
+                AnnotatoLogger.info("Could not get current user, sample documents will be used",
+                                    context: "DocumentListViewController::initializeSubviews")
+
+                documents = SampleData.exampleDocumentsInList
+                addDocumentsSubview()
+                return
+            }
+
+            startSpinner()
+            documents = await DocumentController.loadAllDocuments(userId: userId)
+            stopSpinner()
+
+            addDocumentsSubview()
+        }
+    }
+
+    private func addDocumentsSubview() {
         guard let documents = documents else {
             presentErrorAlert(errorMessage: "Failed to load documents.")
             return
@@ -55,7 +64,7 @@ class DocumentListViewController: UIViewController, AlertPresentable {
             documentListCollectionCellViewDelegate: self
         )
 
-        view.addSubview(collectionView)
+        view.replaceSubview(newSubview: collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.widthAnchor.constraint(equalToConstant: frame.width * 0.9).isActive = true

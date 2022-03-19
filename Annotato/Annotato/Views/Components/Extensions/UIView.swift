@@ -23,6 +23,11 @@ extension UIView {
         )
     }
 
+    func replaceSubview<T: UIView>(newSubview: T) {
+        subviews.filter { $0 is T }.forEach { $0.removeFromSuperview() }
+        addSubview(newSubview)
+    }
+
     class func makeToggleableSystemButton(systemName: String, color: UIColor) -> ToggleableButton {
         let button = ToggleableButton()
         button.setImage(UIImage(systemName: systemName), for: .normal)
