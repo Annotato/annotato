@@ -39,9 +39,6 @@ deactivate DocumentView
 DocumentView --> DocumentView
 deactivate DocumentView
 
-DocumentView --> DocumentView
-deactivate DocumentView
-
 DocumentViewModel -> DocumentView : notify observer
 activate DocumentView
 
