@@ -13,6 +13,12 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        initializeSubviews()
+    }
+
+    func initializeSubviews() {
+        initializeToolbar()
+
         Task {
             guard let documentId = documentId else {
                 return
@@ -20,14 +26,8 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
 
             documentViewModel = await DocumentController.loadDocument(documentId: documentId)
 
-            initializeSubviews()
+            initializeDocumentView()
         }
-    }
-
-    func initializeSubviews() {
-        initializeToolbar()
-
-        initializeDocumentView()
     }
 
     private func initializeToolbar() {
