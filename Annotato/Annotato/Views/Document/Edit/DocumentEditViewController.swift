@@ -3,8 +3,7 @@ import UIKit
 class DocumentEditViewController: UIViewController, AlertPresentable {
     var documentId: UUID?
     let toolbarHeight = 50.0
-    // TODO: Remove the default value once we do not want to fall back on Clean Code when file not found
-    var documentViewModel: DocumentViewModel? = DocumentViewModel(document: SampleData.exampleDocument)
+    var documentViewModel: DocumentViewModel?
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -21,11 +20,14 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
 
         Task {
             guard let documentId = documentId else {
+                AnnotatoLogger.info("Could not get current user, sample document will be used",
+                                    context: "DocumentEditViewController::initializeSubviews")
+                documentViewModel = DocumentViewModel(document: SampleData.exampleDocument)
+                initializeDocumentView()
                 return
             }
 
             documentViewModel = await DocumentController.loadDocument(documentId: documentId)
-
             initializeDocumentView()
         }
     }
