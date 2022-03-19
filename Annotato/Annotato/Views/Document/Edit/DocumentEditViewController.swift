@@ -1,6 +1,7 @@
 import UIKit
 
-class DocumentEditViewController: UIViewController, AlertPresentable {
+class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
     let toolbarHeight = 50.0
     var documentViewModel: DocumentViewModel?
@@ -16,6 +17,8 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
     }
 
     func initializeSubviews() {
+        initializeSpinner()
+
         initializeToolbar()
 
         Task {
@@ -27,7 +30,10 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
                 return
             }
 
+            startSpinner()
             documentViewModel = await DocumentController.loadDocument(documentId: documentId)
+            stopSpinner()
+
             initializeDocumentView()
         }
     }
