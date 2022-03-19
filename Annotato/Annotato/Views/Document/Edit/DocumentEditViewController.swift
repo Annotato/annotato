@@ -69,22 +69,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
         documentView.leftAnchor.constraint(equalTo: margins.leftAnchor).isActive = true
         documentView.rightAnchor.constraint(equalTo: margins.rightAnchor).isActive = true
     }
-
-//    private func initializeDocumentView() {
-//        let documentView = DocumentView(
-//            frame: self.view.safeAreaLayoutGuide.layoutFrame,
-//            documentViewModel: SampleData.exampleDocument()
-//        )
-//
-//        view.addSubview(documentView)
-//
-//        documentView.translatesAutoresizingMaskIntoConstraints = false
-//        documentView.topAnchor.constraint(
-//            equalTo: margins.topAnchor, constant: toolbarHeight).isActive = true
-//        documentView.bottomAnchor.constraint(equalTo: margins.bottomAnchor).isActive = true
-//        documentView.leftAnchor.constraint(equalTo: margins.leftAnchor).isActive = true
-//        documentView.rightAnchor.constraint(equalTo: margins.rightAnchor).isActive = true
-//    }
 }
 
 extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
