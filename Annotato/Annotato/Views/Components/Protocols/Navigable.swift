@@ -29,7 +29,6 @@ extension Navigable {
     }
 
     func goToDocumentEdit(documentId: UUID) {
-        print("goToDocumentEdit.documentId = \(documentId)")
         guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {

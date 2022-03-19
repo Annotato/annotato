@@ -8,23 +8,20 @@ class DocumentEditViewController: UIViewController, AlertPresentable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("inside contorller, documentId is \(documentId)")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
         Task {
             guard let documentId = documentId else {
                 return
             }
 
-            print("going to load document with id \(documentId)")
-
             documentViewModel = await DocumentController.loadDocument(documentId: documentId)
+
+            initializeSubviews()
         }
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        initializeSubviews()
     }
 
     func initializeSubviews() {

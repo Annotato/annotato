@@ -69,7 +69,6 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
                                               withName: selectedFileUrl.lastPathComponent) { [weak self] document in
             // TODO: Remove force-unwrapping once id is no longer optional
             DispatchQueue.main.sync {
-                print(document)
                 self?.goToDocumentEdit(documentId: document.id!)
             }
         }
