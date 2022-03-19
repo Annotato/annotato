@@ -3,7 +3,7 @@ import PDFKit
 import Combine
 
 class DocumentView: UIView {
-    private var documentViewModel: DocumentViewModel
+    private var viewModel: DocumentViewModel
     private var cancellables: Set<AnyCancellable> = []
 
     private var pdfView: DocumentPdfView
@@ -15,7 +15,7 @@ class DocumentView: UIView {
     }
 
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
-        self.documentViewModel = documentViewModel
+        self.viewModel = documentViewModel
         self.annotationViews = []
         self.pdfView = DocumentPdfView(
             frame: .zero,
@@ -34,7 +34,7 @@ class DocumentView: UIView {
     }
 
     private func initializeInitialAnnotationViews() {
-        for annotation in documentViewModel.annotations {
+        for annotation in viewModel.annotations {
             renderNewAnnotation(viewModel: annotation)
         }
     }
@@ -49,7 +49,7 @@ class DocumentView: UIView {
     }
 
     private func setUpSubscribers() {
-        documentViewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
+        viewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
             guard let annotationViewModel = annotationViewModel else {
                 return
             }
@@ -83,7 +83,7 @@ class DocumentView: UIView {
 
     private func addAnnotation(at pointInDocument: CGPoint) {
         let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
-        documentViewModel.addAnnotation(center: pointInPdf)
+        viewModel.addAnnotation(center: pointInPdf)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
