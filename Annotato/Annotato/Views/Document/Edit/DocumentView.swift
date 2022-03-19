@@ -23,8 +23,6 @@ class DocumentView: UIView {
         )
 
         super.init(frame: frame)
-        self.layer.borderWidth = 2
-        self.layer.borderColor = UIColor.black.cgColor
 
         addGestureRecognizers()
         addObservers()
