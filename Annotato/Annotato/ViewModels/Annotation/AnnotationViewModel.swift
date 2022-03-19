@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 import CoreImage
 import PDFKit
+import AnnotatoSharedLibrary
 
 class AnnotationViewModel: ObservableObject {
     private(set) var id: UUID
@@ -38,6 +39,11 @@ class AnnotationViewModel: ObservableObject {
         if self.parts.isEmpty {
             addInitialPartIfNew()
         }
+    }
+
+    convenience init(annotation: Annotation) {
+        // TODO: annotation parts
+        self.init(id: annotation.id, origin: annotation.origin, width: annotation.width, parts: [])
     }
 
     private func addInitialPartIfNew() {

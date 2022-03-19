@@ -8,10 +8,10 @@ class DocumentViewModel: ObservableObject {
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var annotationToAdd: AnnotationViewModel?
-    
+
     init?(document: Document) {
         self.document = document
-        self.annotations = [] // TODO: Replace with document.annotations
+        self.annotations = document.annotations.map { AnnotationViewModel(annotation: $0) }
 
         guard let baseFileUrl = URL(string: document.baseFileUrl) else {
             return nil

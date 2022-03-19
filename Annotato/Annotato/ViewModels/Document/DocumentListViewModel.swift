@@ -11,7 +11,6 @@ class DocumentListViewModel {
     }
 
     convenience init(document: Document) {
-        // TODO: Remove force unwrapping once ID is no longer optional
         self.init(id: document.id, name: document.name)
     }
 }
