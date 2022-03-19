@@ -94,9 +94,8 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
 
         AnnotatoPdfStorageManager().uploadPdf(fileSystemUrl: selectedFileUrl,
                                               withName: selectedFileUrl.lastPathComponent) { [weak self] document in
-            // TODO: Remove force-unwrapping once id is no longer optional
             DispatchQueue.main.sync {
-                self?.goToDocumentEdit(documentId: document.id!)
+                self?.goToDocumentEdit(documentId: document.id)
             }
         }
     }

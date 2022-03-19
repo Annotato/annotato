@@ -11,19 +11,6 @@ class SampleData {
             DocumentListViewModel(id: UUID(), name: "Firebase Clean Code"),
             DocumentListViewModel(id: UUID(), name: "Test E")
         ]
-    }
-
-    func exampleDocument(from listViewModel: DocumentListViewModel) -> DocumentViewModel {
-        let pdfDocument = PdfViewModel(baseFileUrl: listViewModel.baseFileUrl)
-        return DocumentViewModel(annotations: SampleData().exampleAnnotations(), pdfDocument: pdfDocument)
-    }
-
-    func exampleDocument() -> DocumentViewModel {
-        DocumentViewModel(
-            annotations: SampleData().exampleAnnotations(),
-            pdfDocument: examplePdfViewModelLab01Qns()
-        )
-    }
 
     static var exampleDocument: Document {
         Document(name: "Clean Code", ownerId: "owner123", baseFileUrl: firebasePdfUrlString, id: UUID())
@@ -44,8 +31,7 @@ class SampleData {
                 parts: exampleAnnotationParts1)
         ]
 
-    static var examplePdfDocument: DocumentPdfViewModel =
-        DocumentPdfViewModel(baseFileUrl: exampleUrlLab01Qns)
+    static var examplePdfDocument = PdfViewModel(baseFileUrl: exampleUrlLab01Qns)
 
     static var exampleUrlLab01Qns: URL {
         guard let baseFileUrl = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {

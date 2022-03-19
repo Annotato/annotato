@@ -8,11 +8,6 @@ class DocumentViewModel: ObservableObject {
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var annotationToAdd: AnnotationViewModel?
-
-    init(annotations: [AnnotationViewModel], pdfDocument: PdfViewModel) {
-        self.annotations = annotations
-        self.pdfDocument = pdfDocument
-    }
     
     init?(document: Document) {
         self.document = document
@@ -22,7 +17,7 @@ class DocumentViewModel: ObservableObject {
             return nil
         }
 
-        self.pdfDocument = DocumentPdfViewModel(baseFileUrl: baseFileUrl)
+        self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
     }
 }
 
