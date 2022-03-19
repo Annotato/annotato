@@ -1,4 +1,4 @@
-@startuml
+@startuml add-annotation-sequence-diagram
 !include style.puml
 
 box Actor
@@ -14,11 +14,7 @@ participant ":DocumentViewModel" as DocumentViewModel VIEW_MODEL_COLOR
 participant ":AnnotationViewModel" as AnnotationViewModel VIEW_MODEL_COLOR
 end box
 
-User -> DocumentView : tap gesture
-
-activate DocumentView
-
-DocumentView -> DocumentView : didTap(sender)
+User -> DocumentView : didTap(sender)
 activate DocumentView
 
 DocumentView -> DocumentView : addAnnotation(pointInDocument)
