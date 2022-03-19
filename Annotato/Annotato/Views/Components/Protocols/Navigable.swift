@@ -33,7 +33,7 @@ extension Navigable {
         ) else {
             return
         }
-        viewController.currentDocumentViewModel = documentViewModel
+        viewController.documentViewModel = documentViewModel
         present(viewController, animated: true, completion: nil)
     }
 

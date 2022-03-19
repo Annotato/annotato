@@ -9,10 +9,6 @@ class AnnotationView: UIView {
     private var parts: UIStackView
     private var cancellables: Set<AnyCancellable> = []
 
-    var pageLabel: String {
-        viewModel.pageLabel
-    }
-
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -92,22 +88,11 @@ class AnnotationView: UIView {
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        let documentViewPoint = sender.location(in: superview)
+        let pointInPdf = sender.location(in: superview)
         guard sender.state != .cancelled else {
             return
         }
-        guard let pdfView = superview?.superview?.superview
-        as? DocumentPdfView else {
-            return
-        }
-        guard let pointInPdfDocument = superview?.convert(documentViewPoint, to: pdfView) else {
-            return
-        }
-        let currPage = pdfView.page(for: pointInPdfDocument, nearest: true)
-        guard let pageLabel = currPage?.label else {
-            return
-        }
-        viewModel.updateLocation(to: documentViewPoint, pageLabel: pageLabel)
+        viewModel.setCenter(to: pointInPdf)
     }
 
     private func resize() {
