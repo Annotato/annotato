@@ -31,15 +31,15 @@ class AuthViewController: UIViewController, Navigable {
 
         emailTextField.attributedPlaceholder = NSAttributedString(
             string: "Email",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.black]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
         passwordTextField.attributedPlaceholder = NSAttributedString(
             string: "Password",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.black]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
         displayNameTextField.attributedPlaceholder = NSAttributedString(
             string: "Display Name",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.black]
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
     }
 
