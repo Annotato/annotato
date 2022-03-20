@@ -1,0 +1,48 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package Auth {
+    Interface AnnotatoAuthService <<Protocol>> {
+        delegate: AnnotatoAuthDelegate?
+        currentUser: AnnotatoUser?
+        --
+        signUp(email: String, password: String, displayName: String)
+        logIn(email: String, password: String)
+    }
+
+    Class AnnotatoAuth {
+        ( - ) authService: AnnotatoAuthService
+        --
+        signUp(email: String, password: String, displayName: String)
+        logIn(email: String, password: String)
+    }
+
+    Class FirebaseAuth {
+        currentFirebaseUser: Firebase.User?
+        currentUser: AnnotatoUser?
+        --
+        signUp(email: String, password: String, displayName: String)
+        logIn(email: String, password: String)
+        ( - ) setDisplayName(displayName: String, email: String)
+    }
+
+    Class AnnotatoAuthDelegate {
+        logInDidFail(error: Error)
+        signUpDidFail(error: Error)
+        logInDidSucceed()
+        signUpDidSucceed()
+    }
+}
+
+AnnotatoAuth *--> AnnotatoAuthService
+FirebaseAuth .up.|> AnnotatoAuthService
+FirebaseAuth *-> AnnotatoAuthDelegate
+
+'Represents clients of the AuthService'
+Class HiddenOutside #FFFFFF
+HiddenOutside ..> AnnotatoAuth
+
+@enduml
