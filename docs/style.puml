@@ -1,0 +1,71 @@
+/'
+ 'Commonly used styles and colors across diagrams.
+ 'Refer to https://plantuml-documentation.readthedocs.io/en/latest for a more
+ 'comprehensive list of skinparams.
+ '/
+
+
+'T1 through T4 are shades of the original color from lightest to darkest
+
+' To be used for both views and view controllers
+!define VIEW_COLOR #1D8900
+!define VIEW_BACKGROUND_COLOR #83E769
+
+!define VIEW_MODEL_COLOR #3333C4
+!define VIEW_MODEL_BACKGROUND_COLOR #C8C8FA
+
+!define MODEL_COLOR #9D0012
+!define MODEL_BACKGROUND_COLOR #F97181
+
+!define BACKEND_COLOR #A38300
+!define BACKEND_BACKGROUND_COLOR #FFE374
+
+' To be used for authentication and storage things
+!define FIREBASE_COLOR #7F5200
+!define FIREBASE_BACKGROUND_COLOR #E59400
+
+!define OTHER_COLOR #121f15
+!define OTHER_BACKGROUND_COLOR #569466
+
+!define USER_COLOR #000000
+
+skinparam BackgroundColor #FFFFFFF
+
+skinparam Shadowing false
+
+skinparam Class {
+    FontColor #FFFFFF
+    BorderThickness 1
+    BorderColor #FFFFFF
+    StereotypeFontColor #FFFFFF
+    FontName Arial
+}
+
+skinparam Actor {
+    BorderColor USER_COLOR
+    Color USER_COLOR
+    FontName Arial
+}
+
+skinparam Sequence {
+    MessageAlign center
+    BoxFontSize 15
+    BoxPadding 0
+    BoxFontColor #FFFFFF
+    FontName Arial
+}
+
+skinparam Participant {
+    FontColor #FFFFFFF
+    Padding 20
+}
+
+skinparam MinClassWidth 50
+skinparam ParticipantPadding 10
+skinparam Shadowing false
+skinparam DefaultTextAlignment center
+skinparam packageStyle Rectangle
+
+hide footbox
+hide members
+hide circle

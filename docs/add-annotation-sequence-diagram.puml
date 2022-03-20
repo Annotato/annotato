@@ -1,0 +1,54 @@
+@startuml add-annotation-sequence-diagram
+!include style.puml
+
+box Actor
+actor User as User USER_COLOR
+end box
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentView" as DocumentView VIEW_COLOR
+end box
+
+box View Model VIEW_MODEL_BACKGROUND_COLOR
+participant ":DocumentViewModel" as DocumentViewModel VIEW_MODEL_COLOR
+participant ":AnnotationViewModel" as AnnotationViewModel VIEW_MODEL_COLOR
+end box
+
+User -> DocumentView : didTap(sender)
+activate DocumentView
+
+DocumentView -> DocumentView : addAnnotation(pointInDocument)
+activate DocumentView
+
+DocumentView -> DocumentViewModel : addAnnotation(center)
+activate DocumentViewModel
+
+create AnnotationViewModel
+DocumentViewModel -> AnnotationViewModel : AnnotationViewModel(id, origin, width, parts)
+activate AnnotationViewModel
+
+AnnotationViewModel --> DocumentViewModel : annotationViewModel
+deactivate AnnotationViewModel
+
+DocumentViewModel --> DocumentView
+deactivate DocumentViewModel
+
+DocumentView --> DocumentView
+deactivate DocumentView
+
+DocumentView --> DocumentView
+deactivate DocumentView
+
+DocumentViewModel -> DocumentView : notify observer
+activate DocumentView
+
+DocumentView -> DocumentView : renderNewAnnotation(annotationViewModel)
+activate DocumentView
+
+DocumentView --> DocumentView
+deactivate DocumentView
+
+DocumentView --> DocumentView
+deactivate DocumentView
+
+@enduml
