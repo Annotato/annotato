@@ -22,12 +22,12 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
         self.isEditable = false
         super.init(frame: viewModel.frame)
 
-        switchView(basedOn: viewModel.isEditing)
-        setUpEditView()
         setUpPreviewView()
-        setUpSubscribers()
+        setUpEditView()
         setUpStyle()
+        setUpSubscribers()
         addGestureRecognizers()
+        switchView(basedOn: viewModel.isEditing)
     }
 
     private func setUpEditView() {
@@ -59,8 +59,8 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
             editView.removeFromSuperview()
             previewView.removeFromSuperview()
             isEditable = false
-            loadMarkdown()
             addSubview(previewView)
+            loadMarkdown()
         }
     }
 
@@ -102,8 +102,12 @@ extension AnnotationMarkdownView: UITextViewDelegate {
 }
 
 extension AnnotationMarkdownView: WKNavigationDelegate {
+    // References: https://stackoverflow.com/questions/27850792/uiwebview-dynamic-content-size
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         webView.frame.size = CGSize(width: frame.width, height: webView.scrollView.contentSize.height)
+        webView.changeFont(fontFamilies: "-apple-system, BlinkMacSystemFont, sans-serif")
+        webView.contentMode = .scaleAspectFit
+        webView.sizeToFit()
         changeSize(to: webView.frame.size)
     }
 

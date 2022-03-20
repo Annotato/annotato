@@ -95,7 +95,7 @@ class SampleData {
             ),
             AnnotationMarkdownViewModel(
                 id: UUID(),
-                content: "# hello\nsome `code`\n\nabcd",
+                content: "# hello\nsome `code`\n\nabcd\n\na long string that exceeds the width of the container",
                 width: 300.0,
                 height: 30.0
             ),

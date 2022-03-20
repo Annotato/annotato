@@ -15,4 +15,12 @@ extension WKWebView {
             """
         loadHTMLString(headerString + content, baseURL: baseURL)
     }
+
+    func changeFont(fontFamilies: String) {
+        let changeFontFamilyScript =
+            """
+            document.getElementsByTagName(\'body\')[0].style.fontFamily = \"\(fontFamilies)\";
+            """
+        evaluateJavaScript(changeFontFamilyScript)
+    }
 }
