@@ -14,7 +14,6 @@ Package Auth {
     }
 
     Class AnnotatoAuth {
-        ( - ) authService: AnnotatoAuthService
         --
         signUp(email: String, password: String, displayName: String)
         logIn(email: String, password: String)
