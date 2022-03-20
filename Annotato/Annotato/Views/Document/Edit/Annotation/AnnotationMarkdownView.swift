@@ -47,17 +47,16 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     }
 
     private func switchView(basedOn isEditing: Bool) {
+        editView.removeFromSuperview()
+        previewView.removeFromSuperview()
+
         if isEditing {
-            editView.removeFromSuperview()
-            previewView.removeFromSuperview()
             isEditable = true
             editView.text = viewModel.content
             addSubview(editView)
             editView.resizeFrameToFitContent()
             changeSize(to: editView.frame.size)
         } else {
-            editView.removeFromSuperview()
-            previewView.removeFromSuperview()
             isEditable = false
             addSubview(previewView)
             loadMarkdown()
