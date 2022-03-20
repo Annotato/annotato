@@ -32,6 +32,7 @@ extension DocumentViewModel {
         )
         annotationViewModel.center = center
         annotationViewModel.enterEditMode()
+        annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
         annotationToAdd = annotationViewModel
     }

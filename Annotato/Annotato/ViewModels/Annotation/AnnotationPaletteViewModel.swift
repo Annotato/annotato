@@ -8,6 +8,10 @@ class AnnotationPaletteViewModel: ObservableObject {
     private(set) var width: Double
     private(set) var height: Double
 
+    var isMinimized: Bool {
+        parentViewModel?.isMinimized ?? false
+    }
+
     @Published var isEditing = false {
         didSet {
             if !isEditing {

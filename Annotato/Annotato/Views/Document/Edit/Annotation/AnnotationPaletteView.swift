@@ -50,6 +50,7 @@ class AnnotationPaletteView: UIToolbar {
         let deleteBarButton = UIBarButtonItem(customView: deleteButton)
         let minimizeOrMaximizeBarButton = UIBarButtonItem(customView: minimizeOrMaximizeButton)
         minimizeOrMaximizeButton.widthAnchor.constraint(equalToConstant: 20.0).isActive = true
+        minimizeOrMaximizeButton.isSelected = viewModel.isMinimized
         self.items = [
             textBarButton,
             spaceBetween,
@@ -73,6 +74,8 @@ class AnnotationPaletteView: UIToolbar {
         }).store(in: &cancellables)
 
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+            self?.textButton.isHidden = !isEditing
+            self?.markdownButton.isHidden = !isEditing
             self?.editOrViewButton.isSelected = isEditing
         }).store(in: &cancellables)
     }
