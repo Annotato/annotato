@@ -55,8 +55,8 @@ class AnnotationViewModel: ObservableObject {
         resize()
     }
 
-    func setCenter(to center: CGPoint) {
-        self.center = center
+    func translateCenter(by translation: CGPoint) {
+        self.center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
     }
 }
 
