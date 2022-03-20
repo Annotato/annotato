@@ -1,0 +1,47 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package "HTTP" {
+    Interface AnnotatoHTTPService <<Protocol>> {
+        get(url: String): Data
+        get(url: String, params: [String: String]): Data
+        post(url: String, data: Data): Data
+        put(url: String): Data
+        delete(url: String): Data
+    }
+
+    Class URLSessionHTTPService {
+        ( - ) sharedSession: URLSession
+        --
+        get(url: String): Data
+        get(url: String, params: [String: String]): Data
+        post(url: String, data: Data): Data
+        put(url: String): Data
+        delete(url: String): Data
+        ( - ) makeURLWithParams(url: String, params: [String: String]): URL?
+    }
+
+    Enum AnnotatoHTTPError <<enum>> {
+        invalidURL
+        notFound
+        internalServerError
+    }
+
+    Enum AnnotatoHTTPMethod <<enum>> {
+        get
+        post
+        put
+        delete
+    }
+}
+
+URLSessionHTTPService .up.|> AnnotatoHTTPService
+URLSessionHTTPService .left.> AnnotatoHTTPError
+URLSessionHTTPService .right.> AnnotatoHTTPMethod
+
+DocumentsAPI *-down-> AnnotatoHTTPService
+
+@enduml
