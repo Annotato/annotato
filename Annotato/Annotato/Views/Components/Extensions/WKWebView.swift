@@ -8,12 +8,21 @@ extension WKWebView {
     ///   - content: HTML content which we need to load in the webview.
     ///   - baseURL: Content base url. It is optional.
     func loadHTMLStringWithCorrectScale(content: String, baseURL: URL?) {
-        let headerString =
+        let rawHtmlString =
             """
-            <header><meta name='viewport' content='width=device-width,
-            initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no'></header>
+            <html lang="en">
+                <head>
+                    <meta name='viewport' content='width=device-width,
+                          initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,
+                          user-scalable=no'>
+                </head>
+
+                <body>
+                    \(content)
+                </body>
+            </html>
             """
-        loadHTMLString(headerString + content, baseURL: baseURL)
+        loadHTMLString(rawHtmlString, baseURL: baseURL)
     }
 
     func changeFont(fontFamilies: String) {
