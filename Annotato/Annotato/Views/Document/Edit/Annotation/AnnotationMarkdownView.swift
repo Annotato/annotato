@@ -1,9 +1,11 @@
 import UIKit
 import Combine
+import WebKit
 
 class AnnotationMarkdownView: UIView, AnnotationPartView {
     private(set) var viewModel: AnnotationMarkdownViewModel
     private(set) var editView: UITextView
+    private(set) var previewView: WKWebView
     private var cancellables: Set<AnyCancellable> = []
     private var heightConstraint = NSLayoutConstraint()
     private var isEditable: Bool
@@ -16,19 +18,25 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     init(viewModel: AnnotationMarkdownViewModel) {
         self.viewModel = viewModel
         self.editView = UITextView(frame: viewModel.editFrame)
+        self.previewView = WKWebView()
         self.isEditable = false
         super.init(frame: viewModel.frame)
 
-        switchView(basedOn: viewModel.isEditing)
+        setUpPreviewView()
         setUpEditView()
-        setUpSubscribers()
         setUpStyle()
+        setUpSubscribers()
         addGestureRecognizers()
+        switchView(basedOn: viewModel.isEditing)
     }
 
     private func setUpEditView() {
         editView.isScrollEnabled = false
         editView.delegate = self
+    }
+
+    private func setUpPreviewView() {
+        previewView.navigationDelegate = self
     }
 
     private func setUpStyle() {
@@ -39,14 +47,26 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     }
 
     private func switchView(basedOn isEditing: Bool) {
+        editView.removeFromSuperview()
+        previewView.removeFromSuperview()
+
         if isEditing {
             isEditable = true
             editView.text = viewModel.content
             addSubview(editView)
+            editView.resizeFrameToFitContent()
+            changeSize(to: editView.frame.size)
         } else {
             isEditable = false
-            editView.removeFromSuperview()
+            addSubview(previewView)
+            loadMarkdown()
         }
+    }
+
+    private func changeSize(to size: CGSize) {
+        self.frame.size = size
+        self.heightConstraint.constant = self.frame.height
+        viewModel.setHeight(to: size.height)
     }
 
     private func setUpSubscribers() {
@@ -75,10 +95,35 @@ extension AnnotationMarkdownView: UITextViewDelegate {
             return
         }
         editView.resizeFrameToFitContent()
-        self.frame.size = editView.frame.size
-        self.heightConstraint.constant = self.frame.height
         viewModel.setContent(to: text)
-        viewModel.setHeight(to: frame.height)
+        changeSize(to: editView.frame.size)
+    }
+}
+
+extension AnnotationMarkdownView: WKNavigationDelegate {
+    // References: https://stackoverflow.com/questions/27850792/uiwebview-dynamic-content-size
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        webView.frame.size = CGSize(width: frame.width, height: webView.scrollView.contentSize.height)
+        webView.changeFont(fontFamilies: "-apple-system, BlinkMacSystemFont, sans-serif")
+        webView.contentMode = .scaleAspectFit
+        webView.sizeToFit()
+        changeSize(to: webView.frame.size)
+    }
+
+    func loadMarkdown() {
+        guard let payload = viewModel.content.data(using: .utf8) else {
+            return
+        }
+
+        Task {
+            let markdownToHtmlServiceUrl = "https://pandoc.bilimedtech.com/html"
+            guard let data = try? await URLSessionHTTPService()
+                    .postMarkdown(url: markdownToHtmlServiceUrl, data: payload) else {
+                return
+            }
+            let htmlString = String(data: data, encoding: .utf8) ?? ""
+            previewView.loadHTMLStringWithCorrectScale(content: htmlString, baseURL: nil)
+        }
     }
 }
 
