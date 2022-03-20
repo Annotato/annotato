@@ -5,7 +5,7 @@ skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 Package Auth {
-    Interface AnnotatoAuthService <<Protocol>> {
+    Interface AnnotatoAuthService <<protocol>> {
         delegate: AnnotatoAuthDelegate?
         currentUser: AnnotatoUser?
         --

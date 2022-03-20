@@ -5,7 +5,7 @@ skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 Package "HTTP" {
-    Interface AnnotatoHTTPService <<Protocol>> {
+    Interface AnnotatoHTTPService <<protocol>> {
         get(url: String): Data
         get(url: String, params: [String: String]): Data
         post(url: String, data: Data): Data

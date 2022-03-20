@@ -5,7 +5,7 @@ skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 Package Storage {
-    Interface AnnotatoStorageService <<Protocol>> {
+    Interface AnnotatoStorageService <<protocol>> {
         delegate: AnnotatoStorageDelegate?
         --
         uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
