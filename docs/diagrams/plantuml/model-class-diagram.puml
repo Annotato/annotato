@@ -33,7 +33,7 @@ Package Models {
         annotationId: UUID
     }
 
-    Enum AnnotationType {
+    Enum AnnotationType <<enum>> {
         plainText
         markdown
     }
