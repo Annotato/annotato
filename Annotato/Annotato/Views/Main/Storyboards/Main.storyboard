@@ -23,22 +23,22 @@
                                         <rect key="frame" x="25" y="25" width="400" height="400"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Annotato" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EJV-Go-IL2">
-                                                <rect key="frame" x="0.0" y="10" width="400" height="47"/>
+                                                <rect key="frame" x="0.0" y="10" width="400" height="95.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="400" id="tt6-7H-0Kg"/>
                                                 </constraints>
-                                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="39"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" name="SavoyeLetPlain" family="Savoye LET" pointSize="80"/>
+                                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="6dl-sQ-m5b">
-                                                <rect key="frame" x="0.0" y="88" width="400" height="32"/>
-                                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <rect key="frame" x="0.0" y="125.5" width="400" height="32"/>
+                                                <color key="backgroundColor" systemColor="systemFillColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="400" id="Iid-oi-gbw"/>
                                                 </constraints>
                                                 <segments>
-                                                    <segment title="Sign In"/>
+                                                    <segment title="Log In"/>
                                                     <segment title="Sign Up"/>
                                                 </segments>
                                                 <connections>
@@ -46,7 +46,7 @@
                                                 </connections>
                                             </segmentedControl>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XdZ-AQ-eK0" userLabel="Email Container">
-                                                <rect key="frame" x="0.0" y="149" width="400" height="60"/>
+                                                <rect key="frame" x="0.0" y="171.5" width="400" height="60"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BUa-45-b5v">
                                                         <rect key="frame" x="0.0" y="13" width="400" height="34"/>
@@ -67,7 +67,7 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ghY-Kv-anY" userLabel="Password Container">
-                                                <rect key="frame" x="0.0" y="209" width="400" height="60"/>
+                                                <rect key="frame" x="0.0" y="231.5" width="400" height="60"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5Nr-U5-Mt1">
                                                         <rect key="frame" x="0.0" y="13" width="400" height="34"/>
@@ -88,7 +88,7 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ePF-y2-wIo" userLabel="Display Name Container">
-                                                <rect key="frame" x="0.0" y="269" width="400" height="60"/>
+                                                <rect key="frame" x="0.0" y="291.5" width="400" height="60"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Display Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6V0-ah-EEt">
                                                         <rect key="frame" x="0.0" y="13" width="400" height="34"/>
@@ -109,8 +109,8 @@
                                                     <constraint firstItem="6V0-ah-EEt" firstAttribute="centerX" secondItem="ePF-y2-wIo" secondAttribute="centerX" id="zmU-Iy-eaW"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" role="primary" translatesAutoresizingMaskIntoConstraints="NO" id="R9x-9k-e3r" userLabel="Submit Button">
-                                                <rect key="frame" x="167.5" y="350" width="65" height="31"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" role="primary" translatesAutoresizingMaskIntoConstraints="NO" id="R9x-9k-e3r" userLabel="Submit Button">
+                                                <rect key="frame" x="167.5" y="369" width="65" height="31"/>
                                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <state key="normal" title="Button"/>
@@ -127,9 +127,9 @@
                                             <constraint firstItem="R9x-9k-e3r" firstAttribute="centerX" secondItem="7zA-nP-dzy" secondAttribute="centerX" id="86N-Jc-FBM"/>
                                             <constraint firstItem="ePF-y2-wIo" firstAttribute="leading" secondItem="ghY-Kv-anY" secondAttribute="leading" id="8S9-mA-8uG"/>
                                             <constraint firstItem="EJV-Go-IL2" firstAttribute="top" secondItem="7zA-nP-dzy" secondAttribute="top" constant="10" id="KLl-4N-rd9"/>
-                                            <constraint firstAttribute="bottom" secondItem="R9x-9k-e3r" secondAttribute="bottom" constant="19" id="KUy-YT-9En"/>
-                                            <constraint firstItem="XdZ-AQ-eK0" firstAttribute="top" secondItem="6dl-sQ-m5b" secondAttribute="bottom" constant="30" id="NF8-ea-wGc"/>
-                                            <constraint firstItem="6dl-sQ-m5b" firstAttribute="top" secondItem="EJV-Go-IL2" secondAttribute="bottom" constant="31" id="Oe0-5y-bby"/>
+                                            <constraint firstAttribute="bottom" secondItem="R9x-9k-e3r" secondAttribute="bottom" id="KUy-YT-9En"/>
+                                            <constraint firstItem="XdZ-AQ-eK0" firstAttribute="top" secondItem="6dl-sQ-m5b" secondAttribute="bottom" constant="15" id="NF8-ea-wGc"/>
+                                            <constraint firstItem="6dl-sQ-m5b" firstAttribute="top" secondItem="EJV-Go-IL2" secondAttribute="bottom" constant="20" id="Oe0-5y-bby"/>
                                             <constraint firstItem="ghY-Kv-anY" firstAttribute="top" secondItem="XdZ-AQ-eK0" secondAttribute="bottom" id="P8q-OT-zu4"/>
                                             <constraint firstItem="ghY-Kv-anY" firstAttribute="centerX" secondItem="7zA-nP-dzy" secondAttribute="centerX" id="R0D-Hc-fju"/>
                                             <constraint firstItem="EJV-Go-IL2" firstAttribute="centerX" secondItem="7zA-nP-dzy" secondAttribute="centerX" id="TFa-fD-Zbd"/>
@@ -140,7 +140,7 @@
                                         </constraints>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" red="0.032800924032926559" green="0.058265149593353271" blue="0.065860725939273834" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="0.94509804249999996" green="0.91372549530000002" blue="0.87058818339999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <constraints>
                                     <constraint firstItem="7zA-nP-dzy" firstAttribute="centerY" secondItem="ke3-pF-4me" secondAttribute="centerY" id="Jx9-8C-36L"/>
@@ -151,7 +151,7 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="ke3-pF-4me" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="W9R-07-rhL"/>
                             <constraint firstItem="ke3-pF-4me" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="feS-gp-yog"/>
@@ -163,6 +163,7 @@
                         <outlet property="emailTextField" destination="BUa-45-b5v" id="PBX-je-wii"/>
                         <outlet property="formSegmentedControl" destination="6dl-sQ-m5b" id="OTM-lY-FIV"/>
                         <outlet property="heightConstraint" destination="NF8-ea-wGc" id="xIH-lO-v3U"/>
+                        <outlet property="mainContainer" destination="ke3-pF-4me" id="JYE-5E-rEQ"/>
                         <outlet property="passwordTextField" destination="5Nr-U5-Mt1" id="hpx-Iz-seG"/>
                         <outlet property="submitButton" destination="R9x-9k-e3r" id="ZZw-lQ-uT6"/>
                     </connections>
@@ -176,8 +177,8 @@
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        <systemColor name="systemFillColor">
+            <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
