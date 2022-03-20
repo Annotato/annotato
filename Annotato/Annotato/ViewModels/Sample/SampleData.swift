@@ -95,7 +95,7 @@ class SampleData {
             ),
             AnnotationMarkdownViewModel(
                 id: UUID(),
-                content: "some markdown",
+                content: "# hello\nsome `code`\n\nabcd",
                 width: 300.0,
                 height: 30.0
             ),

@@ -53,16 +53,21 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
             isEditable = true
             editView.text = viewModel.content
             addSubview(editView)
+            editView.resizeFrameToFitContent()
+            changeSize(to: editView.frame.size)
         } else {
             editView.removeFromSuperview()
             previewView.removeFromSuperview()
             isEditable = false
-            guard let url = URL(string: "https://www.apple.com") else {
-                return
-            }
-            previewView.load(URLRequest(url: url))
+            loadMarkdown()
             addSubview(previewView)
         }
+    }
+
+    private func changeSize(to size: CGSize) {
+        self.frame.size = size
+        self.heightConstraint.constant = self.frame.height
+        viewModel.setHeight(to: size.height)
     }
 
     private func setUpSubscribers() {
@@ -91,10 +96,31 @@ extension AnnotationMarkdownView: UITextViewDelegate {
             return
         }
         editView.resizeFrameToFitContent()
-        self.frame.size = editView.frame.size
-        self.heightConstraint.constant = self.frame.height
         viewModel.setContent(to: text)
-        viewModel.setHeight(to: frame.height)
+        changeSize(to: editView.frame.size)
+    }
+}
+
+extension AnnotationMarkdownView: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        webView.frame.size = CGSize(width: frame.width, height: webView.scrollView.contentSize.height)
+        changeSize(to: webView.frame.size)
+    }
+
+    func loadMarkdown() {
+        guard let payload = viewModel.content.data(using: .utf8) else {
+            return
+        }
+
+        Task {
+            let markdownToHtmlServiceUrl = "https://pandoc.bilimedtech.com/html"
+            guard let data = try? await URLSessionHTTPService()
+                    .postMarkdown(url: markdownToHtmlServiceUrl, data: payload) else {
+                return
+            }
+            let htmlString = String(data: data, encoding: .utf8) ?? ""
+            previewView.loadHTMLStringWithCorrectScale(content: htmlString, baseURL: nil)
+        }
     }
 }
 
@@ -124,15 +150,5 @@ extension AnnotationMarkdownView: UIGestureRecognizerDelegate {
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
         true
-    }
-}
-
-extension AnnotationMarkdownView: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        webView.frame.size = CGSize(width: frame.width, height: webView.scrollView.contentSize.height)
-        webView.contentMode = .scaleAspectFit
-        self.frame.size = webView.frame.size
-        self.heightConstraint.constant = self.frame.height
-        viewModel.setHeight(to: frame.height)
     }
 }
