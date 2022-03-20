@@ -73,6 +73,8 @@ class AnnotationPaletteView: UIToolbar {
         }).store(in: &cancellables)
 
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+            self?.textButton.isHidden = !isEditing
+            self?.markdownButton.isHidden = !isEditing
             self?.editOrViewButton.isSelected = isEditing
         }).store(in: &cancellables)
     }

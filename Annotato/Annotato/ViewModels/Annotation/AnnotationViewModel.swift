@@ -17,7 +17,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
-    @Published private(set) var isMinimized = false
+    @Published private(set) var isMinimized = true
 
     init(
         id: UUID,
@@ -85,7 +85,7 @@ extension AnnotationViewModel {
     }
 
     var minimizedHeight: Double {
-        min(palette.height + firstPartHeight, maxHeight)
+        min(palette.height + 30.0, maxHeight)
     }
 
     var size: CGSize {
