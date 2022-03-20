@@ -50,6 +50,7 @@ class AnnotationPaletteView: UIToolbar {
         let deleteBarButton = UIBarButtonItem(customView: deleteButton)
         let minimizeOrMaximizeBarButton = UIBarButtonItem(customView: minimizeOrMaximizeButton)
         minimizeOrMaximizeButton.widthAnchor.constraint(equalToConstant: 20.0).isActive = true
+        minimizeOrMaximizeButton.isSelected = viewModel.isMinimized
         self.items = [
             textBarButton,
             spaceBetween,
