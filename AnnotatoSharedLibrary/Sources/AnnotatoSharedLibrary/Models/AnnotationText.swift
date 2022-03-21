@@ -6,11 +6,11 @@ public final class AnnotationText: Codable, AnnotationPart {
     public private(set) var height: Double
     public let annotationId: UUID
 
-    public let type: AnnotationType
+    public let type: AnnotationText.TextType
     public private(set) var content: String
 
     public required init(
-        type: AnnotationType,
+        type: AnnotationText.TextType,
         content: String,
         height: Double,
         order: Int,
@@ -30,5 +30,12 @@ extension AnnotationText: CustomDebugStringConvertible {
     public var debugDescription: String {
         "AnnotationText(id: \(id), type: \(type), content: \(content), " +
         "height: \(height), order: \(order), annotationId: \(annotationId))"
+    }
+}
+
+extension AnnotationText {
+    public enum TextType: Codable {
+        case plainText
+        case markdown
     }
 }
