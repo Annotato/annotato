@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
@@ -41,6 +42,17 @@ class AuthViewController: UIViewController, Navigable {
             string: "Display Name",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
+
+        /*
+         Temporary test to see if annotation codable works. To be removed before merge
+         */
+        do {
+            let encoded = try JSONEncoder().encode(SampleData.exampleAnnotation)
+            let decoded = try JSONDecoder().decode(Annotation.self, from: encoded)
+            print(decoded)
+        } catch {
+            print(error)
+        }
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {

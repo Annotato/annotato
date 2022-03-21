@@ -3,6 +3,19 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class SampleData {
+    static var exampleAnnotation = Annotation(
+        origin: CGPoint(x: 100, y: 100),
+        width: 300.0,
+        parts: exampleAnnotationTexts,
+        ownerId: "Random owner id",
+        documentId: UUID())
+
+    static var exampleAnnotationTexts: [AnnotationPart] =
+        [
+            AnnotationText(type: .plainText, content: "hello", height: 30.0, annotationId: UUID()),
+            AnnotationText(type: .markdown, content: "`code`", height: 40.0, annotationId: UUID())
+        ]
+
     static var exampleDocumentsInList: [DocumentListViewModel] =
         [
             DocumentListViewModel(id: UUID(), name: "Lab01 Qns"),

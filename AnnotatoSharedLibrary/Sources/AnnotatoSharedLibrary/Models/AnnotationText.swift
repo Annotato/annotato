@@ -1,6 +1,6 @@
 import Foundation
 
-public final class AnnotationText: Codable {
+public final class AnnotationText: Codable, AnnotationPart {
     public let id: UUID
     public let type: AnnotationType
     public private(set) var content: String
