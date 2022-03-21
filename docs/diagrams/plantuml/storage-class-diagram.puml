@@ -1,0 +1,45 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package Storage {
+    Interface AnnotatoStorageService <<protocol>> {
+        delegate: AnnotatoStorageDelegate?
+        --
+        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
+        deletePdf(document: Document, completion: Document -> Void)
+    }
+
+    Class AnnotatoPdfStorageManager {
+        --
+        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
+        deletePdf(document: Document, completion: Document -> Void)
+    }
+
+    Class FirebaseStorage {
+        ( - ) storage: Firebase.Storage
+        ( - ) storageRef: Firebase.StorageReference
+        --
+        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
+        deletePdf(document: Document, completion: Document -> Void)
+    }
+
+    Class AnnotatoStorageDelegate {
+        uploadDidFail(error: Error)
+        deleteDidFail(error: Error)
+        uploadDidSucceed()
+        deleteDidSucceed()
+    }
+}
+
+AnnotatoPdfStorageManager *--> AnnotatoStorageService
+FirebaseStorage .up.|> AnnotatoStorageService
+FirebaseStorage *-> AnnotatoStorageDelegate
+
+'Represents clients of the StorageService'
+Class HiddenOutside #FFFFFF
+HiddenOutside ..> AnnotatoPdfStorageManager
+
+@enduml

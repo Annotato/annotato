@@ -1,0 +1,47 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package Models {
+    Class User {
+        uid: String
+        email: String
+        displayName: String
+    }
+
+    Class Document {
+        id: UUID
+        name: String
+        ownerId: String
+        baseFileUrl: String
+    }
+
+    Class Annotation {
+        id: UUID
+        origin: Point
+        width: Double
+        ownerId: String
+        documentId: UUID
+    }
+
+    Class AnnotationText {
+        id: UUID
+        content: String
+        height: Double
+        annotationId: UUID
+    }
+
+    Enum AnnotationType <<enum>> {
+        plainText
+        markdown
+    }
+}
+
+AnnotationText .> AnnotationType
+User *-> "*" Document
+Document *-> "*" Annotation
+Annotation *-> "*" AnnotationText
+
+@enduml
