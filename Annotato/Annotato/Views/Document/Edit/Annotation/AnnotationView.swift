@@ -88,10 +88,22 @@ class AnnotationView: UIView {
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        superview?.bringSubviewToFront(self)
+        guard let superview = superview else {
+            return
+        }
+        let currentCenter = viewModel.center
+        superview.bringSubviewToFront(self)
         let translation = sender.translation(in: superview)
         viewModel.translateCenter(by: translation)
         sender.setTranslation(.zero, in: superview)
+
+        let hasExceededTop = frame.minY < 0
+        let hasExceededBottom = frame.maxY > superview.bounds.maxY
+        let hasExceededLeft = frame.minX < 0
+        let hasExceededRight = frame.maxX > superview.bounds.maxX
+        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
+            viewModel.center = currentCenter
+        }
     }
 
     private func resize() {
