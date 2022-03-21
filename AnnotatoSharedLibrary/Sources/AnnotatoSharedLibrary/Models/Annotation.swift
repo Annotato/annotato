@@ -46,6 +46,7 @@ public final class Annotation: Codable {
         parts = []
         let texts = try container.decode([AnnotationText].self, forKey: .texts)
         parts.append(contentsOf: texts)
+        parts.sort(by: { $0.order < $1.order })
     }
 
     public func encode(to encoder: Encoder) throws {

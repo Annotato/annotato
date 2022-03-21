@@ -10,10 +10,11 @@ class SampleData {
         ownerId: "Random owner id",
         documentId: UUID())
 
+    // Note: Purposely messed up order to test if sort works
     static var exampleAnnotationTexts: [AnnotationPart] =
         [
-            AnnotationText(type: .plainText, content: "hello", height: 30.0, annotationId: UUID()),
-            AnnotationText(type: .markdown, content: "`code`", height: 40.0, annotationId: UUID())
+            AnnotationText(type: .plainText, content: "hello", height: 30.0, order: 1, annotationId: UUID()),
+            AnnotationText(type: .markdown, content: "`code`", height: 40.0, order: 0, annotationId: UUID())
         ]
 
     static var exampleDocumentsInList: [DocumentListViewModel] =
