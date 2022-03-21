@@ -34,7 +34,7 @@ extension AnnotationText: CustomDebugStringConvertible {
 }
 
 extension AnnotationText {
-    public enum TextType: Codable {
+    public enum TextType: Int, Codable {
         case plainText
         case markdown
     }

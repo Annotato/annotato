@@ -4,9 +4,13 @@ import AnnotatoSharedLibrary
 
 extension Annotation: Persistable {
     static func fromManagedEntity(_ managedEntity: AnnotationEntity) -> Self {
-        Self(
+        let textParts = managedEntity.annotationTextEntities.map(AnnotationText.fromManagedEntity)
+        let parts: [AnnotationPart] = textParts
+
+        return Self(
             origin: CGPoint(x: managedEntity.originX, y: managedEntity.originY),
             width: managedEntity.width,
+            parts: parts,
             ownerId: managedEntity.ownerId,
             documentId: managedEntity.$document.id,
             id: managedEntity.id

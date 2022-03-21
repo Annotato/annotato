@@ -31,7 +31,7 @@ final class AnnotationTextEntity: Model {
     init() { }
 
     init(
-        type: AnnotationType,
+        type: AnnotationText.TextType,
         content: String,
         height: Double,
         order: Int,
