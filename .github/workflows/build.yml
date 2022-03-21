@@ -1,0 +1,15 @@
+name: Swift
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Shared Library
+        run: swift build
+        working-directory: AnnotatoSharedLibrary
+      - name: Build Backend
+        run: swift build
+        working-directory: AnnotatoBackend
