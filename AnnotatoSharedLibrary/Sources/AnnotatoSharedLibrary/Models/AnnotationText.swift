@@ -2,11 +2,12 @@ import Foundation
 
 public final class AnnotationText: Codable, AnnotationPart {
     public let id: UUID
+    public private(set) var order: Int
+    public private(set) var height: Double
+    public let annotationId: UUID
+
     public let type: AnnotationType
     public private(set) var content: String
-    public private(set) var height: Double
-    public private(set) var order: Int
-    public let annotationId: UUID
 
     public required init(
         type: AnnotationType,
