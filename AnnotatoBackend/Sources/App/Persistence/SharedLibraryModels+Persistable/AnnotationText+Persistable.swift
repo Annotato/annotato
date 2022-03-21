@@ -8,6 +8,7 @@ extension AnnotationText: Persistable {
             type: AnnotationType(rawValue: managedEntity.type) ?? .plainText,
             content: managedEntity.content,
             height: managedEntity.height,
+            order: managedEntity.order,
             annotationId: managedEntity.$annotation.id,
             id: managedEntity.id
         )
