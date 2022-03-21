@@ -9,9 +9,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build Backend
-        run: swift build
-        working-directory: AnnotatoBackend
       - name: Build Shared Library
         run: swift build
         working-directory: AnnotatoSharedLibrary
+      - name: Build Backend
+        run: swift build
+        working-directory: AnnotatoBackend
