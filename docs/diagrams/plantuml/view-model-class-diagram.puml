@@ -1,0 +1,36 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package "View Models" {
+    Class DocumentListViewModel
+
+    Class DocumentViewModel
+
+    Class PdfViewModel
+
+    Class AnnotationViewModel
+
+    Class AnnotationTextViewModel
+
+    Interface AnnotationPartViewModel <<protocol>>
+
+    Class AnnotationPaletteViewModel
+
+    Class AnnotationMarkdownViewModel
+}
+
+DocumentViewModel *-down-> "*" AnnotationViewModel
+DocumentViewModel *-down-> "1" PdfViewModel
+
+AnnotationViewModel *-down-> "*" AnnotationPartViewModel
+AnnotationViewModel *-down-> "1" AnnotationPaletteViewModel
+
+AnnotationTextViewModel .up.|> AnnotationPartViewModel
+AnnotationMarkdownViewModel .up.|> AnnotationPartViewModel
+
+DocumentListViewModel -[hidden]right-> DocumentViewModel
+
+@enduml

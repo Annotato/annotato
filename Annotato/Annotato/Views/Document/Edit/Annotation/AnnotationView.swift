@@ -88,11 +88,10 @@ class AnnotationView: UIView {
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        let pointInPdf = sender.location(in: superview)
-        guard sender.state != .cancelled else {
-            return
-        }
-        viewModel.setCenter(to: pointInPdf)
+        superview?.bringSubviewToFront(self)
+        let translation = sender.translation(in: superview)
+        viewModel.translateCenter(by: translation)
+        sender.setTranslation(.zero, in: superview)
     }
 
     private func resize() {

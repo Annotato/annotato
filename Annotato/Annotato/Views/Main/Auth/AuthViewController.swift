@@ -10,6 +10,7 @@ class AuthViewController: UIViewController, Navigable {
     @IBOutlet private var displayNameTextField: UITextField!
     @IBOutlet private var submitButton: UIButton!
     @IBOutlet private var heightConstraint: NSLayoutConstraint!
+    @IBOutlet private var mainContainer: UIView!
     @IBOutlet private var displayNameContainer: UIView!
 
     private enum Segment: Int {
@@ -24,8 +25,22 @@ class AuthViewController: UIViewController, Navigable {
         super.viewDidLoad()
 
         auth.delegate = self
+        mainContainer.layer.cornerRadius = 25
         displayNameContainer.isHidden = true
-        heightConstraint.constant = 50
+        heightConstraint.constant = 35
+
+        emailTextField.attributedPlaceholder = NSAttributedString(
+            string: "Email",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
+        )
+        passwordTextField.attributedPlaceholder = NSAttributedString(
+            string: "Password",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
+        )
+        displayNameTextField.attributedPlaceholder = NSAttributedString(
+            string: "Display Name",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
+        )
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
@@ -58,11 +73,11 @@ class AuthViewController: UIViewController, Navigable {
         switch segment {
         case .logIn:
             displayNameContainer.isHidden = true
-            heightConstraint.constant = 50
+            heightConstraint.constant = 35
             submitButton.setTitle(logInButtonText, for: .normal)
         case .signUp:
             displayNameContainer.isHidden = false
-            heightConstraint.constant = 30
+            heightConstraint.constant = 15
             submitButton.setTitle(signUpButtonText, for: .normal)
         default:
             fatalError("Invalid Segment")

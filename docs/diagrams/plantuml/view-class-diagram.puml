@@ -1,0 +1,46 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor VIEW_COLOR
+skinparam classBackgroundColor VIEW_COLOR
+
+Package Views {
+    Class AuthView
+
+    Class DocumentListView
+    Class DocumentListToolbarView
+    Class DocumentListCollectionView
+    Class DocumentListCollectionCellView
+
+    Class DocumentEditView
+    Class DocumentEditToolbarView
+    Class DocumentView
+    Class DocumentPDFView
+
+    Class AnnotationView
+    Class AnnotationPaletteView
+    Interface AnnotationPartView <<protocol>>
+    Class AnnotationMarkdownView
+    Class AnnotationTextView
+}
+
+AuthView --down> "segues into" DocumentListView
+
+DocumentListView *-down-> "1" DocumentListToolbarView
+DocumentListView *-down-> "1" DocumentListCollectionView
+DocumentListCollectionView *-> "*" DocumentListCollectionCellView
+
+DocumentListCollectionCellView -down-> "segues into" DocumentEditView
+
+DocumentEditView *-down--> "1" DocumentEditToolbarView
+DocumentEditView *-down-> "1" DocumentView
+DocumentView *-down-> "1" DocumentPDFView
+DocumentView *-down-> "*" AnnotationView
+
+AnnotationView *-down-> "1" AnnotationPaletteView
+AnnotationView *-down-> "*" AnnotationPartView
+AnnotationMarkdownView .up.|>  AnnotationPartView
+AnnotationTextView .up.|> AnnotationPartView
+
+
+@enduml

@@ -17,7 +17,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
-    @Published private(set) var isMinimized = false
+    @Published private(set) var isMinimized = true
 
     init(
         id: UUID,
@@ -55,8 +55,8 @@ class AnnotationViewModel: ObservableObject {
         resize()
     }
 
-    func setCenter(to center: CGPoint) {
-        self.center = center
+    func translateCenter(by translation: CGPoint) {
+        self.center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
     }
 }
 
@@ -85,7 +85,7 @@ extension AnnotationViewModel {
     }
 
     var minimizedHeight: Double {
-        min(palette.height + firstPartHeight, maxHeight)
+        min(palette.height + 30.0, maxHeight)
     }
 
     var size: CGSize {

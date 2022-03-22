@@ -11,4 +11,4 @@ jobs:
       - name: Run SwiftLint with --strict
         uses: norio-nomura/action-swiftlint@3.2.1
         with:
-          args: --config Annotato/.swiftlint.yml --strict
+          args: --config .swiftlint.yml --strict

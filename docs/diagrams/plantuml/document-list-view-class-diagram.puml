@@ -1,0 +1,18 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor VIEW_COLOR
+skinparam classBackgroundColor VIEW_COLOR
+
+Package "Document List View" {
+    Class DocumentListViewController
+    Class DocumentListToolbarView
+    Class DocumentListCollectionView
+    Class DocumentListCollectionCellView
+}
+
+DocumentListViewController *-down-> "1" DocumentListToolbarView
+DocumentListViewController *-down-> "1" DocumentListCollectionView
+DocumentListCollectionView *--> "*" DocumentListCollectionCellView
+
+@enduml
