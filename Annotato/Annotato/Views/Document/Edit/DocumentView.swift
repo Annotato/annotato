@@ -9,6 +9,9 @@ class DocumentView: UIView {
     private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
 
+    // Used to save start point when creating bounding box
+    private var selectionBoxStartPoint: CGPoint?
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -71,6 +74,27 @@ class DocumentView: UIView {
         isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tapGestureRecognizer)
+
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        addGestureRecognizer(panGestureRecognizer)
+    }
+
+    @objc
+    private func didPan(_ sender: UIPanGestureRecognizer) {
+        if sender.state == .began {
+            print("Began")
+            selectionBoxStartPoint = sender.location(in: self)
+        }
+        if sender.state != .cancelled {
+            print("Not cancelled")
+            let currentTouchPoint = sender.location(in: self)
+            // TODO: Add a bounding box with end points being the start points and the current point
+        }
+        if sender.state == .ended {
+            print("Ended")
+            // TODO: Add an annotation
+        }
+        print("------------\n\n")
     }
 
     @objc
