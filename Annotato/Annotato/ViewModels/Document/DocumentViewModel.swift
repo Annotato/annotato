@@ -22,7 +22,7 @@ class DocumentViewModel: ObservableObject {
 }
 
 extension DocumentViewModel {
-    func addAnnotation(center: CGPoint, bounds: CGRect) {
+    func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
         let newAnnotationWidth = 300.0
         let annotationViewModel = AnnotationViewModel(
             id: UUID(),
@@ -35,7 +35,6 @@ extension DocumentViewModel {
         annotationViewModel.enterMaximizedMode()
         // Check whether it is exceeding the bounds. If it is then not adding
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
-            print("Annotation will exceed bounds, not adding it")
             return
         }
         annotations.append(annotationViewModel)

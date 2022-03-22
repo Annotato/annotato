@@ -81,13 +81,10 @@ class DocumentView: UIView {
 
     private func addAnnotationIfWithinPdfBounds(at pointInDocument: CGPoint) {
         let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
-        print("point in pdf: \(pointInPdf)")
-        print("bounds of pdf: \(pdfView.documentView?.bounds)")
         guard let pdfInnerDocumentView = pdfView.documentView else {
             return
         }
-        viewModel.addAnnotation(center: pointInPdf, bounds: pdfInnerDocumentView.bounds)
-        print("-------------\n\n")
+        viewModel.addAnnotationIfWithinBounds(center: pointInPdf, bounds: pdfInnerDocumentView.bounds)
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
