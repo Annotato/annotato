@@ -31,6 +31,7 @@ public final class AnnotationText: Codable, AnnotationPart {
         self.annotationId = annotationId
     }
 
+    // Define manually as we do not want all properties to be encoded/decoded
     private enum CodingKeys: String, CodingKey {
         case id
         case order

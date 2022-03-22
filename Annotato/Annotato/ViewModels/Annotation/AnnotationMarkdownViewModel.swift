@@ -15,7 +15,6 @@ class AnnotationMarkdownViewModel: AnnotationPartViewModel, ObservableObject {
     var textModel: AnnotationText? {
         model as? AnnotationText
     }
-
     var id: UUID {
         model.id
     }
