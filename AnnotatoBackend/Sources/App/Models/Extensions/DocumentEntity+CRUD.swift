@@ -8,7 +8,7 @@ extension DocumentEntity {
     ///   - document: The updated Document instance.
     func customUpdate(on tx: Database, usingUpdatedModel document: Document) async throws {
         try await self.loadAssociations(on: tx)
-        try await self.pruneOldAssociations(on: tx, using: document)
+        try await self.pruneOldAssociations(on: tx, usingUpdatedModel: document)
         self.copyPropertiesOf(otherEntity: DocumentEntity.fromModel(document))
 
         for annotation in document.annotations {
@@ -51,7 +51,7 @@ extension DocumentEntity {
         baseFileUrl = otherEntity.baseFileUrl
     }
 
-    private func pruneOldAssociations(on tx: Database, using document: Document) async throws {
+    private func pruneOldAssociations(on tx: Database, usingUpdatedModel document: Document) async throws {
         for annotationEntity in annotationEntities where !document.annotations.contains(where: { $0.id == annotationEntity.id }) {
             try await annotationEntity.customDelete(on: tx)
         }

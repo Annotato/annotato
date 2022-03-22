@@ -8,7 +8,7 @@ extension AnnotationEntity {
     ///   - annotation: The updated Annotation instance.
     func customUpdate(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
         try await self.loadAssociations(on: tx)
-        try await self.pruneOldAssociations(on: tx, using: annotation)
+        try await self.pruneOldAssociations(on: tx, usingUpdatedModel: annotation)
         self.copyPropertiesOf(otherEntity: AnnotationEntity.fromModel(annotation))
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
 
@@ -49,7 +49,7 @@ extension AnnotationEntity {
         $documentEntity.id = otherEntity.$documentEntity.id
     }
 
-    private func pruneOldAssociations(on tx: Database, using annotation: Annotation) async throws {
+    private func pruneOldAssociations(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
 
         for annotationTextEntity in annotationTextEntities where !annotationTexts.contains(where: { $0.id == annotationTextEntity.id }) {
