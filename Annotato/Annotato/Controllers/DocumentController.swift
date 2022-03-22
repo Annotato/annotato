@@ -16,6 +16,6 @@ struct DocumentController {
             return nil
         }
 
-        return DocumentViewModel(document: document)
+        return DocumentViewModel(model: document)
     }
 }

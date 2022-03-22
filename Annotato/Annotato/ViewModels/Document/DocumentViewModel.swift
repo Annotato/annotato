@@ -4,18 +4,18 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
-    private let document: Document
+    private let model: Document
 
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var annotationToAdd: AnnotationViewModel?
 
-    init?(document: Document) {
-        self.document = document
-        self.annotations = document.annotations.map { AnnotationViewModel(annotation: $0) }
+    init?(model: Document) {
+        self.model = model
+        self.annotations = model.annotations.map { AnnotationViewModel(model: $0) }
 
-        guard let baseFileUrl = URL(string: document.baseFileUrl) else {
+        guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
 
@@ -35,12 +35,12 @@ extension DocumentViewModel {
             width: newAnnotationWidth,
             parts: [],
             ownerId: currentUser.uid,
-            documentId: document.id,
+            documentId: model.id,
             id: UUID()
         )
-        document.addAnnotation(annotation: newAnnotation)
+        model.addAnnotation(annotation: newAnnotation)
 
-        let annotationViewModel = AnnotationViewModel(annotation: newAnnotation)
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation)
         annotationViewModel.center = center
         annotationViewModel.enterEditMode()
         annotationViewModel.enterMaximizedMode()

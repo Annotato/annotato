@@ -25,21 +25,21 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
 
-    init(annotation: Annotation, palette: AnnotationPaletteViewModel? = nil) {
-        self.model = annotation
+    init(model: Annotation, palette: AnnotationPaletteViewModel? = nil) {
+        self.model = model
         self.palette = palette ?? AnnotationPaletteViewModel(
-            origin: .zero, width: annotation.width, height: 50.0)
+            origin: .zero, width: model.width, height: 50.0)
         self.parts = []
         self.palette.parentViewModel = self
 
-        for part in annotation.parts {
+        for part in model.parts {
             let viewModel: AnnotationPartViewModel
             if let part = part as? AnnotationText {
                 switch part.type {
                 case .plainText:
-                    viewModel = AnnotationTextViewModel(annotationText: part, width: model.width)
+                    viewModel = AnnotationTextViewModel(model: part, width: model.width)
                 case .markdown:
-                    viewModel = AnnotationMarkdownViewModel(annotationMarkdown: part, width: model.width)
+                    viewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
                 }
                 parts.append(viewModel)
                 viewModel.parentViewModel = self
@@ -193,12 +193,12 @@ extension AnnotationViewModel {
     }
 
     private func addTextPart(part: AnnotationText) {
-        let partViewModel = AnnotationTextViewModel(annotationText: part, width: model.width)
+        let partViewModel = AnnotationTextViewModel(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 
     private func addMarkdownPart(part: AnnotationText) {
-        let partViewModel = AnnotationMarkdownViewModel(annotationMarkdown: part, width: model.width)
+        let partViewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 

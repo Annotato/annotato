@@ -30,8 +30,8 @@ class AnnotationMarkdownViewModel: AnnotationPartViewModel, ObservableObject {
     @Published private(set) var isRemoved = false
     @Published var isSelected = false
 
-    init(annotationMarkdown: AnnotationText, width: Double, origin: CGPoint = .zero) {
-        self.model = annotationMarkdown
+    init(model: AnnotationText, width: Double, origin: CGPoint = .zero) {
+        self.model = model
         self.width = width
         self.origin = origin
 

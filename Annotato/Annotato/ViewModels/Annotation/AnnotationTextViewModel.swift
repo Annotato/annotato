@@ -29,8 +29,8 @@ class AnnotationTextViewModel: AnnotationPartViewModel, ObservableObject {
     @Published private(set) var isRemoved = false
     @Published var isSelected = false
 
-    init(annotationText: AnnotationText, width: Double, origin: CGPoint = .zero) {
-        self.model = annotationText
+    init(model: AnnotationText, width: Double, origin: CGPoint = .zero) {
+        self.model = model
         self.width = width
         self.origin = origin
 
