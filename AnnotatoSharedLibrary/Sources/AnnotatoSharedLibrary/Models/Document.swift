@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 @available(macOS 10.15, *)
 @available(iOS 13.0, *)
@@ -25,6 +26,10 @@ public final class Document: Codable {
 
     public func addAnnotation(annotation: Annotation) {
         annotations.append(annotation)
+    }
+
+    public func removeAnnotation(annotation: Annotation) {
+        annotations.removeAll(where: { $0.id == annotation.id })
     }
 }
 

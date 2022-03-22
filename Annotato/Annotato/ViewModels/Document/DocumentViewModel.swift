@@ -42,12 +42,14 @@ extension DocumentViewModel {
 
         let annotationViewModel = AnnotationViewModel(model: newAnnotation)
         annotationViewModel.center = center
-        annotationViewModel.enterEditMode()
-        annotationViewModel.enterMaximizedMode()
 
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
+            model.removeAnnotation(annotation: newAnnotation)
             return
         }
+
+        annotationViewModel.enterEditMode()
+        annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
     }
