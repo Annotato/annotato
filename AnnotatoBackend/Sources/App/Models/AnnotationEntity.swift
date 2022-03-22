@@ -20,9 +20,9 @@ final class AnnotationEntity: Model {
     var ownerId: String
 
     @Parent(key: "document_id")
-    var document: DocumentEntity
+    var documentEntity: DocumentEntity
 
-    @Children(for: \.$annotation)
+    @Children(for: \.$annotationEntity)
     var annotationTextEntities: [AnnotationTextEntity]
 
     @Timestamp(key: "created_at", on: .create)
@@ -30,6 +30,9 @@ final class AnnotationEntity: Model {
 
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
+
+    @Timestamp(key: "deleted_at", on: .delete)
+    var deletedAt: Date?
 
     init() { }
 
@@ -46,7 +49,7 @@ final class AnnotationEntity: Model {
         self.originY = originY
         self.width = width
         self.ownerId = ownerId
-        self.$document.id = documentId
+        self.$documentEntity.id = documentId
     }
 }
 

@@ -16,14 +16,17 @@ final class DocumentEntity: Model {
     @Field(key: "base_file_url")
     var baseFileUrl: String
 
-    @Children(for: \.$document)
-    var annotations: [AnnotationEntity]
+    @Children(for: \.$documentEntity)
+    var annotationEntities: [AnnotationEntity]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
+
+    @Timestamp(key: "deleted_at", on: .delete)
+    var deletedAt: Date?
 
     init() { }
 
@@ -32,14 +35,6 @@ final class DocumentEntity: Model {
         self.name = name
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl
-    }
-
-    func copyPropertiesOf(otherEntity: DocumentEntity) {
-        precondition(id == otherEntity.id)
-
-        name = otherEntity.name
-        ownerId = otherEntity.ownerId
-        baseFileUrl = otherEntity.baseFileUrl
     }
 }
 
