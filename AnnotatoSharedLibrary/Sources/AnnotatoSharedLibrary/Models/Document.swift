@@ -1,8 +1,6 @@
 import Foundation
 import CoreGraphics
 
-@available(macOS 10.15, *)
-@available(iOS 13.0, *)
 public final class Document: Codable {
     public var id: UUID
     public private(set) var name: String
@@ -33,8 +31,6 @@ public final class Document: Codable {
     }
 }
 
-@available(macOS 10.15, *)
-@available(iOS 13.0, *)
 extension Document: CustomStringConvertible {
     public var description: String {
         "Document(id: \(id), name: \(name), ownerId: \(ownerId), " +

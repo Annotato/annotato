@@ -2,8 +2,6 @@ import Foundation
 import CoreGraphics
 import Combine
 
-@available(macOS 10.15, *)
-@available(iOS 13.0, *)
 public final class Annotation: Codable, ObservableObject {
     public let id: UUID
     public private(set) var width: Double
@@ -173,8 +171,6 @@ public final class Annotation: Codable, ObservableObject {
     }
 }
 
-@available(macOS 10.15, *)
-@available(iOS 13.0, *)
 extension Annotation {
     public var partHeights: Double {
         parts.reduce(0, {acc, part in
@@ -183,8 +179,6 @@ extension Annotation {
     }
 }
 
-@available(macOS 10.15, *)
-@available(iOS 13.0, *)
 extension Annotation: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Annotation(id: \(id), origin: \(origin), width: \(width), " +
