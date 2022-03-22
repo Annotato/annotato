@@ -9,7 +9,7 @@ class DocumentView: UIView {
     private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
 
-    // Used to save start point when creating bounding box
+    // Used to save a reference to the selection box view model when updating bounding box
     private var selectionBoxViewModel: SelectionBoxViewModel?
 
     @available(*, unavailable)
@@ -82,30 +82,34 @@ class DocumentView: UIView {
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
-            print("Began")
+            let startPoint = sender.location(in: self)
             let selectionBoxViewModel = SelectionBoxViewModel(
                 id: UUID(),
-                startPoint: sender.location(in: self),
+                startPoint: startPoint,
                 endPoint: nil
             )
             self.selectionBoxViewModel = selectionBoxViewModel
-            let selectionBoxView = SelectionBoxView(viewModel: selectionBoxViewModel)
-            addSubview(selectionBoxView)
+            addSelectionBoxIfWithinBounds(at: startPoint)
         }
         if sender.state != .cancelled {
-            print("Not cancelled")
             let currentTouchPoint = sender.location(in: self)
             self.selectionBoxViewModel?.endPoint = currentTouchPoint
         }
         if sender.state == .ended {
-            print("Ended")
             let currentTouchPoint = sender.location(in: self)
             self.selectionBoxViewModel?.endPoint = currentTouchPoint
 
-            // Remove this reference
+            // Remove the reference
             self.selectionBoxViewModel = nil
         }
-        print("------------\n\n")
+    }
+
+    private func addSelectionBoxIfWithinBounds(at pointInDocument: CGPoint) {
+        guard let pdfInnerDocumentView = pdfView.documentView else {
+            return
+        }
+        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
+        viewModel.addSelectionBoxIfWithinBounds(startPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
     }
 
     @objc

@@ -7,6 +7,11 @@ class DocumentViewModel: ObservableObject {
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
+    /*
+     I added this because I think eventually we will need it. But I make it default empty array first because otherwise we can't compile yet
+     */
+    private(set) var selectionBoxes: [SelectionBoxViewModel] = []
+
     @Published private(set) var annotationToAdd: AnnotationViewModel?
 
     init?(document: Document) {
@@ -35,5 +40,9 @@ extension DocumentViewModel {
         annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
         annotationToAdd = annotationViewModel
+    }
+
+    func addSelectionBoxIfWithinBounds(startPoint: CGPoint, bounds: CGRect) {
+
     }
 }
