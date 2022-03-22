@@ -36,7 +36,7 @@ extension AnnotationEntity {
             }
         }
 
-        return try await self.update(on: tx).get()
+        try await self.update(on: tx).get()
     }
 
     /// Deletes the AnnotationEntity instance. Use this function to cascade deletes.

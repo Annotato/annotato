@@ -33,7 +33,7 @@ extension DocumentEntity {
             }
         }
 
-        return try await self.update(on: tx).get()
+        try await self.update(on: tx).get()
     }
 
     /// Deletes the DocumentEntity instance. Use this function to cascade deletes.
@@ -45,7 +45,7 @@ extension DocumentEntity {
             try await annotationEntity.customDelete(on: tx)
         }
 
-        return try await self.delete(on: tx).get()
+        try await self.delete(on: tx).get()
     }
 
     func loadAssociations(on db: Database) async throws {
