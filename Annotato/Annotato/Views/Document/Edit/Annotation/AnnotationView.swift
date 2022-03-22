@@ -97,12 +97,8 @@ class AnnotationView: UIView {
         viewModel.translateCenter(by: translation)
         sender.setTranslation(.zero, in: superview)
 
-        let hasExceededTop = frame.minY < superview.bounds.minY
-        let hasExceededBottom = frame.maxY > superview.bounds.maxY
-        let hasExceededLeft = frame.minX < superview.bounds.minX
-        let hasExceededRight = frame.maxX > superview.bounds.maxX
-        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
-            viewModel.center = currentCenter
+        if hasExceededBounds(bounds: superview.bounds) {
+            viewModel.center = previousCenter
         }
     }
 
