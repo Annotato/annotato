@@ -33,7 +33,7 @@ extension DocumentViewModel {
         annotationViewModel.center = center
         annotationViewModel.enterEditMode()
         annotationViewModel.enterMaximizedMode()
-        // Check whether it is exceeding the bounds. If it is then not adding
+
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
             return
         }

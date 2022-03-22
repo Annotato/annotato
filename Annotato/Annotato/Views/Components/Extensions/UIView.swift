@@ -41,15 +41,4 @@ extension UIView {
         button.setImage(UIImage(systemName: imageName), for: .normal)
         return button
     }
-
-    func isPointOutOfBounds(point: CGPoint) -> Bool {
-        let hasExceededTop = point.y < bounds.minY
-        let hasExceededBottom = point.y > bounds.maxY
-        let hasExceededLeft = point.x < bounds.minX
-        let hasExceededRight = point.x > bounds.maxX
-        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
-            return true
-        }
-        return false
-    }
 }
