@@ -23,12 +23,20 @@ class DocumentViewModel: ObservableObject {
 
 extension DocumentViewModel {
     func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
+        guard let currentUser = AnnotatoAuth().currentUser else {
+            return
+        }
+
         let newAnnotationWidth = 300.0
         let annotationViewModel = AnnotationViewModel(
-            id: UUID(),
-            origin: .zero,
-            width: newAnnotationWidth,
-            parts: []
+            annotation: Annotation(
+                origin: .zero,
+                width: newAnnotationWidth,
+                parts: [],
+                ownerId: currentUser.uid,
+                documentId: document.id,
+                id: UUID()
+            )
         )
         annotationViewModel.center = center
         annotationViewModel.enterEditMode()

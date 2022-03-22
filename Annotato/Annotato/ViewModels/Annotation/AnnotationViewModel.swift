@@ -3,60 +3,78 @@ import Foundation
 import CoreImage
 import PDFKit
 import AnnotatoSharedLibrary
+import Combine
 
 class AnnotationViewModel: ObservableObject {
-    private(set) var id: UUID
-    private(set) var width: Double
+    private(set) var model: Annotation
+    private var cancellables: Set<AnyCancellable> = []
+
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
-    @Published private(set) var origin: CGPoint
+    var origin: CGPoint {
+        model.origin
+    }
+
+    @Published private(set) var positionDidChange = false
     @Published private(set) var isResizing = false
     @Published private(set) var partToAppend: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
 
-    init(
-        id: UUID,
-        origin: CGPoint,
-        width: Double,
-        parts: [AnnotationPartViewModel],
-        palette: AnnotationPaletteViewModel? = nil
-    ) {
-        self.id = id
-        self.origin = origin
-        self.width = width
-        self.parts = parts
-        self.palette = palette ?? AnnotationPaletteViewModel(origin: .zero, width: width, height: 50.0)
+    init(annotation: Annotation, palette: AnnotationPaletteViewModel? = nil) {
+        self.model = annotation
+        self.palette = palette ?? AnnotationPaletteViewModel(
+            origin: .zero, width: annotation.width, height: 50.0)
+        self.parts = []
         self.palette.parentViewModel = self
 
-        for part in self.parts {
-            part.parentViewModel = self
+        for part in annotation.parts {
+            let viewModel: AnnotationPartViewModel
+            if let part = part as? AnnotationText {
+                switch part.type {
+                case .plainText:
+                    viewModel = AnnotationTextViewModel(annotationText: part, width: model.width)
+                case .markdown:
+                    viewModel = AnnotationMarkdownViewModel(annotationMarkdown: part, width: model.width)
+                }
+                parts.append(viewModel)
+                viewModel.parentViewModel = self
+            }
         }
-        if self.parts.isEmpty {
-            addInitialPartIfNew()
-        }
-    }
 
-    convenience init(annotation: Annotation) {
-        // TODO: annotation parts
-        self.init(id: annotation.id, origin: annotation.origin, width: annotation.width, parts: [])
-    }
-
-    private func addInitialPartIfNew() {
-        let newPart = makeNewTextPart()
-        newPart.parentViewModel = self
-        newPart.enterEditMode()
-        parts.append(newPart)
-        setSelectedPart(to: newPart)
-        resize()
+        setUpSubscribers()
     }
 
     func translateCenter(by translation: CGPoint) {
-        self.center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
+        center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
+    }
+
+    private func setUpSubscribers() {
+        model.$newTextPart.sink(receiveValue: { [weak self] newTextPart in
+            guard let newTextPart = newTextPart else {
+                return
+            }
+            self?.addTextPart(part: newTextPart)
+        }).store(in: &cancellables)
+
+        model.$newMarkdownPart.sink(receiveValue: { [weak self] newMarkdownPart in
+            guard let newMarkdownPart = newMarkdownPart else {
+                return
+            }
+            self?.addMarkdownPart(part: newMarkdownPart)
+        }).store(in: &cancellables)
+
+        model.$origin.sink(receiveValue: { [weak self] _ in
+            self?.positionDidChange = true
+        }).store(in: &cancellables)
+
+        model.$removedPart.sink(receiveValue: { [weak self] removedPart in
+            self?.parts.removeAll(where: { $0.id == removedPart?.id })
+        }).store(in: &cancellables)
     }
 
     func hasExceededBounds(bounds: CGRect) -> Bool {
@@ -74,25 +92,16 @@ class AnnotationViewModel: ObservableObject {
 extension AnnotationViewModel {
     var center: CGPoint {
         get {
-            CGPoint(x: origin.x + width / 2, y: origin.y + height / 2)
+            CGPoint(x: origin.x + model.width / 2, y: origin.y + height / 2)
         }
         set(newCenter) {
-            origin = CGPoint(x: newCenter.x - width / 2, y: newCenter.y - height / 2)
+            let newOrigin = CGPoint(x: newCenter.x - model.width / 2, y: newCenter.y - height / 2)
+            model.setOrigin(to: newOrigin)
         }
-    }
-
-    var partHeights: Double {
-        parts.reduce(0, {acc, part in
-            acc + part.height
-        })
-    }
-
-    var firstPartHeight: Double {
-        parts.isEmpty ? 0 : parts[0].height
     }
 
     var height: Double {
-        min(palette.height + partHeights, maxHeight)
+        min(palette.height + model.partHeights, maxHeight)
     }
 
     var minimizedHeight: Double {
@@ -100,19 +109,19 @@ extension AnnotationViewModel {
     }
 
     var size: CGSize {
-        CGSize(width: width, height: height)
+        CGSize(width: model.width, height: height)
     }
 
     var minimizedSize: CGSize {
-        CGSize(width: width, height: minimizedHeight)
+        CGSize(width: model.width, height: minimizedHeight)
     }
 
     private var maximizedFrame: CGRect {
-        CGRect(origin: origin, size: size)
+        CGRect(origin: model.origin, size: size)
     }
 
     private var minimizedFrame: CGRect {
-        CGRect(origin: origin, size: minimizedSize)
+        CGRect(origin: model.origin, size: minimizedSize)
     }
 
     var frame: CGRect {
@@ -121,12 +130,12 @@ extension AnnotationViewModel {
 
     // Note: scrollFrame is with respect to this frame
     var scrollFrame: CGRect {
-        CGRect(x: .zero, y: palette.height, width: width, height: partHeights)
+        CGRect(x: .zero, y: palette.height, width: model.width, height: model.partHeights)
     }
 
     // Note: partsFrame is with respect to scrollFrame
     var partsFrame: CGRect {
-        CGRect(x: .zero, y: .zero, width: width, height: partHeights)
+        CGRect(x: .zero, y: .zero, width: model.width, height: model.partHeights)
     }
 }
 
@@ -138,7 +147,11 @@ extension AnnotationViewModel {
         for part in parts {
             part.enterEditMode()
         }
-        selectedPart = parts.last
+
+        guard let lastPart = parts.last else {
+            return
+        }
+        setSelectedPart(to: lastPart)
     }
 
     func enterViewMode() {
@@ -166,56 +179,26 @@ extension AnnotationViewModel {
             return
         }
         selectedPart.isSelected = false
-        removeIfPossible(part: selectedPart)
+        removePartIfPossible(part: selectedPart)
         self.selectedPart = nil
     }
 
     func appendTextPartIfNecessary() {
-        guard let lastPart = parts.last else {
-            return
-        }
-
-        removeIfPossible(part: lastPart)
-
-        // The current last part is what we want, return
-        if let currentLastPart = parts.last {
-            if currentLastPart is AnnotationTextViewModel {
-                setSelectedPart(to: currentLastPart)
-                resize()
-                return
-            }
-        }
-
-        let newPart = makeNewTextPart()
-        addNewPart(newPart: newPart)
+        model.appendTextPartIfNecessary()
     }
 
     func appendMarkdownPartIfNecessary() {
-        guard let lastPart = parts.last else {
-            return
-        }
-
-        removeIfPossible(part: lastPart)
-
-        // The current last part is what we want, return
-        if let currentLastPart = parts.last {
-            if currentLastPart is AnnotationMarkdownViewModel {
-                setSelectedPart(to: currentLastPart)
-                resize()
-                return
-            }
-        }
-
-        let newPart = makeNewMarkdownPart()
-        addNewPart(newPart: newPart)
+        model.appendMarkdownPartIfNecessary()
+    }
+    
+    private func addTextPart(part: AnnotationText) {
+        let partViewModel = AnnotationTextViewModel(annotationText: part, width: model.width)
+        addNewPart(newPart: partViewModel)
     }
 
-    private func makeNewTextPart() -> AnnotationTextViewModel {
-        AnnotationTextViewModel(id: UUID(), content: "", width: width, height: 30.0)
-    }
-
-    private func makeNewMarkdownPart() -> AnnotationMarkdownViewModel {
-        AnnotationMarkdownViewModel(id: UUID(), content: "", width: width, height: 30.0)
+    private func addMarkdownPart(part: AnnotationText) {
+        let partViewModel = AnnotationMarkdownViewModel(annotationMarkdown: part, width: model.width)
+        addNewPart(newPart: partViewModel)
     }
 
     private func addNewPart(newPart: AnnotationPartViewModel) {
@@ -227,17 +210,8 @@ extension AnnotationViewModel {
         resize()
     }
 
-    // Each presented annotation should have at least 1 part
-    private func canRemovePart(part: AnnotationPartViewModel) -> Bool {
-        part.isEmpty && parts.count > 1
-    }
-
-    func removeIfPossible(part: AnnotationPartViewModel) {
-        guard canRemovePart(part: part) else {
-            return
-        }
-        part.remove()
-        parts.removeAll(where: { $0.id == part.id })
+    private func removePartIfPossible(part: AnnotationPartViewModel) {
+        model.removePartIfPossible(part: part.model)
         resize()
     }
 

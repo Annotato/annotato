@@ -58,7 +58,10 @@ class AnnotationView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$origin.sink(receiveValue: { [weak self] origin in
+        viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
+            guard let origin = self?.viewModel.origin else {
+                return
+            }
             self?.frame.origin = origin
         }).store(in: &cancellables)
 
