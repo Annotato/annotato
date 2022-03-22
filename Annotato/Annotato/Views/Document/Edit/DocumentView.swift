@@ -10,7 +10,7 @@ class DocumentView: UIView {
     private var annotationViews: [AnnotationView]
 
     // Used to save start point when creating bounding box
-    private var selectionBoxStartPoint: CGPoint?
+    private var selectionBoxViewModel: SelectionBoxViewModel?
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -83,16 +83,27 @@ class DocumentView: UIView {
     private func didPan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
             print("Began")
-            selectionBoxStartPoint = sender.location(in: self)
+            let selectionBoxViewModel = SelectionBoxViewModel(
+                id: UUID(),
+                startPoint: sender.location(in: self),
+                endPoint: nil
+            )
+            self.selectionBoxViewModel = selectionBoxViewModel
+            let selectionBoxView = SelectionBoxView(viewModel: selectionBoxViewModel)
+            addSubview(selectionBoxView)
         }
         if sender.state != .cancelled {
             print("Not cancelled")
             let currentTouchPoint = sender.location(in: self)
-            // TODO: Add a bounding box with end points being the start points and the current point
+            self.selectionBoxViewModel?.endPoint = currentTouchPoint
         }
         if sender.state == .ended {
             print("Ended")
-            // TODO: Add an annotation
+            let currentTouchPoint = sender.location(in: self)
+            self.selectionBoxViewModel?.endPoint = currentTouchPoint
+
+            // Remove this reference
+            self.selectionBoxViewModel = nil
         }
         print("------------\n\n")
     }
