@@ -58,6 +58,17 @@ class AnnotationViewModel: ObservableObject {
     func translateCenter(by translation: CGPoint) {
         self.center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
     }
+
+    func hasExceededBounds(bounds: CGRect) -> Bool {
+        let hasExceededTop = maximizedFrame.minY < bounds.minY
+        let hasExceededBottom = maximizedFrame.maxY > bounds.maxY
+        let hasExceededLeft = maximizedFrame.minX < bounds.minX
+        let hasExceededRight = maximizedFrame.maxX > bounds.maxX
+        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
+            return true
+        }
+        return false
+    }
 }
 
 extension AnnotationViewModel {

@@ -91,13 +91,6 @@ class AnnotationView: UIView {
         guard let superview = superview else {
             return
         }
-        print("point in inner documentview: \(sender.location(in: superview))")
-        print("point in scrollview: \(sender.location(in: superview.superview))")
-        print("point in pdfview: \(sender.location(in: superview.superview?.superview))")
-
-        print("bounds of inner documentview: \(superview.bounds)")
-        print("bounds of scrollview: \(superview.superview?.bounds)")
-        print("bounds of pdfview: \(superview.superview?.superview?.bounds)")
 
         let previousCenter = viewModel.center
         superview.bringSubviewToFront(self)
@@ -105,10 +98,9 @@ class AnnotationView: UIView {
         viewModel.translateCenter(by: translation)
         sender.setTranslation(.zero, in: superview)
 
-        if hasExceededBounds(bounds: superview.bounds) {
+        if viewModel.hasExceededBounds(bounds: superview.bounds) {
             viewModel.center = previousCenter
         }
-        print("-----------------------------\n\n")
     }
 
     private func resize() {

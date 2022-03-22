@@ -42,11 +42,11 @@ extension UIView {
         return button
     }
 
-    func hasExceededBounds(bounds: CGRect) -> Bool {
-        let hasExceededTop = frame.minY < bounds.minY
-        let hasExceededBottom = frame.maxY > bounds.maxY
-        let hasExceededLeft = frame.minX < bounds.minX
-        let hasExceededRight = frame.maxX > bounds.maxX
+    func isPointOutOfBounds(point: CGPoint) -> Bool {
+        let hasExceededTop = point.y < bounds.minY
+        let hasExceededBottom = point.y > bounds.maxY
+        let hasExceededLeft = point.x < bounds.minX
+        let hasExceededRight = point.x > bounds.maxX
         if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
             return true
         }

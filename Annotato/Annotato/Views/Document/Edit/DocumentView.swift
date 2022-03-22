@@ -76,12 +76,18 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        addAnnotation(at: touchPoint)
+        addAnnotationIfWithinPdfBounds(at: touchPoint)
     }
 
-    private func addAnnotation(at pointInDocument: CGPoint) {
+    private func addAnnotationIfWithinPdfBounds(at pointInDocument: CGPoint) {
         let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
-        viewModel.addAnnotation(center: pointInPdf)
+        print("point in pdf: \(pointInPdf)")
+        print("bounds of pdf: \(pdfView.documentView?.bounds)")
+        guard let pdfInnerDocumentView = pdfView.documentView else {
+            return
+        }
+        viewModel.addAnnotation(center: pointInPdf, bounds: pdfInnerDocumentView.bounds)
+        print("-------------\n\n")
     }
 
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
