@@ -1,5 +1,6 @@
 excluded:
-  - Pods
+  - Annotato/Pods
+  - AnnotatoBackend/.build
 
 opt_in_rules:
   - anyobject_protocol

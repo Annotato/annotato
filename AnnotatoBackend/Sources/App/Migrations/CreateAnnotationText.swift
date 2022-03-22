@@ -8,6 +8,7 @@ struct CreateAnnotationText: Migration {
             .field("type", .int, .required)
             .field("content", .string, .required)
             .field("height", .double, .required)
+            .field("order", .int, .required)
             .field("annotation_id", .uuid, .required, .references(AnnotationEntity.schema, "id", onDelete: .cascade))
             .field("created_at", .datetime)
             .field("updated_at", .datetime)

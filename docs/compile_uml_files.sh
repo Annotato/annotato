@@ -8,5 +8,5 @@ if [ ! -f "$JAR_FILE" ]; then
     exit
 fi
 
-java -jar plantuml.jar *.puml -o diagrams
+java -jar plantuml.jar diagrams/plantuml/*.puml -o ../
 

@@ -66,6 +66,11 @@ skinparam Shadowing false
 skinparam DefaultTextAlignment center
 skinparam packageStyle Rectangle
 
+' this makes the visibility + - ~, etc. instead of using icons
+skinparam classAttributeIconSize 0
+' this makes the font color of fields white as well
+skinparam classAttributeFontColor #FFFFFF
+
 hide footbox
-hide members
+hide empty members
 hide circle

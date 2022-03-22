@@ -16,6 +16,9 @@ final class AnnotationTextEntity: Model {
     @Field(key: "height")
     var height: Double
 
+    @Field(key: "order")
+    var order: Int
+
     @Parent(key: "annotation_id")
     var annotation: AnnotationEntity
 
@@ -28,9 +31,10 @@ final class AnnotationTextEntity: Model {
     init() { }
 
     init(
-        type: AnnotationType,
+        type: AnnotationText.TextType,
         content: String,
         height: Double,
+        order: Int,
         annotationId: AnnotationEntity.IDValue,
         id: UUID? = nil
     ) {
@@ -38,6 +42,7 @@ final class AnnotationTextEntity: Model {
         self.type = type.rawValue
         self.content = content
         self.height = height
+        self.order = order
         self.$annotation.id = annotationId
     }
 }
@@ -48,6 +53,7 @@ extension AnnotationTextEntity: PersistedEntity {
             type: model.type,
             content: model.content,
             height: model.height,
+            order: model.order,
             annotationId: model.annotationId,
             id: model.id
         )

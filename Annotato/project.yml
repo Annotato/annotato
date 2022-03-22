@@ -60,7 +60,7 @@ targets:
       - runOnlyWhenInstalling: false
         script:
           "# Homebrew install location for ARM\nPATH=${PATH}:/opt/homebrew/bin\n\nif
-          which swiftlint >/dev/null; then\n    swiftlint autocorrect && swiftlint\nelse\n
+          which swiftlint >/dev/null; then\n    swiftlint autocorrect --config ../.swiftlint.yml && swiftlint --config ../.swiftlint.yml && cd ../AnnotatoBackend && swiftlint autocorrect --config ../.swiftlint.yml && swiftlint --config ../.swiftlint.yml && cd ../AnnotatoSharedLibrary && swiftlint autocorrect --config ../.swiftlint.yml && swiftlint --config ../.swiftlint.yml\nelse\n
           \ echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n"
         shell: /bin/sh
     settings:
