@@ -22,7 +22,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 AnnotatoLogger.info("Document ID not passed to DocumentEditViewController. " +
                                     "Sample document will be used.",
                                     context: "DocumentEditViewController::initializeSubviews")
-                documentViewModel = DocumentViewModel(document: SampleData.exampleDocument)
+                documentViewModel = DocumentViewModel(model: SampleData.exampleDocument)
                 initializeDocumentView()
                 return
             }

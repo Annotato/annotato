@@ -1,19 +1,19 @@
 import CoreGraphics
 import Foundation
+import AnnotatoSharedLibrary
 
 protocol AnnotationPartViewModel: AnyObject {
     var parentViewModel: AnnotationViewModel? { get set }
+    var model: AnnotationPart { get }
     var id: UUID { get }
     var origin: CGPoint { get }
     var width: Double { get }
-    var height: Double { get set }
-    var isEmpty: Bool { get }
+    var height: Double { get }
     var isSelected: Bool { get set }
 
     func toView() -> AnnotationPartView
     func enterEditMode()
     func enterViewMode()
-    func remove()
 }
 
 extension AnnotationPartViewModel {
@@ -26,7 +26,7 @@ extension AnnotationPartViewModel {
     }
 
     func setHeight(to newHeight: Double) {
-        self.height = newHeight
+        model.setHeight(to: newHeight)
         parentViewModel?.resize()
     }
 

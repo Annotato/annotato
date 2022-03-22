@@ -47,11 +47,11 @@ class DocumentView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$annotationToAdd.sink(receiveValue: { [weak self] annotationViewModel in
-            guard let annotationViewModel = annotationViewModel else {
+        viewModel.$addedAnnotation.sink(receiveValue: { [weak self] addedAnnotation in
+            guard let addedAnnotation = addedAnnotation else {
                 return
             }
-            self?.renderNewAnnotation(viewModel: annotationViewModel)
+            self?.renderNewAnnotation(viewModel: addedAnnotation)
         }).store(in: &cancellables)
     }
 

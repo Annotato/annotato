@@ -1,19 +1,21 @@
 import CoreGraphics
 import Foundation
 import AnnotatoSharedLibrary
+import Combine
 
 class DocumentViewModel: ObservableObject {
-    private let document: Document
+    private let model: Document
+
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
-    @Published private(set) var annotationToAdd: AnnotationViewModel?
+    @Published private(set) var addedAnnotation: AnnotationViewModel?
 
-    init?(document: Document) {
-        self.document = document
-        self.annotations = document.annotations.map { AnnotationViewModel(annotation: $0) }
+    init?(model: Document) {
+        self.model = model
+        self.annotations = model.annotations.map { AnnotationViewModel(model: $0) }
 
-        guard let baseFileUrl = URL(string: document.baseFileUrl) else {
+        guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
 
@@ -23,21 +25,32 @@ class DocumentViewModel: ObservableObject {
 
 extension DocumentViewModel {
     func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
-        let newAnnotationWidth = 300.0
-        let annotationViewModel = AnnotationViewModel(
-            id: UUID(),
-            origin: .zero,
-            width: newAnnotationWidth,
-            parts: []
-        )
-        annotationViewModel.center = center
-        annotationViewModel.enterEditMode()
-        annotationViewModel.enterMaximizedMode()
-
-        if annotationViewModel.hasExceededBounds(bounds: bounds) {
+        guard let currentUser = AnnotatoAuth().currentUser else {
             return
         }
+
+        let newAnnotationWidth = 300.0
+        let newAnnotation = Annotation(
+            origin: .zero,
+            width: newAnnotationWidth,
+            parts: [],
+            ownerId: currentUser.uid,
+            documentId: model.id,
+            id: UUID()
+        )
+        model.addAnnotation(annotation: newAnnotation)
+
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation)
+        annotationViewModel.center = center
+
+        if annotationViewModel.hasExceededBounds(bounds: bounds) {
+            model.removeAnnotation(annotation: newAnnotation)
+            return
+        }
+
+        annotationViewModel.enterEditMode()
+        annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
-        annotationToAdd = annotationViewModel
+        addedAnnotation = annotationViewModel
     }
 }
