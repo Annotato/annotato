@@ -2,6 +2,21 @@ import FluentKit
 import AnnotatoSharedLibrary
 
 extension AnnotationEntity {
+    /// Creates the AnnotationEntity instance. Use this function to cascade creates.
+    /// - Parameters:
+    ///   - tx: The database instance in a transaction.
+    ///   - annotation: The new Annotation instance.
+    func customCreate(on tx: Database, usingModel annotation: Annotation) async throws {
+        try await self.create(on: tx).get()
+
+        let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
+        
+        for annotationText in annotationTexts {
+            let annotationEntity = AnnotationTextEntity.fromModel(annotationText)
+            try await annotationEntity.customCreate(on: tx)
+        }
+    }
+
     /// Updates the AnnotationEntity instance. Use this function to cascade updates.
     /// - Parameters:
     ///   - tx: The database instance in a transaction.
@@ -16,7 +31,8 @@ extension AnnotationEntity {
             if let annotationTextEntity = try await AnnotationTextEntity.find(annotationText.id, on: tx).get() {
                 try await annotationTextEntity.customUpdate(on: tx, usingUpdatedModel: annotationText)
             } else {
-                try await AnnotationTextEntity.fromModel(annotationText).create(on: tx).get()
+                let annotationEntity = AnnotationTextEntity.fromModel(annotationText)
+                try await annotationEntity.customCreate(on: tx)
             }
         }
 

@@ -2,6 +2,12 @@ import FluentKit
 import AnnotatoSharedLibrary
 
 extension AnnotationTextEntity {
+    /// Creates the AnnotationTextEntity instance.
+    /// - Parameter tx: The database instance in a transaction.
+    func customCreate(on tx: Database) async throws {
+        return try await self.create(on: tx).get()
+    }
+
     /// Updates the AnnotationTextEntity instance.
     /// - Parameters:
     ///   - tx: The database instance in a transaction.

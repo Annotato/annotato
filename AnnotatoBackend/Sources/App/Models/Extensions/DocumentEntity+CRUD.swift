@@ -2,6 +2,19 @@ import FluentKit
 import AnnotatoSharedLibrary
 
 extension DocumentEntity {
+    /// Creates the DocumentEntity instance. Use this function to cascade creates.
+    /// - Parameters:
+    ///   - tx: The database instance in a transaction.
+    ///   - annotation: The new Document instance.
+    func customCreate(on tx: Database, usingModel document: Document) async throws {
+        try await self.create(on: tx).get()
+
+        for annotation in document.annotations {
+            let annotationEntity = AnnotationEntity.fromModel(annotation)
+            try await annotationEntity.customCreate(on: tx, usingModel: annotation)
+        }
+    }
+
     /// Updates the DocumentEntity instance. Use this function to cascade updates.
     /// - Parameters:
     ///   - tx: The database instance in a transaction.
@@ -15,7 +28,8 @@ extension DocumentEntity {
             if let annotationEntity = try await AnnotationEntity.find(annotation.id, on: tx).get() {
                 try await annotationEntity.customUpdate(on: tx, usingUpdatedModel: annotation)
             } else {
-                try await AnnotationEntity.fromModel(annotation).create(on: tx).get()
+                let annotationEntity = AnnotationEntity.fromModel(annotation)
+                try await annotationEntity.customCreate(on: tx, usingModel: annotation)
             }
         }
 
