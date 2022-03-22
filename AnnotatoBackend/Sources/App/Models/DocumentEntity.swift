@@ -43,4 +43,3 @@ extension DocumentEntity: PersistedEntity {
         Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
     }
 }
-

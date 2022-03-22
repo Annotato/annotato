@@ -36,7 +36,6 @@ extension DocumentEntity {
         return try await self.update(on: tx).get()
     }
 
-
     /// Deletes the DocumentEntity instance. Use this function to cascade deletes.
     /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
@@ -66,7 +65,8 @@ extension DocumentEntity {
     }
 
     private func pruneOldAssociations(on tx: Database, usingUpdatedModel document: Document) async throws {
-        for annotationEntity in annotationEntities where !document.annotations.contains(where: { $0.id == annotationEntity.id }) {
+        for annotationEntity in annotationEntities
+        where !document.annotations.contains(where: { $0.id == annotationEntity.id }) {
             try await annotationEntity.customDelete(on: tx)
         }
     }

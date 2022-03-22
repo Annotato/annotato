@@ -10,7 +10,7 @@ extension AnnotationEntity {
         try await self.create(on: tx).get()
 
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
-        
+
         for annotationText in annotationTexts {
             let annotationEntity = AnnotationTextEntity.fromModel(annotationText)
             try await annotationEntity.customCreate(on: tx)
@@ -68,7 +68,8 @@ extension AnnotationEntity {
     private func pruneOldAssociations(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
 
-        for annotationTextEntity in annotationTextEntities where !annotationTexts.contains(where: { $0.id == annotationTextEntity.id }) {
+        for annotationTextEntity in annotationTextEntities
+        where !annotationTexts.contains(where: { $0.id == annotationTextEntity.id }) {
             try await annotationTextEntity.customDelete(on: tx)
         }
     }
