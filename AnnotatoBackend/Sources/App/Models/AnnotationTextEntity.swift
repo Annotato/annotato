@@ -20,7 +20,7 @@ final class AnnotationTextEntity: Model {
     var order: Int
 
     @Parent(key: "annotation_id")
-    var annotation: AnnotationEntity
+    var annotationEntity: AnnotationEntity
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -43,7 +43,7 @@ final class AnnotationTextEntity: Model {
         self.content = content
         self.height = height
         self.order = order
-        self.$annotation.id = annotationId
+        self.$annotationEntity.id = annotationId
     }
 }
 
@@ -57,5 +57,26 @@ extension AnnotationTextEntity: PersistedEntity {
             annotationId: model.annotationId,
             id: model.id
         )
+    }
+}
+
+extension AnnotationTextEntity {
+    func copyPropertiesOf(otherEntity: AnnotationTextEntity) {
+        precondition(id == otherEntity.id)
+
+        type = otherEntity.type
+        content = otherEntity.content
+        height = otherEntity.height
+        order = otherEntity.order
+        $annotationEntity.id = otherEntity.$annotationEntity.id
+    }
+    
+    func customUpdate(on tx: Database, usingUpdatedModel annotationText: AnnotationText) async throws {
+        self.copyPropertiesOf(otherEntity: AnnotationTextEntity.fromModel(annotationText))
+        return try await self.update(on: tx).get()
+    }
+
+    func customDelete(on tx: Database) async throws {
+        return try await self.delete(on: tx).get()
     }
 }

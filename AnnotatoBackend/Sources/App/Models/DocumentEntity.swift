@@ -16,8 +16,8 @@ final class DocumentEntity: Model {
     @Field(key: "base_file_url")
     var baseFileUrl: String
 
-    @Children(for: \.$document)
-    var annotations: [AnnotationEntity]
+    @Children(for: \.$documentEntity)
+    var annotationEntities: [AnnotationEntity]
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -33,7 +33,15 @@ final class DocumentEntity: Model {
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl
     }
+}
 
+extension DocumentEntity: PersistedEntity {
+    static func fromModel(_ model: Document) -> Self {
+        Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
+    }
+}
+
+extension DocumentEntity {
     func copyPropertiesOf(otherEntity: DocumentEntity) {
         precondition(id == otherEntity.id)
 
@@ -41,10 +49,47 @@ final class DocumentEntity: Model {
         ownerId = otherEntity.ownerId
         baseFileUrl = otherEntity.baseFileUrl
     }
-}
+    
+    func loadAssociations(on db: Database) async throws {
+        try await self.$annotationEntities.load(on: db).get()
 
-extension DocumentEntity: PersistedEntity {
-    static func fromModel(_ model: Document) -> Self {
-        Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
+        for annotationEntity in self.annotationEntities {
+            try await annotationEntity.loadAssociations(on: db)
+        }
+    }
+
+    func customUpdate(on tx: Database, usingUpdatedModel document: Document) async throws {
+        try await self.loadAssociations(on: tx)
+        try await self.pruneOldAssociations(on: tx, using: document)
+        self.copyPropertiesOf(otherEntity: DocumentEntity.fromModel(document))
+
+        for annotation in document.annotations {
+            if let annotationEntity = try await AnnotationEntity.find(annotation.id, on: tx).get() {
+                try await annotationEntity.customUpdate(on: tx, usingUpdatedModel: annotation)
+            } else {
+                try await AnnotationEntity.fromModel(annotation).create(on: tx).get()
+            }
+        }
+
+        return try await self.update(on: tx).get()
+    }
+
+
+    /// Deletes a document entity from the database. Use this function to cascade deletes.
+    /// - Parameter tx: The database instance in a transaction.
+    func customDelete(on tx: Database) async throws {
+        try await self.loadAssociations(on: tx)
+        
+        for annotationEntity in annotationEntities {
+            try await annotationEntity.customDelete(on: tx)
+        }
+
+        return try await self.delete(on: tx).get()
+    }
+
+    private func pruneOldAssociations(on tx: Database, using document: Document) async throws {
+        for annotationEntity in annotationEntities where !document.annotations.contains(where: { $0.id == annotationEntity.id }) {
+            try await annotationEntity.customDelete(on: tx)
+        }
     }
 }

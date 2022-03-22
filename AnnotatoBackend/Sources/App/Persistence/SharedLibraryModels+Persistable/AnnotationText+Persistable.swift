@@ -9,7 +9,7 @@ extension AnnotationText: Persistable {
             content: managedEntity.content,
             height: managedEntity.height,
             order: managedEntity.order,
-            annotationId: managedEntity.$annotation.id,
+            annotationId: managedEntity.$annotationEntity.id,
             id: managedEntity.id
         )
     }

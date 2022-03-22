@@ -1,6 +1,5 @@
 import Vapor
 
-@available(macOS 12, *)
 func documentsRouter(documents: RoutesBuilder) {
     documents.get(use: DocumentsController.list)
 

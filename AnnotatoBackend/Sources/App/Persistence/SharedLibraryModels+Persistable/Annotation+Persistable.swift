@@ -12,7 +12,7 @@ extension Annotation: Persistable {
             width: managedEntity.width,
             parts: parts,
             ownerId: managedEntity.ownerId,
-            documentId: managedEntity.$document.id,
+            documentId: managedEntity.$documentEntity.id,
             id: managedEntity.id
         )
     }
