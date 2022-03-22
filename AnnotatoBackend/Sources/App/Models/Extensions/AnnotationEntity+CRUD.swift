@@ -2,20 +2,10 @@ import FluentKit
 import AnnotatoSharedLibrary
 
 extension AnnotationEntity {
-    func copyPropertiesOf(otherEntity: AnnotationEntity) {
-        precondition(id == otherEntity.id)
-
-        originX = otherEntity.originX
-        originY = otherEntity.originY
-        width = otherEntity.width
-        ownerId = otherEntity.ownerId
-        $documentEntity.id = otherEntity.$documentEntity.id
-    }
-
-    func loadAssociations(on db: Database) async throws {
-        try await self.$annotationTextEntities.load(on: db).get()
-    }
-
+    /// Updates the AnnotationEntity instance. Use this function to cascade updates.
+    /// - Parameters:
+    ///   - tx: The database instance in a transaction.
+    ///   - annotation: The updated Annotation instance.
     func customUpdate(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
         try await self.loadAssociations(on: tx)
         try await self.pruneOldAssociations(on: tx, using: annotation)
@@ -33,6 +23,8 @@ extension AnnotationEntity {
         return try await self.update(on: tx).get()
     }
 
+    /// Deletes the AnnotationEntity instance. Use this function to cascade deletes.
+    /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
         try await self.loadAssociations(on: tx)
 
@@ -41,6 +33,20 @@ extension AnnotationEntity {
         }
 
         try await self.delete(on: tx).get()
+    }
+
+    func loadAssociations(on db: Database) async throws {
+        try await self.$annotationTextEntities.load(on: db).get()
+    }
+
+    func copyPropertiesOf(otherEntity: AnnotationEntity) {
+        precondition(id == otherEntity.id)
+
+        originX = otherEntity.originX
+        originY = otherEntity.originY
+        width = otherEntity.width
+        ownerId = otherEntity.ownerId
+        $documentEntity.id = otherEntity.$documentEntity.id
     }
 
     private func pruneOldAssociations(on tx: Database, using annotation: Annotation) async throws {

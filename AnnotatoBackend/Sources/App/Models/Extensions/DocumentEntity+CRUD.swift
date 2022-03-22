@@ -2,22 +2,10 @@ import FluentKit
 import AnnotatoSharedLibrary
 
 extension DocumentEntity {
-    func copyPropertiesOf(otherEntity: DocumentEntity) {
-        precondition(id == otherEntity.id)
-
-        name = otherEntity.name
-        ownerId = otherEntity.ownerId
-        baseFileUrl = otherEntity.baseFileUrl
-    }
-
-    func loadAssociations(on db: Database) async throws {
-        try await self.$annotationEntities.load(on: db).get()
-
-        for annotationEntity in self.annotationEntities {
-            try await annotationEntity.loadAssociations(on: db)
-        }
-    }
-
+    /// Updates the DocumentEntity instance. Use this function to cascade updates.
+    /// - Parameters:
+    ///   - tx: The database instance in a transaction.
+    ///   - document: The updated Document instance.
     func customUpdate(on tx: Database, usingUpdatedModel document: Document) async throws {
         try await self.loadAssociations(on: tx)
         try await self.pruneOldAssociations(on: tx, using: document)
@@ -35,7 +23,7 @@ extension DocumentEntity {
     }
 
 
-    /// Deletes a document entity from the database. Use this function to cascade deletes.
+    /// Deletes the DocumentEntity instance. Use this function to cascade deletes.
     /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
         try await self.loadAssociations(on: tx)
@@ -45,6 +33,22 @@ extension DocumentEntity {
         }
 
         return try await self.delete(on: tx).get()
+    }
+
+    func loadAssociations(on db: Database) async throws {
+        try await self.$annotationEntities.load(on: db).get()
+
+        for annotationEntity in self.annotationEntities {
+            try await annotationEntity.loadAssociations(on: db)
+        }
+    }
+
+    func copyPropertiesOf(otherEntity: DocumentEntity) {
+        precondition(id == otherEntity.id)
+
+        name = otherEntity.name
+        ownerId = otherEntity.ownerId
+        baseFileUrl = otherEntity.baseFileUrl
     }
 
     private func pruneOldAssociations(on tx: Database, using document: Document) async throws {
