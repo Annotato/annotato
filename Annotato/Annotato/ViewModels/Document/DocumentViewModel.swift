@@ -1,9 +1,11 @@
 import CoreGraphics
 import Foundation
 import AnnotatoSharedLibrary
+import Combine
 
 class DocumentViewModel: ObservableObject {
     private let document: Document
+
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
@@ -28,16 +30,17 @@ extension DocumentViewModel {
         }
 
         let newAnnotationWidth = 300.0
-        let annotationViewModel = AnnotationViewModel(
-            annotation: Annotation(
-                origin: .zero,
-                width: newAnnotationWidth,
-                parts: [],
-                ownerId: currentUser.uid,
-                documentId: document.id,
-                id: UUID()
-            )
+        let newAnnotation = Annotation(
+            origin: .zero,
+            width: newAnnotationWidth,
+            parts: [],
+            ownerId: currentUser.uid,
+            documentId: document.id,
+            id: UUID()
         )
+        document.addAnnotation(annotation: newAnnotation)
+
+        let annotationViewModel = AnnotationViewModel(annotation: newAnnotation)
         annotationViewModel.center = center
         annotationViewModel.enterEditMode()
         annotationViewModel.enterMaximizedMode()

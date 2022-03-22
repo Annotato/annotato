@@ -11,8 +11,8 @@ public final class Annotation: Codable, ObservableObject {
     public let documentId: UUID
 
     @Published public private(set) var origin: CGPoint
-    @Published public private(set) var newTextPart: AnnotationText?
-    @Published public private(set) var newMarkdownPart: AnnotationText?
+    @Published public private(set) var addedTextPart: AnnotationText?
+    @Published public private(set) var addedMarkdownPart: AnnotationText?
     @Published public private(set) var removedPart: AnnotationPart?
 
     public required init(
@@ -84,13 +84,13 @@ public final class Annotation: Codable, ObservableObject {
     public func addPlainTextPart() {
         let newPart = makeNewPlainTextPart()
         parts.append(newPart)
-        newTextPart = newPart
+        addedTextPart = newPart
     }
 
     public func addMarkdownPart() {
         let newPart = makeNewMarkdownPart()
         parts.append(newPart)
-        newMarkdownPart = newPart
+        addedMarkdownPart = newPart
     }
 
     public func appendTextPartIfNecessary() {
@@ -109,7 +109,7 @@ public final class Annotation: Codable, ObservableObject {
 
         let newPart = makeNewPlainTextPart()
         parts.append(newPart)
-        newTextPart = newPart
+        addedTextPart = newPart
     }
 
     public func appendMarkdownPartIfNecessary() {
@@ -128,7 +128,7 @@ public final class Annotation: Codable, ObservableObject {
 
         let newPart = makeNewMarkdownPart()
         parts.append(newPart)
-        newMarkdownPart = newPart
+        addedMarkdownPart = newPart
     }
 
     public func setOrigin(to newOrigin: CGPoint) {

@@ -54,14 +54,14 @@ class AnnotationViewModel: ObservableObject {
     }
 
     private func setUpSubscribers() {
-        model.$newTextPart.sink(receiveValue: { [weak self] newTextPart in
+        model.$addedTextPart.sink(receiveValue: { [weak self] newTextPart in
             guard let newTextPart = newTextPart else {
                 return
             }
             self?.addTextPart(part: newTextPart)
         }).store(in: &cancellables)
 
-        model.$newMarkdownPart.sink(receiveValue: { [weak self] newMarkdownPart in
+        model.$addedMarkdownPart.sink(receiveValue: { [weak self] newMarkdownPart in
             guard let newMarkdownPart = newMarkdownPart else {
                 return
             }
@@ -74,6 +74,7 @@ class AnnotationViewModel: ObservableObject {
 
         model.$removedPart.sink(receiveValue: { [weak self] removedPart in
             self?.parts.removeAll(where: { $0.id == removedPart?.id })
+            self?.resize()
         }).store(in: &cancellables)
     }
 
@@ -190,7 +191,7 @@ extension AnnotationViewModel {
     func appendMarkdownPartIfNecessary() {
         model.appendMarkdownPartIfNecessary()
     }
-    
+
     private func addTextPart(part: AnnotationText) {
         let partViewModel = AnnotationTextViewModel(annotationText: part, width: model.width)
         addNewPart(newPart: partViewModel)
@@ -212,7 +213,6 @@ extension AnnotationViewModel {
 
     private func removePartIfPossible(part: AnnotationPartViewModel) {
         model.removePartIfPossible(part: part.model)
-        resize()
     }
 
     func enterMinimizedMode() {
