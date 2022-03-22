@@ -18,7 +18,10 @@ struct DocumentsDataAccess {
     static func create(db: Database, document: Document) async throws -> Document {
         let documentEntity = DocumentEntity.fromModel(document)
 
-        try await documentEntity.customCreate(on: db, usingModel: document)
+        try await db.transaction { tx in
+            try await documentEntity.customCreate(on: tx, usingModel: document)
+        }
+
         try await documentEntity.loadAssociations(on: db)
 
         return Document.fromManagedEntity(documentEntity)
