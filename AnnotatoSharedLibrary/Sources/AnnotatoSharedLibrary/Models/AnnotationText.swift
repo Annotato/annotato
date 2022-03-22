@@ -40,26 +40,6 @@ public final class AnnotationText: Codable, AnnotationPart {
         case content
     }
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(UUID.self, forKey: .id)
-        order = try container.decode(Int.self, forKey: .order)
-        height = try container.decode(Double.self, forKey: .height)
-        annotationId = try container.decode(UUID.self, forKey: .annotationId)
-        type = try container.decode(AnnotationText.TextType.self, forKey: .type)
-        content = try container.decode(String.self, forKey: .content)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(order, forKey: .order)
-        try container.encode(height, forKey: .height)
-        try container.encode(annotationId, forKey: .annotationId)
-        try container.encode(type, forKey: .type)
-        try container.encode(content, forKey: .content)
-    }
-
     public func setContent(to newContent: String) {
         self.content = newContent
     }
