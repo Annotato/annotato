@@ -9,7 +9,7 @@ class DocumentViewModel: ObservableObject {
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
-    @Published private(set) var annotationToAdd: AnnotationViewModel?
+    @Published private(set) var addedAnnotation: AnnotationViewModel?
 
     init?(model: Document) {
         self.model = model
@@ -49,6 +49,6 @@ extension DocumentViewModel {
             return
         }
         annotations.append(annotationViewModel)
-        annotationToAdd = annotationViewModel
+        addedAnnotation = annotationViewModel
     }
 }

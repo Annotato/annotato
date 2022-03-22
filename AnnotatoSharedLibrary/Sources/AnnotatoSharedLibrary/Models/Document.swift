@@ -1,5 +1,6 @@
 import Foundation
 
+@available(macOS 10.15, *)
 @available(iOS 13.0, *)
 public final class Document: Codable {
     public var id: UUID
@@ -27,6 +28,7 @@ public final class Document: Codable {
     }
 }
 
+@available(macOS 10.15, *)
 @available(iOS 13.0, *)
 extension Document: CustomStringConvertible {
     public var description: String {

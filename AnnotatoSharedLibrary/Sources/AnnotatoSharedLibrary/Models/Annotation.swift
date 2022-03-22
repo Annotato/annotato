@@ -2,6 +2,7 @@ import Foundation
 import CoreGraphics
 import Combine
 
+@available(macOS 10.15, *)
 @available(iOS 13.0, *)
 public final class Annotation: Codable, ObservableObject {
     public let id: UUID
@@ -172,6 +173,7 @@ public final class Annotation: Codable, ObservableObject {
     }
 }
 
+@available(macOS 10.15, *)
 @available(iOS 13.0, *)
 extension Annotation {
     public var partHeights: Double {
@@ -181,6 +183,7 @@ extension Annotation {
     }
 }
 
+@available(macOS 10.15, *)
 @available(iOS 13.0, *)
 extension Annotation: CustomDebugStringConvertible {
     public var debugDescription: String {

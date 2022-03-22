@@ -21,7 +21,7 @@ class AnnotationViewModel: ObservableObject {
 
     @Published private(set) var positionDidChange = false
     @Published private(set) var isResizing = false
-    @Published private(set) var partToAppend: AnnotationPartViewModel?
+    @Published private(set) var addedPart: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
 
@@ -54,18 +54,18 @@ class AnnotationViewModel: ObservableObject {
     }
 
     private func setUpSubscribers() {
-        model.$addedTextPart.sink(receiveValue: { [weak self] newTextPart in
-            guard let newTextPart = newTextPart else {
+        model.$addedTextPart.sink(receiveValue: { [weak self] addedTextPart in
+            guard let addedTextPart = addedTextPart else {
                 return
             }
-            self?.addTextPart(part: newTextPart)
+            self?.addTextPart(part: addedTextPart)
         }).store(in: &cancellables)
 
-        model.$addedMarkdownPart.sink(receiveValue: { [weak self] newMarkdownPart in
-            guard let newMarkdownPart = newMarkdownPart else {
+        model.$addedMarkdownPart.sink(receiveValue: { [weak self] addedMarkdownPart in
+            guard let addedMarkdownPart = addedMarkdownPart else {
                 return
             }
-            self?.addMarkdownPart(part: newMarkdownPart)
+            self?.addMarkdownPart(part: addedMarkdownPart)
         }).store(in: &cancellables)
 
         model.$origin.sink(receiveValue: { [weak self] _ in
@@ -206,7 +206,7 @@ extension AnnotationViewModel {
         newPart.parentViewModel = self
         newPart.enterEditMode()
         parts.append(newPart)
-        partToAppend = newPart
+        addedPart = newPart
         setSelectedPart(to: newPart)
         resize()
     }
