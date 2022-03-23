@@ -99,8 +99,15 @@ class DocumentView: UIView {
         if sender.state == .ended {
             let currentTouchPoint = sender.location(in: self)
             updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: currentTouchPoint)
-            viewModel.removeAddedSelectionBox()
+            addAnnotationWithAssociatedSelectionBoxIfWithinBounds()
         }
+    }
+
+    private func addAnnotationWithAssociatedSelectionBoxIfWithinBounds() {
+        guard let pdfInnerDocumentView = pdfView.documentView else {
+            return
+        }
+        viewModel.addAnnotationWithAssociatedSelectionBoxIfWithinBounds(bounds: pdfInnerDocumentView.bounds)
     }
 
     private func updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: CGPoint) {
@@ -162,7 +169,6 @@ extension DocumentView {
     }
 
     private func showSelectionBoxedOfVisiblePages() {
-        print("showing selection boxes of visible pages")
         let visiblePages = pdfView.visiblePages
 
         let selectionBoxesToShow = selectionBoxViews.filter({

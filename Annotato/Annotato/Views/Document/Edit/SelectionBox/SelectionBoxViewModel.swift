@@ -3,7 +3,7 @@ import Foundation
 
 class SelectionBoxViewModel: ObservableObject {
     private(set) var id: UUID
-    private var startPoint: CGPoint
+    private(set) var startPoint: CGPoint
     @Published var endPoint: CGPoint
 
     init(id: UUID, startPoint: CGPoint, endPoint: CGPoint?) {

@@ -15,6 +15,11 @@ class AnnotationViewModel: ObservableObject {
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
+    // TODO: Set to optional to solve compilation issues first, change later
+    // Also set to be default internal first for proof of concept, changing this to
+    // be initialized in the constructor later after I do the models.
+    var selectionBox: SelectionBoxViewModel?
+
     var origin: CGPoint {
         model.origin
     }

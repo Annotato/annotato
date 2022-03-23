@@ -13,7 +13,7 @@ class DocumentViewModel: ObservableObject {
      I added this because I think eventually we will need it. But I make it
      default empty array first because otherwise we can't compile yet
      */
-    private(set) var selectionBoxes: [SelectionBoxViewModel] = []
+//    private(set) var selectionBoxes: [SelectionBoxViewModel] = []
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var addedSelectionBox: SelectionBoxViewModel?
@@ -50,6 +50,13 @@ extension DocumentViewModel {
         let annotationViewModel = AnnotationViewModel(model: newAnnotation)
         annotationViewModel.center = center
 
+        let addedSelectionBox = addedSelectionBox ?? SelectionBoxViewModel(
+            id: UUID(),
+            startPoint: center,
+            endPoint: nil
+        )
+        annotationViewModel.selectionBox = addedSelectionBox
+
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
             model.removeAnnotation(annotation: newAnnotation)
             return
@@ -62,7 +69,6 @@ extension DocumentViewModel {
     }
 
     func updateCurrentSelectionBoxEndPoint(newEndPoint: CGPoint, bounds: CGRect) {
-        // TODO: Check whether within bounds
         guard let addedSelectionBox = addedSelectionBox else {
             return
         }
@@ -87,7 +93,17 @@ extension DocumentViewModel {
         if selectionBoxViewModel.hasExceededBounds(bounds: bounds) {
             return
         }
-        selectionBoxes.append(selectionBoxViewModel)
         addedSelectionBox = selectionBoxViewModel
+    }
+
+    func addAnnotationWithAssociatedSelectionBoxIfWithinBounds(bounds: CGRect) {
+        guard let addedSelectionBox = addedSelectionBox else {
+            print("There is no selection box to associate with")
+            return
+        }
+        addAnnotationIfWithinBounds(center: addedSelectionBox.startPoint, bounds: bounds)
+
+        // Remove the selection box reference
+        self.addedSelectionBox = nil
     }
 }
