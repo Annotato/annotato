@@ -79,6 +79,10 @@ class AnnotationPaletteView: UIToolbar {
             self?.editOrViewButton.isSelected = isEditing
             self?.minimizeOrMaximizeButton.isHidden = isEditing
         }).store(in: &cancellables)
+
+        viewModel.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
+            self?.minimizeOrMaximizeButton.isSelected = isMinimized
+        }).store(in: &cancellables)
     }
 }
 
@@ -109,10 +113,8 @@ extension AnnotationPaletteView {
         let isNowEditing = editOrViewButton.isSelected
         if isNowEditing {
             viewModel.enterEditMode()
-            viewModel.enterMaximizedMode()
         } else {
             viewModel.enterViewMode()
-            viewModel.enterMinimizedMode()
         }
     }
 
@@ -123,13 +125,6 @@ extension AnnotationPaletteView {
 
     @objc
     private func didTapMinimizeOrMaximizeButton(_ button: UIButton) {
-        minimizeOrMaximizeButton.isSelected.toggle()
-
-        let isNowMinimized = minimizeOrMaximizeButton.isSelected
-        if isNowMinimized {
-            viewModel.enterMinimizedMode()
-        } else {
-            viewModel.enterMaximizedMode()
-        }
+        viewModel.didSelectMinimizeOrMaximizeButton()
     }
 }

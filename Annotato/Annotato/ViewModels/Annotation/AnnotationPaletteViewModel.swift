@@ -2,15 +2,19 @@ import CoreGraphics
 import Combine
 
 class AnnotationPaletteViewModel: ObservableObject {
-    weak var parentViewModel: AnnotationViewModel?
+    weak var parentViewModel: AnnotationViewModel? {
+        didSet {
+            setUpSubscribers()
+        }
+    }
+    private var cancellables: Set<AnyCancellable> = []
 
     private(set) var origin: CGPoint
     private(set) var width: Double
     private(set) var height: Double
 
-    var isMinimized: Bool {
-        parentViewModel?.isMinimized ?? false
-    }
+    private var isMinimizedByUser = true
+    @Published var isMinimized = true
 
     @Published var isEditing = false {
         didSet {
@@ -41,6 +45,12 @@ class AnnotationPaletteViewModel: ObservableObject {
         self.height = height
     }
 
+    private func setUpSubscribers() {
+        parentViewModel?.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
+            self?.isMinimized = isMinimized
+        }).store(in: &cancellables)
+    }
+
     func didSelectTextButton() {
         guard parentViewModel?.isEditing ?? false else {
             return
@@ -60,15 +70,33 @@ class AnnotationPaletteViewModel: ObservableObject {
     func enterEditMode() {
         isEditing = true
         parentViewModel?.enterEditMode()
+        enterMaximizedMode()
     }
 
     func enterViewMode() {
         isEditing = false
         parentViewModel?.enterViewMode()
+
+        guard isMinimizedByUser else {
+            return
+        }
+
+        enterMinimizedMode()
     }
 
     func didSelectDeleteButton() {
         parentViewModel?.didDelete()
+    }
+
+    func didSelectMinimizeOrMaximizeButton() {
+        isMinimizedByUser.toggle()
+
+        let isNowMinimized = !isMinimized
+        if isNowMinimized {
+            enterMinimizedMode()
+        } else {
+            enterMaximizedMode()
+        }
     }
 
     func enterMinimizedMode() {

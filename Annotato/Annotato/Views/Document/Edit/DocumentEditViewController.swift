@@ -77,7 +77,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 return
             }
 
-            self.documentViewModel = await DocumentController.updateDocument(document: documentViewModel)
+            await DocumentController.updateDocument(document: documentViewModel)
         }
     }
 }
