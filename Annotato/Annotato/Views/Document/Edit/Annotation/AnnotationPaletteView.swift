@@ -107,7 +107,6 @@ extension AnnotationPaletteView {
         editOrViewButton.isSelected.toggle()
 
         let isNowEditing = editOrViewButton.isSelected
-
         if isNowEditing {
             viewModel.enterEditMode()
             viewModel.enterMaximizedMode()
@@ -127,7 +126,6 @@ extension AnnotationPaletteView {
         minimizeOrMaximizeButton.isSelected.toggle()
 
         let isNowMinimized = minimizeOrMaximizeButton.isSelected
-
         if isNowMinimized {
             viewModel.enterMinimizedMode()
         } else {
