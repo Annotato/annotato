@@ -18,4 +18,13 @@ struct DocumentController {
 
         return DocumentViewModel(model: document)
     }
+
+    @discardableResult static func updateDocument(document: DocumentViewModel) async -> DocumentViewModel? {
+        let updatedDocument = await DocumentsAPI().updateDocument(document: document.model)
+        guard let updatedDocument = updatedDocument else {
+            return nil
+        }
+
+        return DocumentViewModel(model: updatedDocument)
+    }
 }

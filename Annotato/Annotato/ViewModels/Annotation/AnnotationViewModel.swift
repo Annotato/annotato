@@ -6,6 +6,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class AnnotationViewModel: ObservableObject {
+    private weak var document: DocumentViewModel?
+
     private(set) var model: Annotation
     private var cancellables: Set<AnyCancellable> = []
 
@@ -25,8 +27,9 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
 
-    init(model: Annotation, palette: AnnotationPaletteViewModel? = nil) {
+    init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
+        self.document = document
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: .zero, width: model.width, height: 50.0)
         self.parts = []
@@ -230,5 +233,6 @@ extension AnnotationViewModel {
 extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
+        document?.removeAnnotation(annotation: self)
     }
 }
