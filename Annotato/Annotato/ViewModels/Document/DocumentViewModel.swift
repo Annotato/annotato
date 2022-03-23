@@ -6,20 +6,19 @@ import Combine
 class DocumentViewModel: ObservableObject {
     let model: Document
 
-    private(set) var annotations: [AnnotationViewModel]
+    private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
 
     init?(model: Document) {
-        self.model = model
-        self.annotations = model.annotations.map { AnnotationViewModel(model: $0) }
-
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
 
+        self.model = model
         self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
+        self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
     }
 }
 
@@ -40,7 +39,7 @@ extension DocumentViewModel {
         )
         model.addAnnotation(annotation: newAnnotation)
 
-        let annotationViewModel = AnnotationViewModel(model: newAnnotation)
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
         annotationViewModel.center = center
 
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
@@ -52,5 +51,10 @@ extension DocumentViewModel {
         annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
+    }
+
+    func removeAnnotation(annotation: AnnotationViewModel) {
+        model.removeAnnotation(annotation: annotation.model)
+        annotations.removeAll(where: { $0 === annotation })
     }
 }
