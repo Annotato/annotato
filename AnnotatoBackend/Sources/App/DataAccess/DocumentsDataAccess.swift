@@ -6,6 +6,7 @@ struct DocumentsDataAccess {
     static func list(db: Database, userId: String) async throws -> [Document] {
         let documentEntities = try await DocumentEntity.query(on: db)
             .filter(\.$ownerId == userId)
+            .sort(\.$name)
             .all().get()
 
         for documentEntity in documentEntities {
