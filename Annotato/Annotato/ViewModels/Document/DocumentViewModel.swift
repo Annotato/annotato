@@ -10,11 +10,13 @@ class DocumentViewModel: ObservableObject {
     private(set) var pdfDocument: PdfViewModel
 
     /*
-     I added this because I think eventually we will need it. But I make it default empty array first because otherwise we can't compile yet
+     I added this because I think eventually we will need it. But I make it
+     default empty array first because otherwise we can't compile yet
      */
     private(set) var selectionBoxes: [SelectionBoxViewModel] = []
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
+    @Published private(set) var addedSelectionBox: SelectionBoxViewModel?
 
     init?(model: Document) {
         self.model = model
@@ -59,7 +61,33 @@ extension DocumentViewModel {
         addedAnnotation = annotationViewModel
     }
 
-    func addSelectionBoxIfWithinBounds(startPoint: CGPoint, bounds: CGRect) {
+    func updateCurrentSelectionBoxEndPoint(newEndPoint: CGPoint, bounds: CGRect) {
+        // TODO: Check whether within bounds
+        guard let addedSelectionBox = addedSelectionBox else {
+            return
+        }
+        if addedSelectionBox.hasExceededBounds(bounds: bounds) {
+            return
+        }
+        addedSelectionBox.endPoint = newEndPoint
+    }
 
+    func removeAddedSelectionBox() {
+        addedSelectionBox = nil
+    }
+
+    func addSelectionBoxIfWithinBounds(startPoint: CGPoint, bounds: CGRect) {
+        // TODO: Backend models and guard clause for current user
+
+        let selectionBoxViewModel = SelectionBoxViewModel(
+            id: UUID(),
+            startPoint: startPoint,
+            endPoint: nil
+        )
+        if selectionBoxViewModel.hasExceededBounds(bounds: bounds) {
+            return
+        }
+        selectionBoxes.append(selectionBoxViewModel)
+        addedSelectionBox = selectionBoxViewModel
     }
 }

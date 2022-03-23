@@ -9,9 +9,6 @@ class DocumentView: UIView {
     private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
 
-    // Used to save a reference to the selection box view model when updating bounding box
-    private var selectionBoxViewModel: SelectionBoxViewModel?
-
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -56,6 +53,13 @@ class DocumentView: UIView {
             }
             self?.renderNewAnnotation(viewModel: addedAnnotation)
         }).store(in: &cancellables)
+
+        viewModel.$addedSelectionBox.sink(receiveValue: { [weak self] addedSelectionBox in
+            guard let addedSelectionBox = addedSelectionBox else {
+                return
+            }
+            self?.renderNewSelectionBox(viewModel: addedSelectionBox)
+        }).store(in: &cancellables)
     }
 
     private func addObservers() {
@@ -83,25 +87,25 @@ class DocumentView: UIView {
     private func didPan(_ sender: UIPanGestureRecognizer) {
         if sender.state == .began {
             let startPoint = sender.location(in: self)
-            let selectionBoxViewModel = SelectionBoxViewModel(
-                id: UUID(),
-                startPoint: startPoint,
-                endPoint: nil
-            )
-            self.selectionBoxViewModel = selectionBoxViewModel
             addSelectionBoxIfWithinBounds(at: startPoint)
         }
         if sender.state != .cancelled {
             let currentTouchPoint = sender.location(in: self)
-            self.selectionBoxViewModel?.endPoint = currentTouchPoint
+            updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: currentTouchPoint)
         }
         if sender.state == .ended {
             let currentTouchPoint = sender.location(in: self)
-            self.selectionBoxViewModel?.endPoint = currentTouchPoint
-
-            // Remove the reference
-            self.selectionBoxViewModel = nil
+            updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: currentTouchPoint)
+            viewModel.removeAddedSelectionBox()
         }
+    }
+
+    private func updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: CGPoint) {
+        guard let pdfInnerDocumentView = pdfView.documentView else {
+            return
+        }
+        let pointInPdf = self.convert(newEndPointInDocument, to: pdfView.documentView)
+        viewModel.updateCurrentSelectionBoxEndPoint(newEndPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
     }
 
     private func addSelectionBoxIfWithinBounds(at pointInDocument: CGPoint) {
@@ -130,6 +134,12 @@ class DocumentView: UIView {
         let annotationView = AnnotationView(viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView.documentView?.addSubview(annotationView)
+    }
+
+    private func renderNewSelectionBox(viewModel: SelectionBoxViewModel) {
+        let selectionBoxView = SelectionBoxView(viewModel: viewModel)
+        // TODO: Will need to append to an array because I will need to bring this to front as well
+        pdfView.documentView?.addSubview(selectionBoxView)
     }
 }
 
