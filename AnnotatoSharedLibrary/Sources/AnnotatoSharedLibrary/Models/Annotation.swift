@@ -1,5 +1,4 @@
 import Foundation
-import CoreGraphics
 import Combine
 
 public final class Annotation: Codable, ObservableObject {
