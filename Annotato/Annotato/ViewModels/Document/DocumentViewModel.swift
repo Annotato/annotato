@@ -55,6 +55,6 @@ extension DocumentViewModel {
 
     func removeAnnotation(annotation: AnnotationViewModel) {
         model.removeAnnotation(annotation: annotation.model)
-        annotations.removeAll(where: { $0 === annotation })
+        annotations.removeAll(where: { $0.model.id == annotation.model.id })
     }
 }
