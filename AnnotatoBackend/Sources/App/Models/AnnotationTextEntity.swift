@@ -20,13 +20,16 @@ final class AnnotationTextEntity: Model {
     var order: Int
 
     @Parent(key: "annotation_id")
-    var annotation: AnnotationEntity
+    var annotationEntity: AnnotationEntity
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
     @Timestamp(key: "updated_at", on: .update)
     var updatedAt: Date?
+
+    @Timestamp(key: "deleted_at", on: .delete)
+    var deletedAt: Date?
 
     init() { }
 
@@ -43,7 +46,7 @@ final class AnnotationTextEntity: Model {
         self.content = content
         self.height = height
         self.order = order
-        self.$annotation.id = annotationId
+        self.$annotationEntity.id = annotationId
     }
 }
 

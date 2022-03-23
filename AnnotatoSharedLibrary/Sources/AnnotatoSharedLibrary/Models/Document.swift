@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 public final class Document: Codable {
     public var id: UUID
@@ -19,6 +20,14 @@ public final class Document: Codable {
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl
         self.annotations = annotations
+    }
+
+    public func addAnnotation(annotation: Annotation) {
+        annotations.append(annotation)
+    }
+
+    public func removeAnnotation(annotation: Annotation) {
+        annotations.removeAll(where: { $0.id == annotation.id })
     }
 }
 

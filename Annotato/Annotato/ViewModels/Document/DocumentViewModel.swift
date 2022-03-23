@@ -1,9 +1,11 @@
 import CoreGraphics
 import Foundation
 import AnnotatoSharedLibrary
+import Combine
 
 class DocumentViewModel: ObservableObject {
-    private let document: Document
+    private let model: Document
+
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
@@ -12,13 +14,13 @@ class DocumentViewModel: ObservableObject {
      */
     private(set) var selectionBoxes: [SelectionBoxViewModel] = []
 
-    @Published private(set) var annotationToAdd: AnnotationViewModel?
+    @Published private(set) var addedAnnotation: AnnotationViewModel?
 
-    init?(document: Document) {
-        self.document = document
-        self.annotations = document.annotations.map { AnnotationViewModel(annotation: $0) }
+    init?(model: Document) {
+        self.model = model
+        self.annotations = model.annotations.map { AnnotationViewModel(model: $0) }
 
-        guard let baseFileUrl = URL(string: document.baseFileUrl) else {
+        guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
 
@@ -27,19 +29,34 @@ class DocumentViewModel: ObservableObject {
 }
 
 extension DocumentViewModel {
-    func addAnnotation(center: CGPoint) {
+    func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
+        guard let currentUser = AnnotatoAuth().currentUser else {
+            return
+        }
+
         let newAnnotationWidth = 300.0
-        let annotationViewModel = AnnotationViewModel(
-            id: UUID(),
+        let newAnnotation = Annotation(
             origin: .zero,
             width: newAnnotationWidth,
-            parts: []
+            parts: [],
+            ownerId: currentUser.uid,
+            documentId: model.id,
+            id: UUID()
         )
+        model.addAnnotation(annotation: newAnnotation)
+
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation)
         annotationViewModel.center = center
+
+        if annotationViewModel.hasExceededBounds(bounds: bounds) {
+            model.removeAnnotation(annotation: newAnnotation)
+            return
+        }
+
         annotationViewModel.enterEditMode()
         annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
-        annotationToAdd = annotationViewModel
+        addedAnnotation = annotationViewModel
     }
 
     func addSelectionBoxIfWithinBounds(startPoint: CGPoint, bounds: CGRect) {

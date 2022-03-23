@@ -16,21 +16,6 @@ class SampleData {
         Document(name: "Clean Code", ownerId: "owner123", baseFileUrl: firebasePdfUrlString, id: UUID())
     }
 
-    static var exampleAnnotations: [AnnotationViewModel] =
-        [
-            AnnotationViewModel(
-                id: UUID(),
-                origin: CGPoint(x: 100, y: 100),
-                width: 300.0,
-                parts: exampleAnnotationParts1
-            ),
-            AnnotationViewModel(
-                id: UUID(),
-                origin: CGPoint(x: 200, y: 900),
-                width: 250.0,
-                parts: exampleAnnotationParts1)
-        ]
-
     static var examplePdfDocument = PdfViewModel(baseFileUrl: exampleUrlLab01Qns)
 
     static var exampleUrlLab01Qns: URL {
@@ -69,26 +54,4 @@ class SampleData {
 
         return firebaseUrl
     }
-
-    static var exampleAnnotationParts1: [AnnotationPartViewModel] =
-        [
-            AnnotationTextViewModel(
-                id: UUID(),
-                content: "hello world",
-                width: 300.0,
-                height: 30.0
-            ),
-            AnnotationMarkdownViewModel(
-                id: UUID(),
-                content: "# hello\nsome `code`\n\nabcd\n\na long string that exceeds the width of the container",
-                width: 300.0,
-                height: 30.0
-            ),
-            AnnotationTextViewModel(
-                id: UUID(),
-                content: "more text",
-                width: 300.0,
-                height: 30.0
-            )
-        ]
 }

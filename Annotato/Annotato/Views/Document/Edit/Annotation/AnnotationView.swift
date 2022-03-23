@@ -58,7 +58,10 @@ class AnnotationView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$origin.sink(receiveValue: { [weak self] origin in
+        viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
+            guard let origin = self?.viewModel.origin else {
+                return
+            }
             self?.frame.origin = origin
         }).store(in: &cancellables)
 
@@ -66,11 +69,11 @@ class AnnotationView: UIView {
             self?.resize()
         }).store(in: &cancellables)
 
-        viewModel.$partToAppend.sink(receiveValue: { [weak self] partViewModel in
-            guard let partViewModel = partViewModel else {
+        viewModel.$addedPart.sink(receiveValue: { [weak self] addedPart in
+            guard let addedPart = addedPart else {
                 return
             }
-            self?.parts.addArrangedSubview(partViewModel.toView())
+            self?.parts.addArrangedSubview(addedPart.toView())
         }).store(in: &cancellables)
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
@@ -88,10 +91,19 @@ class AnnotationView: UIView {
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        superview?.bringSubviewToFront(self)
+        guard let superview = superview else {
+            return
+        }
+
+        let previousCenter = viewModel.center
+        superview.bringSubviewToFront(self)
         let translation = sender.translation(in: superview)
         viewModel.translateCenter(by: translation)
         sender.setTranslation(.zero, in: superview)
+
+        if viewModel.hasExceededBounds(bounds: superview.bounds) {
+            viewModel.center = previousCenter
+        }
     }
 
     private func resize() {
