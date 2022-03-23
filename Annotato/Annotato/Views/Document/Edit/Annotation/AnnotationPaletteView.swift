@@ -113,6 +113,7 @@ extension AnnotationPaletteView {
         let isNowEditing = editOrViewButton.isSelected
         if isNowEditing {
             viewModel.enterEditMode()
+            viewModel.enterMaximizedMode()
         } else {
             viewModel.enterViewMode()
         }

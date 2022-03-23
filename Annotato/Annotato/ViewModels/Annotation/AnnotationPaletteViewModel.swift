@@ -13,7 +13,6 @@ class AnnotationPaletteViewModel: ObservableObject {
     private(set) var width: Double
     private(set) var height: Double
 
-    private var isMinimizedByUser = true
     @Published var isMinimized = true
 
     @Published var isEditing = false {
@@ -70,18 +69,11 @@ class AnnotationPaletteViewModel: ObservableObject {
     func enterEditMode() {
         isEditing = true
         parentViewModel?.enterEditMode()
-        enterMaximizedMode()
     }
 
     func enterViewMode() {
         isEditing = false
         parentViewModel?.enterViewMode()
-
-        guard isMinimizedByUser else {
-            return
-        }
-
-        enterMinimizedMode()
     }
 
     func didSelectDeleteButton() {
@@ -89,8 +81,6 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 
     func didSelectMinimizeOrMaximizeButton() {
-        isMinimizedByUser.toggle()
-
         let isNowMinimized = !isMinimized
         if isNowMinimized {
             enterMinimizedMode()
