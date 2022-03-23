@@ -104,16 +104,16 @@ extension AnnotationPaletteView {
 
     @objc
     private func didTapEditOrViewButton(_ button: UIButton) {
-        if editOrViewButton.isSelected {
-            editOrViewButton.isSelected = false
-            viewModel.enterViewMode()
+        editOrViewButton.isSelected.toggle()
 
-            viewModel.enterMinimizedMode()
-        } else {
-            editOrViewButton.isSelected = true
+        let isNowEditing = editOrViewButton.isSelected
+
+        if isNowEditing {
             viewModel.enterEditMode()
-
             viewModel.enterMaximizedMode()
+        } else {
+            viewModel.enterViewMode()
+            viewModel.enterMinimizedMode()
         }
     }
 
@@ -124,12 +124,14 @@ extension AnnotationPaletteView {
 
     @objc
     private func didTapMinimizeOrMaximizeButton(_ button: UIButton) {
-        if minimizeOrMaximizeButton.isSelected {
-            minimizeOrMaximizeButton.isSelected = false
-            viewModel.enterMaximizedMode()
-        } else {
-            minimizeOrMaximizeButton.isSelected = true
+        minimizeOrMaximizeButton.isSelected.toggle()
+
+        let isNowMinimized = minimizeOrMaximizeButton.isSelected
+
+        if isNowMinimized {
             viewModel.enterMinimizedMode()
+        } else {
+            viewModel.enterMaximizedMode()
         }
     }
 }
