@@ -4,7 +4,7 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
-    private let model: Document
+    let model: Document
 
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
