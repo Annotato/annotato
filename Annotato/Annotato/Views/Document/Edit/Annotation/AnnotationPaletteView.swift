@@ -77,6 +77,7 @@ class AnnotationPaletteView: UIToolbar {
             self?.textButton.isHidden = !isEditing
             self?.markdownButton.isHidden = !isEditing
             self?.editOrViewButton.isSelected = isEditing
+            self?.minimizeOrMaximizeButton.isHidden = isEditing
         }).store(in: &cancellables)
     }
 }
@@ -106,9 +107,13 @@ extension AnnotationPaletteView {
         if editOrViewButton.isSelected {
             editOrViewButton.isSelected = false
             viewModel.enterViewMode()
+
+            viewModel.enterMinimizedMode()
         } else {
             editOrViewButton.isSelected = true
             viewModel.enterEditMode()
+
+            viewModel.enterMaximizedMode()
         }
     }
 
