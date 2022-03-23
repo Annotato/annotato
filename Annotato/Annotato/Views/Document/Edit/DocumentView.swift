@@ -8,6 +8,7 @@ class DocumentView: UIView {
 
     private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
+    private var selectionBoxViews: [SelectionBoxView]
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -17,6 +18,7 @@ class DocumentView: UIView {
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
         self.viewModel = documentViewModel
         self.annotationViews = []
+        self.selectionBoxViews = []
         self.pdfView = DocumentPdfView(
             frame: .zero,
             documentPdfViewModel: documentViewModel.pdfDocument
@@ -72,6 +74,7 @@ class DocumentView: UIView {
     @objc
     private func didChangeVisiblePages(notification: Notification) {
         showAnnotationsOfVisiblePages()
+        showSelectionBoxedOfVisiblePages()
     }
 
     private func addGestureRecognizers() {
@@ -138,12 +141,12 @@ class DocumentView: UIView {
 
     private func renderNewSelectionBox(viewModel: SelectionBoxViewModel) {
         let selectionBoxView = SelectionBoxView(viewModel: viewModel)
-        // TODO: Will need to append to an array because I will need to bring this to front as well
+        selectionBoxViews.append(selectionBoxView)
         pdfView.documentView?.addSubview(selectionBoxView)
     }
 }
 
-// MARK: Display annotations when visible pages of pdf change
+// MARK: Display annotations and selection boxes when visible pages of pdf change
 extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
@@ -155,6 +158,18 @@ extension DocumentView {
         })
         for annotation in annotationsToShow {
             bringAnnotationToFront(annotation: annotation)
+        }
+    }
+
+    private func showSelectionBoxedOfVisiblePages() {
+        print("showing selection boxes of visible pages")
+        let visiblePages = pdfView.visiblePages
+
+        let selectionBoxesToShow = selectionBoxViews.filter({
+            selectionBoxIsInVisiblePages(selectionBox: $0, visiblePages: visiblePages)
+        })
+        for selectionBox in selectionBoxesToShow {
+            bringSelectionBoxToFront(selectionBox: selectionBox)
         }
     }
 
@@ -171,7 +186,21 @@ extension DocumentView {
         return visiblePages.contains(pageContainingAnnotation)
     }
 
+    private func selectionBoxIsInVisiblePages(selectionBox: SelectionBoxView, visiblePages: [PDFPage]) -> Bool {
+        guard let centerInDocument = pdfView.documentView?.convert(selectionBox.center, to: self) else {
+            return false
+        }
+        guard let pageContainingSelectionBox = pdfView.page(for: centerInDocument, nearest: true) else {
+            return false
+        }
+        return visiblePages.contains(pageContainingSelectionBox)
+    }
+
     private func bringAnnotationToFront(annotation: AnnotationView) {
         annotation.superview?.bringSubviewToFront(annotation)
+    }
+
+    private func bringSelectionBoxToFront(selectionBox: SelectionBoxView) {
+        selectionBox.superview?.bringSubviewToFront(selectionBox)
     }
 }
