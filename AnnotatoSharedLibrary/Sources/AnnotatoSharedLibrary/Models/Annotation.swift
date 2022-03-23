@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 public final class Annotation: Codable, ObservableObject {
     public let id: UUID
