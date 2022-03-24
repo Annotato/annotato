@@ -11,17 +11,6 @@ class SelectionBoxViewModel: ObservableObject {
         self.startPoint = startPoint
         self.endPoint = endPoint ?? startPoint
     }
-
-    func hasExceededBounds(bounds: CGRect) -> Bool {
-        let hasExceededTop = minY < bounds.minY
-        let hasExceededBottom = maxY > bounds.maxY
-        let hasExceededLeft = minX < bounds.minX
-        let hasExceededRight = maxX > bounds.maxX
-        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
-            return true
-        }
-        return false
-    }
 }
 
 extension SelectionBoxViewModel {
@@ -51,5 +40,9 @@ extension SelectionBoxViewModel {
 
     var frame: CGRect {
         CGRect(x: minX, y: minY, width: width, height: height)
+    }
+
+    func hasExceededBounds(bounds: CGRect) -> Bool {
+        !bounds.contains(frame)
     }
 }

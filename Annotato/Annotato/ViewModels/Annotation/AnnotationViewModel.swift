@@ -96,17 +96,6 @@ class AnnotationViewModel: ObservableObject {
             self?.resize()
         }).store(in: &cancellables)
     }
-
-    func hasExceededBounds(bounds: CGRect) -> Bool {
-        let hasExceededTop = maximizedFrame.minY < bounds.minY
-        let hasExceededBottom = maximizedFrame.maxY > bounds.maxY
-        let hasExceededLeft = maximizedFrame.minX < bounds.minX
-        let hasExceededRight = maximizedFrame.maxX > bounds.maxX
-        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
-            return true
-        }
-        return false
-    }
 }
 
 extension AnnotationViewModel {
@@ -156,6 +145,10 @@ extension AnnotationViewModel {
     // Note: partsFrame is with respect to scrollFrame
     var partsFrame: CGRect {
         CGRect(x: .zero, y: .zero, width: model.width, height: model.partHeights)
+    }
+
+    func hasExceededBounds(bounds: CGRect) -> Bool {
+        !bounds.contains(frame)
     }
 }
 
