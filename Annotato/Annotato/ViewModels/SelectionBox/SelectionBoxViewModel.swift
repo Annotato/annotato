@@ -25,27 +25,27 @@ class SelectionBoxViewModel: ObservableObject {
 }
 
 extension SelectionBoxViewModel {
-    var minX: CGFloat {
+    private var minX: CGFloat {
         min(startPoint.x, endPoint.x)
     }
 
-    var minY: CGFloat {
+    private var minY: CGFloat {
         min(startPoint.y, endPoint.y)
     }
 
-    var maxX: CGFloat {
+    private var maxX: CGFloat {
         max(startPoint.x, endPoint.x)
     }
 
-    var maxY: CGFloat {
+    private var maxY: CGFloat {
         max(startPoint.y, endPoint.y)
     }
 
-    var width: CGFloat {
+    private var width: CGFloat {
         abs(endPoint.x - startPoint.x)
     }
 
-    var height: CGFloat {
+    private var height: CGFloat {
         abs(endPoint.y - startPoint.y)
     }
 

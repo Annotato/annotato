@@ -16,9 +16,24 @@ class AnnotationViewModel: ObservableObject {
     private var maxHeight = 300.0
 
     // TODO: Set to optional to solve compilation issues first, change later
-    // Also set to be default internal first for proof of concept, changing this to
+    // Also set to be internal first for proof of concept, changing this to
     // be initialized in the constructor later after I do the models.
-    var selectionBox: SelectionBoxViewModel?
+    var selectionBox: SelectionBoxViewModel? {
+        didSet {
+            print("new selection box assigned to this view model")
+            guard let selectionBox = selectionBox else {
+                return
+            }
+            let newLinkLineViewModel = LinkLineViewModel(
+                id: UUID(),
+                selectionBoxViewModel: selectionBox,
+                annotationViewModel: self
+            )
+            linkLine = newLinkLineViewModel
+        }
+    }
+
+    var linkLine: LinkLineViewModel?
 
     var origin: CGPoint {
         model.origin

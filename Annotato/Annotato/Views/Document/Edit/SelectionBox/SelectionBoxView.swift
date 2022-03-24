@@ -1,10 +1,3 @@
-//
-//  SelectionBoxView.swift
-//  Annotato
-//
-//  Created by Darren Heng on 22/3/22.
-//
-
 import UIKit
 import Combine
 

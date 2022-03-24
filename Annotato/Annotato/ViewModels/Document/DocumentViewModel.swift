@@ -9,12 +9,6 @@ class DocumentViewModel: ObservableObject {
     private(set) var annotations: [AnnotationViewModel]
     private(set) var pdfDocument: PdfViewModel
 
-    /*
-     I added this because I think eventually we will need it. But I make it
-     default empty array first because otherwise we can't compile yet
-     */
-//    private(set) var selectionBoxes: [SelectionBoxViewModel] = []
-
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var addedSelectionBox: SelectionBoxViewModel?
 

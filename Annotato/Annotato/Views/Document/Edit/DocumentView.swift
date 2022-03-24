@@ -9,6 +9,7 @@ class DocumentView: UIView {
     private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
     private var selectionBoxViews: [SelectionBoxView]
+    private var linkLineViews: [LinkLineView]
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -19,6 +20,7 @@ class DocumentView: UIView {
         self.viewModel = documentViewModel
         self.annotationViews = []
         self.selectionBoxViews = []
+        self.linkLineViews = []
         self.pdfView = DocumentPdfView(
             frame: .zero,
             documentPdfViewModel: documentViewModel.pdfDocument
@@ -75,6 +77,7 @@ class DocumentView: UIView {
     private func didChangeVisiblePages(notification: Notification) {
         showAnnotationsOfVisiblePages()
         showSelectionBoxedOfVisiblePages()
+        showLinkLinesOfVisiblePages()
     }
 
     private func addGestureRecognizers() {
@@ -103,11 +106,21 @@ class DocumentView: UIView {
         }
     }
 
-    private func addAnnotationWithAssociatedSelectionBoxIfWithinBounds() {
+    @objc
+    private func didTap(_ sender: UITapGestureRecognizer) {
+        let touchPoint = sender.location(in: self)
+        addAnnotationIfWithinPdfBounds(at: touchPoint)
+    }
+}
+
+// MARK: Adding new selection box/updating selection box
+extension DocumentView {
+    private func addSelectionBoxIfWithinBounds(at pointInDocument: CGPoint) {
         guard let pdfInnerDocumentView = pdfView.documentView else {
             return
         }
-        viewModel.addAnnotationWithAssociatedSelectionBoxIfWithinBounds(bounds: pdfInnerDocumentView.bounds)
+        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
+        viewModel.addSelectionBoxIfWithinBounds(startPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
     }
 
     private func updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: CGPoint) {
@@ -118,18 +131,26 @@ class DocumentView: UIView {
         viewModel.updateCurrentSelectionBoxEndPoint(newEndPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
     }
 
-    private func addSelectionBoxIfWithinBounds(at pointInDocument: CGPoint) {
-        guard let pdfInnerDocumentView = pdfView.documentView else {
+    private func renderNewSelectionBox(viewModel: SelectionBoxViewModel) {
+        let selectionBoxView = SelectionBoxView(viewModel: viewModel)
+        selectionBoxViews.append(selectionBoxView)
+        pdfView.documentView?.addSubview(selectionBoxView)
+    }
+}
+
+// MARK: Adding new annotations
+extension DocumentView {
+    private func renderNewAnnotation(viewModel: AnnotationViewModel) {
+        let annotationView = AnnotationView(viewModel: viewModel)
+        guard let linkLineViewModel = viewModel.linkLine else {
             return
         }
-        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
-        viewModel.addSelectionBoxIfWithinBounds(startPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
-    }
+        let linkLineView = LinkLineView(viewModel: linkLineViewModel)
+        annotationViews.append(annotationView)
+        linkLineViews.append(linkLineView)
 
-    @objc
-    private func didTap(_ sender: UITapGestureRecognizer) {
-        let touchPoint = sender.location(in: self)
-        addAnnotationIfWithinPdfBounds(at: touchPoint)
+        pdfView.documentView?.addSubview(annotationView)
+        pdfView.documentView?.addSubview(linkLineView)
     }
 
     private func addAnnotationIfWithinPdfBounds(at pointInDocument: CGPoint) {
@@ -140,20 +161,15 @@ class DocumentView: UIView {
         viewModel.addAnnotationIfWithinBounds(center: pointInPdf, bounds: pdfInnerDocumentView.bounds)
     }
 
-    private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annotationView = AnnotationView(viewModel: viewModel)
-        annotationViews.append(annotationView)
-        pdfView.documentView?.addSubview(annotationView)
-    }
-
-    private func renderNewSelectionBox(viewModel: SelectionBoxViewModel) {
-        let selectionBoxView = SelectionBoxView(viewModel: viewModel)
-        selectionBoxViews.append(selectionBoxView)
-        pdfView.documentView?.addSubview(selectionBoxView)
+    private func addAnnotationWithAssociatedSelectionBoxIfWithinBounds() {
+        guard let pdfInnerDocumentView = pdfView.documentView else {
+            return
+        }
+        viewModel.addAnnotationWithAssociatedSelectionBoxIfWithinBounds(bounds: pdfInnerDocumentView.bounds)
     }
 }
 
-// MARK: Display annotations and selection boxes when visible pages of pdf change
+// MARK: Display annotations, selection boxes and link lines when visible pages of pdf change
 extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
@@ -176,6 +192,16 @@ extension DocumentView {
         })
         for selectionBox in selectionBoxesToShow {
             bringSelectionBoxToFront(selectionBox: selectionBox)
+        }
+    }
+
+    private func showLinkLinesOfVisiblePages() {
+        let visiblePages = pdfView.visiblePages
+        let linkLinesToShow = linkLineViews.filter({
+            linkLineIsInVisiblePages(linkLine: $0, visiblePages: visiblePages)
+        })
+        for linkLine in linkLinesToShow {
+            bringLinkLineToFront(linkLine: linkLine)
         }
     }
 
@@ -202,11 +228,25 @@ extension DocumentView {
         return visiblePages.contains(pageContainingSelectionBox)
     }
 
+    private func linkLineIsInVisiblePages(linkLine: LinkLineView, visiblePages: [PDFPage]) -> Bool {
+        guard let centerInDocument = pdfView.documentView?.convert(linkLine.center, to: self) else {
+            return false
+        }
+        guard let pageContainingLinkLine = pdfView.page(for: centerInDocument, nearest: true) else {
+            return false
+        }
+        return visiblePages.contains(pageContainingLinkLine)
+    }
+
     private func bringAnnotationToFront(annotation: AnnotationView) {
         annotation.superview?.bringSubviewToFront(annotation)
     }
 
     private func bringSelectionBoxToFront(selectionBox: SelectionBoxView) {
         selectionBox.superview?.bringSubviewToFront(selectionBox)
+    }
+
+    private func bringLinkLineToFront(linkLine: LinkLineView) {
+        linkLine.superview?.bringSubviewToFront(linkLine)
     }
 }
