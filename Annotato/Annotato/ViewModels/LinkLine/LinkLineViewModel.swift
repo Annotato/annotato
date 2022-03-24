@@ -16,6 +16,7 @@ class LinkLineViewModel: ObservableObject {
      I.e. we only change to unowned when all three have the same lifetime
      Otherwise, unowned will give runtime error here.
      */
+    // TODO: Check on whether can change to unowned
     weak var annotationViewModel: AnnotationViewModel?
     weak var selectionBoxViewModel: SelectionBoxViewModel?
 

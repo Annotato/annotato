@@ -14,9 +14,7 @@ class LinkLineView: UIView {
         self.viewModel = viewModel
         super.init(frame: viewModel.frame)
         setUpSubscribers()
-        self.layer.borderWidth = 1.0
-        self.layer.borderColor = UIColor.systemRed.cgColor
-        self.backgroundColor = UIColor(white: 0.0, alpha: 0.0)
+        isOpaque = false
     }
 
     private func drawLineFromStartPointToEndPoint() {
@@ -24,14 +22,15 @@ class LinkLineView: UIView {
             return
         }
         context.setStrokeColor(UIColor.systemRed.cgColor)
-        context.setLineWidth(3)
+        context.setLineWidth(1)
         context.beginPath()
-
-        // TODO: The coordinates of the move function and add line function is defined differently.
-        // The one from the view model is in terms of the documentview. This function is in terms of
-        // some other view (probably self). I will need a view reference, or by referencing my parent directly.
-        context.move(to: viewModel.selectionBoxPoint)
-        context.addLine(to: viewModel.annotationPoint)
+        guard let superview = superview else {
+            return
+        }
+        let selectionBoxPoint = superview.convert(viewModel.selectionBoxPoint, to: self)
+        let annotationPoint = superview.convert(viewModel.annotationPoint, to: self)
+        context.move(to: selectionBoxPoint)
+        context.addLine(to: annotationPoint)
         context.strokePath()
     }
 
@@ -49,7 +48,6 @@ class LinkLineView: UIView {
                 return
             }
             self?.frame = newLinkLineFrame
-            print("new frame: \(newLinkLineFrame)\n----------------\n\n")
             self?.setNeedsDisplay()
         }).store(in: &cancellables)
     }

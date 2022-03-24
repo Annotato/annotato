@@ -20,7 +20,6 @@ class AnnotationViewModel: ObservableObject {
     // be initialized in the constructor later after I do the models.
     var selectionBox: SelectionBoxViewModel? {
         didSet {
-            print("new selection box assigned to this view model")
             guard let selectionBox = selectionBox else {
                 return
             }

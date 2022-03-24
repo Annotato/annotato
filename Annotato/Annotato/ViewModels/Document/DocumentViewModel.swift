@@ -92,12 +92,9 @@ extension DocumentViewModel {
 
     func addAnnotationWithAssociatedSelectionBoxIfWithinBounds(bounds: CGRect) {
         guard let addedSelectionBox = addedSelectionBox else {
-            print("There is no selection box to associate with")
             return
         }
         addAnnotationIfWithinBounds(center: addedSelectionBox.startPoint, bounds: bounds)
-
-        // Remove the selection box reference
         self.addedSelectionBox = nil
     }
 }
