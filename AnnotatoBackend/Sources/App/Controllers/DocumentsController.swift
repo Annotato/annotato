@@ -17,6 +17,16 @@ struct DocumentsController {
         return try await DocumentsDataAccess.list(db: req.db, userId: userId)
     }
 
+    static func listShared(req: Request) async throws -> [Document] {
+        let userId: String? = req.query[QueryParams.userId.rawValue]
+
+        guard let userId = userId else {
+            throw Abort(.badRequest)
+        }
+
+        return try await DocumentsDataAccess.listShared(db: req.db, userId: userId)
+    }
+
     static func create(req: Request) async throws -> Document {
         let document = try req.content.decode(Document.self)
 
