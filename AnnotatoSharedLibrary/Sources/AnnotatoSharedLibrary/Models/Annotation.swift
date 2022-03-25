@@ -92,6 +92,12 @@ public final class Annotation: Codable, ObservableObject {
         addedMarkdownPart = newPart
     }
 
+    public func addHandwritingPart() {
+        let newPart = makeNewHandwritingPart()
+        parts.append(newPart)
+        addedHandwritingPart = newPart
+    }
+
     public func appendTextPartIfNecessary() {
         guard let lastPart = parts.last else {
             return
@@ -106,9 +112,7 @@ public final class Annotation: Codable, ObservableObject {
             }
         }
 
-        let newPart = makeNewPlainTextPart()
-        parts.append(newPart)
-        addedTextPart = newPart
+        addPlainTextPart()
     }
 
     public func appendMarkdownPartIfNecessary() {
@@ -125,9 +129,7 @@ public final class Annotation: Codable, ObservableObject {
             }
         }
 
-        let newPart = makeNewMarkdownPart()
-        parts.append(newPart)
-        addedMarkdownPart = newPart
+        addMarkdownPart()
     }
 
     public func appendHandwritingPartIfNecessary() {
@@ -141,9 +143,7 @@ public final class Annotation: Codable, ObservableObject {
             return
         }
 
-        let newPart = makeNewHandwritingPart()
-        parts.append(newPart)
-        addedHandwritingPart = newPart
+        addHandwritingPart()
     }
 
     public func setOrigin(to newOrigin: CGPoint) {
