@@ -116,16 +116,15 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 
     func updatePalette(basedOn selectedPart: AnnotationPartViewModel) {
-        if selectedPart is AnnotationTextViewModel {
+        switch selectedPart {
+        case is AnnotationTextViewModel:
             textIsSelected = true
-        }
-
-        if selectedPart is AnnotationMarkdownViewModel {
+        case is AnnotationMarkdownViewModel:
             markdownIsSelected = true
-        }
-
-        if selectedPart is AnnotationHandwritingViewModel {
+        case is AnnotationHandwritingViewModel:
             handwritingIsSelected = true
+        default:
+            return
         }
     }
 }

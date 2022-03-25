@@ -85,9 +85,7 @@ class AnnotationPaletteView: UIToolbar {
         }).store(in: &cancellables)
 
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
-            self?.textButton.isHidden = !isEditing
-            self?.markdownButton.isHidden = !isEditing
-            self?.handwritingButton.isHidden = !isEditing
+            self?.annotationTypeButtons.forEach { $0.isHidden = !isEditing }
             self?.editOrViewButton.isSelected = isEditing
             self?.minimizeOrMaximizeButton.isHidden = isEditing
         }).store(in: &cancellables)
@@ -109,16 +107,15 @@ extension AnnotationPaletteView {
             annotationTypeButton.isSelected = false
         }
 
-        if toggleableButton == textButton {
+        switch toggleableButton {
+        case textButton:
             viewModel.didSelectTextButton()
-        }
-
-        if toggleableButton == markdownButton {
+        case markdownButton:
             viewModel.didSelectMarkdownButton()
-        }
-
-        if toggleableButton == handwritingButton {
+        case handwritingButton:
             viewModel.didSelectHandwritingButton()
+        default:
+            return
         }
     }
 
