@@ -22,6 +22,10 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
     }
 
     private func setUpSubscribers() {
+        viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+            self?.isUserInteractionEnabled = isEditing
+        }).store(in: &cancellables)
+
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 self?.removeFromSuperview()
@@ -29,6 +33,7 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         }).store(in: &cancellables)
 
         viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
+            self?.isUserInteractionEnabled = isSelected
             if isSelected {
                 self?.showSelected()
             }
