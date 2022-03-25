@@ -11,6 +11,7 @@ public final class Annotation: Codable, ObservableObject {
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
     @Published public private(set) var addedMarkdownPart: AnnotationText?
+    @Published public private(set) var addedHandwritingPart: AnnotationHandwriting?
     @Published public private(set) var removedPart: AnnotationPart?
 
     public required init(
@@ -129,6 +130,22 @@ public final class Annotation: Codable, ObservableObject {
         addedMarkdownPart = newPart
     }
 
+    public func appendHandwritingPartIfNecessary() {
+        guard let lastPart = parts.last else {
+            return
+        }
+
+        removePartIfPossible(part: lastPart)
+
+        guard !(lastPart is AnnotationHandwriting) else {
+            return
+        }
+
+        let newPart = makeNewHandwritingPart()
+        parts.append(newPart)
+        addedHandwritingPart = newPart
+    }
+
     public func setOrigin(to newOrigin: CGPoint) {
         self.origin = newOrigin
     }
@@ -150,6 +167,16 @@ public final class Annotation: Codable, ObservableObject {
             height: 30.0,
             order: parts.count,
             annotationId: id,
+            id: UUID()
+        )
+    }
+
+    private func makeNewHandwritingPart() -> AnnotationHandwriting {
+        AnnotationHandwriting(
+            order: parts.count,
+            height: 150.0,
+            annotationId: id,
+            handwriting: Data(),
             id: UUID()
         )
     }

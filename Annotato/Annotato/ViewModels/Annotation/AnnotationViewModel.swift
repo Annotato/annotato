@@ -76,6 +76,13 @@ class AnnotationViewModel: ObservableObject {
             self?.addMarkdownPart(part: addedMarkdownPart)
         }).store(in: &cancellables)
 
+        model.$addedHandwritingPart.sink(receiveValue: { [weak self] addedHandwritingPart in
+            guard let addedHandwritingPart = addedHandwritingPart else {
+                return
+            }
+            self?.addHandwritingPart(part: addedHandwritingPart)
+        }).store(in: &cancellables)
+
         model.$origin.sink(receiveValue: { [weak self] _ in
             self?.positionDidChange = true
         }).store(in: &cancellables)
@@ -201,6 +208,10 @@ extension AnnotationViewModel {
         model.appendMarkdownPartIfNecessary()
     }
 
+    func appendHandwritingPartIfNecessary() {
+        model.appendHandwritingPartIfNecessary()
+    }
+
     private func addTextPart(part: AnnotationText) {
         let partViewModel = AnnotationTextViewModel(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
@@ -208,6 +219,11 @@ extension AnnotationViewModel {
 
     private func addMarkdownPart(part: AnnotationText) {
         let partViewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
+        addNewPart(newPart: partViewModel)
+    }
+
+    private func addHandwritingPart(part: AnnotationHandwriting) {
+        let partViewModel = AnnotationHandwritingViewModel(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 

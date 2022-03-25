@@ -5,6 +5,7 @@ class AnnotationPaletteView: UIToolbar {
     private(set) var viewModel: AnnotationPaletteViewModel
     private(set) var textButton: ToggleableButton
     private(set) var markdownButton: ToggleableButton
+    private(set) var handwritingButton: ToggleableButton
     private(set) var editOrViewButton: ImageToggleableButton
     private(set) var deleteButton: UIButton
     private(set) var minimizeOrMaximizeButton: ImageToggleableButton
@@ -22,6 +23,8 @@ class AnnotationPaletteView: UIToolbar {
             systemName: SystemImageName.textformat.rawValue, color: .darkGray)
         self.markdownButton = AnnotationPaletteView.makeToggleableSystemButton(
             systemName: SystemImageName.mSquare.rawValue, color: .darkGray)
+        self.handwritingButton = AnnotationPaletteView.makeToggleableSystemButton(
+            systemName: SystemImageName.pencil.rawValue, color: .darkGray)
         self.editOrViewButton = ImageToggleableButton(
             selectedImage: UIImage(systemName: SystemImageName.eye.rawValue),
             unselectedImage: UIImage(systemName: SystemImageName.pencil.rawValue))
@@ -36,16 +39,18 @@ class AnnotationPaletteView: UIToolbar {
     }
 
     private func setUpButtons() {
-        textButton.addTarget(self, action: #selector(didTap(toggleableButton: )), for: .touchUpInside)
-        markdownButton.addTarget(self, action: #selector(didTap(toggleableButton: )), for: .touchUpInside)
-        editOrViewButton.addTarget(self, action: #selector(didTapEditOrViewButton(_: )), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(didTapDeleteButton(_: )), for: .touchUpInside)
+        textButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        markdownButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        handwritingButton.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        editOrViewButton.addTarget(self, action: #selector(didTapEditOrViewButton), for: .touchUpInside)
+        deleteButton.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
         minimizeOrMaximizeButton.addTarget(
-            self, action: #selector(didTapMinimizeOrMaximizeButton(_:)), for: .touchUpInside)
+            self, action: #selector(didTapMinimizeOrMaximizeButton), for: .touchUpInside)
         minimizeOrMaximizeButton.imageView?.contentMode = .scaleAspectFit
 
         let textBarButton = UIBarButtonItem(customView: textButton)
         let markdownBarButton = UIBarButtonItem(customView: markdownButton)
+        let handwritingBarButton = UIBarButtonItem(customView: handwritingButton)
         let editOrViewBarButton = UIBarButtonItem(customView: editOrViewButton)
         let deleteBarButton = UIBarButtonItem(customView: deleteButton)
         let minimizeOrMaximizeBarButton = UIBarButtonItem(customView: minimizeOrMaximizeButton)
@@ -55,6 +60,8 @@ class AnnotationPaletteView: UIToolbar {
             textBarButton,
             spaceBetween,
             markdownBarButton,
+            spaceBetween,
+            handwritingBarButton,
             flexibleSpace,
             editOrViewBarButton,
             spaceBetween,
@@ -73,9 +80,14 @@ class AnnotationPaletteView: UIToolbar {
             self?.markdownButton.isSelected = markdownIsSelected
         }).store(in: &cancellables)
 
+        viewModel.$handwritingIsSelected.sink(receiveValue: { [weak self] handwritingIsSelected in
+            self?.handwritingButton.isSelected = handwritingIsSelected
+        }).store(in: &cancellables)
+
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
             self?.textButton.isHidden = !isEditing
             self?.markdownButton.isHidden = !isEditing
+            self?.handwritingButton.isHidden = !isEditing
             self?.editOrViewButton.isSelected = isEditing
             self?.minimizeOrMaximizeButton.isHidden = isEditing
         }).store(in: &cancellables)
@@ -88,7 +100,7 @@ class AnnotationPaletteView: UIToolbar {
 
 extension AnnotationPaletteView {
     var annotationTypeButtons: [ToggleableButton] {
-        [textButton, markdownButton]
+        [textButton, markdownButton, handwritingButton]
     }
 
     @objc
@@ -103,6 +115,10 @@ extension AnnotationPaletteView {
 
         if toggleableButton == markdownButton {
             viewModel.didSelectMarkdownButton()
+        }
+
+        if toggleableButton == handwritingButton {
+            viewModel.didSelectHandwritingButton()
         }
     }
 

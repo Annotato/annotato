@@ -27,6 +27,7 @@ class AnnotationPaletteViewModel: ObservableObject {
         didSet {
             if textIsSelected {
                 markdownIsSelected = false
+                handwritingIsSelected = false
             }
         }
     }
@@ -34,6 +35,15 @@ class AnnotationPaletteViewModel: ObservableObject {
         didSet {
             if markdownIsSelected {
                 textIsSelected = false
+                handwritingIsSelected = false
+            }
+        }
+    }
+    @Published private(set) var handwritingIsSelected = false {
+        didSet {
+            if handwritingIsSelected {
+                textIsSelected = false
+                markdownIsSelected = false
             }
         }
     }
@@ -64,6 +74,14 @@ class AnnotationPaletteViewModel: ObservableObject {
         }
         markdownIsSelected = true
         parentViewModel?.appendMarkdownPartIfNecessary()
+    }
+
+    func didSelectHandwritingButton() {
+        guard parentViewModel?.isEditing ?? false else {
+            return
+        }
+        handwritingIsSelected = true
+        parentViewModel?.appendHandwritingPartIfNecessary()
     }
 
     func enterEditMode() {
@@ -104,6 +122,10 @@ class AnnotationPaletteViewModel: ObservableObject {
 
         if selectedPart is AnnotationMarkdownViewModel {
             markdownIsSelected = true
+        }
+
+        if selectedPart is AnnotationHandwritingViewModel {
+            handwritingIsSelected = true
         }
     }
 }
