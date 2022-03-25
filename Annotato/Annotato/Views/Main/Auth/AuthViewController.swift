@@ -41,6 +41,9 @@ class AuthViewController: UIViewController, Navigable {
             string: "Display Name",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
+
+        // TODO: Remove
+        auth.logIn(email: "hy@gmail.com", password: "123123")
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {

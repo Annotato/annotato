@@ -199,7 +199,7 @@ public final class Annotation: Codable, ObservableObject {
 
 extension Annotation {
     public var partHeights: Double {
-        parts.reduce(0, {acc, part in
+        parts.reduce(0, { acc, part in
             acc + part.height
         })
     }

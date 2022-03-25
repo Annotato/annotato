@@ -41,17 +41,23 @@ class AnnotationViewModel: ObservableObject {
         self.palette.parentViewModel = self
 
         for part in model.parts {
-            let viewModel: AnnotationPartViewModel
-            if let part = part as? AnnotationText {
-                switch part.type {
+            let partViewModel: AnnotationPartViewModel
+            switch part {
+            case let textPart as AnnotationText:
+                switch textPart.type {
                 case .plainText:
-                    viewModel = AnnotationTextViewModel(model: part, width: model.width)
+                    partViewModel = AnnotationTextViewModel(model: textPart, width: model.width)
                 case .markdown:
-                    viewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
+                    partViewModel = AnnotationMarkdownViewModel(model: textPart, width: model.width)
                 }
-                parts.append(viewModel)
-                viewModel.parentViewModel = self
+            case let handwritingPart as AnnotationHandwriting:
+                partViewModel = AnnotationHandwritingViewModel(model: handwritingPart, width: model.width)
+            default:
+                continue
             }
+
+            partViewModel.parentViewModel = self
+            parts.append(partViewModel)
         }
 
         setUpSubscribers()
