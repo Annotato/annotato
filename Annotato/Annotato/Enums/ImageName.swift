@@ -8,6 +8,7 @@ enum SystemImageName: String {
     case eye
     case mSquare = "m.square"
     case pencil
+    case share = "arrowshape.turn.up.forward"
     case textformat
     case trash
 }

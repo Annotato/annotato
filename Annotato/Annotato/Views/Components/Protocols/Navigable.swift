@@ -46,6 +46,16 @@ extension Navigable {
         present(documentPicker, animated: true, completion: nil)
     }
 
+    func goToShare(documentId: UUID) {
+        guard let viewController = ShareViewController.instantiatePartialScreenFromStoryboard(
+            .document
+        ) else {
+            return
+        }
+        viewController.documentId = documentId
+        present(viewController, animated: true, completion: nil)
+    }
+
     func goBack() {
         self.dismiss(animated: true, completion: nil)
     }
