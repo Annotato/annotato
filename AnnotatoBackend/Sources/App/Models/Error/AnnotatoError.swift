@@ -3,6 +3,7 @@ import Foundation
 struct AnnotatoError: Error {
     enum ErrorType: String {
         case modelNotFound
+        case modelAlreadyExists
     }
 
     enum RequestType: String {
@@ -21,5 +22,9 @@ struct AnnotatoError: Error {
             errorType: .modelNotFound, requestType: requestType,
             description: "Could not \(requestType) \(modelType) - \(modelType) with ID \(modelId) does not exist"
         )
+    }
+
+    static func modelAlreadyExists(modelType: String, modelId: UUID, requestType: RequestType = .create) -> AnnotatoError {
+        AnnotatoError(errorType: .modelAlreadyExists, requestType: requestType, description: "Could not \(requestType) \(modelType) - \(modelType) with ID \(modelId) already exists")
     }
 }
