@@ -87,4 +87,8 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
         saveDocument()
         goBack()
     }
+
+    func didTapShareButton() {
+        print("tapped share button")
+    }
 }
