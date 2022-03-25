@@ -6,7 +6,10 @@ struct DocumentSharesDataAccess {
         let existingDocumentShare = await findByDocumentIdAndRecipientId(db: db, documentShare: documentShare)
 
         if let existingDocumentShare = existingDocumentShare {
-            throw AnnotatoError.modelAlreadyExists(modelType: String(describing: DocumentShareEntity.self), modelId: existingDocumentShare.documentId)
+            throw AnnotatoError.modelAlreadyExists(
+                modelType: String(describing: DocumentShareEntity.self),
+                modelId: existingDocumentShare.documentId
+            )
         }
 
         let documentShareEntity = DocumentShareEntity.fromModel(documentShare)

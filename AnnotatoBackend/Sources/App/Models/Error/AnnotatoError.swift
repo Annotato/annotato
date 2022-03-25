@@ -24,7 +24,14 @@ struct AnnotatoError: Error {
         )
     }
 
-    static func modelAlreadyExists(modelType: String, modelId: UUID, requestType: RequestType = .create) -> AnnotatoError {
-        AnnotatoError(errorType: .modelAlreadyExists, requestType: requestType, description: "Could not \(requestType) \(modelType) - \(modelType) with ID \(modelId) already exists")
+    static func modelAlreadyExists(
+        modelType: String,
+        modelId: UUID,
+        requestType: RequestType = .create
+    ) -> AnnotatoError {
+        AnnotatoError(
+            errorType: .modelAlreadyExists, requestType: requestType,
+            description: "Could not \(requestType) \(modelType) - \(modelType) with ID \(modelId) already exists"
+        )
     }
 }
