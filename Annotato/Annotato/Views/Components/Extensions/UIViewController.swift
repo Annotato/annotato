@@ -19,10 +19,10 @@ extension UIViewController {
         return viewController
     }
 
-    static func instantiatePartialScreenFromStoryboard(storyboard: Storyboard) -> Self? {
+    static func instantiatePartialScreenFromStoryboard(_ storyboard: Storyboard) -> Self? {
         let viewController = instantiateFromStoryboard(storyboard)
 
-        viewController?.isModalInPresentation = true
+        viewController?.modalPresentationStyle = .formSheet
 
         return viewController
     }

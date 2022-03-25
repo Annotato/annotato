@@ -38,8 +38,60 @@
             </objects>
             <point key="canvasLocation" x="703.22580645161293" y="33.627537511032656"/>
         </scene>
+        <!--Share View Controller-->
+        <scene sceneID="kx6-uh-vyb">
+            <objects>
+                <viewController storyboardIdentifier="ShareViewController" id="p5i-WV-BS9" customClass="ShareViewController" customModule="Annotato" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="THf-6T-AHe">
+                        <rect key="frame" x="0.0" y="0.0" width="744" height="1133"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dc7-46-spN">
+                                <rect key="frame" x="587" y="614" width="21" height="23"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="" image="doc.on.clipboard" catalog="system"/>
+                                <connections>
+                                    <action selector="didTapCopyButton:" destination="p5i-WV-BS9" eventType="touchUpInside" id="G3Z-Nw-4ci"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Share the code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JNS-vx-TCA">
+                                <rect key="frame" x="222.5" y="464" width="299.5" height="95.5"/>
+                                <fontDescription key="fontDescription" name="SavoyeLetPlain" family="Savoye LET" pointSize="80"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hVs-JI-hcC">
+                                <rect key="frame" x="162" y="608.5" width="420" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="420" id="ChS-ve-rio"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Rockwell-Regular" family="Rockwell" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="gc9-Jv-Ssi"/>
+                        <color key="backgroundColor" red="0.94509803921568625" green="0.9137254901960784" blue="0.87058823529411766" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="JNS-vx-TCA" firstAttribute="centerY" secondItem="gc9-Jv-Ssi" secondAttribute="centerY" multiplier="0.9" id="155-Mh-Gus"/>
+                            <constraint firstItem="JNS-vx-TCA" firstAttribute="centerX" secondItem="gc9-Jv-Ssi" secondAttribute="centerX" id="6KM-on-gaE"/>
+                            <constraint firstItem="dc7-46-spN" firstAttribute="leading" secondItem="hVs-JI-hcC" secondAttribute="trailing" constant="5" id="EkH-yP-Urg"/>
+                            <constraint firstItem="hVs-JI-hcC" firstAttribute="centerX" secondItem="gc9-Jv-Ssi" secondAttribute="centerX" id="Ffg-Ex-8WD"/>
+                            <constraint firstItem="dc7-46-spN" firstAttribute="centerY" secondItem="gc9-Jv-Ssi" secondAttribute="centerY" multiplier="1.1" id="UH4-Oo-muu"/>
+                            <constraint firstItem="hVs-JI-hcC" firstAttribute="centerY" secondItem="gc9-Jv-Ssi" secondAttribute="centerY" multiplier="1.1" id="c42-WY-Goy"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="copyButton" destination="dc7-46-spN" id="4t8-VL-UaE"/>
+                        <outlet property="documentCodeField" destination="hVs-JI-hcC" id="GiG-iF-JIU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VZv-Ns-mH5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1346" y="34"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="doc.on.clipboard" catalog="system" width="116" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

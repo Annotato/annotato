@@ -89,6 +89,9 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
     }
 
     func didTapShareButton() {
-        print("tapped share button")
+        guard let documentId = documentId else {
+            return
+        }
+        goToShare(documentId: documentId)
     }
 }
