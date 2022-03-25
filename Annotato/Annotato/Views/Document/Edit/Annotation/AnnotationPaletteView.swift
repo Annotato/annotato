@@ -24,7 +24,7 @@ class AnnotationPaletteView: UIToolbar {
         self.markdownButton = AnnotationPaletteView.makeToggleableSystemButton(
             systemName: SystemImageName.mSquare.rawValue, color: .darkGray)
         self.handwritingButton = AnnotationPaletteView.makeToggleableSystemButton(
-            systemName: SystemImageName.pencil.rawValue, color: .darkGray)
+            systemName: SystemImageName.scribble.rawValue, color: .darkGray)
         self.editOrViewButton = ImageToggleableButton(
             selectedImage: UIImage(systemName: SystemImageName.eye.rawValue),
             unselectedImage: UIImage(systemName: SystemImageName.pencil.rawValue))
