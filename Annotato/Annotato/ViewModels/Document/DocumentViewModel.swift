@@ -83,7 +83,7 @@ extension DocumentViewModel {
         guard AnnotatoAuth().currentUser != nil else {
             return
         }
-        let newSelectionBox = SelectionBox(id: UUID(), startPoint: startPoint, endPoint: startPoint)
+        let newSelectionBox = SelectionBox(startPoint: startPoint, endPoint: startPoint, id: UUID())
         let selectionBoxViewModel = SelectionBoxViewModel(model: newSelectionBox)
         if selectionBoxViewModel.hasExceededBounds(bounds: bounds) {
             return

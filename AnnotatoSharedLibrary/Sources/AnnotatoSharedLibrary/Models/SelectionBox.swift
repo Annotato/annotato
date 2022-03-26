@@ -7,7 +7,7 @@ public final class SelectionBox: Codable, ObservableObject {
     public private(set) var startPoint: CGPoint
     @Published public private(set) var endPoint: CGPoint
 
-    public required init(id: UUID? = nil, startPoint: CGPoint, endPoint: CGPoint) {
+    public required init(startPoint: CGPoint, endPoint: CGPoint, id: UUID? = nil) {
         self.id = id ?? UUID()
         self.startPoint = startPoint
         self.endPoint = endPoint
