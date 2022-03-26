@@ -16,6 +16,16 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
+    static func listAll(db: Database, userId: String) async throws -> [Document] {
+        let ownDocuments = try await list(db: db, userId: userId)
+        let sharedDocuments = try await listShared(db: db, userId: userId)
+        let allDocuments = ownDocuments + sharedDocuments
+        let sortedDocuments = allDocuments.sorted(by: {(firstDocument: Document, secondDocument: Document) -> Bool in
+            firstDocument.name < secondDocument.name
+        })
+        return sortedDocuments
+    }
+
     static func listShared(db: Database, userId: String) async throws -> [Document] {
         let documentEntities = try await DocumentEntity.query(on: db)
             .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)

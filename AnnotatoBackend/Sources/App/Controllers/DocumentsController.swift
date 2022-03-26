@@ -14,7 +14,7 @@ struct DocumentsController {
             throw Abort(.badRequest)
         }
 
-        return try await DocumentsDataAccess.list(db: req.db, userId: userId)
+        return try await DocumentsDataAccess.listAll(db: req.db, userId: userId)
     }
 
     static func listShared(req: Request) async throws -> [Document] {

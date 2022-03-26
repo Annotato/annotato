@@ -69,4 +69,9 @@ extension Navigable {
     func goBack() {
         self.dismiss(animated: true, completion: nil)
     }
+
+    func goBackWithRefresh() {
+        goBack()
+        presentingViewController?.viewWillAppear(true)
+    }
 }

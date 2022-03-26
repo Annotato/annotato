@@ -23,7 +23,10 @@ class DocumentCodeImportViewController: UIViewController, AlertPresentable, Navi
         Task {
             let documentShare = await DocumentShareController.createDocumentShare(documentId: documentId)
             if documentShare != nil {
-                presentSuccessAlert(successMessage: "Successfully imported document!", completion: goBack)
+                presentSuccessAlert(
+                    successMessage: "Successfully imported document!",
+                    completion: goBackWithRefresh
+                )
             } else {
                 presentErrorAlert(
                     errorMessage: "The document was not imported. It may already exist in your collection")

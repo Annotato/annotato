@@ -7,8 +7,8 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     private var documents: [DocumentListViewModel]?
     let toolbarHeight = 50.0
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
         initializeDocumentsCollectionView()
     }
