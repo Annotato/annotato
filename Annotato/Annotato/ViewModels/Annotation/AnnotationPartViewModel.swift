@@ -57,6 +57,10 @@ extension AnnotationPartViewModel {
     }
 
     func didSelect() {
+        guard !isSelected else {
+            return
+        }
+
         parentViewModel?.setSelectedPart(to: self)
     }
 }

@@ -19,11 +19,12 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         self.delegate = customDelegate
         self.drawing = viewModel.handwritingDrawing
         setUpSubscribers()
+        addGestureRecognizers()
     }
 
     private func setUpSubscribers() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
-            self?.isUserInteractionEnabled = isEditing
+            self?.drawingGestureRecognizer.isEnabled = isEditing
         }).store(in: &cancellables)
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
@@ -33,11 +34,24 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         }).store(in: &cancellables)
 
         viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
-            self?.isUserInteractionEnabled = isSelected
+            self?.drawingGestureRecognizer.isEnabled = isSelected
             if isSelected {
                 self?.showSelected()
             }
         }).store(in: &cancellables)
+    }
+}
+
+// MARK: Gestures
+extension AnnotationHandwritingView {
+    private func addGestureRecognizers() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    @objc
+    private func didTap() {
+        viewModel.didSelect()
     }
 }
 
