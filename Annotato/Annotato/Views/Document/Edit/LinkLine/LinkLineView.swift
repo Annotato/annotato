@@ -50,6 +50,12 @@ class LinkLineView: UIView {
             self?.frame = newLinkLineFrame
             self?.setNeedsDisplay()
         }).store(in: &cancellables)
+
+        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+            if isRemoved {
+                self?.removeFromSuperview()
+            }
+        }).store(in: &cancellables)
     }
 
     override func draw(_ rect: CGRect) {

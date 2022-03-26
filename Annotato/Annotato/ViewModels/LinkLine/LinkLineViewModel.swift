@@ -8,15 +8,8 @@ class LinkLineViewModel: ObservableObject {
 
     @Published var selectionBoxPoint: CGPoint
     @Published var annotationPoint: CGPoint
+    @Published var isRemoved = false
 
-    /*
-     Can potentially change to unowned when we have implemented that
-     the deletion of an annotation
-     will ensure selection box and this link line will be deallocated too
-     I.e. we only change to unowned when all three have the same lifetime
-     Otherwise, unowned will give runtime error here.
-     */
-    // TODO: Check on whether can change to unowned
     unowned var annotationViewModel: AnnotationViewModel? {
         didSet {
             guard let annotationViewModel = annotationViewModel else {
@@ -57,6 +50,10 @@ class LinkLineViewModel: ObservableObject {
             }
             self?.selectionBoxPoint = newEndPoint
         }).store(in: &cancellables)
+    }
+
+    func didDelete() {
+        self.isRemoved = true
     }
 }
 

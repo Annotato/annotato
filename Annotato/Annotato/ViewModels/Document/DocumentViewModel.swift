@@ -44,6 +44,13 @@ extension DocumentViewModel {
         model.addAnnotation(annotation: newAnnotation)
         let annotationViewModel = AnnotationViewModel(model: newAnnotation)
         annotationViewModel.center = center
+        /*
+         Need to reassign the selection box to the added one, because the init for annotation view model will create a
+         brand new instance which is not what we want. Yet we cannot change the constructor of the annotation model
+         to take in a selection box view model instead, because in the future we will want to load from persisted data
+         and persisted data uses models.
+         */
+        annotationViewModel.selectionBox = addedSelectionBox
 
         // Now we create the link line then assign it to the annotation
         let linkLineViewModel = LinkLineViewModel(id: UUID())

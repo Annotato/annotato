@@ -8,6 +8,7 @@ class SelectionBoxViewModel: ObservableObject {
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var endPointDidChange = false
+    @Published private(set) var isRemoved = false
 
     init(model: SelectionBox) {
         self.model = model
@@ -26,6 +27,10 @@ class SelectionBoxViewModel: ObservableObject {
 
     var startPoint: CGPoint {
         model.startPoint
+    }
+
+    func didDelete() {
+        self.isRemoved = true
     }
 }
 

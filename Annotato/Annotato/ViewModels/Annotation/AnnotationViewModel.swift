@@ -33,8 +33,12 @@ class AnnotationViewModel: ObservableObject {
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: .zero, width: model.width, height: 50.0)
         self.parts = []
-        self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
 
+        /*
+         Assigned here, but if this instance is not loaded from persisted data, it will be
+         replaced by the added selection box instance. Refer to comments in document view model
+         */
+        self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.palette.parentViewModel = self
 
         for part in model.parts {
@@ -227,5 +231,7 @@ extension AnnotationViewModel {
 extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
+        selectionBox.didDelete()
+        linkLine?.didDelete()
     }
 }

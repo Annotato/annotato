@@ -25,5 +25,11 @@ class SelectionBoxView: UIView {
             }
             self?.frame = newSelectionBoxFrame
         }).store(in: &cancellables)
+
+        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+            if isRemoved {
+                self?.removeFromSuperview()
+            }
+        }).store(in: &cancellables)
     }
 }
