@@ -3,7 +3,7 @@ import AnnotatoSharedLibrary
 
 struct DocumentSharesDataAccess {
     static func create(db: Database, documentShare: DocumentShare) async throws -> DocumentShare {
-        let existingDocumentShare = await findByDocumentIdAndRecipientId(db: db, documentShare: documentShare)
+        let existingDocumentShare = try await findByDocumentIdAndRecipientId(db: db, documentShare: documentShare)
 
         if let existingDocumentShare = existingDocumentShare {
             throw AnnotatoError.modelAlreadyExists(
@@ -22,8 +22,9 @@ struct DocumentSharesDataAccess {
     }
 
     // NOTE: DocumentShare is unique on (documentId, recipientId)
-    static func findByDocumentIdAndRecipientId(db: Database, documentShare: DocumentShare) async -> DocumentShare? {
-        guard let documentShareEntity = try? await DocumentShareEntity
+    // swiftlint:disable:next first_where
+    static func findByDocumentIdAndRecipientId(db: Database, documentShare: DocumentShare) async throws -> DocumentShare? {
+        guard let documentShareEntity = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentShare.documentId)
             .filter(\.$recipientId == documentShare.recipientId)
