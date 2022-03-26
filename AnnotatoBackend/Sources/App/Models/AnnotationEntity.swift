@@ -26,6 +26,9 @@ final class AnnotationEntity: Model {
     @Children(for: \.$annotationEntity)
     var annotationTextEntities: [AnnotationTextEntity]
 
+    @Children(for: \.$annotationEntity)
+    var annotationHandwritingEntities: [AnnotationHandwritingEntity]
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

@@ -10,7 +10,7 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
     public private(set) var handwriting: Data
 
     public var isEmpty: Bool {
-        (try? PKDrawing(data: handwriting).strokes.isEmpty) ?? false
+        (try? PKDrawing(data: handwriting).bounds.isEmpty) ?? false
     }
 
     @Published public private(set) var isRemoved = false

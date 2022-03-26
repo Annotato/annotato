@@ -39,6 +39,7 @@ public final class Annotation: Codable, ObservableObject {
         case origin
         case width
         case texts
+        case handwritings
         case ownerId
         case documentId
     }
@@ -54,7 +55,9 @@ public final class Annotation: Codable, ObservableObject {
         // Note: AnnotationPart protocol has to be split into concrete types to decode
         parts = []
         let texts = try container.decode([AnnotationText].self, forKey: .texts)
+        let handwritings = try container.decode([AnnotationHandwriting].self, forKey: .handwritings)
         parts.append(contentsOf: texts)
+        parts.append(contentsOf: handwritings)
         parts.sort(by: { $0.order < $1.order })
     }
 
@@ -69,6 +72,9 @@ public final class Annotation: Codable, ObservableObject {
         // Note: AnnotationPart protocol has to be split into concrete types to encode
         let texts = parts.compactMap({ $0 as? AnnotationText })
         try container.encode(texts, forKey: .texts)
+
+        let handwritings = parts.compactMap({ $0 as? AnnotationHandwriting })
+        try container.encode(handwritings, forKey: .handwritings)
     }
 
     public var hasNoParts: Bool {
