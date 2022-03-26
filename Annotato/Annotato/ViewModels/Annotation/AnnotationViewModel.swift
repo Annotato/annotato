@@ -26,6 +26,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var addedPart: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
+    @Published private(set) var isInFocus = false
 
     init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
@@ -234,5 +235,14 @@ extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
         document?.removeAnnotation(annotation: self)
+    }
+
+    func inFocus() {
+        isInFocus = true
+    }
+
+    func outOfFocus() {
+        isInFocus = false
+        enterMinimizedMode()
     }
 }

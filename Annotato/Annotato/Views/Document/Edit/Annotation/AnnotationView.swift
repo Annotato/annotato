@@ -23,7 +23,7 @@ class AnnotationView: UIView {
 
         initializeSubviews()
         setUpSubscribers()
-        addPanGestureRecognizer()
+        addGestureRecognizers()
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
@@ -83,10 +83,19 @@ class AnnotationView: UIView {
         }).store(in: &cancellables)
     }
 
-    private func addPanGestureRecognizer() {
+    private func addGestureRecognizers() {
         isUserInteractionEnabled = true
-        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
-        addGestureRecognizer(gestureRecognizer)
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        addGestureRecognizer(panGestureRecognizer)
+
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(tapGestureRecognizer)
+    }
+
+    @objc
+    private func didTap(_ sender: UITapGestureRecognizer) {
+        print("Annotation is tapped, calling the inFocus function of annotation view model")
+        viewModel.inFocus()
     }
 
     @objc
@@ -94,7 +103,6 @@ class AnnotationView: UIView {
         guard let superview = superview else {
             return
         }
-
         let previousCenter = viewModel.center
         superview.bringSubviewToFront(self)
         let translation = sender.translation(in: superview)
