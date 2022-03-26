@@ -22,8 +22,11 @@ struct DocumentSharesDataAccess {
     }
 
     // NOTE: DocumentShare is unique on (documentId, recipientId)
-    // swiftlint:disable:next first_where
-    static func findByDocumentIdAndRecipientId(db: Database, documentShare: DocumentShare) async throws -> DocumentShare? {
+    static func findByDocumentIdAndRecipientId(
+        db: Database,
+        documentShare: DocumentShare
+    ) async throws -> DocumentShare? {
+        // swiftlint:disable:next first_where
         guard let documentShareEntity = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentShare.documentId)
