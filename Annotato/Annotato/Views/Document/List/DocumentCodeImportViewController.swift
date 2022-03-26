@@ -1,6 +1,6 @@
 import UIKit
 
-class DocumentCodeImportViewController: UIViewController, AlertPresentable {
+class DocumentCodeImportViewController: UIViewController, AlertPresentable, Navigable {
     @IBOutlet private var documentCodeField: UITextField!
 
     @IBAction private func didTapImportButton(_ sender: UIButton) {
@@ -10,8 +10,24 @@ class DocumentCodeImportViewController: UIViewController, AlertPresentable {
     private func importDocument() {
         let code = documentCodeField.text ?? ""
 
-        if code.isEmptyOrWhitespaceOnly {
+        guard !code.isEmptyOrWhitespaceOnly else {
             presentErrorAlert(errorMessage: "Please enter a code")
+            return
+        }
+
+        guard let documentId = UUID(uuidString: code) else {
+            presentErrorAlert(errorMessage: "Please enter a valid code")
+            return
+        }
+
+        Task {
+            let documentShare = await DocumentShareController.createDocumentShare(documentId: documentId)
+            if documentShare != nil {
+                presentSuccessAlert(successMessage: "Successfully imported document!", completion: goBack)
+            } else {
+                presentErrorAlert(
+                    errorMessage: "The document was not imported. It may already exist in your collection")
+            }
         }
     }
 }
