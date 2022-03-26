@@ -63,6 +63,6 @@ class AnnotationHandwritingViewDelegate: NSObject, PKCanvasViewDelegate {
     }
 
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        viewModel.setHandwriting(to: canvasView.drawing.dataRepresentation())
+        viewModel.setHandwritingDrawing(to: canvasView.drawing)
     }
 }

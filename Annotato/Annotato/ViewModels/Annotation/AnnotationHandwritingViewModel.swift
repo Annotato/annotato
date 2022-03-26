@@ -27,8 +27,8 @@ class AnnotationHandwritingViewModel: AnnotationPartViewModel {
         }).store(in: &cancellables)
     }
 
-    func setHandwriting(to newHandwriting: Data) {
-        handwritingModel.setHandwriting(to: newHandwriting)
+    func setHandwritingDrawing(to newHandwritingDrawing: PKDrawing) {
+        handwritingModel.setHandwriting(to: newHandwritingDrawing.dataRepresentation())
     }
 
     override func toView() -> AnnotationPartView {
