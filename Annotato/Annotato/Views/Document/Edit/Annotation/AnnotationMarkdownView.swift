@@ -83,6 +83,8 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
             if isSelected {
                 self?.editView.becomeFirstResponder()
                 self?.editView.showSelected()
+            } else {
+                self?.editView.resignFirstResponder()
             }
         }).store(in: &cancellables)
     }

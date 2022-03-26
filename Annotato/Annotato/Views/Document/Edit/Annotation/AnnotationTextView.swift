@@ -37,6 +37,8 @@ class AnnotationTextView: UITextView, AnnotationPartView {
             if isSelected {
                 self?.becomeFirstResponder()
                 self?.showSelected()
+            } else {
+                self?.resignFirstResponder()
             }
         }).store(in: &cancellables)
     }
