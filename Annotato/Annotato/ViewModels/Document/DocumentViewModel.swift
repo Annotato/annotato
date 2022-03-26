@@ -32,6 +32,12 @@ class DocumentViewModel: ObservableObject {
         }
     }
 
+    func setAllAnnotationsOutOfFocus() {
+        for annotation in annotations {
+            annotation.outOfFocus()
+        }
+    }
+
     private func setAllOtherAnnotationsOutOfFocus(except annotationInFocus: AnnotationViewModel) {
         for annotation in annotations where annotation.model.id != annotationInFocus.model.id {
             annotation.outOfFocus()

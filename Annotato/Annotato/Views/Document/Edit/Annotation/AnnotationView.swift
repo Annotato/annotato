@@ -94,7 +94,6 @@ class AnnotationView: UIView {
 
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
-        print("Annotation is tapped, calling the inFocus function of annotation view model")
         viewModel.inFocus()
     }
 

@@ -147,6 +147,7 @@ extension AnnotationViewModel {
 // MARK: Parts
 extension AnnotationViewModel {
     func enterEditMode() {
+        inFocus()
         isEditing = true
         palette.isEditing = true
         for part in parts {
@@ -226,6 +227,7 @@ extension AnnotationViewModel {
     }
 
     func enterMaximizedMode() {
+        inFocus()
         isMinimized = false
         resize()
     }
