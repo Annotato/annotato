@@ -136,6 +136,6 @@ extension DocumentListViewController: DocumentListImportMenuDelegate {
     }
 
     func didTapFromCodeButton() {
-        print("tapped from code button")
+        goToImportByCode()
     }
 }
