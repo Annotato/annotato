@@ -16,6 +16,19 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
+    static func listShared(db: Database, userId: String) async throws -> [Document] {
+        let documentEntities = try await DocumentEntity.query(on: db)
+            .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .all().get()
+
+        for documentEntity in documentEntities {
+            try await documentEntity.loadAssociations(on: db)
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
+    }
+
     static func create(db: Database, document: Document) async throws -> Document {
         let documentEntity = DocumentEntity.fromModel(document)
 
