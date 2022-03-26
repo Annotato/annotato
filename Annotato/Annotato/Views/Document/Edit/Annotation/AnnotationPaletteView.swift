@@ -33,6 +33,7 @@ class AnnotationPaletteView: UIToolbar {
 
         setUpButtons()
         setUpSubscribers()
+        addTapGestureRecognizer()
     }
 
     private func setUpButtons() {
@@ -84,12 +85,21 @@ class AnnotationPaletteView: UIToolbar {
             self?.minimizeOrMaximizeButton.isSelected = isMinimized
         }).store(in: &cancellables)
     }
+
+    private func addTapGestureRecognizer() {
+        isUserInteractionEnabled = true
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
+        addGestureRecognizer(tapGestureRecognizer)
+    }
 }
 
 extension AnnotationPaletteView {
     var annotationTypeButtons: [ToggleableButton] {
         [textButton, markdownButton]
     }
+
+    @objc
+    private func didTap(_ sender: UITapGestureRecognizer) {}
 
     @objc
     private func didTap(toggleableButton: ToggleableButton) {
