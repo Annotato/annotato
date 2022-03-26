@@ -4,7 +4,7 @@ import Combine
 import AnnotatoSharedLibrary
 
 class AnnotationMarkdownViewModel: AnnotationPartViewModel {
-    var textModel: AnnotationText
+    private var textModel: AnnotationText
 
     var content: String {
         textModel.content

@@ -5,13 +5,10 @@ import AnnotatoSharedLibrary
 import PencilKit
 
 class AnnotationHandwritingViewModel: AnnotationPartViewModel {
-    var handwritingModel: AnnotationHandwriting
+    private var handwritingModel: AnnotationHandwriting
 
-    var handwriting: Data {
-        handwritingModel.handwriting
-    }
     var handwritingDrawing: PKDrawing {
-        (try? PKDrawing(data: handwriting)) ?? PKDrawing()
+        (try? PKDrawing(data: handwritingModel.handwriting)) ?? PKDrawing()
     }
 
     init(model: AnnotationHandwriting, width: Double, origin: CGPoint = .zero) {
