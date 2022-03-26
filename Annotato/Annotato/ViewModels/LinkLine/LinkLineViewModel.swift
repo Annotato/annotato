@@ -17,16 +17,29 @@ class LinkLineViewModel: ObservableObject {
      Otherwise, unowned will give runtime error here.
      */
     // TODO: Check on whether can change to unowned
-    weak var annotationViewModel: AnnotationViewModel?
-    weak var selectionBoxViewModel: SelectionBoxViewModel?
+    unowned var annotationViewModel: AnnotationViewModel? {
+        didSet {
+            guard let annotationViewModel = annotationViewModel else {
+                return
+            }
+            setUpSubscribers()
+            self.annotationPoint = annotationViewModel.origin
+        }
+    }
+    unowned var selectionBoxViewModel: SelectionBoxViewModel? {
+        didSet {
+            guard let selectionBoxViewModel = selectionBoxViewModel else {
+                return
+            }
+            setUpSubscribers()
+            self.selectionBoxPoint = selectionBoxViewModel.endPoint
+        }
+    }
 
-    init(id: UUID, selectionBoxViewModel: SelectionBoxViewModel, annotationViewModel: AnnotationViewModel) {
+    init(id: UUID, selectionBoxPoint: CGPoint = .zero, annotationPoint: CGPoint = .zero) {
         self.id = id
-        self.selectionBoxViewModel = selectionBoxViewModel
-        self.annotationViewModel = annotationViewModel
-
-        self.selectionBoxPoint = selectionBoxViewModel.endPoint
-        self.annotationPoint = annotationViewModel.origin
+        self.selectionBoxPoint = selectionBoxPoint
+        self.annotationPoint = annotationPoint
         setUpSubscribers()
     }
 
@@ -38,7 +51,10 @@ class LinkLineViewModel: ObservableObject {
             self?.annotationPoint = annotationViewModel.origin
         }).store(in: &cancellables)
 
-        selectionBoxViewModel?.$endPoint.sink(receiveValue: { [weak self] newEndPoint in
+        selectionBoxViewModel?.$endPointDidChange.sink(receiveValue: { [weak self] _ in
+            guard let newEndPoint = self?.selectionBoxViewModel?.endPoint else {
+                return
+            }
             self?.selectionBoxPoint = newEndPoint
         }).store(in: &cancellables)
     }

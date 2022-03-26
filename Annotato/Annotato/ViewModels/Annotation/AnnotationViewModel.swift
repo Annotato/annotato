@@ -15,23 +15,7 @@ class AnnotationViewModel: ObservableObject {
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
-    // TODO: Set to optional to solve compilation issues first, change later
-    // Also set to be internal first for proof of concept, changing this to
-    // be initialized in the constructor later after I do the models.
-    var selectionBox: SelectionBoxViewModel? {
-        didSet {
-            guard let selectionBox = selectionBox else {
-                return
-            }
-            let newLinkLineViewModel = LinkLineViewModel(
-                id: UUID(),
-                selectionBoxViewModel: selectionBox,
-                annotationViewModel: self
-            )
-            linkLine = newLinkLineViewModel
-        }
-    }
-
+    var selectionBox: SelectionBoxViewModel
     var linkLine: LinkLineViewModel?
 
     var origin: CGPoint {
@@ -49,6 +33,8 @@ class AnnotationViewModel: ObservableObject {
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: .zero, width: model.width, height: 50.0)
         self.parts = []
+        self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
+
         self.palette.parentViewModel = self
 
         for part in model.parts {
@@ -64,7 +50,6 @@ class AnnotationViewModel: ObservableObject {
                 viewModel.parentViewModel = self
             }
         }
-
         setUpSubscribers()
     }
 

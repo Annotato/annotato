@@ -109,7 +109,8 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
-        addAnnotationIfWithinPdfBounds(at: touchPoint)
+        addSelectionBoxIfWithinBounds(at: touchPoint)
+        addAnnotationWithAssociatedSelectionBoxIfWithinBounds()
     }
 }
 

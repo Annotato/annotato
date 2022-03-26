@@ -1,41 +1,64 @@
 import CoreGraphics
 import Foundation
+import AnnotatoSharedLibrary
+import Combine
 
 class SelectionBoxViewModel: ObservableObject {
-    private(set) var id: UUID
-    private(set) var startPoint: CGPoint
-    @Published var endPoint: CGPoint
+    private(set) var model: SelectionBox
+    private var cancellables: Set<AnyCancellable> = []
 
-    init(id: UUID, startPoint: CGPoint, endPoint: CGPoint?) {
-        self.id = id
-        self.startPoint = startPoint
-        self.endPoint = endPoint ?? startPoint
+    @Published private(set) var endPointDidChange = false
+
+    init(model: SelectionBox) {
+        self.model = model
+        setUpSubscribers()
+    }
+
+    private func setUpSubscribers() {
+        model.$endPoint.sink(receiveValue: { [weak self] _ in
+            self?.endPointDidChange = true
+        }).store(in: &cancellables)
+    }
+
+    var endPoint: CGPoint {
+        model.endPoint
+    }
+
+    var startPoint: CGPoint {
+        model.startPoint
+    }
+}
+
+// MARK: Updating the end point
+extension SelectionBoxViewModel {
+    func updateEndPoint(newEndPoint: CGPoint) {
+        model.setEndPoint(to: newEndPoint)
     }
 }
 
 extension SelectionBoxViewModel {
     private var minX: CGFloat {
-        min(startPoint.x, endPoint.x)
+        min(model.startPoint.x, model.endPoint.x)
     }
 
     private var minY: CGFloat {
-        min(startPoint.y, endPoint.y)
+        min(model.startPoint.y, model.endPoint.y)
     }
 
     private var maxX: CGFloat {
-        max(startPoint.x, endPoint.x)
+        max(model.startPoint.x, model.endPoint.x)
     }
 
     private var maxY: CGFloat {
-        max(startPoint.y, endPoint.y)
+        max(model.startPoint.y, model.endPoint.y)
     }
 
     private var width: CGFloat {
-        abs(endPoint.x - startPoint.x)
+        abs(model.endPoint.x - model.startPoint.x)
     }
 
     private var height: CGFloat {
-        abs(endPoint.y - startPoint.y)
+        abs(model.endPoint.y - model.startPoint.y)
     }
 
     var frame: CGRect {

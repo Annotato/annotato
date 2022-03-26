@@ -19,7 +19,6 @@ class DocumentViewModel: ObservableObject {
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
-
         self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
     }
 }
@@ -29,27 +28,28 @@ extension DocumentViewModel {
         guard let currentUser = AnnotatoAuth().currentUser else {
             return
         }
-
+        guard let addedSelectionBox = addedSelectionBox else {
+            return
+        }
         let newAnnotationWidth = 300.0
         let newAnnotation = Annotation(
             origin: .zero,
             width: newAnnotationWidth,
             parts: [],
+            selectionBox: addedSelectionBox.model,
             ownerId: currentUser.uid,
             documentId: model.id,
             id: UUID()
         )
         model.addAnnotation(annotation: newAnnotation)
-
         let annotationViewModel = AnnotationViewModel(model: newAnnotation)
         annotationViewModel.center = center
 
-        let addedSelectionBox = addedSelectionBox ?? SelectionBoxViewModel(
-            id: UUID(),
-            startPoint: center,
-            endPoint: nil
-        )
-        annotationViewModel.selectionBox = addedSelectionBox
+        // Now we create the link line then assign it to the annotation
+        let linkLineViewModel = LinkLineViewModel(id: UUID())
+        linkLineViewModel.selectionBoxViewModel = annotationViewModel.selectionBox
+        linkLineViewModel.annotationViewModel = annotationViewModel
+        annotationViewModel.linkLine = linkLineViewModel
 
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
             model.removeAnnotation(annotation: newAnnotation)
@@ -69,21 +69,15 @@ extension DocumentViewModel {
         if addedSelectionBox.hasExceededBounds(bounds: bounds) {
             return
         }
-        addedSelectionBox.endPoint = newEndPoint
-    }
-
-    func removeAddedSelectionBox() {
-        addedSelectionBox = nil
+        addedSelectionBox.updateEndPoint(newEndPoint: newEndPoint)
     }
 
     func addSelectionBoxIfWithinBounds(startPoint: CGPoint, bounds: CGRect) {
-        // TODO: Backend models and guard clause for current user
-
-        let selectionBoxViewModel = SelectionBoxViewModel(
-            id: UUID(),
-            startPoint: startPoint,
-            endPoint: nil
-        )
+        guard AnnotatoAuth().currentUser != nil else {
+            return
+        }
+        let newSelectionBox = SelectionBox(id: UUID(), startPoint: startPoint, endPoint: startPoint)
+        let selectionBoxViewModel = SelectionBoxViewModel(model: newSelectionBox)
         if selectionBoxViewModel.hasExceededBounds(bounds: bounds) {
             return
         }

@@ -17,7 +17,7 @@ class LinkLineView: UIView {
         isOpaque = false
     }
 
-    private func drawLineFromStartPointToEndPoint() {
+    private func drawLineFromSelectionBoxToAnnotation() {
         guard let context = UIGraphicsGetCurrentContext() else {
             return
         }
@@ -53,6 +53,6 @@ class LinkLineView: UIView {
     }
 
     override func draw(_ rect: CGRect) {
-        drawLineFromStartPointToEndPoint()
+        drawLineFromSelectionBoxToAnnotation()
     }
 }

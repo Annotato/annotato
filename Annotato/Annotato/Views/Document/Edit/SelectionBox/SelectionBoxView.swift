@@ -19,7 +19,7 @@ class SelectionBoxView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$endPoint.sink(receiveValue: { [weak self] _ in
+        viewModel.$endPointDidChange.sink(receiveValue: { [weak self] _ in
             guard let newSelectionBoxFrame = self?.viewModel.frame else {
                 return
             }
