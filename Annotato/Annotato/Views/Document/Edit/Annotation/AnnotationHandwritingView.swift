@@ -20,6 +20,7 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         self.drawing = viewModel.handwritingDrawing
         setUpSubscribers()
         addGestureRecognizers()
+        self.addAnnotationPartBorders()
     }
 
     private func setUpSubscribers() {

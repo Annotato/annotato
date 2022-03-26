@@ -19,8 +19,7 @@ class AnnotationTextView: UITextView, AnnotationPartView {
         self.delegate = self
         setUpSubscribers()
         addGestureRecognizers()
-        self.layer.borderWidth = 0.3
-        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.addAnnotationPartBorders()
     }
 
     private func setUpSubscribers() {
