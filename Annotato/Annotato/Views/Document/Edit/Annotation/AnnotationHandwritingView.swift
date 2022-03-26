@@ -6,6 +6,7 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
     private var viewModel: AnnotationHandwritingViewModel
     private var cancellables: Set<AnyCancellable> = []
     private var customDelegate: AnnotationHandwritingViewDelegate
+    private var toolPicker = PKToolPicker()
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -18,9 +19,19 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         super.init(frame: viewModel.frame)
         self.delegate = customDelegate
         self.drawing = viewModel.handwritingDrawing
+        initializeSubviews()
         setUpSubscribers()
         addGestureRecognizers()
         self.addAnnotationPartBorders()
+    }
+
+    private func initializeSubviews() {
+        initializeToolPicker()
+    }
+
+    private func initializeToolPicker() {
+        toolPicker.addObserver(self)
+        toolPicker.setVisible(true, forFirstResponder: self)
     }
 
     private func setUpSubscribers() {
@@ -37,6 +48,7 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
             self?.drawingGestureRecognizer.isEnabled = isSelected
             if isSelected {
+                self?.becomeFirstResponder()
                 self?.showSelected()
             }
         }).store(in: &cancellables)
