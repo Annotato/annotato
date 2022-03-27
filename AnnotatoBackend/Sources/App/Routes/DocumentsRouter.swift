@@ -13,7 +13,11 @@ func documentsRouter(documents: RoutesBuilder) {
         document.put(use: DocumentsController.update)
 
         document.delete(use: DocumentsController.delete)
+    }
 
-        document.webSocket(onUpgrade: DocumentsWebSocketController.handleIncomingConnection)
+    documents.group("ws") { document in
+        document.group(":id") { document in
+            document.webSocket(onUpgrade: DocumentsWebSocketController.handleIncomingConnection)
+        }
     }
 }
