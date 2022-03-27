@@ -41,6 +41,11 @@ class AuthViewController: UIViewController, Navigable {
             string: "Display Name",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
+
+        // TODO: REMOVE BEFORE MERGE
+        let socketManger = WebSocketManager()
+        socketManger.setSocket(to: URLSession(configuration: .default)
+            .webSocketTask(with: URL(string: "ws://localhost:8080/documents/aa763c89-0b48-4a3a-9094-7ab1ad25c7e6")!))
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
