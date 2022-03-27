@@ -38,6 +38,16 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
+    func goToImportByCode() {
+        guard let viewController = DocumentCodeImportViewController.instantiatePartialScreenFromStoryboard(
+            .document
+        ) else {
+            return
+        }
+
+        present(viewController, animated: true, completion: nil)
+    }
+
     func goToImportingFiles() {
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.pdf], asCopy: true)
         documentPicker.delegate = self as? UIDocumentPickerDelegate
@@ -58,5 +68,10 @@ extension Navigable {
 
     func goBack() {
         self.dismiss(animated: true, completion: nil)
+    }
+
+    func goBackWithRefresh() {
+        goBack()
+        presentingViewController?.viewWillAppear(true)
     }
 }

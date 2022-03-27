@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad7_9" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -87,7 +87,58 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VZv-Ns-mH5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1346" y="34"/>
+            <point key="canvasLocation" x="1351" y="34"/>
+        </scene>
+        <!--Document Code Import View Controller-->
+        <scene sceneID="9nm-Mh-q6U">
+            <objects>
+                <viewController storyboardIdentifier="DocumentCodeImportViewController" id="3D2-JS-uhA" customClass="DocumentCodeImportViewController" customModule="Annotato" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="eox-9w-SPg">
+                        <rect key="frame" x="0.0" y="0.0" width="744" height="1133"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter the code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VHr-Vu-Jht">
+                                <rect key="frame" x="226.5" y="463.5" width="291" height="96"/>
+                                <fontDescription key="fontDescription" name="SavoyeLetPlain" family="Savoye LET" pointSize="80"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BFr-TH-QV7">
+                                <rect key="frame" x="162" y="608.5" width="420" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="420" id="wnI-WV-c21"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Rockwell-Regular" family="Rockwell" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hGs-Uf-z7I">
+                                <rect key="frame" x="338.5" y="672.5" width="67" height="31"/>
+                                <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Import"/>
+                                <connections>
+                                    <action selector="didTapImportButton:" destination="3D2-JS-uhA" eventType="touchUpInside" id="36n-Le-UIx"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="daH-BJ-hXm"/>
+                        <color key="backgroundColor" red="0.94509803920000002" green="0.91372549020000005" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="VHr-Vu-Jht" firstAttribute="centerX" secondItem="daH-BJ-hXm" secondAttribute="centerX" id="Djp-x1-hEm"/>
+                            <constraint firstItem="VHr-Vu-Jht" firstAttribute="centerY" secondItem="daH-BJ-hXm" secondAttribute="centerY" multiplier="0.9" id="HQj-2f-dXc"/>
+                            <constraint firstItem="hGs-Uf-z7I" firstAttribute="centerX" secondItem="daH-BJ-hXm" secondAttribute="centerX" id="HaJ-p4-r1D"/>
+                            <constraint firstItem="BFr-TH-QV7" firstAttribute="centerY" secondItem="daH-BJ-hXm" secondAttribute="centerY" multiplier="1.1" id="hcC-F1-ZbF"/>
+                            <constraint firstItem="hGs-Uf-z7I" firstAttribute="top" secondItem="BFr-TH-QV7" secondAttribute="bottom" constant="30" id="jBk-ph-Log"/>
+                            <constraint firstItem="BFr-TH-QV7" firstAttribute="centerX" secondItem="daH-BJ-hXm" secondAttribute="centerX" id="nEc-k6-HE5"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="documentCodeField" destination="BFr-TH-QV7" id="X8s-oC-JFv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GUh-eD-2xi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1994.3548387096773" y="33.627537511032656"/>
         </scene>
     </scenes>
     <resources>

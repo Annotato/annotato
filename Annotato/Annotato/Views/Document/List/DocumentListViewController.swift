@@ -2,11 +2,13 @@ import UIKit
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     let spinner = UIActivityIndicatorView(style: .large)
+    private var toolbar = DocumentListToolbarView()
+    private var importMenu = DocumentListImportMenu()
     private var documents: [DocumentListViewModel]?
     let toolbarHeight = 50.0
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
         initializeDocumentsCollectionView()
     }
@@ -16,10 +18,12 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
         initializeSpinner()
         initializeToolbar()
+        initializeImportMenu()
+        view.bringSubviewToFront(importMenu)
     }
 
     private func initializeToolbar() {
-        let toolbar = DocumentListToolbarView(
+        toolbar = DocumentListToolbarView(
             frame: CGRect(x: .zero, y: .zero, width: frame.width, height: toolbarHeight)
         )
         toolbar.actionDelegate = self
@@ -33,13 +37,30 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         toolbar.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
     }
 
+    private func initializeImportMenu() {
+        let width = 120.0
+        let height = 80.0
+        importMenu = DocumentListImportMenu(frame: .zero)
+
+        view.addSubview(importMenu)
+
+        importMenu.translatesAutoresizingMaskIntoConstraints = false
+        importMenu.topAnchor.constraint(equalTo: toolbar.bottomAnchor).isActive = true
+        importMenu.rightAnchor.constraint(equalTo: margins.rightAnchor).isActive = true
+        importMenu.widthAnchor.constraint(equalToConstant: width).isActive = true
+        importMenu.heightAnchor.constraint(equalToConstant: height).isActive = true
+
+        importMenu.isHidden = true
+        importMenu.actionDelegate = self
+    }
+
     private func initializeDocumentsCollectionView() {
         Task {
             guard let userId = AnnotatoAuth().currentUser?.uid else {
-                AnnotatoLogger.info("Could not get current user. Sample documents will be used.",
+                AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
 
-                documents = SampleData.exampleDocumentsInList
+                documents = []
                 addDocumentsSubview()
                 return
             }
@@ -80,7 +101,11 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         Navigable {
 
     func didTapImportFileButton() {
-        goToImportingFiles()
+        importMenu.isHidden.toggle()
+
+        if !importMenu.isHidden {
+            view.bringSubviewToFront(importMenu)
+        }
     }
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt baseFileUrls: [URL]) {
@@ -102,5 +127,15 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
 
     func didSelectCellView(document: DocumentListViewModel) {
         goToDocumentEdit(documentId: document.id)
+    }
+}
+
+extension DocumentListViewController: DocumentListImportMenuDelegate {
+    func didTapFromIpadButton() {
+        goToImportingFiles()
+    }
+
+    func didTapFromCodeButton() {
+        goToImportByCode()
     }
 }

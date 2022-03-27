@@ -3,6 +3,7 @@ import AnnotatoSharedLibrary
 
 struct DocumentsAPI {
     private static let documentsUrl = "\(BaseAPI.baseAPIUrl)/documents"
+    private static let sharedDocumentsUrl = "\(documentsUrl)/shared"
 
     private var httpService: AnnotatoHTTPService
 
@@ -10,14 +11,26 @@ struct DocumentsAPI {
         httpService = URLSessionHTTPService()
     }
 
-    // MARK: LIST
-    func getDocuments(userId: String) async -> [Document]? {
+    // MARK: LIST OWN
+    func getOwnDocuments(userId: String) async -> [Document]? {
         do {
             let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching own documents: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    // MARK: LIST SHARED
+    func getSharedDocuments(userId: String) async -> [Document]? {
+        do {
+            let responseData = try await httpService.get(url: DocumentsAPI.sharedDocumentsUrl,
+                                                         params: ["userId": userId])
+            return try JSONDecoder().decode([Document].self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When fetching shared documents: \(error.localizedDescription)")
             return nil
         }
     }

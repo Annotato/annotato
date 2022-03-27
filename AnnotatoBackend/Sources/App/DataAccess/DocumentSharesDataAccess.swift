@@ -12,6 +12,12 @@ struct DocumentSharesDataAccess {
             )
         }
 
+        let document = try await DocumentsDataAccess.read(db: db, documentId: documentShare.documentId)
+
+        if document.ownerId == documentShare.recipientId {
+            throw DocumentShareError.sharingWithSelf(documentShare: documentShare, requestType: .create)
+        }
+
         let documentShareEntity = DocumentShareEntity.fromModel(documentShare)
 
         try await db.transaction { tx in
