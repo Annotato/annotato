@@ -43,7 +43,8 @@ extension AnnotationEntity {
 
         let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
         for annotationHandwriting in annotationHandwritings {
-            if let annotationHandwritingEntity = try await AnnotationHandwritingEntity.find(annotationHandwriting.id, on: tx).get() {
+            if let annotationHandwritingEntity = try await AnnotationHandwritingEntity.find(annotationHandwriting.id,
+                                                                                            on: tx).get() {
                 try await annotationHandwritingEntity.customUpdate(on: tx, usingUpdatedModel: annotationHandwriting)
             } else {
                 let annotationHandwritingEntity = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
