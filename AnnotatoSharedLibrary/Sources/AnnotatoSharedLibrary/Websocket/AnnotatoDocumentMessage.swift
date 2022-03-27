@@ -1,4 +1,4 @@
-public final class AnnotatoDocumentMessage: Codable {
+public final class AnnotatoDocumentMessage: Codable, WebSocketMessage {
     public let type: WebSocketMessageType
     public var modelType = ModelType.document
     public let document: Document
