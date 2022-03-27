@@ -17,6 +17,10 @@ class AnnotationViewModel: ObservableObject {
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
+    var id: UUID {
+        model.id
+    }
+
     var origin: CGPoint {
         model.origin
     }
@@ -26,6 +30,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var addedPart: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
+    @Published private(set) var isInFocus = false
 
     init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
@@ -146,6 +151,7 @@ extension AnnotationViewModel {
 // MARK: Parts
 extension AnnotationViewModel {
     func enterEditMode() {
+        inFocus()
         isEditing = true
         palette.isEditing = true
         for part in parts {
@@ -225,6 +231,7 @@ extension AnnotationViewModel {
     }
 
     func enterMaximizedMode() {
+        inFocus()
         isMinimized = false
         resize()
     }
@@ -234,5 +241,14 @@ extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
         document?.removeAnnotation(annotation: self)
+    }
+
+    func inFocus() {
+        isInFocus = true
+    }
+
+    func outOfFocus() {
+        isInFocus = false
+        enterMinimizedMode()
     }
 }
