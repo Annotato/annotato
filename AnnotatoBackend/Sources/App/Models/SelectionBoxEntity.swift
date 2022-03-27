@@ -37,7 +37,7 @@ final class SelectionBoxEntity: Model {
         startPointX: Double,
         startPointY: Double,
         endPointX: Double,
-        endPointY: Double
+        endPointY: Double,
         id: UUID? = nil
     ) {
         self.id = id
