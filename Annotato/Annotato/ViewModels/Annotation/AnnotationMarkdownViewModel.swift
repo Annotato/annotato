@@ -3,64 +3,32 @@ import CoreGraphics
 import Combine
 import AnnotatoSharedLibrary
 
-class AnnotationMarkdownViewModel: AnnotationPartViewModel, ObservableObject {
-    weak var parentViewModel: AnnotationViewModel?
+class AnnotationMarkdownViewModel: AnnotationPartViewModel {
+    private var textModel: AnnotationText
 
-    private(set) var model: AnnotationPart
-    private(set) var origin: CGPoint
-    private(set) var width: Double
-    private var cancellables: Set<AnyCancellable> = []
-
-    // TODO: To use abstract class
-    var textModel: AnnotationText? {
-        model as? AnnotationText
-    }
-    var id: UUID {
-        model.id
-    }
-    var height: Double {
-        model.height
-    }
     var content: String {
-        textModel?.content ?? ""
+        textModel.content
     }
-
-    @Published private(set) var isEditing = false
-    @Published private(set) var isRemoved = false
-    @Published var isSelected = false
 
     init(model: AnnotationText, width: Double, origin: CGPoint = .zero) {
-        self.model = model
-        self.width = width
-        self.origin = origin
+        self.textModel = model
+        super.init(model: model, width: width, origin: origin)
 
         setUpSubscribers()
     }
 
-    func toView() -> AnnotationPartView {
-        AnnotationMarkdownView(viewModel: self)
-    }
-
-    func enterEditMode() {
-        isEditing = true
-    }
-
-    func enterViewMode() {
-        isEditing = false
+    private func setUpSubscribers() {
+        textModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+            self?.isRemoved = isRemoved
+        }).store(in: &cancellables)
     }
 
     func setContent(to newContent: String) {
-        textModel?.setContent(to: newContent)
+        textModel.setContent(to: newContent)
     }
 
-    func remove() {
-        isRemoved = true
-    }
-
-    private func setUpSubscribers() {
-        textModel?.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
-            self?.isRemoved = isRemoved
-        }).store(in: &cancellables)
+    override func toView() -> AnnotationPartView {
+        AnnotationMarkdownView(viewModel: self)
     }
 }
 

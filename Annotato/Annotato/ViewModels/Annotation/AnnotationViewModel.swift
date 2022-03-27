@@ -41,17 +41,23 @@ class AnnotationViewModel: ObservableObject {
         self.palette.parentViewModel = self
 
         for part in model.parts {
-            let viewModel: AnnotationPartViewModel
-            if let part = part as? AnnotationText {
-                switch part.type {
+            let partViewModel: AnnotationPartViewModel
+            switch part {
+            case let textPart as AnnotationText:
+                switch textPart.type {
                 case .plainText:
-                    viewModel = AnnotationTextViewModel(model: part, width: model.width)
+                    partViewModel = AnnotationTextViewModel(model: textPart, width: model.width)
                 case .markdown:
-                    viewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
+                    partViewModel = AnnotationMarkdownViewModel(model: textPart, width: model.width)
                 }
-                parts.append(viewModel)
-                viewModel.parentViewModel = self
+            case let handwritingPart as AnnotationHandwriting:
+                partViewModel = AnnotationHandwritingViewModel(model: handwritingPart, width: model.width)
+            default:
+                continue
             }
+
+            partViewModel.parentViewModel = self
+            parts.append(partViewModel)
         }
 
         setUpSubscribers()
@@ -74,6 +80,13 @@ class AnnotationViewModel: ObservableObject {
                 return
             }
             self?.addMarkdownPart(part: addedMarkdownPart)
+        }).store(in: &cancellables)
+
+        model.$addedHandwritingPart.sink(receiveValue: { [weak self] addedHandwritingPart in
+            guard let addedHandwritingPart = addedHandwritingPart else {
+                return
+            }
+            self?.addHandwritingPart(part: addedHandwritingPart)
         }).store(in: &cancellables)
 
         model.$origin.sink(receiveValue: { [weak self] _ in
@@ -201,6 +214,10 @@ extension AnnotationViewModel {
         model.appendMarkdownPartIfNecessary()
     }
 
+    func appendHandwritingPartIfNecessary() {
+        model.appendHandwritingPartIfNecessary()
+    }
+
     private func addTextPart(part: AnnotationText) {
         let partViewModel = AnnotationTextViewModel(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
@@ -208,6 +225,11 @@ extension AnnotationViewModel {
 
     private func addMarkdownPart(part: AnnotationText) {
         let partViewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
+        addNewPart(newPart: partViewModel)
+    }
+
+    private func addHandwritingPart(part: AnnotationHandwriting) {
+        let partViewModel = AnnotationHandwritingViewModel(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 

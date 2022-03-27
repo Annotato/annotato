@@ -42,8 +42,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     private func setUpStyle() {
         heightConstraint = self.heightAnchor.constraint(equalToConstant: self.frame.height)
         self.heightConstraint.isActive = true
-        self.layer.borderWidth = 0.3
-        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.addAnnotationPartBorders()
     }
 
     private func switchView(basedOn isEditing: Bool) {
@@ -84,6 +83,8 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
             if isSelected {
                 self?.editView.becomeFirstResponder()
                 self?.editView.showSelected()
+            } else {
+                self?.editView.resignFirstResponder()
             }
         }).store(in: &cancellables)
     }
