@@ -19,10 +19,10 @@ class DocumentViewModel: ObservableObject {
         self.model = model
         self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
         self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
-        setUpSubscribersForAllAnnotations()
+        setUpSubscribers()
     }
 
-    private func setUpSubscribersForAllAnnotations() {
+    private func setUpSubscribers() {
         for annotation in annotations {
             annotation.$isInFocus.sink(receiveValue: { [weak self] isInFocus in
                 if isInFocus {
@@ -32,6 +32,14 @@ class DocumentViewModel: ObservableObject {
         }
     }
 
+    private func setUpSubscriberForAnnotation(annotation: AnnotationViewModel) {
+        annotation.$isInFocus.sink(receiveValue: { [weak self] isInFocus in
+            if isInFocus {
+                self?.setAllOtherAnnotationsOutOfFocus(except: annotation)
+            }
+        }).store(in: &cancellables)
+    }
+
     func setAllAnnotationsOutOfFocus() {
         for annotation in annotations {
             annotation.outOfFocus()
@@ -39,7 +47,7 @@ class DocumentViewModel: ObservableObject {
     }
 
     private func setAllOtherAnnotationsOutOfFocus(except annotationInFocus: AnnotationViewModel) {
-        for annotation in annotations where annotation.model.id != annotationInFocus.model.id {
+        for annotation in annotations where annotation.id != annotationInFocus.id {
             annotation.outOfFocus()
         }
     }
@@ -74,7 +82,7 @@ extension DocumentViewModel {
         annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
-        setUpSubscribersForAllAnnotations()
+        setUpSubscriberForAnnotation(annotation: annotationViewModel)
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {

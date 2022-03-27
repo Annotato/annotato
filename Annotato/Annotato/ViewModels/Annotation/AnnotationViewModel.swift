@@ -17,6 +17,10 @@ class AnnotationViewModel: ObservableObject {
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
 
+    var id: UUID {
+        model.id
+    }
+
     var origin: CGPoint {
         model.origin
     }
