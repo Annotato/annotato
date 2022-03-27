@@ -74,9 +74,10 @@ struct DocumentsAPI {
         do {
             let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(document.id)",
                                                          data: requestData)
+            print(String(data: responseData, encoding: .utf8))
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When updating document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When updating document: \(String(describing: error))")
             return nil
         }
     }
