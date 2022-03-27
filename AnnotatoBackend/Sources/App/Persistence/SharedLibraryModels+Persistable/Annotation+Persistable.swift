@@ -5,11 +5,16 @@ extension Annotation: Persistable {
     static func fromManagedEntity(_ managedEntity: AnnotationEntity) -> Self {
         let textParts = managedEntity.annotationTextEntities.map(AnnotationText.fromManagedEntity)
         let parts: [AnnotationPart] = textParts
+
         let selectionBox: SelectionBox
         if let selectionBoxEntity = managedEntity.selectionBox {
             selectionBox = SelectionBox.fromManagedEntity(selectionBoxEntity)
         } else {
-            selectionBox = SelectionBox(startPoint: .zero, endPoint: .zero, id: UUID())
+            // Will never come to this part
+            fatalError("This annotation entity has no associated selection box.")
+            /*
+             selectionBox = SelectionBox(startPoint: .zero, endPoint: .zero, annotationId: managedEntity.id ?? UUID(), id: UUID())
+             */
         }
 
         return Self(

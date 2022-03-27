@@ -7,6 +7,7 @@ extension SelectionBox: Persistable {
         Self(
             startPoint: CGPoint(x: managedEntity.startPointX, y: managedEntity.startPointY),
             endPoint: CGPoint(x: managedEntity.endPointX, y: managedEntity.endPointY),
+            annotationId: managedEntity.$annotationEntity.id,
             id: managedEntity.id
         )
     }

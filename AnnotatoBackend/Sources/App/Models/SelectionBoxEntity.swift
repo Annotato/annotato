@@ -38,6 +38,7 @@ final class SelectionBoxEntity: Model {
         startPointY: Double,
         endPointX: Double,
         endPointY: Double,
+        annotationId: AnnotationEntity.IDValue,
         id: UUID? = nil
     ) {
         self.id = id
@@ -45,6 +46,7 @@ final class SelectionBoxEntity: Model {
         self.startPointY = startPointY
         self.endPointX = endPointX
         self.endPointY = endPointY
+        self.$annotationEntity.id = annotationId
     }
 }
 
@@ -55,6 +57,7 @@ extension SelectionBoxEntity: PersistedEntity {
             startPointY: model.startPoint.y,
             endPointX: model.endPoint.x,
             endPointY: model.endPoint.y,
+            annotationId: model.annotationId,
             id: model.id
         )
     }
