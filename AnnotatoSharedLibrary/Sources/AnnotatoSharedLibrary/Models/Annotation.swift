@@ -82,26 +82,42 @@ public final class Annotation: Codable, ObservableObject {
     }
 
     private func addInitialPart() {
+        checkRepresentation()
+
         let newPart = makeNewPlainTextPart()
         parts.append(newPart)
+
+        checkRepresentation()
     }
 
     public func addPlainTextPart() {
+        checkRepresentation()
+
         let newPart = makeNewPlainTextPart()
         parts.append(newPart)
         addedTextPart = newPart
+
+        checkRepresentation()
     }
 
     public func addMarkdownPart() {
+        checkRepresentation()
+
         let newPart = makeNewMarkdownPart()
         parts.append(newPart)
         addedMarkdownPart = newPart
+
+        checkRepresentation()
     }
 
     public func addHandwritingPart() {
+        checkRepresentation()
+
         let newPart = makeNewHandwritingPart()
         parts.append(newPart)
         addedHandwritingPart = newPart
+
+        checkRepresentation()
     }
 
     public func appendTextPartIfNecessary() {
@@ -197,9 +213,38 @@ public final class Annotation: Codable, ObservableObject {
             return
         }
 
+        removePart(part: part)
+    }
+
+    public func removePart(part: AnnotationPart) {
+        checkRepresentation()
+
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
         removedPart = part
+
+        maintainOrderOfParts()
+
+        checkRepresentation()
+    }
+
+    private func maintainOrderOfParts() {
+        parts.enumerated().forEach { idx, part in
+            part.order = idx
+        }
+    }
+}
+
+// MARK: Representation Invariants
+extension Annotation {
+    private func checkRepresentation() {
+        assert(checkOrderOfParts())
+    }
+
+    private func checkOrderOfParts() -> Bool {
+        parts.enumerated().allSatisfy { idx, part in
+            part.order == idx
+        }
     }
 }
 
