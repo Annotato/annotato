@@ -2,7 +2,7 @@ import Vapor
 
 extension WebSocket: Hashable {
     private static let logger = Logger(label: "WebSocket+Send")
-    
+
     public static func == (lhs: WebSocket, rhs: WebSocket) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }

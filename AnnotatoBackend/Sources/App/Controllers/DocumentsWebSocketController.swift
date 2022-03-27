@@ -64,7 +64,13 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleCreate(_ modelType: ModelType, _ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleCreate(
+        _ modelType: ModelType,
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         switch modelType {
         case .document:
             Self.logger.error("Creating documents through websocket is not supported.")
@@ -73,7 +79,13 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleUpdate(_ modelType: ModelType, _ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleUpdate(
+        _ modelType: ModelType,
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         switch modelType {
         case .document:
             await Self.handleUpdateDocument(documentId, ws, data, db)
@@ -82,7 +94,13 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleRead(_ modelType: ModelType, _ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleRead(
+        _ modelType: ModelType,
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         switch modelType {
         case .document:
             await Self.handleReadDocument(documentId, ws, data, db)
@@ -91,7 +109,13 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleDelete(_ modelType: ModelType, _ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleDelete(
+        _ modelType: ModelType,
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         switch modelType {
         case .document:
             await Self.handleDeleteDocument(documentId, ws, data, db)
@@ -103,8 +127,10 @@ class DocumentsWebSocketController {
     private static func handleUpdateDocument(_ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
         do {
             let documentMessage = try JSONDecoder().decode(AnnotatoDocumentMessage.self, from: data)
-            
-            let updatedDocument = try await DocumentsDataAccess.update(db: db, documentId: documentId, document: documentMessage.document)
+
+            let updatedDocument = try await DocumentsDataAccess.update(
+                db: db, documentId: documentId, document: documentMessage.document
+            )
 
             sendToAllConnectedClients(documentId: documentId, message: updatedDocument)
         } catch {
@@ -132,7 +158,12 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleCreateAnnotation(_ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleCreateAnnotation(
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         do {
             let annotationMessage = try JSONDecoder().decode(AnnotatoAnnotationMessage.self, from: data)
 
@@ -156,11 +187,18 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleUpdateAnnotation(_ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleUpdateAnnotation(
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         do {
             let annotationMessage = try JSONDecoder().decode(AnnotatoAnnotationMessage.self, from: data)
 
-            let updatedAnnotation = try await AnnotationDataAccess.update(db: db, annotationId: annotationMessage.annotation.id, annotation: annotationMessage.annotation)
+            let updatedAnnotation = try await AnnotationDataAccess.update(
+                db: db, annotationId: annotationMessage.annotation.id, annotation: annotationMessage.annotation
+            )
 
             sendToAllConnectedClients(documentId: documentId, message: updatedAnnotation)
         } catch {
@@ -168,11 +206,18 @@ class DocumentsWebSocketController {
         }
     }
 
-    private static func handleDeleteAnnotation(_ documentId: UUID, _ ws: WebSocket, _ data: Data, _ db: Database) async {
+    private static func handleDeleteAnnotation(
+        _ documentId: UUID,
+        _ ws: WebSocket,
+        _ data: Data,
+        _ db: Database
+    ) async {
         do {
             let annotationMessage = try JSONDecoder().decode(AnnotatoAnnotationMessage.self, from: data)
 
-            let deletedAnnotation = try await AnnotationDataAccess.delete(db: db, annotationId: annotationMessage.annotation.id)
+            let deletedAnnotation = try await AnnotationDataAccess.delete(
+                db: db, annotationId: annotationMessage.annotation.id
+            )
 
             sendToAllConnectedClients(documentId: documentId, message: deletedAnnotation)
         } catch {
