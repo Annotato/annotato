@@ -2,15 +2,19 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class DocumentListViewModel {
-    let id: UUID
-    private(set) var name: String
+    let document: Document
+    let isShared: Bool
 
-    init(id: UUID, name: String) {
-        self.id = id
-        self.name = name
+    var id: UUID {
+        document.id
     }
 
-    convenience init(document: Document) {
-        self.init(id: document.id, name: document.name)
+    var name: String {
+        document.name
+    }
+
+    init(document: Document, isShared: Bool) {
+        self.document = document
+        self.isShared = isShared
     }
 }

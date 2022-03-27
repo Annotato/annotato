@@ -3,6 +3,7 @@ import UIKit
 class DocumentListCollectionCellView: UICollectionViewCell {
     var document: DocumentListViewModel?
     let nameLabelHeight = 30.0
+    let shareIconWidth = 20.0
     weak var actionDelegate: DocumentListCollectionCellViewDelegate?
 
     @available(*, unavailable)
@@ -17,6 +18,9 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     func initializeSubviews() {
         addTapGestureRecognizer()
         initializeIconImageView()
+        if document?.isShared ?? false {
+            initializeShareIconImageView()
+        }
         initializeNameLabel()
     }
 
@@ -33,6 +37,19 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
     }
 
+    private func initializeShareIconImageView() {
+        let image = UIImage(systemName: SystemImageName.people.rawValue) ?? UIImage()
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = .systemGray
+
+        addSubview(imageView)
+
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.widthAnchor.constraint(equalToConstant: shareIconWidth).isActive = true
+        imageView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5.0).isActive = true
+    }
+
     private func initializeNameLabel() {
         guard let document = document else {
             return
@@ -45,10 +62,11 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         addSubview(label)
 
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.widthAnchor.constraint(equalToConstant: self.frame.width).isActive = true
+        let width = document.isShared ? self.frame.width - shareIconWidth : self.frame.width
+        label.widthAnchor.constraint(equalToConstant: width).isActive = true
         label.heightAnchor.constraint(equalToConstant: nameLabelHeight).isActive = true
         label.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        label.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        label.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
     }
 
     private func addTapGestureRecognizer() {

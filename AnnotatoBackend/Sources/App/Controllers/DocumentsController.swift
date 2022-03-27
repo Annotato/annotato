@@ -7,14 +7,14 @@ struct DocumentsController {
         case userId
     }
 
-    static func list(req: Request) async throws -> [Document] {
+    static func listOwn(req: Request) async throws -> [Document] {
         let userId: String? = req.query[QueryParams.userId.rawValue]
 
         guard let userId = userId else {
             throw Abort(.badRequest)
         }
 
-        return try await DocumentsDataAccess.listAll(db: req.db, userId: userId)
+        return try await DocumentsDataAccess.listOwn(db: req.db, userId: userId)
     }
 
     static func listShared(req: Request) async throws -> [Document] {

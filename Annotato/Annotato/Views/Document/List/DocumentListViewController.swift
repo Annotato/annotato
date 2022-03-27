@@ -57,10 +57,10 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     private func initializeDocumentsCollectionView() {
         Task {
             guard let userId = AnnotatoAuth().currentUser?.uid else {
-                AnnotatoLogger.info("Could not get current user. Sample documents will be used.",
+                AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
 
-                documents = SampleData.exampleDocumentsInList
+                documents = []
                 addDocumentsSubview()
                 return
             }
