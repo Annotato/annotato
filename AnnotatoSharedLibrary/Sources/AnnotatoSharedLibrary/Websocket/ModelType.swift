@@ -1,4 +1,4 @@
 public enum ModelType: String, Codable {
-    case document 
+    case document
     case annotation
 }
