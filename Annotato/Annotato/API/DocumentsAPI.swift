@@ -18,7 +18,7 @@ struct DocumentsAPI {
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching own documents: \(error.localizedDescription)")
             return nil
         }
     }
@@ -30,7 +30,7 @@ struct DocumentsAPI {
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching shared documents: \(error.localizedDescription)")
             return nil
         }
     }
