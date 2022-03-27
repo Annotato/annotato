@@ -15,6 +15,10 @@ extension AnnotationEntity {
             let annotationEntity = AnnotationTextEntity.fromModel(annotationText)
             try await annotationEntity.customCreate(on: tx)
         }
+
+        let selectionBox = annotation.selectionBox
+        let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
+        try await selectionBoxEntity.customCreate(on: tx)
     }
 
     /// Updates the AnnotationEntity instance. Use this function to cascade updates.
@@ -36,6 +40,14 @@ extension AnnotationEntity {
             }
         }
 
+        let selectionBox = annotation.selectionBox
+        if let selectionBoxEntity = try await SelectionBoxEntity.find(selectionBox.id, on: tx).get() {
+            try await selectionBoxEntity.customUpdate(on: tx, usingUpdatedModel: selectionBox)
+        } else {
+            let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
+            try await selectionBoxEntity.customCreate(on: tx)
+        }
+
         try await self.update(on: tx).get()
     }
 
@@ -53,6 +65,7 @@ extension AnnotationEntity {
 
     func loadAssociations(on db: Database) async throws {
         try await self.$annotationTextEntities.load(on: db).get()
+        try await self.$selectionBox.load(on: db).get()
     }
 
     func copyPropertiesOf(otherEntity: AnnotationEntity) {
