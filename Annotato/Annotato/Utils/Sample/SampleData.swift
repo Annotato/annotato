@@ -3,15 +3,6 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class SampleData {
-    static var exampleDocumentsInList: [DocumentListViewModel] =
-        [
-            DocumentListViewModel(id: UUID(), name: "Lab01 Qns"),
-            DocumentListViewModel(id: UUID(), name: "L0 Overview"),
-            DocumentListViewModel(id: UUID(), name: "L1 Intro"),
-            DocumentListViewModel(id: UUID(), name: "Firebase Clean Code"),
-            DocumentListViewModel(id: UUID(), name: "Test E")
-        ]
-
     static var exampleDocument: Document {
         Document(name: "Clean Code", ownerId: "owner123", baseFileUrl: firebasePdfUrlString, id: UUID())
     }

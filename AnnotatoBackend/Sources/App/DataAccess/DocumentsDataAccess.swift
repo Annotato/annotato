@@ -3,9 +3,24 @@ import Fluent
 import AnnotatoSharedLibrary
 
 struct DocumentsDataAccess {
-    static func list(db: Database, userId: String) async throws -> [Document] {
+    static func listOwn(db: Database, userId: String) async throws -> [Document] {
         let documentEntities = try await DocumentEntity.query(on: db)
             .filter(\.$ownerId == userId)
+            .sort(\.$name)
+            .all().get()
+
+        for documentEntity in documentEntities {
+            try await documentEntity.loadAssociations(on: db)
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
+    }
+
+    static func listShared(db: Database, userId: String) async throws -> [Document] {
+        let documentEntities = try await DocumentEntity.query(on: db)
+            .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .sort(\.$name)
             .all().get()
 
         for documentEntity in documentEntities {

@@ -70,10 +70,28 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
         documentView.leftAnchor.constraint(equalTo: margins.leftAnchor).isActive = true
         documentView.rightAnchor.constraint(equalTo: margins.rightAnchor).isActive = true
     }
+
+    private func saveDocument() {
+        Task {
+            guard let documentViewModel = documentViewModel else {
+                return
+            }
+
+            await DocumentController.updateDocument(document: documentViewModel)
+        }
+    }
 }
 
 extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
     func didTapBackButton() {
+        saveDocument()
         goBack()
+    }
+
+    func didTapShareButton() {
+        guard let documentId = documentId else {
+            return
+        }
+        goToShare(documentId: documentId)
     }
 }

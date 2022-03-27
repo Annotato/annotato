@@ -1,7 +1,9 @@
 import Vapor
 
 func documentsRouter(documents: RoutesBuilder) {
-    documents.get(use: DocumentsController.list)
+    documents.get(use: DocumentsController.listOwn)
+
+    documents.get("shared", use: DocumentsController.listShared)
 
     documents.post(use: DocumentsController.create)
 

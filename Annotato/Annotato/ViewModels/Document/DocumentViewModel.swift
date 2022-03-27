@@ -4,22 +4,22 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
-    private let model: Document
+    let model: Document
 
-    private(set) var annotations: [AnnotationViewModel]
+    private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var addedSelectionBox: SelectionBoxViewModel?
 
     init?(model: Document) {
-        self.model = model
-        self.annotations = model.annotations.map { AnnotationViewModel(model: $0) }
-
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
+
+        self.model = model
         self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
+        self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
     }
 }
 
@@ -42,7 +42,8 @@ extension DocumentViewModel {
             id: UUID()
         )
         model.addAnnotation(annotation: newAnnotation)
-        let annotationViewModel = AnnotationViewModel(model: newAnnotation)
+
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
         annotationViewModel.center = center
         /*
          Need to reassign the selection box to the added one, because the init for annotation view model will create a
@@ -97,5 +98,10 @@ extension DocumentViewModel {
         }
         addAnnotationIfWithinBounds(center: addedSelectionBox.startPoint, bounds: bounds)
         self.addedSelectionBox = nil
+    }
+
+    func removeAnnotation(annotation: AnnotationViewModel) {
+        model.removeAnnotation(annotation: annotation.model)
+        annotations.removeAll(where: { $0.model.id == annotation.model.id })
     }
 }

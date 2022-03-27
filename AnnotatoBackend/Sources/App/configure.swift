@@ -34,6 +34,7 @@ private func addAndRunMigrations(app: Application) throws {
     app.migrations.add(CreateAnnotations())
     app.migrations.add(CreateAnnotationText())
     app.migrations.add(CreateSelectionBoxes())
+    app.migrations.add(CreateDocumentShares())
 
     try app.autoMigrate().wait()
 }

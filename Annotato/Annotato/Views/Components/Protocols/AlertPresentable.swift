@@ -3,7 +3,7 @@ import UIKit
 protocol AlertPresentable where Self: UIViewController {
     func presentTimedAlert(title: String, message: String)
     func presentErrorAlert(errorMessage: String)
-    func presentSuccessAlert(successMessage: String)
+    func presentSuccessAlert(successMessage: String, completion: (() -> Void)?)
     func presentWarningAlert(warningMessage: String, confirmHandler: @escaping () -> Void)
 }
 
@@ -29,7 +29,7 @@ extension AlertPresentable {
         present(alertController, animated: true)
     }
 
-    func presentSuccessAlert(successMessage: String) {
+    func presentSuccessAlert(successMessage: String, completion: (() -> Void)? = nil) {
         let alertController = UIAlertController(
             title: "",
             message: successMessage,
@@ -37,7 +37,7 @@ extension AlertPresentable {
 
         let displayDuration = DispatchTime.now() + 1
         DispatchQueue.main.asyncAfter(deadline: displayDuration) {
-            alertController.dismiss(animated: true, completion: nil)
+            alertController.dismiss(animated: true, completion: completion)
         }
 
         present(alertController, animated: true)

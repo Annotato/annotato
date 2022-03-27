@@ -1,5 +1,4 @@
 import Foundation
-import CoreGraphics
 
 public final class Document: Codable {
     public var id: UUID

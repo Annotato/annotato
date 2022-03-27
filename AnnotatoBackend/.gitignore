@@ -1,6 +1,7 @@
 **/.env.*
 !**/.env.template
 
+Package.resolved
 Packages
 .build
 xcuserdata
