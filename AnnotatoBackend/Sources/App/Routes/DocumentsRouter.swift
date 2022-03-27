@@ -14,6 +14,6 @@ func documentsRouter(documents: RoutesBuilder) {
 
         document.delete(use: DocumentsController.delete)
 
-        document.webSocket("edit", onUpgrade: DocumentsWebSocketController.handleIncomingConnection)
+        document.webSocket(onUpgrade: DocumentsWebSocketController.handleIncomingConnection)
     }
 }
