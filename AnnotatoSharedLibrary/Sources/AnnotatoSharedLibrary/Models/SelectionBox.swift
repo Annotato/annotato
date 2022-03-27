@@ -3,7 +3,7 @@ import Combine
 import CoreGraphics
 
 public final class SelectionBox: Codable, ObservableObject {
-    private(set) var id: UUID
+    public private(set) var id: UUID
     public private(set) var startPoint: CGPoint
     @Published public private(set) var endPoint: CGPoint
 

@@ -60,6 +60,8 @@ extension AnnotationEntity {
             try await textEntity.customDelete(on: tx)
         }
 
+        try await selectionBox?.customDelete(on: tx)
+
         try await self.delete(on: tx).get()
     }
 
