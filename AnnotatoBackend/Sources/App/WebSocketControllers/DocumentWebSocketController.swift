@@ -35,8 +35,8 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .createDocument, document: newDocument)
 
             await Self.sendToAllAppropriateClients(
-                    userId: userId, documentId: newDocument.id, db: db, message: response
-                )
+                db: db, document: newDocument, message: response
+            )
 
         } catch {
             Self.logger.error("Error when creating document. \(error.localizedDescription)")
@@ -50,7 +50,7 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .readDocument, document: readDocument)
 
             await Self.sendToAllAppropriateClients(
-                userId: userId, documentId: readDocument.id, db: db, message: response
+                db: db, document: readDocument, message: response
             )
 
         } catch {
@@ -66,7 +66,7 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .updateDocument, document: updatedDocument)
 
             await Self.sendToAllAppropriateClients(
-                userId: userId, documentId: updatedDocument.id, db: db, message: response
+                db: db, document: updatedDocument, message: response
             )
 
         } catch {
@@ -81,7 +81,7 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .deleteDocument, document: deletedDocument)
 
             await Self.sendToAllAppropriateClients(
-                userId: userId, documentId: deletedDocument.id, db: db, message: response
+                db: db, document: deletedDocument, message: response
             )
 
         } catch {
@@ -90,20 +90,19 @@ class DocumentWebSocketController {
     }
 
     private static func sendToAllAppropriateClients<T: Codable>(
-        userId: String,
-        documentId: UUID,
         db: Database,
+        document: Document,
         message: T
     ) async {
         do {
             let documentShares = try await DocumentSharesDataAccess
-                .findAllRecipientsUsingDocumentId(db: db, documentId: documentId)
+                .findAllRecipientsUsingDocumentId(db: db, documentId: document.id)
 
             // Gets the users sharing document
             var recipientIdsSet = Set(documentShares.map { $0.recipientId })
 
-            // Adds the user that sent the websocket message
-            recipientIdsSet.insert(userId)
+            // Adds the document owner
+            recipientIdsSet.insert(document.ownerId)
 
             WebSocketController.sendAll(recipientIds: recipientIdsSet, message: message)
         } catch {

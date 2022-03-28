@@ -39,8 +39,8 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: newAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                    userId: userId, documentId: newAnnotation.documentId, db: db, message: response
-                )
+                db: db, annotation: newAnnotation, message: response
+            )
 
         } catch {
             Self.logger.error("Error when creating annotation. \(error.localizedDescription)")
@@ -58,8 +58,8 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .readAnnotation, annotation: readAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                    userId: userId, documentId: readAnnotation.documentId, db: db, message: response
-                )
+                db: db, annotation: readAnnotation, message: response
+            )
 
         } catch {
             Self.logger.error("Error when reading annotation. \(error.localizedDescription)")
@@ -78,8 +78,8 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: updatedAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                    userId: userId, documentId: updatedAnnotation.documentId, db: db, message: response
-                )
+                db: db, annotation: updatedAnnotation, message: response
+            )
 
         } catch {
             Self.logger.error("Error when updating annotation. \(error.localizedDescription)")
@@ -97,8 +97,8 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: deletedAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                    userId: userId, documentId: deletedAnnotation.documentId, db: db, message: response
-                )
+                db: db, annotation: deletedAnnotation, message: response
+            )
 
         } catch {
             Self.logger.error("Error when deleting annotation. \(error.localizedDescription)")
@@ -106,20 +106,20 @@ class AnnotationWebSocketController {
     }
 
     private static func sendToAllAppropriateClients<T: Codable>(
-        userId: String,
-        documentId: UUID,
         db: Database,
+        annotation: Annotation,
         message: T
     ) async {
         do {
+            let annotationDocument = try await DocumentsDataAccess.read(db: db, documentId: annotation.documentId)
             let documentShares = try await DocumentSharesDataAccess
-                .findAllRecipientsUsingDocumentId(db: db, documentId: documentId)
+                .findAllRecipientsUsingDocumentId(db: db, documentId: annotation.documentId)
 
             // Gets the users sharing document
             var recipientIdsSet = Set(documentShares.map { $0.recipientId })
 
-            // Adds the user that sent the websocket message
-            recipientIdsSet.insert(userId)
+            // Adds the document owner
+            recipientIdsSet.insert(annotationDocument.ownerId)
 
             WebSocketController.sendAll(recipientIds: recipientIdsSet, message: message)
         } catch {
