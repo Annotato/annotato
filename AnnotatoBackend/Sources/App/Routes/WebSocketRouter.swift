@@ -1,7 +1,7 @@
 import Vapor
 
 func webSocketRouter(ws: RoutesBuilder) {
-    ws.group(":id") { user in
+    ws.group(":userId") { user in
         user.webSocket(onUpgrade: WebSocketController.handleIncomingConnection)
     }
 }

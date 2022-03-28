@@ -6,20 +6,21 @@ import FluentKit
 class AnnotationWebSocketController {
     private static var logger = Logger(label: "AnnotationWebSocketController")
 
-    static func handleCrudAnnotationData(userId: String, ws: WebSocket, data: Data, db: Database) async {
+    static func handleCrudAnnotationData(userId: String, data: Data, db: Database) async {
         do {
 
             let message = try JSONDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
+            let annotation = message.annotation
 
             switch message.subtype {
             case .createAnnotation:
-                await Self.handleCreateAnnotation(userId: userId, ws: ws, db: db, annotation: message.annotation)
+                await Self.handleCreateAnnotation(userId: userId, db: db, annotation: annotation)
             case .readAnnotation:
-                await Self.handleReadAnnotation(userId: userId, ws: ws, db: db, annotation: message.annotation)
+                await Self.handleReadAnnotation(userId: userId, db: db, annotation: annotation)
             case .updateAnnotation:
-                await Self.handleUpdateAnnotation(userId: userId, ws: ws, db: db, annotation: message.annotation)
+                await Self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
             case .deleteAnnotation:
-                await Self.handleDeleteAnnotation(userId: userId, ws: ws, db: db, annotation: message.annotation)
+                await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
             }
 
         } catch {
@@ -29,7 +30,6 @@ class AnnotationWebSocketController {
 
     private static func handleCreateAnnotation(
         userId: String,
-        ws: WebSocket,
         db: Database,
         annotation: Annotation
     ) async {
@@ -38,8 +38,7 @@ class AnnotationWebSocketController {
             let newAnnotation = try await AnnotationDataAccess.create(db: db, annotation: annotation)
             let response = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: newAnnotation)
 
-            await WebSocketController
-                .sendToAllAppropriateClients(
+            await Self.sendToAllAppropriateClients(
                     userId: userId, documentId: newAnnotation.documentId, db: db, message: response
                 )
 
@@ -50,7 +49,6 @@ class AnnotationWebSocketController {
 
     private static func handleReadAnnotation(
         userId: String,
-        ws: WebSocket,
         db: Database,
         annotation: Annotation
     ) async {
@@ -59,8 +57,7 @@ class AnnotationWebSocketController {
             let readAnnotation = try await AnnotationDataAccess.read(db: db, annotationId: annotation.id)
             let response = AnnotatoCrudAnnotationMessage(subtype: .readAnnotation, annotation: readAnnotation)
 
-            await WebSocketController
-                .sendToAllAppropriateClients(
+            await Self.sendToAllAppropriateClients(
                     userId: userId, documentId: readAnnotation.documentId, db: db, message: response
                 )
 
@@ -71,7 +68,6 @@ class AnnotationWebSocketController {
 
     private static func handleUpdateAnnotation(
         userId: String,
-        ws: WebSocket,
         db: Database,
         annotation: Annotation
     ) async {
@@ -81,8 +77,7 @@ class AnnotationWebSocketController {
                 .update(db: db, annotationId: annotation.id, annotation: annotation)
             let response = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: updatedAnnotation)
 
-            await WebSocketController
-                .sendToAllAppropriateClients(
+            await Self.sendToAllAppropriateClients(
                     userId: userId, documentId: updatedAnnotation.documentId, db: db, message: response
                 )
 
@@ -92,7 +87,7 @@ class AnnotationWebSocketController {
     }
 
     private static func handleDeleteAnnotation(
-        userId: String, ws: WebSocket,
+        userId: String,
         db: Database,
         annotation: Annotation
     ) async {
@@ -101,13 +96,29 @@ class AnnotationWebSocketController {
             let deletedAnnotation = try await AnnotationDataAccess.delete(db: db, annotationId: annotation.id)
             let response = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: deletedAnnotation)
 
-            await WebSocketController
-                .sendToAllAppropriateClients(
+            await Self.sendToAllAppropriateClients(
                     userId: userId, documentId: deletedAnnotation.documentId, db: db, message: response
                 )
 
         } catch {
             Self.logger.error("Error when deleting annotation. \(error.localizedDescription)")
+        }
+    }
+
+    private static func sendToAllAppropriateClients<T: Codable>(userId: String, documentId: UUID, db: Database, message: T) async {
+        do {
+            let documentShares = try await DocumentSharesDataAccess
+                .findAllRecipientsUsingDocumentId(db: db, documentId: documentId)
+
+            // Gets the users sharing document
+            var recipientIdsSet = Set(documentShares.map { $0.recipientId })
+
+            // Adds the user that sent the websocket message
+            recipientIdsSet.insert(userId)
+
+            WebSocketController.sendAll(recipientIds: recipientIdsSet, message: message)
+        } catch {
+            Self.logger.error("Error when sending response to users. \(error.localizedDescription)")
         }
     }
 }

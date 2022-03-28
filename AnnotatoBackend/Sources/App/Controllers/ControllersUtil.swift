@@ -13,11 +13,7 @@ struct ControllersUtil {
         return uuid
     }
 
-    static func getIdFromParamsAsString(request: Request) throws -> String {
-        try getParamValue(request: request, paramKey: "id")
-    }
-
-    private static func getParamValue(request: Request, paramKey: String) throws -> String {
+    static func getParamValue(request: Request, paramKey: String) throws -> String {
         guard let paramValue = request.parameters.get(paramKey) else {
             request.application.logger.error("Failed to get expected value for key: \(paramKey)")
             throw Abort(.internalServerError)
