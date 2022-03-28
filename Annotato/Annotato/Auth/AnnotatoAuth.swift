@@ -9,7 +9,7 @@ class AnnotatoAuth {
     }
 
     var currentUser: AnnotatoUser? {
-        authService.fetchLocalCredentials() ?? authService.currentUser
+        fetchLocalUserCredentials() ?? authService.currentUser
     }
 
     var delegate: AnnotatoAuthDelegate? {
@@ -24,12 +24,41 @@ class AnnotatoAuth {
     func logIn(email: String, password: String) {
         authService.logIn(email: email, password: password)
 
-        authService.storeCredentialsLocally()
+        storeCredentialsLocally()
     }
 
     func logOut() {
         authService.logOut()
 
-        authService.purgeLocalCredentials()
+        purgeLocalCredentials()
+    }
+}
+
+// MARK: Local storage of user credentials
+extension AnnotatoAuth {
+    private var savedUserKey: String {
+        "savedUser"
+    }
+
+    private func storeCredentialsLocally() {
+        guard let currentUser = currentUser,
+              let encodedUser = try? JSONEncoder().encode(currentUser) else {
+            return
+        }
+
+        UserDefaults.standard.set(encodedUser, forKey: savedUserKey)
+    }
+
+    private func fetchLocalUserCredentials() -> AnnotatoUser? {
+        guard let savedUser = UserDefaults.standard.object(forKey: savedUserKey) as? Data,
+              let decodedUser = try? JSONDecoder().decode(AnnotatoUser.self, from: savedUser) else {
+            return nil
+        }
+
+        return decodedUser
+    }
+
+    private func purgeLocalCredentials() {
+        UserDefaults.standard.removeObject(forKey: savedUserKey)
     }
 }
