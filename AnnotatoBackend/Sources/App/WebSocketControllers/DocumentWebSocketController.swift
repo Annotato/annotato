@@ -34,7 +34,9 @@ class DocumentWebSocketController {
             let newDocument = try await DocumentsDataAccess.create(db: db, document: document)
             let response = AnnotatoCrudDocumentMessage(subtype: .createDocument, document: newDocument)
 
-            await Self.sendToAllAppropriateClients(userId: userId, documentId: newDocument.id, db: db, message: response)
+            await Self.sendToAllAppropriateClients(
+                    userId: userId, documentId: newDocument.id, db: db, message: response
+                )
 
         } catch {
             Self.logger.error("Error when creating document. \(error.localizedDescription)")
@@ -47,7 +49,9 @@ class DocumentWebSocketController {
             let readDocument = try await DocumentsDataAccess.read(db: db, documentId: document.id)
             let response = AnnotatoCrudDocumentMessage(subtype: .readDocument, document: readDocument)
 
-            await Self.sendToAllAppropriateClients(userId: userId, documentId: readDocument.id, db: db, message: response)
+            await Self.sendToAllAppropriateClients(
+                userId: userId, documentId: readDocument.id, db: db, message: response
+            )
 
         } catch {
             Self.logger.error("Error when reading document. \(error.localizedDescription)")
@@ -61,7 +65,9 @@ class DocumentWebSocketController {
                 .update(db: db, documentId: document.id, document: document)
             let response = AnnotatoCrudDocumentMessage(subtype: .updateDocument, document: updatedDocument)
 
-            await Self.sendToAllAppropriateClients(userId: userId, documentId: updatedDocument.id, db: db, message: response)
+            await Self.sendToAllAppropriateClients(
+                userId: userId, documentId: updatedDocument.id, db: db, message: response
+            )
 
         } catch {
             Self.logger.error("Error when updating document. \(error.localizedDescription)")
@@ -74,14 +80,21 @@ class DocumentWebSocketController {
             let deletedDocument = try await DocumentsDataAccess.delete(db: db, documentId: document.id)
             let response = AnnotatoCrudDocumentMessage(subtype: .deleteDocument, document: deletedDocument)
 
-            await Self.sendToAllAppropriateClients(userId: userId, documentId: deletedDocument.id, db: db, message: response)
+            await Self.sendToAllAppropriateClients(
+                userId: userId, documentId: deletedDocument.id, db: db, message: response
+            )
 
         } catch {
             Self.logger.error("Error when deleting document. \(error.localizedDescription)")
         }
     }
 
-    private static func sendToAllAppropriateClients<T: Codable>(userId: String, documentId: UUID, db: Database, message: T) async {
+    private static func sendToAllAppropriateClients<T: Codable>(
+        userId: String,
+        documentId: UUID,
+        db: Database,
+        message: T
+    ) async {
         do {
             let documentShares = try await DocumentSharesDataAccess
                 .findAllRecipientsUsingDocumentId(db: db, documentId: documentId)

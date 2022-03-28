@@ -105,7 +105,12 @@ class AnnotationWebSocketController {
         }
     }
 
-    private static func sendToAllAppropriateClients<T: Codable>(userId: String, documentId: UUID, db: Database, message: T) async {
+    private static func sendToAllAppropriateClients<T: Codable>(
+        userId: String,
+        documentId: UUID,
+        db: Database,
+        message: T
+    ) async {
         do {
             let documentShares = try await DocumentSharesDataAccess
                 .findAllRecipientsUsingDocumentId(db: db, documentId: documentId)
