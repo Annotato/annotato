@@ -2,27 +2,36 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class WebSocketManager {
-    let socket: URLSessionWebSocketTask
+    static let shared = WebSocketManager()
+
+    private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
 
-    init?() {
+    private init() { }
+
+    func setSocket(to webSocketSession: URLSessionWebSocketTask) {
         guard let userId = AnnotatoAuth().currentUser?.uid else {
             AnnotatoLogger.error("Unable to retrieve user id.", context: "WebSocketManager::init")
-            return nil
+            return
         }
 
         guard let url = URL(string: "\(BaseAPI.baseWsAPIUrl)/ws/\(userId)") else {
-            return nil
+            return
         }
 
         socket = URLSession(configuration: .default).webSocketTask(with: url)
         listen()
-        socket.resume()
+        socket?.resume()
+    }
+
+    func resetSocket() {
+        socket?.cancel(with: .normalClosure, reason: nil)
+        socket = nil
     }
 
     func listen() {
-        socket.receive { [weak self] result in
+        socket?.receive { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -54,7 +63,7 @@ class WebSocketManager {
         do {
 
             let data = try JSONEncoder().encode(message)
-            socket.send(.data(data)) { error in
+            socket?.send(.data(data)) { error in
                 if let error = error {
                     AnnotatoLogger.error(
                         "While sending data. \(error.localizedDescription).",
