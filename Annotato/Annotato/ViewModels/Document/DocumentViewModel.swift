@@ -11,6 +11,7 @@ class DocumentViewModel: ObservableObject {
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
+    @Published private(set) var deletedAnnotation: Annotation?
 
     init?(model: Document) {
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
@@ -30,6 +31,37 @@ class DocumentViewModel: ObservableObject {
                 }
             }).store(in: &cancellables)
         }
+
+        WebSocketManager.shared.annotationManager.$newAnnotation.sink { [weak self] newAnnotation in
+            guard let currentUser = AnnotatoAuth().currentUser else {
+                return
+            }
+
+            guard let newAnnotation = newAnnotation else {
+                return
+            }
+
+            guard let self = self else {
+                return
+            }
+
+            // If the annotation was added by the current user, we would not need to render it again
+            if newAnnotation.ownerId == currentUser.uid {
+                return
+            }
+
+            self.model.addAnnotation(annotation: newAnnotation)
+            let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
+            self.addedAnnotation = annotationViewModel
+        }.store(in: &cancellables)
+
+        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
+            guard let deletedAnnotation = deletedAnnotation else {
+                return
+            }
+
+            self?.deletedAnnotation = deletedAnnotation
+        }.store(in: &cancellables)
     }
 
     private func setUpSubscriberForAnnotation(annotation: AnnotationViewModel) {
@@ -83,10 +115,28 @@ extension DocumentViewModel {
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
         setUpSubscriberForAnnotation(annotation: annotationViewModel)
+
+        createAnnotation(annotation: newAnnotation)
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {
         model.removeAnnotation(annotation: annotation.model)
         annotations.removeAll(where: { $0.model.id == annotation.model.id })
+        deleteAnnotation(annotation: annotation.model)
+    }
+}
+
+// MARK: WebSocket Actions
+extension DocumentViewModel {
+    func createAnnotation(annotation: Annotation) {
+        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: annotation)
+
+        WebSocketManager.shared.send(message: webSocketMessage)
+    }
+
+    func deleteAnnotation(annotation: Annotation) {
+        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: annotation)
+
+        WebSocketManager.shared.send(message: webSocketMessage)
     }
 }

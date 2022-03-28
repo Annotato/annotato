@@ -31,6 +31,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
     @Published private(set) var isInFocus = false
+    @Published private(set) var modelWasUpdated = false
 
     init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
@@ -40,6 +41,12 @@ class AnnotationViewModel: ObservableObject {
         self.parts = []
         self.palette.parentViewModel = self
 
+        populatePartViewModels(model: model)
+
+        setUpSubscribers()
+    }
+
+    private func populatePartViewModels(model: Annotation) {
         for part in model.parts {
             let partViewModel: AnnotationPartViewModel
             switch part {
@@ -59,12 +66,12 @@ class AnnotationViewModel: ObservableObject {
             partViewModel.parentViewModel = self
             parts.append(partViewModel)
         }
-
-        setUpSubscribers()
     }
 
     func translateCenter(by translation: CGPoint) {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
+
+        updateAnnotation()
     }
 
     private func setUpSubscribers() {
@@ -97,6 +104,10 @@ class AnnotationViewModel: ObservableObject {
             self?.parts.removeAll(where: { $0.id == removedPart?.id })
             self?.resize()
         }).store(in: &cancellables)
+
+        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] _ in
+            // NOT IMPLEMENTED YET
+        }.store(in: &cancellables)
     }
 
     func hasExceededBounds(bounds: CGRect) -> Bool {
@@ -184,6 +195,8 @@ extension AnnotationViewModel {
         for part in parts {
             part.enterViewMode()
         }
+
+        updateAnnotation()
     }
 
     func resize() {
@@ -272,5 +285,13 @@ extension AnnotationViewModel {
     func outOfFocus() {
         isInFocus = false
         enterMinimizedMode()
+    }
+}
+
+extension AnnotationViewModel {
+    func updateAnnotation() {
+        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: model)
+
+        WebSocketManager.shared.send(message: webSocketMessage)
     }
 }
