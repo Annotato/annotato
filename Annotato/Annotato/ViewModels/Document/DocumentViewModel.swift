@@ -56,10 +56,12 @@ class DocumentViewModel: ObservableObject {
 
 extension DocumentViewModel {
     func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
-        guard let currentUser = AnnotatoAuth().currentUser else {
+        guard let addedSelectionBox = addedSelectionBox else {
+            // If we click outside the document, there will not be a selection box
             return
         }
-        guard let addedSelectionBox = addedSelectionBox else {
+        guard let currentUser = AnnotatoAuth().currentUser else {
+            addedSelectionBox.didDelete()
             return
         }
         let newAnnotationWidth = 300.0
@@ -80,8 +82,7 @@ extension DocumentViewModel {
          Reassign the annotationId of the selection box to be this one because the initial one that I
          initialized at init is a placeholder
          */
-        // TODO: Change to annotationviewmodel.id once I get from master
-        addedSelectionBox.annotationId = annotationViewModel.model.id
+        addedSelectionBox.annotationId = annotationViewModel.id
 
         /*
          Need to reassign the selection box to the added one, because the init for annotation view model will create a
@@ -92,8 +93,9 @@ extension DocumentViewModel {
         annotationViewModel.selectionBox = addedSelectionBox
 
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
-            model.removeAnnotation(annotation: newAnnotation)
-            return
+            let boundsMidX = bounds.midX
+            let annotationY = annotationViewModel.frame.midY
+            annotationViewModel.center = CGPoint(x: boundsMidX, y: annotationY)
         }
 
         annotationViewModel.enterEditMode()

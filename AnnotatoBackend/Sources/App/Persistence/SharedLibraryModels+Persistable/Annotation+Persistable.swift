@@ -11,11 +11,8 @@ extension Annotation: Persistable {
         if let selectionBoxEntity = managedEntity.selectionBox {
             selectionBox = SelectionBox.fromManagedEntity(selectionBoxEntity)
         } else {
-            // Will never come to this part
+            // Will never come to this part. But it has to be optional because we use @OptionalChild
             fatalError("This annotation entity has no associated selection box.")
-            /*
-             selectionBox = SelectionBox(startPoint: .zero, endPoint: .zero, annotationId: managedEntity.id ?? UUID(), id: UUID())
-             */
         }
 
         return Self(
