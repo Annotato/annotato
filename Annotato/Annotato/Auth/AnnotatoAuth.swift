@@ -1,4 +1,5 @@
 import AnnotatoSharedLibrary
+import Foundation
 
 class AnnotatoAuth {
     private var authService: AnnotatoAuthService
@@ -8,7 +9,7 @@ class AnnotatoAuth {
     }
 
     var currentUser: AnnotatoUser? {
-        authService.currentUser
+        authService.fetchLocalCredentials() ?? authService.currentUser
     }
 
     var delegate: AnnotatoAuthDelegate? {
@@ -22,5 +23,7 @@ class AnnotatoAuth {
 
     func logIn(email: String, password: String) {
         authService.logIn(email: email, password: password)
+
+        authService.storeCredentialsLocally()
     }
 }

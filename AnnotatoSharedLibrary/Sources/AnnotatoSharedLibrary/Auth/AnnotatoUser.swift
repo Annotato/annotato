@@ -1,4 +1,4 @@
-public class AnnotatoUser {
+public class AnnotatoUser: Codable {
     public let uid: String
     public let email: String
     public let displayName: String
