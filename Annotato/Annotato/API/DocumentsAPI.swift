@@ -18,7 +18,7 @@ struct DocumentsAPI {
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching own documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching own documents: \(String(describing: error))")
             return nil
         }
     }
@@ -30,7 +30,7 @@ struct DocumentsAPI {
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching shared documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching shared documents: \(String(describing: error))")
             return nil
         }
     }
@@ -41,7 +41,7 @@ struct DocumentsAPI {
             let responseData = try await httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching document: \(String(describing: error))")
             return nil
         }
     }
@@ -58,7 +58,7 @@ struct DocumentsAPI {
             let responseData = try await httpService.post(url: DocumentsAPI.documentsUrl, data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When creating document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When creating document: \(String(describing: error))")
             return nil
         }
     }
@@ -74,7 +74,6 @@ struct DocumentsAPI {
         do {
             let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(document.id)",
                                                          data: requestData)
-            print(String(data: responseData, encoding: .utf8))
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When updating document: \(String(describing: error))")
@@ -88,7 +87,7 @@ struct DocumentsAPI {
             let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(document.id)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When deleting document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When deleting document: \(String(describing: error))")
             return nil
         }
     }
@@ -98,7 +97,7 @@ struct DocumentsAPI {
             let data = try JSONEncoder().encode(document)
             return data
         } catch {
-            AnnotatoLogger.error("Could not encode Document into JSON. \(error.localizedDescription)",
+            AnnotatoLogger.error("Could not encode Document into JSON. \(String(describing: error))",
                                  context: "DocumentsAPI::encodeDocument")
             return nil
         }

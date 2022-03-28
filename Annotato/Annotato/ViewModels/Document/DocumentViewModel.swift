@@ -46,18 +46,19 @@ extension DocumentViewModel {
         let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
         annotationViewModel.center = center
         /*
+         Reassign the annotationId of the selection box to be this one because the initial one that I
+         initialized at init is a placeholder
+         */
+        // TODO: Change to annotationviewmodel.id once I get from master
+        addedSelectionBox.annotationId = annotationViewModel.model.id
+
+        /*
          Need to reassign the selection box to the added one, because the init for annotation view model will create a
          brand new instance which is not what we want. Yet we cannot change the constructor of the annotation model
          to take in a selection box view model instead, because in the future we will want to load from persisted data
          and persisted data uses models.
          */
         annotationViewModel.selectionBox = addedSelectionBox
-
-        // Now we create the link line then assign it to the annotation
-        let linkLineViewModel = LinkLineViewModel(id: UUID())
-        linkLineViewModel.selectionBoxViewModel = annotationViewModel.selectionBox
-        linkLineViewModel.annotationViewModel = annotationViewModel
-        annotationViewModel.linkLine = linkLineViewModel
 
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
             model.removeAnnotation(annotation: newAnnotation)
@@ -84,7 +85,12 @@ extension DocumentViewModel {
         guard AnnotatoAuth().currentUser != nil else {
             return
         }
-        let newSelectionBox = SelectionBox(startPoint: startPoint, endPoint: startPoint, id: UUID())
+        let newSelectionBox = SelectionBox(
+            startPoint: startPoint,
+            endPoint: startPoint,
+            annotationId: UUID(),
+            id: UUID()
+        )
         let selectionBoxViewModel = SelectionBoxViewModel(model: newSelectionBox)
         if selectionBoxViewModel.hasExceededBounds(bounds: bounds) {
             return

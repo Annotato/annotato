@@ -10,6 +10,15 @@ class SelectionBoxViewModel: ObservableObject {
     @Published private(set) var endPointDidChange = false
     @Published private(set) var isRemoved = false
 
+    var annotationId: UUID {
+        get {
+            model.annotationId
+        }
+        set(newAnnotationId) {
+            model.annotationId = newAnnotationId
+        }
+    }
+
     init(model: SelectionBox) {
         self.model = model
         setUpSubscribers()

@@ -37,6 +37,7 @@ class DocumentView: UIView {
 
     private func initializeInitialAnnotationViews() {
         for annotation in viewModel.annotations {
+            renderNewSelectionBox(viewModel: annotation.selectionBox)
             renderNewAnnotation(viewModel: annotation)
         }
     }
@@ -75,9 +76,9 @@ class DocumentView: UIView {
 
     @objc
     private func didChangeVisiblePages(notification: Notification) {
-        showAnnotationsOfVisiblePages()
-        showSelectionBoxedOfVisiblePages()
         showLinkLinesOfVisiblePages()
+        showSelectionBoxedOfVisiblePages()
+        showAnnotationsOfVisiblePages()
     }
 
     private func addGestureRecognizers() {
@@ -143,23 +144,14 @@ extension DocumentView {
 extension DocumentView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotationView = AnnotationView(viewModel: viewModel)
-        guard let linkLineViewModel = viewModel.linkLine else {
-            return
-        }
+
+        let linkLineViewModel = viewModel.getLinkLine()
         let linkLineView = LinkLineView(viewModel: linkLineViewModel)
         annotationViews.append(annotationView)
         linkLineViews.append(linkLineView)
 
-        pdfView.documentView?.addSubview(annotationView)
         pdfView.documentView?.addSubview(linkLineView)
-    }
-
-    private func addAnnotationIfWithinPdfBounds(at pointInDocument: CGPoint) {
-        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
-        guard let pdfInnerDocumentView = pdfView.documentView else {
-            return
-        }
-        viewModel.addAnnotationIfWithinBounds(center: pointInPdf, bounds: pdfInnerDocumentView.bounds)
+        pdfView.documentView?.addSubview(annotationView)
     }
 
     private func addAnnotationWithAssociatedSelectionBoxIfWithinBounds() {
