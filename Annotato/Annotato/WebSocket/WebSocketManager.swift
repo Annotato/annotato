@@ -10,7 +10,7 @@ class WebSocketManager {
 
     private init() { }
 
-    func setSocket(to webSocketSession: URLSessionWebSocketTask) {
+    func setUpSocket() {
         guard let userId = AnnotatoAuth().currentUser?.uid else {
             AnnotatoLogger.error("Unable to retrieve user id.", context: "WebSocketManager::init")
             return
