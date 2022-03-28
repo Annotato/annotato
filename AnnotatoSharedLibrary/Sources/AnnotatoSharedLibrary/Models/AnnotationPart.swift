@@ -2,7 +2,7 @@ import Foundation
 
 public protocol AnnotationPart: AnyObject, Codable {
     var id: UUID { get }
-    var order: Int { get }
+    var order: Int { get set }
     var height: Double { get set }
     var annotationId: UUID { get }
     var isEmpty: Bool { get }

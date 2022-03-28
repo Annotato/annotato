@@ -110,6 +110,7 @@ class DocumentView: UIView {
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
         let touchPoint = sender.location(in: self)
+        viewModel.setAllAnnotationsOutOfFocus()
         addSelectionBoxIfWithinBounds(at: touchPoint)
         addAnnotationWithAssociatedSelectionBoxIfWithinBounds()
     }

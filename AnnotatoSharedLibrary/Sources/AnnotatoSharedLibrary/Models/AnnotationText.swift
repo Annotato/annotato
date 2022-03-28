@@ -2,7 +2,7 @@ import Foundation
 
 public final class AnnotationText: Codable, AnnotationPart {
     public let id: UUID
-    public private(set) var order: Int
+    public var order: Int
     public var height: Double
     public let annotationId: UUID
 

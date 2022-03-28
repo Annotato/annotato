@@ -5,6 +5,7 @@ import Combine
 
 class DocumentViewModel: ObservableObject {
     let model: Document
+    private var cancellables: Set<AnyCancellable> = []
 
     private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
@@ -16,10 +17,40 @@ class DocumentViewModel: ObservableObject {
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
             return nil
         }
-
         self.model = model
         self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
         self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
+        setUpSubscribers()
+    }
+
+    private func setUpSubscribers() {
+        for annotation in annotations {
+            annotation.$isInFocus.sink(receiveValue: { [weak self] isInFocus in
+                if isInFocus {
+                    self?.setAllOtherAnnotationsOutOfFocus(except: annotation)
+                }
+            }).store(in: &cancellables)
+        }
+    }
+
+    private func setUpSubscriberForAnnotation(annotation: AnnotationViewModel) {
+        annotation.$isInFocus.sink(receiveValue: { [weak self] isInFocus in
+            if isInFocus {
+                self?.setAllOtherAnnotationsOutOfFocus(except: annotation)
+            }
+        }).store(in: &cancellables)
+    }
+
+    func setAllAnnotationsOutOfFocus() {
+        for annotation in annotations {
+            annotation.outOfFocus()
+        }
+    }
+
+    private func setAllOtherAnnotationsOutOfFocus(except annotationInFocus: AnnotationViewModel) {
+        for annotation in annotations where annotation.id != annotationInFocus.id {
+            annotation.outOfFocus()
+        }
     }
 }
 
@@ -69,6 +100,7 @@ extension DocumentViewModel {
         annotationViewModel.enterMaximizedMode()
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
+        setUpSubscriberForAnnotation(annotation: annotationViewModel)
     }
 
     func updateCurrentSelectionBoxEndPoint(newEndPoint: CGPoint, bounds: CGRect) {

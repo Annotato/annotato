@@ -26,6 +26,9 @@ final class AnnotationEntity: Model {
     @Children(for: \.$annotationEntity)
     var annotationTextEntities: [AnnotationTextEntity]
 
+    @Children(for: \.$annotationEntity)
+    var annotationHandwritingEntities: [AnnotationHandwritingEntity]
+
     @OptionalChild(for: \.$annotationEntity)
     var selectionBox: SelectionBoxEntity?
 

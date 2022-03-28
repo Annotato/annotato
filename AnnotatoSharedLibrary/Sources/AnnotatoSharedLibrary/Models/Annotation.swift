@@ -12,6 +12,7 @@ public final class Annotation: Codable, ObservableObject {
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
     @Published public private(set) var addedMarkdownPart: AnnotationText?
+    @Published public private(set) var addedHandwritingPart: AnnotationHandwriting?
     @Published public private(set) var removedPart: AnnotationPart?
 
     public required init(
@@ -42,6 +43,7 @@ public final class Annotation: Codable, ObservableObject {
         case width
         case texts
         case selectionBox
+        case handwritings
         case ownerId
         case documentId
     }
@@ -58,7 +60,9 @@ public final class Annotation: Codable, ObservableObject {
         // Note: AnnotationPart protocol has to be split into concrete types to decode
         parts = []
         let texts = try container.decode([AnnotationText].self, forKey: .texts)
+        let handwritings = try container.decode([AnnotationHandwriting].self, forKey: .handwritings)
         parts.append(contentsOf: texts)
+        parts.append(contentsOf: handwritings)
         parts.sort(by: { $0.order < $1.order })
     }
 
@@ -74,6 +78,9 @@ public final class Annotation: Codable, ObservableObject {
         // Note: AnnotationPart protocol has to be split into concrete types to encode
         let texts = parts.compactMap({ $0 as? AnnotationText })
         try container.encode(texts, forKey: .texts)
+
+        let handwritings = parts.compactMap({ $0 as? AnnotationHandwriting })
+        try container.encode(handwritings, forKey: .handwritings)
     }
 
     public var hasNoParts: Bool {
@@ -81,20 +88,42 @@ public final class Annotation: Codable, ObservableObject {
     }
 
     private func addInitialPart() {
+        checkRepresentation()
+
         let newPart = makeNewPlainTextPart()
         parts.append(newPart)
+
+        checkRepresentation()
     }
 
     public func addPlainTextPart() {
+        checkRepresentation()
+
         let newPart = makeNewPlainTextPart()
         parts.append(newPart)
         addedTextPart = newPart
+
+        checkRepresentation()
     }
 
     public func addMarkdownPart() {
+        checkRepresentation()
+
         let newPart = makeNewMarkdownPart()
         parts.append(newPart)
         addedMarkdownPart = newPart
+
+        checkRepresentation()
+    }
+
+    public func addHandwritingPart() {
+        checkRepresentation()
+
+        let newPart = makeNewHandwritingPart()
+        parts.append(newPart)
+        addedHandwritingPart = newPart
+
+        checkRepresentation()
     }
 
     public func appendTextPartIfNecessary() {
@@ -111,9 +140,7 @@ public final class Annotation: Codable, ObservableObject {
             }
         }
 
-        let newPart = makeNewPlainTextPart()
-        parts.append(newPart)
-        addedTextPart = newPart
+        addPlainTextPart()
     }
 
     public func appendMarkdownPartIfNecessary() {
@@ -130,9 +157,21 @@ public final class Annotation: Codable, ObservableObject {
             }
         }
 
-        let newPart = makeNewMarkdownPart()
-        parts.append(newPart)
-        addedMarkdownPart = newPart
+        addMarkdownPart()
+    }
+
+    public func appendHandwritingPartIfNecessary() {
+        guard let lastPart = parts.last else {
+            return
+        }
+
+        removePartIfPossible(part: lastPart)
+
+        guard !(lastPart is AnnotationHandwriting) else {
+            return
+        }
+
+        addHandwritingPart()
     }
 
     public func setOrigin(to newOrigin: CGPoint) {
@@ -160,6 +199,16 @@ public final class Annotation: Codable, ObservableObject {
         )
     }
 
+    private func makeNewHandwritingPart() -> AnnotationHandwriting {
+        AnnotationHandwriting(
+            order: parts.count,
+            height: 150.0,
+            annotationId: id,
+            handwriting: Data(),
+            id: UUID()
+        )
+    }
+
     // Note: Each annotation should have at least 1 part
     private func canRemovePart(part: AnnotationPart) -> Bool {
         part.isEmpty && parts.count > 1
@@ -170,15 +219,44 @@ public final class Annotation: Codable, ObservableObject {
             return
         }
 
+        removePart(part: part)
+    }
+
+    public func removePart(part: AnnotationPart) {
+        checkRepresentation()
+
         part.remove()
         parts.removeAll(where: { $0.id == part.id })
         removedPart = part
+
+        maintainOrderOfParts()
+
+        checkRepresentation()
+    }
+
+    private func maintainOrderOfParts() {
+        parts.enumerated().forEach { idx, part in
+            part.order = idx
+        }
+    }
+}
+
+// MARK: Representation Invariants
+extension Annotation {
+    private func checkRepresentation() {
+        assert(checkOrderOfParts())
+    }
+
+    private func checkOrderOfParts() -> Bool {
+        parts.enumerated().allSatisfy { idx, part in
+            part.order == idx
+        }
     }
 }
 
 extension Annotation {
     public var partHeights: Double {
-        parts.reduce(0, {acc, part in
+        parts.reduce(0, { acc, part in
             acc + part.height
         })
     }

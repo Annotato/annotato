@@ -10,10 +10,15 @@ extension AnnotationEntity {
         try await self.create(on: tx).get()
 
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
-
         for annotationText in annotationTexts {
-            let annotationEntity = AnnotationTextEntity.fromModel(annotationText)
-            try await annotationEntity.customCreate(on: tx)
+            let annotationTextEntity = AnnotationTextEntity.fromModel(annotationText)
+            try await annotationTextEntity.customCreate(on: tx)
+        }
+
+        let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
+        for annotationHandwriting in annotationHandwritings {
+            let annotationHandwritingEntity = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
+            try await annotationHandwritingEntity.customCreate(on: tx)
         }
 
         let selectionBox = annotation.selectionBox
@@ -29,14 +34,25 @@ extension AnnotationEntity {
         try await self.loadAssociations(on: tx)
         try await self.pruneOldAssociations(on: tx, usingUpdatedModel: annotation)
         self.copyPropertiesOf(otherEntity: AnnotationEntity.fromModel(annotation))
-        let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
 
+        let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
         for annotationText in annotationTexts {
             if let annotationTextEntity = try await AnnotationTextEntity.find(annotationText.id, on: tx).get() {
                 try await annotationTextEntity.customUpdate(on: tx, usingUpdatedModel: annotationText)
             } else {
-                let annotationEntity = AnnotationTextEntity.fromModel(annotationText)
-                try await annotationEntity.customCreate(on: tx)
+                let annotationTextEntity = AnnotationTextEntity.fromModel(annotationText)
+                try await annotationTextEntity.customCreate(on: tx)
+            }
+        }
+
+        let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
+        for annotationHandwriting in annotationHandwritings {
+            if let annotationHandwritingEntity = try await AnnotationHandwritingEntity.find(annotationHandwriting.id,
+                                                                                            on: tx).get() {
+                try await annotationHandwritingEntity.customUpdate(on: tx, usingUpdatedModel: annotationHandwriting)
+            } else {
+                let annotationHandwritingEntity = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
+                try await annotationHandwritingEntity.customCreate(on: tx)
             }
         }
 
@@ -62,12 +78,17 @@ extension AnnotationEntity {
 
         try await selectionBox?.customDelete(on: tx)
 
+        for handwritingEntity in annotationHandwritingEntities {
+            try await handwritingEntity.customDelete(on: tx)
+        }
+
         try await self.delete(on: tx).get()
     }
 
     func loadAssociations(on db: Database) async throws {
         try await self.$annotationTextEntities.load(on: db).get()
         try await self.$selectionBox.load(on: db).get()
+        try await self.$annotationHandwritingEntities.load(on: db).get()
     }
 
     func copyPropertiesOf(otherEntity: AnnotationEntity) {
@@ -82,10 +103,15 @@ extension AnnotationEntity {
 
     private func pruneOldAssociations(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
-
         for annotationTextEntity in annotationTextEntities
         where !annotationTexts.contains(where: { $0.id == annotationTextEntity.id }) {
             try await annotationTextEntity.customDelete(on: tx)
+        }
+
+        let annotationHandwritings = annotation.parts.compactMap { $0 as? AnnotationHandwriting }
+        for annotationHandwritingEntity in annotationHandwritingEntities
+        where !annotationHandwritings.contains(where: { $0.id == annotationHandwritingEntity.id }) {
+            try await annotationHandwritingEntity.customDelete(on: tx)
         }
     }
 }

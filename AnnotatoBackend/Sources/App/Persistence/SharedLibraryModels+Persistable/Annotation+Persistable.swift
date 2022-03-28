@@ -4,7 +4,8 @@ import AnnotatoSharedLibrary
 extension Annotation: Persistable {
     static func fromManagedEntity(_ managedEntity: AnnotationEntity) -> Self {
         let textParts = managedEntity.annotationTextEntities.map(AnnotationText.fromManagedEntity)
-        let parts: [AnnotationPart] = textParts
+        let handwritingParts = managedEntity.annotationHandwritingEntities.map(AnnotationHandwriting.fromManagedEntity)
+        let parts: [AnnotationPart] = textParts + handwritingParts
 
         let selectionBox: SelectionBox
         if let selectionBoxEntity = managedEntity.selectionBox {
