@@ -18,25 +18,8 @@ class WebSocketController {
         req.logger.info("Client with ID: \(userId) connected!")
         addToOpenConnections(userId: userId, webSocket: webSocket)
 
-        webSocket.onBinary { ws, buffer in
-            guard let data = buffer.getData(at: buffer.readerIndex, length: buffer.readableBytes) else {
-                return
-            }
-
-            Task {
-                await Self.handleIncomingData(userId: userId, ws: ws, data: data, db: req.db)
-            }
-        }
-
-        webSocket.onText { ws, text in
-            guard let data = text.data(using: .utf8) else {
-                return
-            }
-
-            Task {
-                await Self.handleIncomingData(userId: userId, ws: ws, data: data, db: req.db)
-            }
-        }
+        webSocket.onBinary(handleBinaryData(userId: userId, db: req.db))
+        webSocket.onText(handleTextData(userId: userId, db: req.db))
 
         webSocket.onClose.whenComplete { _ in
             req.logger.info("Client with ID: \(userId) disconnected!")
@@ -47,6 +30,30 @@ class WebSocketController {
     static func sendToAllAppropriateClients<T: Codable>(userId: String, documentId: UUID, db: Database, message: T) {
         openConnections[userId]?.send(message: message)
         // TODO: SEND TO SHARED
+    }
+
+    private static func handleBinaryData(userId: String, db: Database) -> (WebSocket, ByteBuffer) -> Void {
+        { ws, buffer in
+            guard let data = buffer.getData(at: buffer.readerIndex, length: buffer.readableBytes) else {
+                return
+            }
+
+            Task {
+                await Self.handleIncomingData(userId: userId, ws: ws, data: data, db: db)
+            }
+        }
+    }
+
+    private static func handleTextData(userId: String, db: Database) -> (WebSocket, String) -> Void {
+        { ws, text in
+            guard let data = text.data(using: .utf8) else {
+                return
+            }
+
+            Task {
+                await Self.handleIncomingData(userId: userId, ws: ws, data: data, db: db)
+            }
+        }
     }
 
     private static func handleIncomingData(userId: String, ws: WebSocket, data: Data, db: Database) async {
