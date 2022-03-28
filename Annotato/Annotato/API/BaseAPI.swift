@@ -9,5 +9,6 @@ struct BaseAPI {
     private static let localApiWsEnpoint = "ws://127.0.0.1:8080"
     private static let remoteApiWsEnpoint = "ws://178.128.111.22:80"
 
+    // TODO: CHANGE TO REMOTE ENDPOINT BEFORE MERGE
     static let baseWsAPIUrl = localApiWsEnpoint
 }
