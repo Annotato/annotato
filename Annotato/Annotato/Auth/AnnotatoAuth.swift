@@ -26,4 +26,10 @@ class AnnotatoAuth {
 
         authService.storeCredentialsLocally()
     }
+
+    func logOut() {
+        authService.logOut()
+
+        authService.purgeLocalCredentials()
+    }
 }

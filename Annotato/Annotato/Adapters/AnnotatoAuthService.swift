@@ -6,6 +6,7 @@ protocol AnnotatoAuthService {
     var currentUser: AnnotatoUser? { get }
     func signUp(email: String, password: String, displayName: String)
     func logIn(email: String, password: String)
+    func logOut()
 }
 
 extension AnnotatoAuthService {
@@ -29,5 +30,9 @@ extension AnnotatoAuthService {
         }
 
         return decodedUser
+    }
+
+    func purgeLocalCredentials() {
+        UserDefaults.standard.removeObject(forKey: savedUserKey)
     }
 }

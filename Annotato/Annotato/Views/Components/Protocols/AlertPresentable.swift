@@ -4,7 +4,7 @@ protocol AlertPresentable where Self: UIViewController {
     func presentTimedAlert(title: String, message: String)
     func presentErrorAlert(errorMessage: String)
     func presentSuccessAlert(successMessage: String, completion: (() -> Void)?)
-    func presentWarningAlert(warningMessage: String, confirmHandler: @escaping () -> Void)
+    func presentWarningAlert(alertTitle: String, warningMessage: String?, confirmHandler: @escaping () -> Void)
 }
 
 extension AlertPresentable {
@@ -43,9 +43,10 @@ extension AlertPresentable {
         present(alertController, animated: true)
     }
 
-    func presentWarningAlert(warningMessage: String, confirmHandler: @escaping () -> Void) {
+    func presentWarningAlert(alertTitle: String = "Are you sure?", warningMessage: String? = nil,
+                             confirmHandler: @escaping () -> Void) {
         let alertController = UIAlertController(
-            title: "Are you sure?",
+            title: alertTitle,
             message: warningMessage,
             preferredStyle: .alert)
 

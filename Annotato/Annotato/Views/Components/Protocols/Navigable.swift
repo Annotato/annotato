@@ -10,13 +10,27 @@ protocol Navigable where Self: UIViewController {
 }
 
 extension Navigable {
+    func goToAuth() {
+        guard let authViewController = AuthViewController.instantiateFromStoryboard(.main) else {
+            return
+        }
+
+        goToNewRootViewController(authViewController)
+    }
+
     func goToDocumentList() {
-        guard let viewController = DocumentListViewController.instantiateFullScreenFromStoryboard(
+        guard let listViewController = DocumentListViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
             return
         }
-        present(viewController, animated: true, completion: nil)
+
+        goToNewRootViewController(listViewController)
+    }
+
+    private func goToNewRootViewController(_ newRootViewController: UIViewController) {
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
+            .changeRootViewController(newRootViewController: newRootViewController, animated: true)
     }
 
     func goToDocumentEdit() {

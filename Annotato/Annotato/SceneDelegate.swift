@@ -14,19 +14,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new
         // (see `application:configurationForConnectingSceneSession` instead).
 
-        guard let windowScene = (scene as? UIWindowScene) else {
+        // swiftlint:disable unused_optional_binding
+        guard let _ = (scene as? UIWindowScene) else {
             return
         }
 
-        let window = UIWindow(windowScene: windowScene)
-
-        // Skips AuthViewController if user is already logged in
-        window.rootViewController = AnnotatoAuth().currentUser != nil
+        window?.rootViewController = AnnotatoAuth().currentUser != nil
             ? DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
             : AuthViewController.instantiateFullScreenFromStoryboard(.main)
+    }
 
-        self.window = window
-        window.makeKeyAndVisible()
+    func changeRootViewController(newRootViewController: UIViewController, animated: Bool = true) {
+        guard let window = self.window else {
+            return
+        }
+
+        window.rootViewController = newRootViewController
+
+        if animated {
+            UIView.transition(with: window,
+                              duration: 0.5,
+                              options: [.transitionCrossDissolve],
+                              animations: nil,
+                              completion: nil)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
