@@ -105,7 +105,7 @@ class AnnotationViewModel: ObservableObject {
             self?.resize()
         }).store(in: &cancellables)
 
-        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] _ in
+        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { _ in
             // NOT IMPLEMENTED YET
         }.store(in: &cancellables)
     }
