@@ -1,5 +1,5 @@
-public class AnnotatoOfflineToOnlineMessage {
-    public let type = AnnotatoMessageType.offlineToOnline
+public class AnnotatoOfflineToOnlineMessage: Codable {
+    public var type = AnnotatoMessageType.offlineToOnline
     public let mergeStrategy: AnnotatoOfflineToOnlineMergeStrategy
     public let documents: [Document]
     public let annotations: [Annotation]

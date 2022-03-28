@@ -1,5 +1,5 @@
-public class AnnotatoCrudAnnotationMessage {
-    public let type = AnnotatoMessageType.crudAnnotation
+public class AnnotatoCrudAnnotationMessage: Codable {
+    public var type = AnnotatoMessageType.crudAnnotation
     public let subtype: AnnotatoCrudAnnotationMessageType
     public let annotation: Annotation
 
