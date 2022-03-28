@@ -50,6 +50,27 @@ class WebSocketManager {
         }
     }
 
+    func send<T: Codable>(message: T) {
+        do {
+
+            let data = try JSONEncoder().encode(message)
+            socket.send(.data(data)) { error in
+                if let error = error {
+                    AnnotatoLogger.error(
+                        "While sending data. \(error.localizedDescription).",
+                        context: "WebSocketManager:send:"
+                    )
+                }
+            }
+
+        } catch {
+            AnnotatoLogger.error(
+                "When sending data. \(error.localizedDescription).",
+                context: "WebSocketManager:send:"
+            )
+        }
+    }
+
     private func handleResponseData(data: Data) {
         do {
 
