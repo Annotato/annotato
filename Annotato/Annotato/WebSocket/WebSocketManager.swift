@@ -1,11 +1,12 @@
 import Foundation
+import AnnotatoSharedLibrary
 
 class WebSocketManager {
     var socket: URLSessionWebSocketTask?
 
     func setSocket(to session: URLSessionWebSocketTask) {
         socket = session
-        listen()
+        self.listen()
         socket?.resume()
 
         print("Set socket")
@@ -21,10 +22,6 @@ class WebSocketManager {
         }
 
         socket.receive { [weak self] result in
-            guard let self = self else {
-                return
-            }
-
             print(result)
 
             switch result {
@@ -33,7 +30,8 @@ class WebSocketManager {
             case .success(let message):
                 switch message {
                 case .data(let data):
-                    print(data)
+                    let annotation = try? JSONDecoder().decode(Annotation.self, from: data)
+                    print(annotation)
                 case .string(let str):
                     print(str)
                 @unknown default:
@@ -41,7 +39,7 @@ class WebSocketManager {
                 }
             }
 
-            self.listen()
+            self?.listen()
         }
     }
 }
