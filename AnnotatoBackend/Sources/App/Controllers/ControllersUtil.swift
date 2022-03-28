@@ -14,7 +14,7 @@ struct ControllersUtil {
     }
 
     static func getIdFromParamsAsString(request: Request) throws -> String {
-        return try getParamValue(request: request, paramKey: "id")
+        try getParamValue(request: request, paramKey: "id")
     }
 
     private static func getParamValue(request: Request, paramKey: String) throws -> String {

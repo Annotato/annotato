@@ -27,13 +27,19 @@ class WebSocketController {
         }
     }
 
-    static func sendToAllAppropriateClients<T: Codable>(userId: String, documentId: UUID, db: Database, message: T) async {
+    static func sendToAllAppropriateClients<T: Codable>(
+        userId: String,
+        documentId: UUID,
+        db: Database,
+        message: T
+    ) async {
         // Send to user that sent the websocket message
         openConnections[userId]?.send(message: message)
 
         do {
 
-            let documentShares = try await DocumentSharesDataAccess.findAllRecipientsUsingDocumentId(db: db, documentId: documentId)
+            let documentShares = try await DocumentSharesDataAccess
+                .findAllRecipientsUsingDocumentId(db: db, documentId: documentId)
 
             // Send to all other users that share the same document
             for (userId, ws) in openConnections {

@@ -17,6 +17,7 @@ public class AnnotatoOfflineToOnlineMessage: Codable {
 
 extension AnnotatoOfflineToOnlineMessage: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "AnnotatoOfflineToOnlineMessage(type: \(type), mergeStrategy: \(mergeStrategy), documents: \(documents), annotations: \(annotations))"
+        "AnnotatoOfflineToOnlineMessage(type: \(type), mergeStrategy: \(mergeStrategy), " +
+        "documents: \(documents), annotations: \(annotations))"
     }
 }
