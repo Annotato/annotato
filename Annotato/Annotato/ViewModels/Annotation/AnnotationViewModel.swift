@@ -45,9 +45,7 @@ class AnnotationViewModel: ObservableObject {
         populatePartViewModels(model: model)
 
         setUpSubscribers()
-
-        // THIS LINE IS PROBLEMATIC. Adding this will break create and delete.
-        // setUpWebSocketSubscribers()
+        setUpWebSocketSubscribers()
     }
 
     private func populatePartViewModels(model: Annotation) {
@@ -112,7 +110,8 @@ class AnnotationViewModel: ObservableObject {
 
     private func setUpWebSocketSubscribers() {
         WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
-            guard let updatedAnnotation = updatedAnnotation else {
+            guard let updatedAnnotation = updatedAnnotation,
+            updatedAnnotation.id == self?.model.id else {
                 return
             }
 
