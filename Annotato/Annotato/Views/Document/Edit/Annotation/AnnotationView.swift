@@ -93,6 +93,7 @@ class AnnotationView: UIView {
                     self?.parts.arrangedSubviews.forEach({ $0.removeFromSuperview() })
 
                     self?.populateParts()
+
                     self?.resize()
                 }
             }

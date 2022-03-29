@@ -14,6 +14,12 @@ class DocumentWebSocketManager: ObservableObject {
             let message = try JSONDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
             let document = message.document
 
+            // Defensive resets
+            newDocument = nil
+            readDocument = nil
+            updatedDocument = nil
+            deletedDocument = nil
+
             switch message.subtype {
             case .createDocument:
                 newDocument = document

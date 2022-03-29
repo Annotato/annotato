@@ -14,6 +14,12 @@ class AnnotationWebSocketManager: ObservableObject {
             let message = try JSONDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
             let annotation = message.annotation
 
+            // Defensive resets
+            newAnnotation = nil
+            readAnnotation = nil
+            updatedAnnotation = nil
+            deletedAnnotation = nil
+
             switch message.subtype {
             case .createAnnotation:
                 newAnnotation = annotation

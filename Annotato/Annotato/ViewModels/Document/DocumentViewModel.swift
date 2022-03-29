@@ -33,20 +33,11 @@ class DocumentViewModel: ObservableObject {
         }
 
         WebSocketManager.shared.annotationManager.$newAnnotation.sink { [weak self] newAnnotation in
-            guard let currentUser = AnnotatoAuth().currentUser else {
-                return
-            }
-
             guard let newAnnotation = newAnnotation else {
                 return
             }
 
             guard let self = self else {
-                return
-            }
-
-            // If the annotation was added by the current user, we would not need to render it again
-            if newAnnotation.ownerId == currentUser.uid {
                 return
             }
 
