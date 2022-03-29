@@ -37,8 +37,8 @@ class DocumentWebSocketManager: ObservableObject {
 
         } catch {
             AnnotatoLogger.error(
-                "When handling reponse data. \(error.localizedDescription).",
-                context: "DocumentWebSocketManager:handleResponseData:"
+                "When handling response data. \(error.localizedDescription).",
+                context: "DocumentWebSocketManager::handleResponseData"
             )
         }
     }
