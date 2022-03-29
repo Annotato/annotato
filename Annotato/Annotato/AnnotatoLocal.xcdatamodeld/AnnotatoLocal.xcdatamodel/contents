@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="CDAnnotationEntity" representedClassName="CDAnnotationEntity" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AnnotationEntity" representedClassName="AnnotationEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="originX" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="originY" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="ownerId" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="ownerId" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="width" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <relationship name="cdAnnotationHandwritingEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAnnotationHandwritingEntity" inverseName="cdAnnotationEntity" inverseEntity="CDAnnotationHandwritingEntity"/>
-        <relationship name="cdAnnotationTextEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAnnotationTextEntity" inverseName="cdAnnotationEntity" inverseEntity="CDAnnotationTextEntity"/>
-        <relationship name="cdDocumentEntity" maxCount="1" deletionRule="Nullify" destinationEntity="CDDocumentEntity" inverseName="cdAnnotationEntities" inverseEntity="CDDocumentEntity"/>
+        <relationship name="annotationHandwritingEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationHandwritingEntity" inverseName="annotationEntity" inverseEntity="AnnotationHandwritingEntity"/>
+        <relationship name="annotationTextEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationTextEntity" inverseName="annotationEntity" inverseEntity="AnnotationTextEntity"/>
+        <relationship name="documentEntity" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="annotationEntities" inverseEntity="DocumentEntity"/>
     </entity>
-    <entity name="CDAnnotationHandwritingEntity" representedClassName="CDAnnotationHandwritingEntity" syncable="YES" codeGenerationType="class">
+    <entity name="AnnotationHandwritingEntity" representedClassName="AnnotationHandwritingEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="handwriting" optional="YES" attributeType="Binary"/>
@@ -21,9 +21,9 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="cdAnnotationEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDAnnotationEntity" inverseName="cdAnnotationHandwritingEntities" inverseEntity="CDAnnotationEntity"/>
+        <relationship name="annotationEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationHandwritingEntities" inverseEntity="AnnotationEntity"/>
     </entity>
-    <entity name="CDAnnotationTextEntity" representedClassName="CDAnnotationTextEntity" syncable="YES" codeGenerationType="class">
+    <entity name="AnnotationTextEntity" representedClassName="AnnotationTextEntity" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -32,9 +32,9 @@
         <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="cdAnnotationEntity" maxCount="1" deletionRule="Nullify" destinationEntity="CDAnnotationEntity" inverseName="cdAnnotationTextEntities" inverseEntity="CDAnnotationEntity"/>
+        <relationship name="annotationEntity" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationTextEntities" inverseEntity="AnnotationEntity"/>
     </entity>
-    <entity name="CDDocumentEntity" representedClassName="CDDocumentEntity" syncable="YES" codeGenerationType="class">
+    <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES" codeGenerationType="class">
         <attribute name="baseFileUrl" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -42,22 +42,22 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="ownerId" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="cdAnnotationEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDAnnotationEntity" inverseName="cdDocumentEntity" inverseEntity="CDAnnotationEntity"/>
-        <relationship name="cdDocumentShareEntities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDDocumentShareEntity" inverseName="cdDocumentEntity" inverseEntity="CDDocumentShareEntity"/>
+        <relationship name="annotationEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationEntity" inverseName="documentEntity" inverseEntity="AnnotationEntity"/>
+        <relationship name="documentShareEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DocumentShareEntity" inverseName="documentEntity" inverseEntity="DocumentShareEntity"/>
     </entity>
-    <entity name="CDDocumentShareEntity" representedClassName="CDDocumentShareEntity" syncable="YES" codeGenerationType="class">
+    <entity name="DocumentShareEntity" representedClassName="DocumentShareEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="recipientId" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="cdDocumentEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDocumentEntity" inverseName="cdDocumentShareEntities" inverseEntity="CDDocumentEntity"/>
+        <relationship name="documentEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="documentShareEntities" inverseEntity="DocumentEntity"/>
     </entity>
     <elements>
-        <element name="CDDocumentEntity" positionX="-63" positionY="-18" width="128" height="164"/>
-        <element name="CDAnnotationEntity" positionX="-54" positionY="9" width="128" height="194"/>
-        <element name="CDAnnotationTextEntity" positionX="-36" positionY="9" width="128" height="14"/>
-        <element name="CDAnnotationHandwritingEntity" positionX="-18" positionY="27" width="128" height="14"/>
-        <element name="CDDocumentShareEntity" positionX="-9" positionY="126" width="128" height="119"/>
+        <element name="AnnotationEntity" positionX="-54" positionY="9" width="128" height="194"/>
+        <element name="AnnotationHandwritingEntity" positionX="-18" positionY="27" width="128" height="149"/>
+        <element name="AnnotationTextEntity" positionX="-36" positionY="9" width="128" height="164"/>
+        <element name="DocumentEntity" positionX="-63" positionY="-18" width="128" height="164"/>
+        <element name="DocumentShareEntity" positionX="-9" positionY="126" width="128" height="119"/>
     </elements>
 </model>
