@@ -38,7 +38,8 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
     // MARK: READ
     func getDocument(documentId: UUID) async -> Document? {
         do {
-            let responseData = try await httpService.get(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(documentId)")
+            let responseData =
+                try await httpService.get(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(documentId)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching document: \(error.localizedDescription)")
@@ -55,7 +56,8 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         }
 
         do {
-            let responseData = try await httpService.post(url: RemoteDocumentsPersistence.documentsUrl, data: requestData)
+            let responseData =
+                try await httpService.post(url: RemoteDocumentsPersistence.documentsUrl, data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When creating document: \(error.localizedDescription)")
@@ -72,8 +74,9 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         }
 
         do {
-            let responseData = try await httpService.put(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)",
-                                                         data: requestData)
+            let responseData =
+                try await httpService.put(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)",
+                                          data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When updating document: \(error.localizedDescription)")
@@ -84,7 +87,8 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
     // MARK: DELETE
     func deleteDocument(document: Document) async -> Document? {
         do {
-            let responseData = try await httpService.delete(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)")
+            let responseData =
+                try await httpService.delete(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When deleting document: \(error.localizedDescription)")
