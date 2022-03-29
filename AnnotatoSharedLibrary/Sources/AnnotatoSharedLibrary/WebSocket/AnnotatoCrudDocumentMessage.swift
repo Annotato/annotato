@@ -1,5 +1,5 @@
 public class AnnotatoCrudDocumentMessage: Codable {
-    public var type = AnnotatoMessageType.crudDocument
+    public private(set) var type = AnnotatoMessageType.crudDocument
     public let subtype: AnnotatoCrudDocumentMessageType
     public let document: Document
 
