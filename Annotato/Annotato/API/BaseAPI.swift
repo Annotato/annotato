@@ -3,13 +3,11 @@ struct BaseAPI {
     private static let localApiEndpoint = "http://127.0.0.1:8080"
     private static let remoteApiEndpoint = "http://178.128.111.22:80"
 
-    // TODO: CHANGE TO REMOTE ENDPOINT BEFORE MERGE
-    static let baseAPIUrl = localApiEndpoint
+    static let baseAPIUrl = remoteApiEndpoint
 
     // WebSocket
-    private static let localApiWsEnpoint = "ws://127.0.0.1:8080"
-    private static let remoteApiWsEnpoint = "ws://178.128.111.22:80"
+    private static let localApiWsEndpoint = "ws://127.0.0.1:8080"
+    private static let remoteApiWsEndpoint = "ws://178.128.111.22:80"
 
-    // TODO: CHANGE TO REMOTE ENDPOINT BEFORE MERGE
-    static let baseWsAPIUrl = localApiWsEnpoint
+    static let baseWsAPIUrl = remoteApiWsEndpoint
 }
