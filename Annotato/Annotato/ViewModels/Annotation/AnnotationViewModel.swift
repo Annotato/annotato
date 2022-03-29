@@ -10,6 +10,7 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var model: Annotation
     private var cancellables: Set<AnyCancellable> = []
+    private var webSocketCancellables: Set<AnyCancellable> = []
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
@@ -44,6 +45,9 @@ class AnnotationViewModel: ObservableObject {
         populatePartViewModels(model: model)
 
         setUpSubscribers()
+
+        // THIS LINE IS PROBLEMATIC. Adding this will break create and delete.
+        // setUpWebSocketSubscribers()
     }
 
     private func populatePartViewModels(model: Annotation) {
@@ -104,10 +108,26 @@ class AnnotationViewModel: ObservableObject {
             self?.parts.removeAll(where: { $0.id == removedPart?.id })
             self?.resize()
         }).store(in: &cancellables)
+    }
 
-        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { _ in
-            // NOT IMPLEMENTED YET
-        }.store(in: &cancellables)
+    private func setUpWebSocketSubscribers() {
+        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
+            guard let updatedAnnotation = updatedAnnotation else {
+                return
+            }
+
+            self?.model = updatedAnnotation
+
+            self?.cancellables = []
+            self?.setUpSubscribers()
+
+            self?.positionDidChange = true
+
+            self?.parts = []
+            self?.populatePartViewModels(model: updatedAnnotation)
+            self?.modelWasUpdated = true
+
+        }.store(in: &webSocketCancellables)
     }
 
     func hasExceededBounds(bounds: CGRect) -> Bool {
@@ -288,6 +308,7 @@ extension AnnotationViewModel {
     }
 }
 
+// MARK: WebSocket Actions
 extension AnnotationViewModel {
     func updateAnnotation() {
         let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: model)
