@@ -39,7 +39,7 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: newAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                db: db, annotation: newAnnotation, message: response
+                db: db, userId: userId, annotation: newAnnotation, message: response
             )
 
         } catch {
@@ -58,7 +58,7 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .readAnnotation, annotation: readAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                db: db, annotation: readAnnotation, message: response
+                db: db, userId: userId, annotation: readAnnotation, message: response
             )
 
         } catch {
@@ -78,7 +78,7 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: updatedAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                db: db, annotation: updatedAnnotation, message: response
+                db: db, userId: userId, annotation: updatedAnnotation, message: response
             )
 
         } catch {
@@ -97,7 +97,7 @@ class AnnotationWebSocketController {
             let response = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: deletedAnnotation)
 
             await Self.sendToAllAppropriateClients(
-                db: db, annotation: deletedAnnotation, message: response
+                db: db, userId: userId, annotation: deletedAnnotation, message: response
             )
 
         } catch {
@@ -107,6 +107,7 @@ class AnnotationWebSocketController {
 
     private static func sendToAllAppropriateClients<T: Codable>(
         db: Database,
+        userId: String,
         annotation: Annotation,
         message: T
     ) async {
@@ -120,6 +121,9 @@ class AnnotationWebSocketController {
 
             // Adds the document owner
             recipientIdsSet.insert(annotationDocument.ownerId)
+
+            // Remove the message sender
+            recipientIdsSet.remove(userId)
 
             WebSocketController.sendAll(recipientIds: recipientIdsSet, message: message)
         } catch {

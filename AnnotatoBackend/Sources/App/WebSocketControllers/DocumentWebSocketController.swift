@@ -35,7 +35,7 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .createDocument, document: newDocument)
 
             await Self.sendToAllAppropriateClients(
-                db: db, document: newDocument, message: response
+                db: db, userId: userId, document: newDocument, message: response
             )
 
         } catch {
@@ -50,7 +50,7 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .readDocument, document: readDocument)
 
             await Self.sendToAllAppropriateClients(
-                db: db, document: readDocument, message: response
+                db: db, userId: userId, document: readDocument, message: response
             )
 
         } catch {
@@ -66,9 +66,8 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .updateDocument, document: updatedDocument)
 
             await Self.sendToAllAppropriateClients(
-                db: db, document: updatedDocument, message: response
+                db: db, userId: userId, document: updatedDocument, message: response
             )
-
         } catch {
             Self.logger.error("Error when updating document. \(error.localizedDescription)")
         }
@@ -81,7 +80,7 @@ class DocumentWebSocketController {
             let response = AnnotatoCrudDocumentMessage(subtype: .deleteDocument, document: deletedDocument)
 
             await Self.sendToAllAppropriateClients(
-                db: db, document: deletedDocument, message: response
+                db: db, userId: userId, document: deletedDocument, message: response
             )
 
         } catch {
@@ -91,6 +90,7 @@ class DocumentWebSocketController {
 
     private static func sendToAllAppropriateClients<T: Codable>(
         db: Database,
+        userId: String,
         document: Document,
         message: T
     ) async {
@@ -103,6 +103,9 @@ class DocumentWebSocketController {
 
             // Adds the document owner
             recipientIdsSet.insert(document.ownerId)
+
+            // Remove the message sender
+            recipientIdsSet.remove(userId)
 
             WebSocketController.sendAll(recipientIds: recipientIdsSet, message: message)
         } catch {
