@@ -20,6 +20,8 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeToolbar()
         initializeImportMenu()
         view.bringSubviewToFront(importMenu)
+
+        WebSocketManager.shared.setUpSocket()
     }
 
     private func initializeToolbar() {

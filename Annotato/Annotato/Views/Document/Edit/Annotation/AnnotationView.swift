@@ -62,11 +62,16 @@ class AnnotationView: UIView {
             guard let origin = self?.viewModel.origin else {
                 return
             }
-            self?.frame.origin = origin
+
+            DispatchQueue.main.async {
+                self?.frame.origin = origin
+            }
         }).store(in: &cancellables)
 
         viewModel.$isResizing.sink(receiveValue: { [weak self] _ in
-            self?.resize()
+            DispatchQueue.main.async {
+                self?.resize()
+            }
         }).store(in: &cancellables)
 
         viewModel.$addedPart.sink(receiveValue: { [weak self] addedPart in
@@ -78,9 +83,23 @@ class AnnotationView: UIView {
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
-                self?.removeFromSuperview()
+                DispatchQueue.main.async {
+                    self?.removeFromSuperview()
+                }
             }
         }).store(in: &cancellables)
+
+        viewModel.$modelWasUpdated.sink { [weak self] modelWasUpdated in
+            if modelWasUpdated {
+                DispatchQueue.main.async {
+                    self?.parts.arrangedSubviews.forEach({ $0.removeFromSuperview() })
+
+                    self?.populateParts()
+
+                    self?.resize()
+                }
+            }
+        }.store(in: &cancellables)
     }
 
     private func addGestureRecognizers() {

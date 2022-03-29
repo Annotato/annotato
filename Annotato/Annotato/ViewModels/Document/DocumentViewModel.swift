@@ -30,6 +30,20 @@ class DocumentViewModel: ObservableObject {
                 }
             }).store(in: &cancellables)
         }
+
+        WebSocketManager.shared.annotationManager.$newAnnotation.sink { [weak self] newAnnotation in
+            guard let newAnnotation = newAnnotation else {
+                return
+            }
+
+            guard let self = self else {
+                return
+            }
+
+            self.model.addAnnotation(annotation: newAnnotation)
+            let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
+            self.addedAnnotation = annotationViewModel
+        }.store(in: &cancellables)
     }
 
     private func setUpSubscriberForAnnotation(annotation: AnnotationViewModel) {
@@ -83,10 +97,29 @@ extension DocumentViewModel {
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
         setUpSubscriberForAnnotation(annotation: annotationViewModel)
+
+        broadcastAnnotationCreate(annotation: newAnnotation)
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {
         model.removeAnnotation(annotation: annotation.model)
         annotations.removeAll(where: { $0.model.id == annotation.model.id })
+
+        broadcastAnnotationDelete(annotation: annotation.model)
+    }
+}
+
+// MARK: WebSocket Actions
+extension DocumentViewModel {
+    func broadcastAnnotationCreate(annotation: Annotation) {
+        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: annotation)
+
+        WebSocketManager.shared.send(message: webSocketMessage)
+    }
+
+    func broadcastAnnotationDelete(annotation: Annotation) {
+        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: annotation)
+
+        WebSocketManager.shared.send(message: webSocketMessage)
     }
 }

@@ -1,6 +1,7 @@
 import UIKit
 import PDFKit
 import Combine
+import AnnotatoSharedLibrary
 
 class DocumentView: UIView {
     private var viewModel: DocumentViewModel
@@ -51,7 +52,10 @@ class DocumentView: UIView {
             guard let addedAnnotation = addedAnnotation else {
                 return
             }
-            self?.renderNewAnnotation(viewModel: addedAnnotation)
+
+            DispatchQueue.main.async {
+                self?.renderNewAnnotation(viewModel: addedAnnotation)
+            }
         }).store(in: &cancellables)
     }
 
