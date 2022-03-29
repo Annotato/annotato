@@ -57,14 +57,6 @@ class DocumentView: UIView {
                 self?.renderNewAnnotation(viewModel: addedAnnotation)
             }
         }).store(in: &cancellables)
-
-        viewModel.$deletedAnnotation.sink { [weak self] deletedAnnotation in
-            guard let deletedAnnotation = deletedAnnotation else {
-                return
-            }
-
-            self?.removeDeletedAnnotation(annotation: deletedAnnotation)
-        }.store(in: &cancellables)
     }
 
     private func addObservers() {
@@ -104,18 +96,6 @@ class DocumentView: UIView {
         let annotationView = AnnotationView(viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView.documentView?.addSubview(annotationView)
-    }
-
-    private func removeDeletedAnnotation(annotation: Annotation) {
-        guard let annotationView = annotationViews.first(where: { $0.viewModel.model.id == annotation.id }) else {
-            return
-        }
-
-        annotationViews.removeAll(where: { $0.viewModel.model.id == annotation.id })
-
-        DispatchQueue.main.sync {
-            annotationView.removeFromSuperview()
-        }
     }
 }
 

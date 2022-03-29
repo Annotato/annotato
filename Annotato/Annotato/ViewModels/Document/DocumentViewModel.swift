@@ -11,7 +11,6 @@ class DocumentViewModel: ObservableObject {
     private(set) var pdfDocument: PdfViewModel
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
-    @Published private(set) var deletedAnnotation: Annotation?
 
     init?(model: Document) {
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
@@ -44,14 +43,6 @@ class DocumentViewModel: ObservableObject {
             self.model.addAnnotation(annotation: newAnnotation)
             let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
             self.addedAnnotation = annotationViewModel
-        }.store(in: &cancellables)
-
-        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
-            guard let deletedAnnotation = deletedAnnotation else {
-                return
-            }
-
-            self?.deletedAnnotation = deletedAnnotation
         }.store(in: &cancellables)
     }
 

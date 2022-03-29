@@ -83,7 +83,9 @@ class AnnotationView: UIView {
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
-                self?.removeFromSuperview()
+                DispatchQueue.main.async {
+                    self?.removeFromSuperview()
+                }
             }
         }).store(in: &cancellables)
 

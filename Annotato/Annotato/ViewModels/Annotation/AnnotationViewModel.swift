@@ -109,6 +109,15 @@ class AnnotationViewModel: ObservableObject {
     }
 
     private func setUpWebSocketSubscribers() {
+        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
+            guard let deletedAnnotation = deletedAnnotation,
+            deletedAnnotation.id == self?.model.id else {
+                return
+            }
+
+            self?.didDelete()
+        }.store(in: &webSocketCancellables)
+
         WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
             guard let updatedAnnotation = updatedAnnotation,
             updatedAnnotation.id == self?.model.id else {
