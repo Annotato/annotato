@@ -73,7 +73,7 @@ class AnnotationViewModel: ObservableObject {
     func translateCenter(by translation: CGPoint) {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
-        updateAnnotation()
+        broadcastAnnotationUpdate()
     }
 
     private func setUpSubscribers() {
@@ -215,7 +215,7 @@ extension AnnotationViewModel {
             part.enterViewMode()
         }
 
-        updateAnnotation()
+        broadcastAnnotationUpdate()
     }
 
     func resize() {
@@ -309,7 +309,7 @@ extension AnnotationViewModel {
 
 // MARK: WebSocket Actions
 extension AnnotationViewModel {
-    func updateAnnotation() {
+    func broadcastAnnotationUpdate() {
         let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: model)
 
         WebSocketManager.shared.send(message: webSocketMessage)
