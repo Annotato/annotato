@@ -168,79 +168,29 @@ extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
     private func showAnnotationsOfVisiblePages() {
-        let visiblePages = pdfView.visiblePages
-
         let annotationsToShow = annotationViews.filter({
-            annotationIsInVisiblePages(annotation: $0, visiblePages: visiblePages)
+            pdfView.visiblePagesContains(view: $0)
         })
         for annotation in annotationsToShow {
-            bringAnnotationToFront(annotation: annotation)
+            annotation.bringToFrontOfSuperview()
         }
     }
 
     private func showSelectionBoxedOfVisiblePages() {
-        let visiblePages = pdfView.visiblePages
-
         let selectionBoxesToShow = selectionBoxViews.filter({
-            selectionBoxIsInVisiblePages(selectionBox: $0, visiblePages: visiblePages)
+            pdfView.visiblePagesContains(view: $0)
         })
         for selectionBox in selectionBoxesToShow {
-            bringSelectionBoxToFront(selectionBox: selectionBox)
+            selectionBox.bringToFrontOfSuperview()
         }
     }
 
     private func showLinkLinesOfVisiblePages() {
-        let visiblePages = pdfView.visiblePages
         let linkLinesToShow = linkLineViews.filter({
-            linkLineIsInVisiblePages(linkLine: $0, visiblePages: visiblePages)
+            pdfView.visiblePagesContains(view: $0)
         })
         for linkLine in linkLinesToShow {
-            bringLinkLineToFront(linkLine: linkLine)
+            linkLine.bringToFrontOfSuperview()
         }
-    }
-
-    private func annotationIsInVisiblePages(
-        annotation: AnnotationView,
-        visiblePages: [PDFPage]
-    ) -> Bool {
-        guard let centerInDocument = pdfView.documentView?.convert(annotation.center, to: self) else {
-            return false
-        }
-        guard let pageContainingAnnotation = pdfView.page(for: centerInDocument, nearest: true) else {
-            return false
-        }
-        return visiblePages.contains(pageContainingAnnotation)
-    }
-
-    private func selectionBoxIsInVisiblePages(selectionBox: SelectionBoxView, visiblePages: [PDFPage]) -> Bool {
-        guard let centerInDocument = pdfView.documentView?.convert(selectionBox.center, to: self) else {
-            return false
-        }
-        guard let pageContainingSelectionBox = pdfView.page(for: centerInDocument, nearest: true) else {
-            return false
-        }
-        return visiblePages.contains(pageContainingSelectionBox)
-    }
-
-    private func linkLineIsInVisiblePages(linkLine: LinkLineView, visiblePages: [PDFPage]) -> Bool {
-        guard let centerInDocument = pdfView.documentView?.convert(linkLine.center, to: self) else {
-            return false
-        }
-        guard let pageContainingLinkLine = pdfView.page(for: centerInDocument, nearest: true) else {
-            return false
-        }
-        return visiblePages.contains(pageContainingLinkLine)
-    }
-
-    private func bringAnnotationToFront(annotation: AnnotationView) {
-        annotation.superview?.bringSubviewToFront(annotation)
-    }
-
-    private func bringSelectionBoxToFront(selectionBox: SelectionBoxView) {
-        selectionBox.superview?.bringSubviewToFront(selectionBox)
-    }
-
-    private func bringLinkLineToFront(linkLine: LinkLineView) {
-        linkLine.superview?.bringSubviewToFront(linkLine)
     }
 }
