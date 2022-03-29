@@ -5,6 +5,7 @@ import Combine
 class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
     private var viewModel: AnnotationHandwritingViewModel
     private var cancellables: Set<AnyCancellable> = []
+    // swiftlint:disable weak_delegate
     private var customDelegate: AnnotationHandwritingViewDelegate
     private var toolPicker = PKToolPicker()
 
