@@ -29,6 +29,8 @@ class WebSocketController {
 
     static func sendAll<T: Codable>(recipientIds: Set<String>, message: T) {
         for (userId, ws) in openConnections where recipientIds.contains(userId) {
+            Self.logger.info("Sending to user with id \(userId)")
+
             ws.send(message: message)
         }
     }
@@ -38,6 +40,8 @@ class WebSocketController {
             guard let data = buffer.getData(at: buffer.readerIndex, length: buffer.readableBytes) else {
                 return
             }
+
+            Self.logger.info("Received binary data...")
 
             Task {
                 await Self.handleIncomingData(userId: userId, data: data, db: db)
@@ -51,6 +55,8 @@ class WebSocketController {
                 return
             }
 
+            Self.logger.info("Received text data...")
+
             Task {
                 await Self.handleIncomingData(userId: userId, data: data, db: db)
             }
@@ -59,6 +65,7 @@ class WebSocketController {
 
     private static func handleIncomingData(userId: String, data: Data, db: Database) async {
         do {
+            Self.logger.info("Processing data...")
 
             let message = try JSONDecoder().decode(AnnotatoMessage.self, from: data)
 
@@ -82,10 +89,15 @@ class WebSocketController {
             _ = webSocket.close()
         }
 
+        Self.logger.info("Adding websocket connection for user with id \(userId)")
+
         openConnections[userId] = webSocket
     }
 
     private static func handleClosedConnection(userId: String) {
+        Self.logger.info("Closing websocket connection for user with id \(userId)")
+
+        _ = openConnections[userId]?.close()
         openConnections.removeValue(forKey: userId)
     }
 }

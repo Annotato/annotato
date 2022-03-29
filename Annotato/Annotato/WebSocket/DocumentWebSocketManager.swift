@@ -9,18 +9,24 @@ class DocumentWebSocketManager: ObservableObject {
 
     func handleResponseData(data: Data) {
         do {
+            AnnotatoLogger.info("Handling document response data...")
+
             let message = try JSONDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
             let document = message.document
 
             switch message.subtype {
             case .createDocument:
                 newDocument = document
+                AnnotatoLogger.info("Document was created. \(document)")
             case .readDocument:
                 readDocument = document
+                AnnotatoLogger.info("Document was read. \(document)")
             case .updateDocument:
                 updatedDocument = document
+                AnnotatoLogger.info("Document was updated. \(document)")
             case .deleteDocument:
                 deletedDocument = document
+                AnnotatoLogger.info("Document was deleted. \(document)")
             }
 
         } catch {

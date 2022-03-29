@@ -8,6 +8,7 @@ class AnnotationWebSocketController {
 
     static func handleCrudAnnotationData(userId: String, data: Data, db: Database) async {
         do {
+            Self.logger.info("Processing crud annotation data...")
 
             let message = try JSONDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
             let annotation = message.annotation
@@ -34,6 +35,7 @@ class AnnotationWebSocketController {
         annotation: Annotation
     ) async {
         do {
+            Self.logger.info("Processing create annotation data...")
 
             let newAnnotation = try await AnnotationDataAccess.create(db: db, annotation: annotation)
             let response = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: newAnnotation)
@@ -53,6 +55,7 @@ class AnnotationWebSocketController {
         annotation: Annotation
     ) async {
         do {
+            Self.logger.info("Processing read annotation data...")
 
             let readAnnotation = try await AnnotationDataAccess.read(db: db, annotationId: annotation.id)
             let response = AnnotatoCrudAnnotationMessage(subtype: .readAnnotation, annotation: readAnnotation)
@@ -72,6 +75,7 @@ class AnnotationWebSocketController {
         annotation: Annotation
     ) async {
         do {
+            Self.logger.info("Processing update annotation data...")
 
             let updatedAnnotation = try await AnnotationDataAccess
                 .update(db: db, annotationId: annotation.id, annotation: annotation)
@@ -92,6 +96,7 @@ class AnnotationWebSocketController {
         annotation: Annotation
     ) async {
         do {
+            Self.logger.info("Processing delete annotation data...")
 
             let deletedAnnotation = try await AnnotationDataAccess.delete(db: db, annotationId: annotation.id)
             let response = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: deletedAnnotation)
@@ -112,6 +117,8 @@ class AnnotationWebSocketController {
         message: T
     ) async {
         do {
+            Self.logger.info("Sending annotation messages to appropriate connected clients...")
+
             let annotationDocument = try await DocumentsDataAccess.read(db: db, documentId: annotation.documentId)
             let documentShares = try await DocumentSharesDataAccess
                 .findAllRecipientsUsingDocumentId(db: db, documentId: annotation.documentId)

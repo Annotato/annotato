@@ -21,16 +21,22 @@ class WebSocketManager {
         }
 
         socket = URLSession(configuration: .default).webSocketTask(with: url)
+        AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
+
         listen()
         socket?.resume()
     }
 
     func resetSocket() {
         socket?.cancel(with: .normalClosure, reason: nil)
+
+        AnnotatoLogger.info("Websocket connection terminated...")
         socket = nil
     }
 
     func listen() {
+        AnnotatoLogger.info("Websocket connection listening for events...")
+
         socket?.receive { [weak self] result in
             guard let self = self else {
                 return
@@ -61,6 +67,7 @@ class WebSocketManager {
 
     func send<T: Codable>(message: T) {
         do {
+            AnnotatoLogger.info("Sending message: \(message) through websocket connection...")
 
             let data = try JSONEncoder().encode(message)
             socket?.send(.data(data)) { error in
@@ -82,6 +89,7 @@ class WebSocketManager {
 
     private func handleResponseData(data: Data) {
         do {
+            AnnotatoLogger.info("Handling response data...")
 
             let message = try JSONDecoder().decode(AnnotatoMessage.self, from: data)
 

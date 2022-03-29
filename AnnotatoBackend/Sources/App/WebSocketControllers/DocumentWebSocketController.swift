@@ -8,6 +8,7 @@ class DocumentWebSocketController {
 
     static func handleCrudDocumentData(userId: String, data: Data, db: Database) async {
         do {
+            Self.logger.info("Processing crud document data...")
 
             let message = try JSONDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
             let document = message.document
@@ -30,6 +31,7 @@ class DocumentWebSocketController {
 
     private static func handleCreateDocument(userId: String, db: Database, document: Document) async {
         do {
+            Self.logger.info("Processing create document data...")
 
             let newDocument = try await DocumentsDataAccess.create(db: db, document: document)
             let response = AnnotatoCrudDocumentMessage(subtype: .createDocument, document: newDocument)
@@ -45,6 +47,7 @@ class DocumentWebSocketController {
 
     private static func handleReadDocument(userId: String, db: Database, document: Document) async {
         do {
+            Self.logger.info("Processing read document data...")
 
             let readDocument = try await DocumentsDataAccess.read(db: db, documentId: document.id)
             let response = AnnotatoCrudDocumentMessage(subtype: .readDocument, document: readDocument)
@@ -60,6 +63,7 @@ class DocumentWebSocketController {
 
     private static func handleUpdateDocument(userId: String, db: Database, document: Document) async {
         do {
+            Self.logger.info("Processing update document data...")
 
             let updatedDocument = try await DocumentsDataAccess
                 .update(db: db, documentId: document.id, document: document)
@@ -75,6 +79,7 @@ class DocumentWebSocketController {
 
     private static func handleDeleteDocument(userId: String, db: Database, document: Document) async {
         do {
+            Self.logger.info("Processing delete document data...")
 
             let deletedDocument = try await DocumentsDataAccess.delete(db: db, documentId: document.id)
             let response = AnnotatoCrudDocumentMessage(subtype: .deleteDocument, document: deletedDocument)
@@ -95,6 +100,8 @@ class DocumentWebSocketController {
         message: T
     ) async {
         do {
+            Self.logger.info("Sending document messages to appropriate connected clients...")
+
             let documentShares = try await DocumentSharesDataAccess
                 .findAllRecipientsUsingDocumentId(db: db, documentId: document.id)
 
