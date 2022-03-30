@@ -101,7 +101,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
             let data = try JSONEncoder().encode(document)
             return data
         } catch {
-            AnnotatoLogger.error("Could not encode Document into JSON. \(error.localizedDescription)",
+            AnnotatoLogger.error("Could not encode Document into JSON. \(String(describing: error))",
                                  context: "RemoteDocumentsPersistence::encodeDocument")
             return nil
         }
