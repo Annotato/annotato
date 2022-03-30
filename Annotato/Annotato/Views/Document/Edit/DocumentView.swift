@@ -72,7 +72,7 @@ class DocumentView: UIView {
         selectionBoxView?.removeFromSuperview()
         let newSelectionBoxView = UIView(frame: newSelectionBoxFrame)
         newSelectionBoxView.layer.borderWidth = 2.0
-        newSelectionBoxView.layer.borderColor = UIColor.systemGray.cgColor
+        newSelectionBoxView.layer.borderColor = UIColor.systemGray2.cgColor
         selectionBoxView = newSelectionBoxView
         pdfView.documentView?.addSubview(newSelectionBoxView)
     }
