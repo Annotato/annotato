@@ -11,8 +11,10 @@ struct LocalPersistenceManager {
         container = NSPersistentContainer(name: LocalPersistenceManager.containerName)
         container.loadPersistentStores { _, error in
             if let error = error {
-                AnnotatoLogger.error("Error loading Core Data: \(error)",
+                let errorMessage = "Error loading Core Data: \(error)"
+                AnnotatoLogger.error(errorMessage,
                                      context: "LocalPersistenceManager::init")
+                fatalError(errorMessage)
             }
         }
     }
