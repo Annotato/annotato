@@ -18,7 +18,7 @@ class AnnotationViewModel: ObservableObject {
     private var maxHeight = 300.0
 
     var selectionBox: SelectionBoxViewModel
-    private var linkLine: LinkLineViewModel?
+//    private var linkLine: LinkLineViewModel?
 
     var id: UUID {
         model.id
@@ -107,19 +107,19 @@ class AnnotationViewModel: ObservableObject {
         }).store(in: &cancellables)
     }
 
-    func getLinkLine() -> LinkLineViewModel {
-        // The first time this is called it will create the link line view model, subsequently it will return the
-        // same instance
-        if let linkLine = linkLine {
-            return linkLine
-        }
-        // Initialize the link line then assign and return it
-        let linkLineViewModel = LinkLineViewModel(id: UUID())
-        linkLineViewModel.selectionBoxViewModel = selectionBox
-        linkLineViewModel.annotationViewModel = self
-        self.linkLine = linkLineViewModel
-        return linkLineViewModel
-    }
+//    func getLinkLine() -> LinkLineViewModel {
+//        // The first time this is called it will create the link line view model, subsequently it will return the
+//        // same instance
+//        if let linkLine = linkLine {
+//            return linkLine
+//        }
+//        // Initialize the link line then assign and return it
+//        let linkLineViewModel = LinkLineViewModel(id: UUID())
+//        linkLineViewModel.selectionBoxViewModel = selectionBox
+//        linkLineViewModel.annotationViewModel = self
+//        self.linkLine = linkLineViewModel
+//        return linkLineViewModel
+//    }
 }
 
 extension AnnotationViewModel {
@@ -278,7 +278,7 @@ extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
         selectionBox.didDelete()
-        linkLine?.didDelete()
+//        linkLine?.didDelete()
         document?.removeAnnotation(annotation: self)
     }
 

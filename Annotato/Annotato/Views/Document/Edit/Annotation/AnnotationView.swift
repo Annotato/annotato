@@ -7,6 +7,7 @@ class AnnotationView: UIView {
     private var palette: AnnotationPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
+    private var selectionBox: UIView
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -14,13 +15,16 @@ class AnnotationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationViewModel) {
+    init(parentView: UIView, viewModel: AnnotationViewModel) {
         self.viewModel = viewModel
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
+        self.selectionBox = UIView(frame: viewModel.selectionBox.frame)
+        self.selectionBox.layer.borderWidth = 1.0
+        self.selectionBox.layer.borderColor = UIColor.systemBlue.cgColor
         super.init(frame: viewModel.frame)
-
+        initializeSiblingViews(parentView: parentView)
         initializeSubviews()
         setUpSubscribers()
         addGestureRecognizers()
@@ -32,6 +36,10 @@ class AnnotationView: UIView {
         addSubview(palette)
         setUpScrollAndParts()
         populateParts()
+    }
+
+    private func initializeSiblingViews(parentView: UIView) {
+        parentView.addSubview(selectionBox)
     }
 
     private func setUpScrollAndParts() {
@@ -79,6 +87,7 @@ class AnnotationView: UIView {
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 self?.removeFromSuperview()
+                self?.selectionBox.removeFromSuperview()
             }
         }).store(in: &cancellables)
     }
