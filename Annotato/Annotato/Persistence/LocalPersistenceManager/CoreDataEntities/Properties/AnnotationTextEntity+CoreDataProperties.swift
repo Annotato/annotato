@@ -23,5 +23,7 @@ extension AnnotationTextEntity {
 }
 
 extension AnnotationTextEntity: Identifiable {
-
+    var annotationId: UUID {
+        annotationEntity.id
+    }
 }

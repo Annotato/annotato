@@ -54,5 +54,7 @@ extension AnnotationEntity {
 }
 
 extension AnnotationEntity: Identifiable {
-
+    var documentId: UUID {
+        documentEntity.id
+    }
 }

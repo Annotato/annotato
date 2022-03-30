@@ -19,5 +19,7 @@ extension DocumentShareEntity {
 }
 
 extension DocumentShareEntity: Identifiable {
-
+    var documentId: UUID {
+        documentEntity.id
+    }
 }

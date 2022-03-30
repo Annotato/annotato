@@ -21,5 +21,7 @@ extension AnnotationHandwritingEntity {
 }
 
 extension AnnotationHandwritingEntity: Identifiable {
-
+    var annotationId: UUID {
+        annotationEntity.id
+    }
 }
