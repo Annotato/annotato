@@ -16,6 +16,6 @@ extension AnnotationTextEntity {
 
     // Timestamps
     @NSManaged public var createdAt: Date?
-    @NSManaged public var deletedAt: Date?
     @NSManaged public var updatedAt: Date?
+    @NSManaged public var deletedAt: Date?
 }
