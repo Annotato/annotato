@@ -34,7 +34,7 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="annotationEntity" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationTextEntities" inverseEntity="AnnotationEntity"/>
     </entity>
-    <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES" codeGenerationType="class">
+    <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES">
         <attribute name="baseFileUrl" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -45,7 +45,7 @@
         <relationship name="annotationEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationEntity" inverseName="documentEntity" inverseEntity="AnnotationEntity"/>
         <relationship name="documentShareEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DocumentShareEntity" inverseName="documentEntity" inverseEntity="DocumentShareEntity"/>
     </entity>
-    <entity name="DocumentShareEntity" representedClassName="DocumentShareEntity" syncable="YES" codeGenerationType="class">
+    <entity name="DocumentShareEntity" representedClassName="DocumentShareEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

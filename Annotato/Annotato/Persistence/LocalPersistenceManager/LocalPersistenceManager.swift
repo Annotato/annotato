@@ -18,6 +18,10 @@ struct LocalPersistenceManager {
             }
         }
     }
+
+    func makeCoreDataEntity<T: Persistable>(class: T.Type) -> T.ManagedEntity {
+        T.ManagedEntity(context: container.viewContext)
+    }
 }
 
 extension LocalPersistenceManager: PersistenceManager {
