@@ -3,11 +3,14 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager {
     static let shared = WebSocketManager()
+    static let unavailableDestinationHostErrorCode = 54
+    static let unconnectedSocketErrorCode = 57
+    static let connectionTimeOutErrorCode = 60
 
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
-    private(set) var isConnected = true
+    private(set) var isConnected = false
 
     private init() { }
 
@@ -24,9 +27,7 @@ class WebSocketManager {
         socket = URLSession(configuration: .default).webSocketTask(with: url)
         AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
 
-        print("Right before calling the listening function")
         listen()
-        print("Right before calling resume")
         socket?.resume()
     }
 
@@ -40,16 +41,18 @@ class WebSocketManager {
     func listen() {
         AnnotatoLogger.info("Websocket connection listening for events...")
 
+        // swiftlint:disable closure_body_length
         socket?.receive { [weak self] result in
             guard let self = self else {
                 return
             }
-
             switch result {
             case .failure(let error):
                 AnnotatoLogger.error(error.localizedDescription)
                 let errorCode = (error as NSError).code
-                if errorCode == 54 || errorCode == 57 || errorCode == 60 {
+                if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
+                    errorCode == WebSocketManager.unconnectedSocketErrorCode ||
+                    errorCode == WebSocketManager.connectionTimeOutErrorCode {
                     self.isConnected = false
                 }
             case .success(let message):
@@ -61,7 +64,6 @@ class WebSocketManager {
                     guard let data = str.data(using: .utf8) else {
                         return
                     }
-
                     self.handleResponseData(data: data)
                 @unknown default:
                     break
