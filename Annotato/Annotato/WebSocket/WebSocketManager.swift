@@ -7,7 +7,7 @@ class WebSocketManager {
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
-    var isConnected = true
+    private(set) var isConnected = true
 
     private init() { }
 
