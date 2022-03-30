@@ -3,20 +3,43 @@ import UIKit
 import UniformTypeIdentifiers
 
 protocol Navigable where Self: UIViewController {
-    func goToDocumentList()
+    func goToAuth(asNewRootViewController: Bool)
+    func goToDocumentList(asNewRootViewController: Bool)
     func goToDocumentEdit()
     func goToDocumentEdit(documentId: UUID)
     func goToImportingFiles()
 }
 
 extension Navigable {
-    func goToDocumentList() {
-        guard let viewController = DocumentListViewController.instantiateFullScreenFromStoryboard(
+    func goToAuth(asNewRootViewController: Bool = false) {
+        guard let authViewController = AuthViewController.instantiateFromStoryboard(.main) else {
+            return
+        }
+
+        if asNewRootViewController {
+            goToNewRootViewController(authViewController)
+        } else {
+            present(authViewController, animated: true, completion: nil)
+        }
+    }
+
+    func goToDocumentList(asNewRootViewController: Bool = false) {
+        guard let listViewController = DocumentListViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
             return
         }
-        present(viewController, animated: true, completion: nil)
+
+        if asNewRootViewController {
+            goToNewRootViewController(listViewController)
+        } else {
+            present(listViewController, animated: true, completion: nil)
+        }
+    }
+
+    private func goToNewRootViewController(_ newRootViewController: UIViewController) {
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
+            .changeRootViewController(newRootViewController: newRootViewController, animated: true)
     }
 
     func goToDocumentEdit() {

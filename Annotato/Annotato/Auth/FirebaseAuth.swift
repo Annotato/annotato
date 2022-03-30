@@ -51,6 +51,20 @@ class FirebaseAuth: AnnotatoAuthService {
         }
     }
 
+    func logOut() {
+        guard let currentUser = currentUser else {
+            return
+        }
+
+        do {
+            try Auth.auth().signOut()
+            AnnotatoLogger.info("\(currentUser.email) logged out")
+        } catch {
+            AnnotatoLogger.error("When trying to log out \(currentUser.email). \(error.localizedDescription)",
+                                 context: "FirebaseAuth::logOut")
+        }
+    }
+
     private func setDisplayName(to displayName: String, email: String) {
         let changeRequest = self.currentFirebaseUser?.createProfileChangeRequest()
         changeRequest?.displayName = displayName

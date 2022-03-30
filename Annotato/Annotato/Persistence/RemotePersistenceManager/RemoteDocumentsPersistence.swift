@@ -1,8 +1,8 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct DocumentsAPI {
-    private static let documentsUrl = "\(BaseAPI.baseAPIUrl)/documents"
+struct RemoteDocumentsPersistence: DocumentsPersistence {
+    private static let documentsUrl = "\(RemotePersistenceManager.baseAPIUrl)/documents"
     private static let sharedDocumentsUrl = "\(documentsUrl)/shared"
 
     private var httpService: AnnotatoHTTPService
@@ -14,7 +14,7 @@ struct DocumentsAPI {
     // MARK: LIST OWN
     func getOwnDocuments(userId: String) async -> [Document]? {
         do {
-            let responseData = try await httpService.get(url: DocumentsAPI.documentsUrl,
+            let responseData = try await httpService.get(url: RemoteDocumentsPersistence.documentsUrl,
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
@@ -26,7 +26,7 @@ struct DocumentsAPI {
     // MARK: LIST SHARED
     func getSharedDocuments(userId: String) async -> [Document]? {
         do {
-            let responseData = try await httpService.get(url: DocumentsAPI.sharedDocumentsUrl,
+            let responseData = try await httpService.get(url: RemoteDocumentsPersistence.sharedDocumentsUrl,
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
@@ -38,7 +38,8 @@ struct DocumentsAPI {
     // MARK: READ
     func getDocument(documentId: UUID) async -> Document? {
         do {
-            let responseData = try await httpService.get(url: "\(DocumentsAPI.documentsUrl)/\(documentId)")
+            let responseData =
+                try await httpService.get(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(documentId)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching document: \(String(describing: error))")
@@ -50,12 +51,13 @@ struct DocumentsAPI {
     func createDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not created",
-                                 context: "DocumentsAPI::createDocument")
+                                 context: "RemoteDocumentsPersistence::createDocument")
             return nil
         }
 
         do {
-            let responseData = try await httpService.post(url: DocumentsAPI.documentsUrl, data: requestData)
+            let responseData =
+                try await httpService.post(url: RemoteDocumentsPersistence.documentsUrl, data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When creating document: \(String(describing: error))")
@@ -67,13 +69,14 @@ struct DocumentsAPI {
     func updateDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not updated",
-                                 context: "DocumentsAPI::createDocument")
+                                 context: "RemoteDocumentsPersistence::createDocument")
             return nil
         }
 
         do {
-            let responseData = try await httpService.put(url: "\(DocumentsAPI.documentsUrl)/\(document.id)",
-                                                         data: requestData)
+            let responseData =
+                try await httpService.put(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)",
+                                          data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When updating document: \(String(describing: error))")
@@ -84,7 +87,8 @@ struct DocumentsAPI {
     // MARK: DELETE
     func deleteDocument(document: Document) async -> Document? {
         do {
-            let responseData = try await httpService.delete(url: "\(DocumentsAPI.documentsUrl)/\(document.id)")
+            let responseData =
+                try await httpService.delete(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When deleting document: \(String(describing: error))")
@@ -97,8 +101,8 @@ struct DocumentsAPI {
             let data = try JSONEncoder().encode(document)
             return data
         } catch {
-            AnnotatoLogger.error("Could not encode Document into JSON. \(String(describing: error))",
-                                 context: "DocumentsAPI::encodeDocument")
+            AnnotatoLogger.error("Could not encode Document into JSON. \(error.localizedDescription)",
+                                 context: "RemoteDocumentsPersistence::encodeDocument")
             return nil
         }
     }

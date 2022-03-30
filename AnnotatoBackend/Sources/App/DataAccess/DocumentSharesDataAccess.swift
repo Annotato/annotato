@@ -45,4 +45,13 @@ struct DocumentSharesDataAccess {
 
         return DocumentShare.fromManagedEntity(documentShareEntity)
     }
+
+    static func findAllRecipientsUsingDocumentId(db: Database, documentId: UUID) async throws -> [DocumentShare] {
+        let documentShareEntities = try await DocumentShareEntity
+            .query(on: db)
+            .filter(\.$documentEntity.$id == documentId)
+            .all().get()
+
+        return documentShareEntities.map(DocumentShare.fromManagedEntity)
+    }
 }

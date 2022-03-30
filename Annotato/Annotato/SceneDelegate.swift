@@ -18,6 +18,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let _ = (scene as? UIWindowScene) else {
             return
         }
+
+        window?.rootViewController = AnnotatoAuth().currentUser != nil
+            ? DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
+            : AuthViewController.instantiateFullScreenFromStoryboard(.main)
+    }
+
+    func changeRootViewController(newRootViewController: UIViewController, animated: Bool = true) {
+        guard let window = self.window else {
+            return
+        }
+
+        window.rootViewController = newRootViewController
+
+        if animated {
+            UIView.transition(with: window,
+                              duration: 0.5,
+                              options: [.transitionCrossDissolve],
+                              animations: nil,
+                              completion: nil)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -20,6 +20,8 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeToolbar()
         initializeImportMenu()
         view.bringSubviewToFront(importMenu)
+
+        WebSocketManager.shared.setUpSocket()
     }
 
     private func initializeToolbar() {
@@ -99,6 +101,14 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         UIDocumentPickerDelegate,
         DocumentListCollectionCellViewDelegate,
         Navigable {
+
+    func didTapLogOutButton() {
+        presentWarningAlert(alertTitle: "Log Out",
+                            warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
+            AnnotatoAuth().logOut()
+            self?.goToAuth(asNewRootViewController: true)
+        })
+    }
 
     func didTapImportFileButton() {
         importMenu.isHidden.toggle()

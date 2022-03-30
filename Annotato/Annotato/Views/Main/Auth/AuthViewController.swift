@@ -95,7 +95,7 @@ extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
     }
 
     func logInDidSucceed() {
-        goToDocumentList()
+        goToDocumentList(asNewRootViewController: true)
     }
 
     func signUpDidSucceed() {

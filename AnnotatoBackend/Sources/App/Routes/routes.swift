@@ -8,5 +8,8 @@ func routes(_ app: Application) throws {
     }
 
     app.group("documents", configure: documentsRouter)
+
     app.group("documentShares", configure: documentSharesRouter)
+
+    app.group("ws", configure: webSocketRouter)
 }

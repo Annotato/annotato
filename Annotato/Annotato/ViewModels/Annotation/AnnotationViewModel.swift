@@ -10,6 +10,7 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var model: Annotation
     private var cancellables: Set<AnyCancellable> = []
+    private var webSocketCancellables: Set<AnyCancellable> = []
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
@@ -32,6 +33,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
     @Published private(set) var isInFocus = false
+    @Published private(set) var modelWasUpdated = false
 
     init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
@@ -42,6 +44,13 @@ class AnnotationViewModel: ObservableObject {
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.palette.parentViewModel = self
 
+        populatePartViewModels(model: model)
+
+        setUpSubscribers()
+        setUpWebSocketSubscribers()
+    }
+
+    private func populatePartViewModels(model: Annotation) {
         for part in model.parts {
             let partViewModel: AnnotationPartViewModel
             switch part {
@@ -61,11 +70,12 @@ class AnnotationViewModel: ObservableObject {
             partViewModel.parentViewModel = self
             parts.append(partViewModel)
         }
-        setUpSubscribers()
     }
 
     func translateCenter(by translation: CGPoint) {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
+
+        broadcastAnnotationUpdate()
     }
 
     private func setUpSubscribers() {
@@ -98,6 +108,47 @@ class AnnotationViewModel: ObservableObject {
             self?.parts.removeAll(where: { $0.id == removedPart?.id })
             self?.resize()
         }).store(in: &cancellables)
+    }
+
+    private func setUpWebSocketSubscribers() {
+        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
+            guard let deletedAnnotation = deletedAnnotation,
+            deletedAnnotation.id == self?.model.id else {
+                return
+            }
+
+            self?.didDelete()
+        }.store(in: &webSocketCancellables)
+
+        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
+            guard let updatedAnnotation = updatedAnnotation,
+            updatedAnnotation.id == self?.model.id else {
+                return
+            }
+
+            self?.model = updatedAnnotation
+
+            self?.cancellables = []
+            self?.setUpSubscribers()
+
+            self?.positionDidChange = true
+
+            self?.parts = []
+            self?.populatePartViewModels(model: updatedAnnotation)
+            self?.modelWasUpdated = true
+
+        }.store(in: &webSocketCancellables)
+    }
+
+    func hasExceededBounds(bounds: CGRect) -> Bool {
+        let hasExceededTop = maximizedFrame.minY < bounds.minY
+        let hasExceededBottom = maximizedFrame.maxY > bounds.maxY
+        let hasExceededLeft = maximizedFrame.minX < bounds.minX
+        let hasExceededRight = maximizedFrame.maxX > bounds.maxX
+        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
+            return true
+        }
+        return false
     }
 }
 
@@ -178,6 +229,8 @@ extension AnnotationViewModel {
         for part in parts {
             part.enterViewMode()
         }
+
+        broadcastAnnotationUpdate()
     }
 
     func resize() {
@@ -267,5 +320,14 @@ extension AnnotationViewModel {
     func outOfFocus() {
         isInFocus = false
         enterMinimizedMode()
+    }
+}
+
+// MARK: WebSocket Actions
+extension AnnotationViewModel {
+    func broadcastAnnotationUpdate() {
+        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: model)
+
+        WebSocketManager.shared.send(message: webSocketMessage)
     }
 }

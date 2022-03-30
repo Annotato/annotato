@@ -2,7 +2,7 @@ import Foundation
 
 struct DocumentController {
     static func loadOwnDocuments(userId: String) async -> [DocumentListViewModel] {
-        let documents = await DocumentsAPI().getOwnDocuments(userId: userId)
+        let documents = await RemoteDocumentsPersistence().getOwnDocuments(userId: userId)
         guard let documents = documents else {
             return []
         }
@@ -11,7 +11,7 @@ struct DocumentController {
     }
 
     static func loadSharedDocuments(userId: String) async -> [DocumentListViewModel] {
-        let documents = await DocumentsAPI().getSharedDocuments(userId: userId)
+        let documents = await RemoteDocumentsPersistence().getSharedDocuments(userId: userId)
         guard let documents = documents else {
             return []
         }
@@ -28,7 +28,7 @@ struct DocumentController {
     }
 
     static func loadDocument(documentId: UUID) async -> DocumentViewModel? {
-        let document = await DocumentsAPI().getDocument(documentId: documentId)
+        let document = await RemoteDocumentsPersistence().getDocument(documentId: documentId)
         guard let document = document else {
             return nil
         }
@@ -37,7 +37,7 @@ struct DocumentController {
     }
 
     @discardableResult static func updateDocument(document: DocumentViewModel) async -> DocumentViewModel? {
-        let updatedDocument = await DocumentsAPI().updateDocument(document: document.model)
+        let updatedDocument = await RemoteDocumentsPersistence().updateDocument(document: document.model)
         guard let updatedDocument = updatedDocument else {
             return nil
         }
