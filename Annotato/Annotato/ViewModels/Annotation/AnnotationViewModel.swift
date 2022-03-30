@@ -113,7 +113,7 @@ class AnnotationViewModel: ObservableObject {
         if let linkLine = linkLine {
             return linkLine
         }
-        // Initialize the link line then return it
+        // Initialize the link line then assign and return it
         let linkLineViewModel = LinkLineViewModel(id: UUID())
         linkLineViewModel.selectionBoxViewModel = selectionBox
         linkLineViewModel.annotationViewModel = self

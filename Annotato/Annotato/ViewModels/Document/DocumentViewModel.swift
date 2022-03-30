@@ -57,7 +57,6 @@ class DocumentViewModel: ObservableObject {
 extension DocumentViewModel {
     func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
         guard let addedSelectionBox = addedSelectionBox else {
-            // If we click outside the document, there will not be a selection box
             return
         }
         guard let currentUser = AnnotatoAuth().currentUser else {
@@ -109,7 +108,7 @@ extension DocumentViewModel {
         guard let addedSelectionBox = addedSelectionBox else {
             return
         }
-        if addedSelectionBox.hasExceededBounds(bounds: bounds) {
+        if !bounds.contains(newEndPoint) {
             return
         }
         addedSelectionBox.updateEndPoint(newEndPoint: newEndPoint)
