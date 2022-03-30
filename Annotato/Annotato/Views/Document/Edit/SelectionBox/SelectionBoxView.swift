@@ -14,18 +14,12 @@ class SelectionBoxView: UIView {
         self.viewModel = viewModel
         super.init(frame: viewModel.frame)
         setUpSubscribers()
-        self.layer.borderWidth = 1.0
-        self.layer.borderColor = UIColor.systemRed.cgColor
+        self.layer.borderWidth = 2.0
+        self.layer.zPosition = 1.0
+        self.layer.borderColor = UIColor.systemGray.cgColor
     }
 
     private func setUpSubscribers() {
-        viewModel.$endPointDidChange.sink(receiveValue: { [weak self] _ in
-            guard let newSelectionBoxFrame = self?.viewModel.frame else {
-                return
-            }
-            self?.frame = newSelectionBoxFrame
-        }).store(in: &cancellables)
-
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 self?.removeFromSuperview()

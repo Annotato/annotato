@@ -13,12 +13,10 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
+    private(set) var selectionBox: SelectionBoxViewModel
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
-
-    var selectionBox: SelectionBoxViewModel
-    private var linkLine: LinkLineViewModel?
 
     var id: UUID {
         model.id
@@ -41,11 +39,6 @@ class AnnotationViewModel: ObservableObject {
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: .zero, width: model.width, height: 50.0)
         self.parts = []
-
-        /*
-         Assigned here, but if this instance is not loaded from persisted data, it will be
-         replaced by the added selection box instance. Refer to comments in document view model
-         */
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.palette.parentViewModel = self
 
@@ -105,20 +98,6 @@ class AnnotationViewModel: ObservableObject {
             self?.parts.removeAll(where: { $0.id == removedPart?.id })
             self?.resize()
         }).store(in: &cancellables)
-    }
-
-    func getLinkLine() -> LinkLineViewModel {
-        // The first time this is called it will create the link line view model, subsequently it will return the
-        // same instance
-        if let linkLine = linkLine {
-            return linkLine
-        }
-        // Initialize the link line then assign and return it
-        let linkLineViewModel = LinkLineViewModel(id: UUID())
-        linkLineViewModel.selectionBoxViewModel = selectionBox
-        linkLineViewModel.annotationViewModel = self
-        self.linkLine = linkLineViewModel
-        return linkLineViewModel
     }
 }
 
@@ -278,7 +257,6 @@ extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
         selectionBox.didDelete()
-        linkLine?.didDelete()
         document?.removeAnnotation(annotation: self)
     }
 
