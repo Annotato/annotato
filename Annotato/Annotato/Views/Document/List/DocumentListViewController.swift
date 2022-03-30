@@ -102,6 +102,14 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         DocumentListCollectionCellViewDelegate,
         Navigable {
 
+    func didTapLogOutButton() {
+        presentWarningAlert(alertTitle: "Log Out",
+                            warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
+            AnnotatoAuth().logOut()
+            self?.goToAuth(asNewRootViewController: true)
+        })
+    }
+
     func didTapImportFileButton() {
         importMenu.isHidden.toggle()
 
