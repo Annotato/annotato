@@ -2,7 +2,7 @@ import Foundation
 import CoreData
 
 struct LocalPersistenceManager {
-    static let sharedInstance = LocalPersistenceManager()
+    static let shared = LocalPersistenceManager()
     private static let containerName = "AnnotatoLocal"
 
     private let container: NSPersistentContainer
