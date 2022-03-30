@@ -149,7 +149,7 @@ class DocumentView: UIView {
 // MARK: Adding new annotations
 extension DocumentView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annotationView = AnnotationView(parentView: pdfView.documentView!, viewModel: viewModel)
+        let annotationView = AnnotationView(parentView: pdfView.documentView, viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView.documentView?.addSubview(annotationView)
     }

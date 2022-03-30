@@ -2,13 +2,13 @@ import FluentKit
 import AnnotatoSharedLibrary
 
 extension SelectionBoxEntity {
-    /// Creates the SelectionBoxEntity instance. Use this function to create cascades.
+    /// Creates the SelectionBoxEntity instance.
     /// - Parameter tx: The database instance in a transaction.
     func customCreate(on tx: Database) async throws {
         try await self.create(on: tx).get()
     }
 
-    /// Updates the SelectionBoxEntity instance. Use this function to cascade updates.
+    /// Updates the SelectionBoxEntity instance.
     /// - Parameters:
     ///   - tx: The database instance in a transaction.
     ///   - selectionBox: The updated SelectionBox instance.
@@ -17,7 +17,7 @@ extension SelectionBoxEntity {
         try await self.update(on: tx).get()
     }
 
-    /// Deletes the SelectionBoxEntity instance. Use this function to cascade deletes.
+    /// Deletes the SelectionBoxEntity instance.
     /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
         try await self.delete(on: tx).get()

@@ -6,6 +6,7 @@ public final class SelectionBox: Codable, ObservableObject {
     public let id: UUID
     public private(set) var startPoint: CGPoint
     public var annotationId: UUID
+
     @Published public private(set) var endPoint: CGPoint
 
     public required init(startPoint: CGPoint, endPoint: CGPoint, annotationId: UUID, id: UUID? = nil) {
@@ -16,7 +17,7 @@ public final class SelectionBox: Codable, ObservableObject {
     }
 
     public func setEndPoint(to newEndPoint: CGPoint) {
-        endPoint = newEndPoint
+        self.endPoint = newEndPoint
     }
 
     private enum CodingKeys: String, CodingKey {

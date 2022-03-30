@@ -4,7 +4,7 @@ import Combine
 class AnnotationView: UIView {
     private(set) var viewModel: AnnotationViewModel
 
-    private unowned var parentView: UIView
+    private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
@@ -17,7 +17,7 @@ class AnnotationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(parentView: UIView, viewModel: AnnotationViewModel) {
+    init(parentView: UIView?, viewModel: AnnotationViewModel) {
         self.viewModel = viewModel
         self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
@@ -69,13 +69,13 @@ class AnnotationView: UIView {
     }
 
     private func initializeSelectionBox() {
-        parentView.addSubview(selectionBox)
+        parentView?.addSubview(selectionBox)
     }
 
     private func initializeLine() {
         let linkLine = Line(start: viewModel.selectionBox.startPoint, end: viewModel.origin)
         self.linkLine = linkLine
-        parentView.addSubview(linkLine)
+        parentView?.addSubview(linkLine)
     }
 
     private func setUpSubscribers() {
