@@ -42,20 +42,6 @@ struct URLSessionHTTPService: AnnotatoHTTPService {
         return data
     }
 
-    func postMarkdown(url: String, data: Data) async throws -> Data {
-        guard let url = URL(string: url) else {
-            throw AnnotatoHTTPError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = AnnotatoHTTPMethod.post.rawValue
-        request.setValue("text/markdown", forHTTPHeaderField: "Content-Type")
-        request.httpBody = data
-
-        let (data, _) = try await URLSession.shared.data(for: request)
-        return data
-    }
-
     func put(url: String, data: Data) async throws -> Data {
         guard let url = URL(string: url) else {
             throw AnnotatoHTTPError.invalidURL
