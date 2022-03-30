@@ -58,8 +58,8 @@ extension AnnotationText: CustomDebugStringConvertible {
 }
 
 extension AnnotationText {
-    public enum TextType: Int, Codable {
-        case plainText
-        case markdown
+    @objc public enum TextType: Int64, Codable {
+        case plainText = 0
+        case markdown = 1
     }
 }

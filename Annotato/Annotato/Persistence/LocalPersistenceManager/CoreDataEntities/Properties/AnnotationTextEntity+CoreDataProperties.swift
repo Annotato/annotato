@@ -1,5 +1,6 @@
 import Foundation
 import CoreData
+import AnnotatoSharedLibrary
 
 extension AnnotationTextEntity {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<AnnotationTextEntity> {
@@ -7,7 +8,7 @@ extension AnnotationTextEntity {
     }
 
     @NSManaged public var id: UUID
-    @NSManaged public var type: Int64
+    @NSManaged public var type: AnnotationText.TextType
     @NSManaged public var order: Int64
     @NSManaged public var height: Double
     @NSManaged public var content: String
