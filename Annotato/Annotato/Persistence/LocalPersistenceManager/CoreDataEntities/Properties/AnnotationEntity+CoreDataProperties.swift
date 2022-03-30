@@ -11,9 +11,11 @@ extension AnnotationEntity {
     @NSManaged public var ownerId: String
     @NSManaged public var originX: Double
     @NSManaged public var originY: Double
-    @NSManaged public var annotationHandwritingEntities: Set<AnnotationHandwritingEntity>
-    @NSManaged public var annotationTextEntities: Set<AnnotationTextEntity>
+
+    // Relations
     @NSManaged public var documentEntity: DocumentEntity
+    @NSManaged public var annotationTextEntities: Set<AnnotationTextEntity>
+    @NSManaged public var annotationHandwritingEntities: Set<AnnotationHandwritingEntity>
 
     // Timestamps
     @NSManaged public var createdAt: Date?

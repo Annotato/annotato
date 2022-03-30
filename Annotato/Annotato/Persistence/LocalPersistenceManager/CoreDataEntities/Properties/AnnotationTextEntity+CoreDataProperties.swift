@@ -12,6 +12,8 @@ extension AnnotationTextEntity {
     @NSManaged public var order: Int64
     @NSManaged public var height: Double
     @NSManaged public var content: String
+
+    // Relations
     @NSManaged public var annotationEntity: AnnotationEntity
 
     // Timestamps

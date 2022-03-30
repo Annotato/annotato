@@ -8,6 +8,8 @@ extension DocumentShareEntity {
 
     @NSManaged public var id: UUID
     @NSManaged public var recipientId: String
+
+    // Relations
     @NSManaged public var documentEntity: DocumentEntity
 
     // Timestamps

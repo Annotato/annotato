@@ -10,6 +10,8 @@ extension AnnotationHandwritingEntity {
     @NSManaged public var order: Int64
     @NSManaged public var height: Double
     @NSManaged public var handwriting: Data
+
+    // Relations
     @NSManaged public var annotationEntity: AnnotationEntity
 
     // Timestamps

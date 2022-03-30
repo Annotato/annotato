@@ -10,6 +10,8 @@ extension DocumentEntity {
     @NSManaged public var name: String
     @NSManaged public var ownerId: String
     @NSManaged public var baseFileUrl: String
+
+    // Relations
     @NSManaged public var annotationEntities: Set<AnnotationEntity>
     @NSManaged public var documentShareEntities: Set<DocumentShareEntity>
 
