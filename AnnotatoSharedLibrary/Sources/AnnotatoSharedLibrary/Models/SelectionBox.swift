@@ -4,7 +4,7 @@ import CoreGraphics
 
 public final class SelectionBox: Codable, ObservableObject {
     public let id: UUID
-    public private(set) var startPoint: CGPoint
+    public let startPoint: CGPoint
     public var annotationId: UUID
 
     @Published public private(set) var endPoint: CGPoint
