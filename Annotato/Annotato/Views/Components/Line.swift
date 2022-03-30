@@ -6,7 +6,7 @@ class Line: UIView {
     private var end: CGPoint
 
     // Appearance configuration
-    var strokeColor: CGColor = UIColor.systemGray.cgColor
+    var strokeColor: CGColor = UIColor.systemGray3.cgColor
     var lineWidth: CGFloat = 2
 
     @available(*, unavailable)

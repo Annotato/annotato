@@ -16,7 +16,7 @@ class SelectionBoxView: UIView {
         setUpSubscribers()
         self.layer.borderWidth = 2.0
         self.layer.zPosition = 1.0
-        self.layer.borderColor = UIColor.systemGray.cgColor
+        self.layer.borderColor = UIColor.systemGray3.cgColor
     }
 
     private func setUpSubscribers() {
