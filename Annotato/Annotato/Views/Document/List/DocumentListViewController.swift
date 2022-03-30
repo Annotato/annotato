@@ -104,7 +104,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         presentWarningAlert(alertTitle: "Log Out",
                             warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
             AnnotatoAuth().logOut()
-            self?.goToAuth()
+            self?.goToAuth(asNewRootViewController: true)
         })
     }
 
