@@ -11,11 +11,6 @@ class SelectionBoxViewModel: ObservableObject {
 
     init(model: SelectionBox) {
         self.model = model
-        setUpSubscribers()
-    }
-
-    private func setUpSubscribers() {
-
     }
 
     var startPoint: CGPoint {

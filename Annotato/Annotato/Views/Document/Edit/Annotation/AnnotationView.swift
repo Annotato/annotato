@@ -30,6 +30,7 @@ class AnnotationView: UIView {
         setUpSubscribers()
         addGestureRecognizers()
         self.layer.borderWidth = 1.0
+        self.layer.zPosition = 2.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
 

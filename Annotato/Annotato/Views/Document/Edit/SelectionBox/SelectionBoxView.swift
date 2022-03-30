@@ -15,6 +15,7 @@ class SelectionBoxView: UIView {
         super.init(frame: viewModel.frame)
         setUpSubscribers()
         self.layer.borderWidth = 2.0
+        self.layer.zPosition = 1.0
         self.layer.borderColor = UIColor.systemGray.cgColor
     }
 

@@ -18,6 +18,7 @@ class Line: UIView {
         self.start = start
         self.end = end
         super.init(frame: CGRect(startPoint: start, endPoint: end))
+        self.layer.zPosition = 1.0
         isOpaque = false
     }
 
