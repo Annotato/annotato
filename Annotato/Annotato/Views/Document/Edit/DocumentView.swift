@@ -18,8 +18,6 @@ class DocumentView: UIView {
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
         self.viewModel = documentViewModel
         self.annotationViews = []
-//        self.selectionBoxViews = []
-//        self.linkLineViews = []
         self.pdfView = DocumentPdfView(
             frame: .zero,
             documentPdfViewModel: documentViewModel.pdfDocument
@@ -36,7 +34,6 @@ class DocumentView: UIView {
 
     private func initializeInitialAnnotationViews() {
         for annotation in viewModel.annotations {
-//            renderNewSelectionBox(viewModel: annotation.selectionBox)
             renderNewAnnotation(viewModel: annotation)
         }
     }
@@ -65,19 +62,12 @@ class DocumentView: UIView {
             }
             self?.replaceSelectionBox(newSelectionBoxFrame: newSelectionBoxFrame)
         }).store(in: &cancellables)
-
-//        viewModel.$addedSelectionBox.sink(receiveValue: { [weak self] addedSelectionBox in
-//            guard let addedSelectionBox = addedSelectionBox else {
-//                return
-//            }
-//            self?.renderNewSelectionBox(viewModel: addedSelectionBox)
-//        }).store(in: &cancellables)
     }
 
     private func replaceSelectionBox(newSelectionBoxFrame: CGRect) {
         selectionBoxView?.removeFromSuperview()
         let newSelectionBoxView = UIView(frame: newSelectionBoxFrame)
-        newSelectionBoxView.layer.borderWidth = 3.0
+        newSelectionBoxView.layer.borderWidth = 2.0
         newSelectionBoxView.layer.borderColor = UIColor.systemGray.cgColor
         selectionBoxView = newSelectionBoxView
         pdfView.documentView?.addSubview(newSelectionBoxView)
@@ -92,8 +82,6 @@ class DocumentView: UIView {
 
     @objc
     private func didChangeVisiblePages(notification: Notification) {
-//        showLinkLinesOfVisiblePages()
-//        showSelectionBoxedOfVisiblePages()
         showAnnotationsOfVisiblePages()
     }
 
@@ -154,54 +142,16 @@ class DocumentView: UIView {
     }
 }
 
-// MARK: Adding new selection box/updating selection box
-extension DocumentView {
-//    private func addSelectionBoxIfWithinBounds(at pointInDocument: CGPoint) {
-//        guard let pdfInnerDocumentView = pdfView.documentView else {
-//            return
-//        }
-//        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
-//        viewModel.addSelectionBoxIfWithinBounds(startPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
-//    }
-
-//    private func updateCurrentSelectionBoxIfWithinBounds(newEndPointInDocument: CGPoint) {
-//        guard let pdfInnerDocumentView = pdfView.documentView else {
-//            return
-//        }
-//        let pointInPdf = self.convert(newEndPointInDocument, to: pdfView.documentView)
-//        viewModel.setSelectionBoxEndPoint(point: <#T##CGPoint#>)(newEndPoint: pointInPdf, bounds: pdfInnerDocumentView.bounds)
-//    }
-
-//    private func renderNewSelectionBox(viewModel: SelectionBoxViewModel) {
-//        let selectionBoxView = SelectionBoxView(viewModel: viewModel)
-//        selectionBoxViews.append(selectionBoxView)
-//        pdfView.documentView?.addSubview(selectionBoxView)
-//    }
-}
-
 // MARK: Adding new annotations
 extension DocumentView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotationView = AnnotationView(parentView: pdfView.documentView!, viewModel: viewModel)
-
-//        let linkLineViewModel = viewModel.getLinkLine()
-//        let linkLineView = LinkLineView(viewModel: linkLineViewModel)
         annotationViews.append(annotationView)
-//        linkLineViews.append(linkLineView)
-
-//        pdfView.documentView?.addSubview(linkLineView)
         pdfView.documentView?.addSubview(annotationView)
     }
-
-//    private func addAnnotationWithAssociatedSelectionBoxIfWithinBounds() {
-//        guard let pdfInnerDocumentView = pdfView.documentView else {
-//            return
-//        }
-//        viewModel.addA(bounds: pdfInnerDocumentView.bounds)
-//    }
 }
 
-// MARK: Display annotations, selection boxes and link lines when visible pages of pdf change
+// MARK: Display annotations when visible pages of pdf change
 extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
@@ -213,22 +163,4 @@ extension DocumentView {
             annotation.bringToFrontOfSuperview()
         }
     }
-//
-//    private func showSelectionBoxedOfVisiblePages() {
-//        let selectionBoxesToShow = selectionBoxViews.filter({
-//            pdfView.visiblePagesContains(view: $0)
-//        })
-//        for selectionBox in selectionBoxesToShow {
-//            selectionBox.bringToFrontOfSuperview()
-//        }
-//    }
-
-//    private func showLinkLinesOfVisiblePages() {
-//        let linkLinesToShow = linkLineViews.filter({
-//            pdfView.visiblePagesContains(view: $0)
-//        })
-//        for linkLine in linkLinesToShow {
-//            linkLine.bringToFrontOfSuperview()
-//        }
-//    }
 }

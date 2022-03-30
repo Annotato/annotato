@@ -9,7 +9,7 @@ class AnnotationView: UIView {
     private var scroll: UIScrollView
     private var parts: UIStackView
     private var selectionBox: SelectionBoxView
-    private var linkLine: LinkLineView?
+    private var linkLine: Line?
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -39,24 +39,6 @@ class AnnotationView: UIView {
         populateParts()
     }
 
-    private func initializeSiblingViews() {
-        initializeSelectionBox()
-        initializeLine()
-    }
-
-    private func initializeSelectionBox() {
-        parentView.addSubview(selectionBox)
-    }
-
-    private func initializeLine() {
-        let lineView = LinkLineView(pointA: viewModel.selectionBox.startPoint, pointB: viewModel.origin)
-        self.linkLine = lineView
-        parentView.addSubview(lineView)
-
-        //        lineView.setNeedsDisplay()
-        //        lineView.bringToFrontOfSuperview()
-    }
-
     private func setUpScrollAndParts() {
         addSubview(scroll)
         scroll.translatesAutoresizingMaskIntoConstraints = false
@@ -80,12 +62,23 @@ class AnnotationView: UIView {
         }
     }
 
-    private func drawLinkLine() {
-//        let lineView = LinkLineView(pointA: viewModel.origin, pointB: viewModel.selectionBox.frame.origin)
+    private func initializeSiblingViews() {
+        initializeSelectionBox()
+        initializeLine()
+    }
+
+    private func initializeSelectionBox() {
+        parentView.addSubview(selectionBox)
+    }
+
+    private func initializeLine() {
+        let linkLine = Line(start: viewModel.selectionBox.startPoint, end: viewModel.origin)
+        self.linkLine = linkLine
+        parentView.addSubview(linkLine)
     }
 
     private func setUpSubscribers() {
-        viewModel.$annotationPositionDidChange.sink(receiveValue: { [weak self] _ in
+        viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
             guard let origin = self?.viewModel.origin else {
                 return
             }
@@ -107,7 +100,6 @@ class AnnotationView: UIView {
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 self?.removeFromSuperview()
-//                self?.selectionBox.removeFromSuperview()
                 self?.linkLine?.removeFromSuperview()
             }
         }).store(in: &cancellables)

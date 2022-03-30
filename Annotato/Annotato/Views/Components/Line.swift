@@ -1,23 +1,23 @@
 import Combine
 import UIKit
 
- class LinkLineView: UIView {
-    private var pointA: CGPoint
-    private var pointB: CGPoint
+ class Line: UIView {
+    private var start: CGPoint
+    private var end: CGPoint
 
      // Appearance configuration
      var strokeColor: CGColor = UIColor.systemGray.cgColor
-     var lineWidth: CGFloat = 3
+     var lineWidth: CGFloat = 2
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-     init(pointA: CGPoint, pointB: CGPoint) {
-         self.pointA = pointA
-         self.pointB = pointB
-        super.init(frame: CGRect(startPoint: pointA, endPoint: pointB))
+     init(start: CGPoint, end: CGPoint) {
+         self.start = start
+         self.end = end
+        super.init(frame: CGRect(startPoint: start, endPoint: end))
         isOpaque = false
     }
 
@@ -34,21 +34,21 @@ import UIKit
             return
         }
 
-        let reframedPointA = superview.convert(pointA, to: self)
-        let reframedPointB = superview.convert(pointB, to: self)
+        let reframedPointA = superview.convert(start, to: self)
+        let reframedPointB = superview.convert(end, to: self)
         context.move(to: reframedPointA)
         context.addLine(to: reframedPointB)
         context.strokePath()
     }
 
      func movePointA(to newPoint: CGPoint) {
-         pointA = newPoint
+         start = newPoint
          reframe()
          setNeedsDisplay()
      }
 
      func movePointB(to newPoint: CGPoint) {
-         pointB = newPoint
+         end = newPoint
          reframe()
          setNeedsDisplay()
      }
@@ -58,6 +58,6 @@ import UIKit
      }
 
      private var newFrame: CGRect {
-         CGRect(startPoint: pointA, endPoint: pointB)
+         CGRect(startPoint: start, endPoint: end)
      }
  }
