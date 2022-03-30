@@ -1,22 +1,22 @@
 import Combine
 import UIKit
 
- class Line: UIView {
+class Line: UIView {
     private var start: CGPoint
     private var end: CGPoint
 
-     // Appearance configuration
-     var strokeColor: CGColor = UIColor.systemGray.cgColor
-     var lineWidth: CGFloat = 2
+    // Appearance configuration
+    var strokeColor: CGColor = UIColor.systemGray.cgColor
+    var lineWidth: CGFloat = 2
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-     init(start: CGPoint, end: CGPoint) {
-         self.start = start
-         self.end = end
+    init(start: CGPoint, end: CGPoint) {
+        self.start = start
+        self.end = end
         super.init(frame: CGRect(startPoint: start, endPoint: end))
         isOpaque = false
     }
@@ -41,23 +41,23 @@ import UIKit
         context.strokePath()
     }
 
-     func movePointA(to newPoint: CGPoint) {
-         start = newPoint
-         reframe()
-         setNeedsDisplay()
-     }
+    func movePointA(to newPoint: CGPoint) {
+        start = newPoint
+        reframe()
+        setNeedsDisplay()
+    }
 
-     func movePointB(to newPoint: CGPoint) {
-         end = newPoint
-         reframe()
-         setNeedsDisplay()
-     }
+    func movePointB(to newPoint: CGPoint) {
+        end = newPoint
+        reframe()
+        setNeedsDisplay()
+    }
 
-     private func reframe() {
-         frame = newFrame
-     }
+    private func reframe() {
+        frame = newFrame
+    }
 
-     private var newFrame: CGRect {
-         CGRect(startPoint: start, endPoint: end)
-     }
- }
+    private var newFrame: CGRect {
+        CGRect(startPoint: start, endPoint: end)
+    }
+}
