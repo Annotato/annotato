@@ -3,10 +3,14 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager {
     static let shared = WebSocketManager()
+    private static let unavailableDestinationHostErrorCode = 54
+    private static let unconnectedSocketErrorCode = 57
+    private static let connectionTimeOutErrorCode = 60
 
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
+    private(set) var isConnected = false
 
     private init() { }
 
@@ -37,15 +41,22 @@ class WebSocketManager {
     func listen() {
         AnnotatoLogger.info("Websocket connection listening for events...")
 
+        // swiftlint:disable closure_body_length
         socket?.receive { [weak self] result in
             guard let self = self else {
                 return
             }
-
             switch result {
             case .failure(let error):
                 AnnotatoLogger.error(error.localizedDescription)
+                let errorCode = (error as NSError).code
+                if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
+                    errorCode == WebSocketManager.unconnectedSocketErrorCode ||
+                    errorCode == WebSocketManager.connectionTimeOutErrorCode {
+                    self.isConnected = false
+                }
             case .success(let message):
+                self.isConnected = true
                 switch message {
                 case .data(let data):
                     self.handleResponseData(data: data)
@@ -53,7 +64,6 @@ class WebSocketManager {
                     guard let data = str.data(using: .utf8) else {
                         return
                     }
-
                     self.handleResponseData(data: data)
                 @unknown default:
                     break
