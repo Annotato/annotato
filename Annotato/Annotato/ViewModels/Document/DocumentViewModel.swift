@@ -59,6 +59,7 @@ class DocumentViewModel: ObservableObject {
 extension DocumentViewModel {
     func setSelectionBoxStartPoint(point: CGPoint) {
         selectionStartPoint = point
+        print("Set start: \(selectionStartPoint)")
         updateSelectionBoxFrame()
     }
 

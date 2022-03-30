@@ -77,8 +77,8 @@ class DocumentView: UIView {
     private func replaceSelectionBox(newSelectionBoxFrame: CGRect) {
         selectionBoxView?.removeFromSuperview()
         let newSelectionBoxView = UIView(frame: newSelectionBoxFrame)
-        newSelectionBoxView.layer.borderWidth = 1.0
-        newSelectionBoxView.layer.borderColor = UIColor.systemRed.cgColor
+        newSelectionBoxView.layer.borderWidth = 3.0
+        newSelectionBoxView.layer.borderColor = UIColor.systemGray.cgColor
         selectionBoxView = newSelectionBoxView
         pdfView.documentView?.addSubview(newSelectionBoxView)
     }

@@ -28,7 +28,8 @@ class AnnotationViewModel: ObservableObject {
         model.origin
     }
 
-    @Published private(set) var positionDidChange = false
+    @Published private(set) var annotationPositionDidChange = false
+    @Published private(set) var selectionBoxPositionDidChange = false
     @Published private(set) var isResizing = false
     @Published private(set) var addedPart: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
@@ -98,7 +99,7 @@ class AnnotationViewModel: ObservableObject {
         }).store(in: &cancellables)
 
         model.$origin.sink(receiveValue: { [weak self] _ in
-            self?.positionDidChange = true
+            self?.annotationPositionDidChange = true
         }).store(in: &cancellables)
 
         model.$removedPart.sink(receiveValue: { [weak self] removedPart in
@@ -277,7 +278,7 @@ extension AnnotationViewModel {
 extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
-        selectionBox.didDelete()
+//        selectionBox.didDelete()
 //        linkLine?.didDelete()
         document?.removeAnnotation(annotation: self)
     }

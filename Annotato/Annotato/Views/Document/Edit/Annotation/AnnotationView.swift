@@ -4,10 +4,12 @@ import Combine
 class AnnotationView: UIView {
     private(set) var viewModel: AnnotationViewModel
 
+    private unowned var parentView: UIView
     private var palette: AnnotationPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
-    private var selectionBox: UIView
+    private var selectionBox: UIView?
+    private var linkLine: LinkLineView?
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -17,14 +19,12 @@ class AnnotationView: UIView {
 
     init(parentView: UIView, viewModel: AnnotationViewModel) {
         self.viewModel = viewModel
+        self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
-        self.selectionBox = UIView(frame: viewModel.selectionBox.frame)
-        self.selectionBox.layer.borderWidth = 1.0
-        self.selectionBox.layer.borderColor = UIColor.systemBlue.cgColor
         super.init(frame: viewModel.frame)
-        initializeSiblingViews(parentView: parentView)
+        initializeSiblingViews()
         initializeSubviews()
         setUpSubscribers()
         addGestureRecognizers()
@@ -38,8 +38,27 @@ class AnnotationView: UIView {
         populateParts()
     }
 
-    private func initializeSiblingViews(parentView: UIView) {
+    private func initializeSiblingViews() {
+        initializeSelectionBox()
+        initializeLine()
+    }
+
+    private func initializeSelectionBox() {
+        let selectionBox = UIView(frame: viewModel.selectionBox.frame)
+        selectionBox.layer.borderWidth = 3.0
+        selectionBox.layer.borderColor = UIColor.systemGray.cgColor
+
+        self.selectionBox = selectionBox
         parentView.addSubview(selectionBox)
+    }
+
+    private func initializeLine() {
+        let lineView = LinkLineView(pointA: viewModel.selectionBox.startPoint, pointB: viewModel.origin)
+        self.linkLine = lineView
+        parentView.addSubview(lineView)
+
+        //        lineView.setNeedsDisplay()
+        //        lineView.bringToFrontOfSuperview()
     }
 
     private func setUpScrollAndParts() {
@@ -65,12 +84,17 @@ class AnnotationView: UIView {
         }
     }
 
+    private func drawLinkLine() {
+//        let lineView = LinkLineView(pointA: viewModel.origin, pointB: viewModel.selectionBox.frame.origin)
+    }
+
     private func setUpSubscribers() {
-        viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
+        viewModel.$annotationPositionDidChange.sink(receiveValue: { [weak self] _ in
             guard let origin = self?.viewModel.origin else {
                 return
             }
             self?.frame.origin = origin
+            self?.linkLine?.movePointB(to: origin)
         }).store(in: &cancellables)
 
         viewModel.$isResizing.sink(receiveValue: { [weak self] _ in
@@ -87,7 +111,8 @@ class AnnotationView: UIView {
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 self?.removeFromSuperview()
-                self?.selectionBox.removeFromSuperview()
+                self?.selectionBox?.removeFromSuperview()
+                self?.linkLine?.removeFromSuperview()
             }
         }).store(in: &cancellables)
     }
