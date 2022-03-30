@@ -1,28 +1,26 @@
 import Foundation
 import CoreData
 
-
 extension DocumentEntity {
-
     @nonobjc public class func fetchRequest() -> NSFetchRequest<DocumentEntity> {
-        return NSFetchRequest<DocumentEntity>(entityName: "DocumentEntity")
+        NSFetchRequest<DocumentEntity>(entityName: "DocumentEntity")
     }
 
-    @NSManaged public var baseFileUrl: String?
-    @NSManaged public var createdAt: Date?
-    @NSManaged public var deletedAt: Date?
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
     @NSManaged public var ownerId: String?
-    @NSManaged public var updatedAt: Date?
+    @NSManaged public var baseFileUrl: String?
     @NSManaged public var annotationEntities: NSSet?
     @NSManaged public var documentShareEntities: NSSet?
 
+    // Timestamps
+    @NSManaged public var createdAt: Date?
+    @NSManaged public var deletedAt: Date?
+    @NSManaged public var updatedAt: Date?
 }
 
 // MARK: Generated accessors for annotationEntities
 extension DocumentEntity {
-
     @objc(addAnnotationEntitiesObject:)
     @NSManaged public func addToAnnotationEntities(_ value: AnnotationEntity)
 
@@ -34,12 +32,10 @@ extension DocumentEntity {
 
     @objc(removeAnnotationEntities:)
     @NSManaged public func removeFromAnnotationEntities(_ values: NSSet)
-
 }
 
 // MARK: Generated accessors for documentShareEntities
 extension DocumentEntity {
-
     @objc(addDocumentShareEntitiesObject:)
     @NSManaged public func addToDocumentShareEntities(_ value: DocumentShareEntity)
 
@@ -51,5 +47,4 @@ extension DocumentEntity {
 
     @objc(removeDocumentShareEntities:)
     @NSManaged public func removeFromDocumentShareEntities(_ values: NSSet)
-
 }

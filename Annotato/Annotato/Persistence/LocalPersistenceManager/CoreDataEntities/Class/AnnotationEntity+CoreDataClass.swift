@@ -2,6 +2,4 @@ import Foundation
 import CoreData
 
 @objc(AnnotationEntity)
-public class AnnotationEntity: NSManagedObject {
-
-}
+public class AnnotationEntity: NSManagedObject { }
