@@ -7,6 +7,7 @@ class WebSocketManager {
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
+    var isConnected = true
 
     private init() { }
 
@@ -23,7 +24,9 @@ class WebSocketManager {
         socket = URLSession(configuration: .default).webSocketTask(with: url)
         AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
 
+        print("Right before calling the listening function")
         listen()
+        print("Right before calling resume")
         socket?.resume()
     }
 
@@ -45,7 +48,12 @@ class WebSocketManager {
             switch result {
             case .failure(let error):
                 AnnotatoLogger.error(error.localizedDescription)
+                let errorCode = (error as NSError).code
+                if errorCode == 54 || errorCode == 57 || errorCode == 60 {
+                    self.isConnected = false
+                }
             case .success(let message):
+                self.isConnected = true
                 switch message {
                 case .data(let data):
                     self.handleResponseData(data: data)
