@@ -3,7 +3,7 @@ import AnnotatoSharedLibrary
 
 class AnnotatoPdfStorageManager {
     private var storageService: AnnotatoStorageService
-    private let api = DocumentsAPI()
+    private let api = RemoteDocumentsPersistence()
 
     init() {
         storageService = FirebaseStorage()

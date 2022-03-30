@@ -1,8 +1,8 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-struct DocumentSharesAPI {
-    private static let documentSharesUrl = "\(BaseAPI.baseAPIUrl)/documentShares"
+struct RemoteDocumentSharesPersistence: DocumentSharesPersistence {
+    private static let documentSharesUrl = "\(RemotePersistenceManager.baseAPIUrl)/documentShares"
 
     private var httpService: AnnotatoHTTPService
 
@@ -14,12 +14,13 @@ struct DocumentSharesAPI {
     func createDocumentShare(documentShare: DocumentShare) async -> DocumentShare? {
         guard let requestData = encodeDocumentShare(documentShare) else {
             AnnotatoLogger.error("DocumentShare was not created",
-                                 context: "DocumentSharesAPI::createDocumentShare")
+                                 context: "RemoteDocumentSharesPersistence::createDocumentShare")
             return nil
         }
 
         do {
-            let responseData = try await httpService.post(url: DocumentSharesAPI.documentSharesUrl, data: requestData)
+            let responseData =
+                try await httpService.post(url: RemoteDocumentSharesPersistence.documentSharesUrl, data: requestData)
             return try JSONDecoder().decode(DocumentShare.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When creating document share: \(error.localizedDescription)")
@@ -33,7 +34,7 @@ struct DocumentSharesAPI {
             return data
         } catch {
             AnnotatoLogger.error("Could not encode DocumentShare into JSON. \(error.localizedDescription)",
-                                 context: "DocumentSharesAPI::encodeDocumentShare")
+                                 context: "RemoteDocumentSharesPersistence::encodeDocumentShare")
             return nil
         }
     }

@@ -9,6 +9,6 @@ struct DocumentShareController {
 
         let documentShare = DocumentShare(documentId: documentId, recipientId: currentUser.uid)
 
-        return await DocumentSharesAPI().createDocumentShare(documentShare: documentShare)
+        return await RemoteDocumentSharesPersistence().createDocumentShare(documentShare: documentShare)
     }
 }
