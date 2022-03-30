@@ -278,8 +278,7 @@ extension AnnotationViewModel {
 extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
-//        selectionBox.didDelete()
-//        linkLine?.didDelete()
+        selectionBox.didDelete()
         document?.removeAnnotation(annotation: self)
     }
 

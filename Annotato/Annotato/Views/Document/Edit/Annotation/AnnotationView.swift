@@ -8,7 +8,7 @@ class AnnotationView: UIView {
     private var palette: AnnotationPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
-    private var selectionBox: UIView?
+    private var selectionBox: SelectionBoxView
     private var linkLine: LinkLineView?
     private var cancellables: Set<AnyCancellable> = []
 
@@ -23,6 +23,7 @@ class AnnotationView: UIView {
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
+        self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
         super.init(frame: viewModel.frame)
         initializeSiblingViews()
         initializeSubviews()
@@ -44,11 +45,6 @@ class AnnotationView: UIView {
     }
 
     private func initializeSelectionBox() {
-        let selectionBox = UIView(frame: viewModel.selectionBox.frame)
-        selectionBox.layer.borderWidth = 3.0
-        selectionBox.layer.borderColor = UIColor.systemGray.cgColor
-
-        self.selectionBox = selectionBox
         parentView.addSubview(selectionBox)
     }
 
@@ -111,7 +107,7 @@ class AnnotationView: UIView {
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 self?.removeFromSuperview()
-                self?.selectionBox?.removeFromSuperview()
+//                self?.selectionBox.removeFromSuperview()
                 self?.linkLine?.removeFromSuperview()
             }
         }).store(in: &cancellables)
