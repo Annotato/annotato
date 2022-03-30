@@ -139,17 +139,6 @@ class AnnotationViewModel: ObservableObject {
 
         }.store(in: &webSocketCancellables)
     }
-
-    func hasExceededBounds(bounds: CGRect) -> Bool {
-        let hasExceededTop = maximizedFrame.minY < bounds.minY
-        let hasExceededBottom = maximizedFrame.maxY > bounds.maxY
-        let hasExceededLeft = maximizedFrame.minX < bounds.minX
-        let hasExceededRight = maximizedFrame.maxX > bounds.maxX
-        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
-            return true
-        }
-        return false
-    }
 }
 
 extension AnnotationViewModel {
