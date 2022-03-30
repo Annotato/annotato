@@ -3,12 +3,12 @@
     <entity name="AnnotationEntity" representedClassName="AnnotationEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="originX" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="originY" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="ownerId" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="originX" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="originY" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="ownerId" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="width" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="width" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="annotationHandwritingEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationHandwritingEntity" inverseName="annotationEntity" inverseEntity="AnnotationHandwritingEntity"/>
         <relationship name="annotationTextEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationTextEntity" inverseName="annotationEntity" inverseEntity="AnnotationTextEntity"/>
         <relationship name="documentEntity" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="annotationEntities" inverseEntity="DocumentEntity"/>
@@ -16,31 +16,31 @@
     <entity name="AnnotationHandwritingEntity" representedClassName="AnnotationHandwritingEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="handwriting" optional="YES" attributeType="Binary"/>
-        <attribute name="height" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="handwriting" attributeType="Binary"/>
+        <attribute name="height" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="order" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="annotationEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationHandwritingEntities" inverseEntity="AnnotationEntity"/>
     </entity>
     <entity name="AnnotationTextEntity" representedClassName="AnnotationTextEntity" syncable="YES">
-        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="content" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="height" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="type" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="height" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="order" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="annotationEntity" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationTextEntities" inverseEntity="AnnotationEntity"/>
     </entity>
     <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES">
-        <attribute name="baseFileUrl" optional="YES" attributeType="String"/>
+        <attribute name="baseFileUrl" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="ownerId" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="ownerId" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="annotationEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationEntity" inverseName="documentEntity" inverseEntity="AnnotationEntity"/>
         <relationship name="documentShareEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DocumentShareEntity" inverseName="documentEntity" inverseEntity="DocumentShareEntity"/>
@@ -48,8 +48,8 @@
     <entity name="DocumentShareEntity" representedClassName="DocumentShareEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="recipientId" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="recipientId" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="documentEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="documentShareEntities" inverseEntity="DocumentEntity"/>
     </entity>
