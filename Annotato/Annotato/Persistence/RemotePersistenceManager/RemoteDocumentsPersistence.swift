@@ -18,7 +18,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching own documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching own documents: \(String(describing: error))")
             return nil
         }
     }
@@ -30,7 +30,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
                                                          params: ["userId": userId])
             return try JSONDecoder().decode([Document].self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching shared documents: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching shared documents: \(String(describing: error))")
             return nil
         }
     }
@@ -42,7 +42,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
                 try await httpService.get(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(documentId)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When fetching document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When fetching document: \(String(describing: error))")
             return nil
         }
     }
@@ -60,7 +60,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
                 try await httpService.post(url: RemoteDocumentsPersistence.documentsUrl, data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When creating document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When creating document: \(String(describing: error))")
             return nil
         }
     }
@@ -79,7 +79,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
                                           data: requestData)
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When updating document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When updating document: \(String(describing: error))")
             return nil
         }
     }
@@ -91,7 +91,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
                 try await httpService.delete(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)")
             return try JSONDecoder().decode(Document.self, from: responseData)
         } catch {
-            AnnotatoLogger.error("When deleting document: \(error.localizedDescription)")
+            AnnotatoLogger.error("When deleting document: \(String(describing: error))")
             return nil
         }
     }
@@ -101,7 +101,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
             let data = try JSONEncoder().encode(document)
             return data
         } catch {
-            AnnotatoLogger.error("Could not encode Document into JSON. \(error.localizedDescription)",
+            AnnotatoLogger.error("Could not encode Document into JSON. \(String(describing: error))",
                                  context: "RemoteDocumentsPersistence::encodeDocument")
             return nil
         }
