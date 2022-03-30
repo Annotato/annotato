@@ -3,9 +3,9 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager {
     static let shared = WebSocketManager()
-    static let unavailableDestinationHostErrorCode = 54
-    static let unconnectedSocketErrorCode = 57
-    static let connectionTimeOutErrorCode = 60
+    private static let unavailableDestinationHostErrorCode = 54
+    private static let unconnectedSocketErrorCode = 57
+    private static let connectionTimeOutErrorCode = 60
 
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
