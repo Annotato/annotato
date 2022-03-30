@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="AnnotationEntity" representedClassName="AnnotationEntity" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AnnotationEntity" representedClassName="AnnotationEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -13,7 +13,7 @@
         <relationship name="annotationTextEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationTextEntity" inverseName="annotationEntity" inverseEntity="AnnotationTextEntity"/>
         <relationship name="documentEntity" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="annotationEntities" inverseEntity="DocumentEntity"/>
     </entity>
-    <entity name="AnnotationHandwritingEntity" representedClassName="AnnotationHandwritingEntity" syncable="YES" codeGenerationType="class">
+    <entity name="AnnotationHandwritingEntity" representedClassName="AnnotationHandwritingEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="handwriting" optional="YES" attributeType="Binary"/>
@@ -23,7 +23,7 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="annotationEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationHandwritingEntities" inverseEntity="AnnotationEntity"/>
     </entity>
-    <entity name="AnnotationTextEntity" representedClassName="AnnotationTextEntity" syncable="YES" codeGenerationType="class">
+    <entity name="AnnotationTextEntity" representedClassName="AnnotationTextEntity" syncable="YES">
         <attribute name="content" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -34,7 +34,7 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="annotationEntity" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationTextEntities" inverseEntity="AnnotationEntity"/>
     </entity>
-    <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES" codeGenerationType="class">
+    <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES">
         <attribute name="baseFileUrl" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -45,7 +45,7 @@
         <relationship name="annotationEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationEntity" inverseName="documentEntity" inverseEntity="AnnotationEntity"/>
         <relationship name="documentShareEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DocumentShareEntity" inverseName="documentEntity" inverseEntity="DocumentShareEntity"/>
     </entity>
-    <entity name="DocumentShareEntity" representedClassName="DocumentShareEntity" syncable="YES" codeGenerationType="class">
+    <entity name="DocumentShareEntity" representedClassName="DocumentShareEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
