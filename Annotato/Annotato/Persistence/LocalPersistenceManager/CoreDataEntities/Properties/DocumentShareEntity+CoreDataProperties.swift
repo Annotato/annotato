@@ -6,9 +6,9 @@ extension DocumentShareEntity {
         NSFetchRequest<DocumentShareEntity>(entityName: "DocumentShareEntity")
     }
 
-    @NSManaged public var id: UUID?
-    @NSManaged public var documentEntity: DocumentEntity?
-    @NSManaged public var recipientId: String?
+    @NSManaged public var id: UUID
+    @NSManaged public var recipientId: String
+    @NSManaged public var documentEntity: DocumentEntity
 
     // Timestamps
     @NSManaged public var createdAt: Date?

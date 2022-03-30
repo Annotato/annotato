@@ -6,12 +6,12 @@ extension DocumentEntity {
         NSFetchRequest<DocumentEntity>(entityName: "DocumentEntity")
     }
 
-    @NSManaged public var id: UUID?
-    @NSManaged public var name: String?
-    @NSManaged public var ownerId: String?
-    @NSManaged public var baseFileUrl: String?
-    @NSManaged public var annotationEntities: NSSet?
-    @NSManaged public var documentShareEntities: NSSet?
+    @NSManaged public var id: UUID
+    @NSManaged public var name: String
+    @NSManaged public var ownerId: String
+    @NSManaged public var baseFileUrl: String
+    @NSManaged public var annotationEntities: Set<AnnotationEntity>
+    @NSManaged public var documentShareEntities: Set<DocumentShareEntity>
 
     // Timestamps
     @NSManaged public var createdAt: Date?
@@ -28,10 +28,10 @@ extension DocumentEntity {
     @NSManaged public func removeFromAnnotationEntities(_ value: AnnotationEntity)
 
     @objc(addAnnotationEntities:)
-    @NSManaged public func addToAnnotationEntities(_ values: NSSet)
+    @NSManaged public func addToAnnotationEntities(_ values: Set<AnnotationEntity>)
 
     @objc(removeAnnotationEntities:)
-    @NSManaged public func removeFromAnnotationEntities(_ values: NSSet)
+    @NSManaged public func removeFromAnnotationEntities(_ values: Set<AnnotationEntity>)
 }
 
 // MARK: Generated accessors for documentShareEntities
@@ -43,8 +43,8 @@ extension DocumentEntity {
     @NSManaged public func removeFromDocumentShareEntities(_ value: DocumentShareEntity)
 
     @objc(addDocumentShareEntities:)
-    @NSManaged public func addToDocumentShareEntities(_ values: NSSet)
+    @NSManaged public func addToDocumentShareEntities(_ values: Set<DocumentShareEntity>)
 
     @objc(removeDocumentShareEntities:)
-    @NSManaged public func removeFromDocumentShareEntities(_ values: NSSet)
+    @NSManaged public func removeFromDocumentShareEntities(_ values: Set<DocumentShareEntity>)
 }

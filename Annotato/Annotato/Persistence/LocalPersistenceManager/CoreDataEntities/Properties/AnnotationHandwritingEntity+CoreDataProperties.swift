@@ -6,11 +6,11 @@ extension AnnotationHandwritingEntity {
         NSFetchRequest<AnnotationHandwritingEntity>(entityName: "AnnotationHandwritingEntity")
     }
 
-    @NSManaged public var id: UUID?
+    @NSManaged public var id: UUID
     @NSManaged public var order: Int64
     @NSManaged public var height: Double
-    @NSManaged public var handwriting: Data?
-    @NSManaged public var annotationEntity: AnnotationEntity?
+    @NSManaged public var handwriting: Data
+    @NSManaged public var annotationEntity: AnnotationEntity
 
     // Timestamps
     @NSManaged public var createdAt: Date?

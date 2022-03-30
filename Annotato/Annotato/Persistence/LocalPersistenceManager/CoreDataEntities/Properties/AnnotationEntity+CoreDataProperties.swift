@@ -6,14 +6,14 @@ extension AnnotationEntity {
         NSFetchRequest<AnnotationEntity>(entityName: "AnnotationEntity")
     }
 
-    @NSManaged public var id: UUID?
+    @NSManaged public var id: UUID
     @NSManaged public var width: Double
-    @NSManaged public var ownerId: String?
+    @NSManaged public var ownerId: String
     @NSManaged public var originX: Double
     @NSManaged public var originY: Double
-    @NSManaged public var annotationHandwritingEntities: NSSet?
-    @NSManaged public var annotationTextEntities: NSSet?
-    @NSManaged public var documentEntity: DocumentEntity?
+    @NSManaged public var annotationHandwritingEntities: Set<AnnotationHandwritingEntity>
+    @NSManaged public var annotationTextEntities: Set<AnnotationTextEntity>
+    @NSManaged public var documentEntity: DocumentEntity
 
     // Timestamps
     @NSManaged public var createdAt: Date?
@@ -30,10 +30,10 @@ extension AnnotationEntity {
     @NSManaged public func removeFromAnnotationHandwritingEntities(_ value: AnnotationHandwritingEntity)
 
     @objc(addAnnotationHandwritingEntities:)
-    @NSManaged public func addToAnnotationHandwritingEntities(_ values: NSSet)
+    @NSManaged public func addToAnnotationHandwritingEntities(_ values: Set<AnnotationHandwritingEntity>)
 
     @objc(removeAnnotationHandwritingEntities:)
-    @NSManaged public func removeFromAnnotationHandwritingEntities(_ values: NSSet)
+    @NSManaged public func removeFromAnnotationHandwritingEntities(_ values: Set<AnnotationHandwritingEntity>)
 }
 
 // MARK: Generated accessors for annotationTextEntities
@@ -45,8 +45,8 @@ extension AnnotationEntity {
     @NSManaged public func removeFromAnnotationTextEntities(_ value: AnnotationTextEntity)
 
     @objc(addAnnotationTextEntities:)
-    @NSManaged public func addToAnnotationTextEntities(_ values: NSSet)
+    @NSManaged public func addToAnnotationTextEntities(_ values: Set<AnnotationTextEntity>)
 
     @objc(removeAnnotationTextEntities:)
-    @NSManaged public func removeFromAnnotationTextEntities(_ values: NSSet)
+    @NSManaged public func removeFromAnnotationTextEntities(_ values: Set<AnnotationTextEntity>)
 }
