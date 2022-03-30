@@ -17,3 +17,7 @@ extension DocumentShareEntity {
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?
 }
+
+extension DocumentShareEntity: Identifiable {
+
+}

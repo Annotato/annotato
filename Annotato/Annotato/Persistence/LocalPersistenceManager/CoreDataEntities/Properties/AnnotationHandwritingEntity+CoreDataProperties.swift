@@ -19,3 +19,7 @@ extension AnnotationHandwritingEntity {
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?
 }
+
+extension AnnotationHandwritingEntity: Identifiable {
+
+}

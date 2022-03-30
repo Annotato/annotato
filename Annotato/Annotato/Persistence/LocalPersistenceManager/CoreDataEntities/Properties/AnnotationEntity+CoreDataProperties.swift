@@ -52,3 +52,7 @@ extension AnnotationEntity {
     @objc(removeAnnotationTextEntities:)
     @NSManaged public func removeFromAnnotationTextEntities(_ values: Set<AnnotationTextEntity>)
 }
+
+extension AnnotationEntity: Identifiable {
+
+}

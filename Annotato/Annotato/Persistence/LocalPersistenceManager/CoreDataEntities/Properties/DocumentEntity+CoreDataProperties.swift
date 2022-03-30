@@ -50,3 +50,7 @@ extension DocumentEntity {
     @objc(removeDocumentShareEntities:)
     @NSManaged public func removeFromDocumentShareEntities(_ values: Set<DocumentShareEntity>)
 }
+
+extension DocumentEntity: Identifiable {
+
+}
