@@ -2,7 +2,12 @@ import Foundation
 import CoreData
 
 struct LocalPersistenceManager {
-    static let shared = LocalPersistenceManager()
+    static var sharedContext: NSManagedObjectContext {
+        LocalPersistenceManager.shared.container.viewContext
+    }
+
+    private static let shared = LocalPersistenceManager()
+
     private static let containerName = "AnnotatoLocal"
 
     private let container: NSPersistentContainer
