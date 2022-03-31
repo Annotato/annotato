@@ -31,16 +31,35 @@ final class DocumentEntity: Model {
 
     init() { }
 
-    init(name: String, ownerId: String, baseFileUrl: String, id: UUID? = nil) {
+    init(
+        name: String,
+        ownerId: String,
+        baseFileUrl: String,
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
+    ) {
         self.id = id
         self.name = name
         self.ownerId = ownerId
         self.baseFileUrl = baseFileUrl
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 }
 
 extension DocumentEntity: PersistedEntity {
     static func fromModel(_ model: Document) -> Self {
-        Self(name: model.name, ownerId: model.ownerId, baseFileUrl: model.baseFileUrl, id: model.id)
+        Self(
+            name: model.name,
+            ownerId: model.ownerId,
+            baseFileUrl: model.baseFileUrl,
+            id: model.id,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+            deletedAt: model.deletedAt
+        )
     }
 }
