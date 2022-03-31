@@ -5,6 +5,9 @@ public final class AnnotationText: Codable, AnnotationPart {
     public var order: Int
     public var height: Double
     public let annotationId: UUID
+    public let createdAt: Date?
+    public let updatedAt: Date?
+    public let deletedAt: Date?
 
     public let type: AnnotationText.TextType
     public private(set) var content: String
@@ -21,7 +24,10 @@ public final class AnnotationText: Codable, AnnotationPart {
         height: Double,
         order: Int,
         annotationId: UUID,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id ?? UUID()
         self.type = type
@@ -29,6 +35,9 @@ public final class AnnotationText: Codable, AnnotationPart {
         self.height = height
         self.order = order
         self.annotationId = annotationId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 
     // Define manually as we do not want all properties to be encoded/decoded
@@ -39,6 +48,9 @@ public final class AnnotationText: Codable, AnnotationPart {
         case annotationId
         case type
         case content
+        case createdAt
+        case updatedAt
+        case deletedAt
     }
 
     public func setContent(to newContent: String) {
@@ -53,7 +65,10 @@ public final class AnnotationText: Codable, AnnotationPart {
 extension AnnotationText: CustomDebugStringConvertible {
     public var debugDescription: String {
         "AnnotationText(id: \(id), type: \(type), content: \(content), " +
-        "height: \(height), order: \(order), annotationId: \(annotationId))"
+        "height: \(height), order: \(order), annotationId: \(annotationId)), " +
+        "createdAt: \(String(describing: createdAt)), " +
+        "updatedAt: \(String(describing: updatedAt)), " +
+        "deleteAt: \(String(describing: deletedAt))"
     }
 }
 

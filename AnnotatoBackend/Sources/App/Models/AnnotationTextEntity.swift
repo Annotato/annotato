@@ -40,7 +40,10 @@ final class AnnotationTextEntity: Model {
         height: Double,
         order: Int,
         annotationId: AnnotationEntity.IDValue,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.type = type.rawValue
@@ -48,6 +51,9 @@ final class AnnotationTextEntity: Model {
         self.height = height
         self.order = order
         self.$annotationEntity.id = annotationId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 }
 
@@ -59,7 +65,10 @@ extension AnnotationTextEntity: PersistedEntity {
             height: model.height,
             order: model.order,
             annotationId: model.annotationId,
-            id: model.id
+            id: model.id,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+            deletedAt: model.deletedAt
         )
     }
 }
