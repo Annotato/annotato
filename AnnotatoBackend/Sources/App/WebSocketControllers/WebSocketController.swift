@@ -67,7 +67,7 @@ class WebSocketController {
         do {
             Self.logger.info("Processing data...")
 
-            let message = try JSONDecoder().decode(AnnotatoMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: data)
 
             switch message.type {
             case .crudDocument:

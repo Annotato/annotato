@@ -22,7 +22,10 @@ extension Annotation: Persistable {
             selectionBox: selectionBox,
             ownerId: managedEntity.ownerId,
             documentId: managedEntity.$documentEntity.id,
-            id: managedEntity.id
+            id: managedEntity.id,
+            createdAt: managedEntity.createdAt,
+            updatedAt: managedEntity.updatedAt,
+            deletedAt: managedEntity.deletedAt
         )
     }
 }

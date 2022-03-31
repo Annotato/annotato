@@ -39,7 +39,10 @@ final class SelectionBoxEntity: Model {
         endPointX: Double,
         endPointY: Double,
         annotationId: AnnotationEntity.IDValue,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.startPointX = startPointX
@@ -47,6 +50,9 @@ final class SelectionBoxEntity: Model {
         self.endPointX = endPointX
         self.endPointY = endPointY
         self.$annotationEntity.id = annotationId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 }
 
@@ -58,7 +64,10 @@ extension SelectionBoxEntity: PersistedEntity {
             endPointX: model.endPoint.x,
             endPointY: model.endPoint.y,
             annotationId: model.annotationId,
-            id: model.id
+            id: model.id,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+            deletedAt: model.deletedAt
         )
     }
 }

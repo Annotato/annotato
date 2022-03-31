@@ -1,4 +1,5 @@
 import Vapor
+import AnnotatoSharedLibrary
 
 extension WebSocket: Hashable {
     private static let logger = Logger(label: "WebSocket+Hashable")
@@ -13,7 +14,7 @@ extension WebSocket: Hashable {
 
     func send<T: Codable>(message: T) {
         do {
-            let data = try JSONEncoder().encode(message)
+            let data = try JSONCustomEncoder().encode(message)
             self.send(raw: data, opcode: .binary)
         } catch {
             WebSocket.logger.report(error: error)

@@ -8,6 +8,9 @@ public final class Annotation: Codable, ObservableObject {
     public private(set) var selectionBox: SelectionBox
     public let ownerId: String
     public let documentId: UUID
+    public let createdAt: Date?
+    public let updatedAt: Date?
+    public let deletedAt: Date?
 
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
@@ -22,7 +25,10 @@ public final class Annotation: Codable, ObservableObject {
         selectionBox: SelectionBox,
         ownerId: String,
         documentId: UUID,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id ?? UUID()
         self.origin = origin
@@ -31,6 +37,9 @@ public final class Annotation: Codable, ObservableObject {
         self.selectionBox = selectionBox
         self.ownerId = ownerId
         self.documentId = documentId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
 
         if parts.isEmpty {
             addInitialPart()
@@ -46,6 +55,9 @@ public final class Annotation: Codable, ObservableObject {
         case handwritings
         case ownerId
         case documentId
+        case createdAt
+        case updatedAt
+        case deletedAt
     }
 
     public init(from decoder: Decoder) throws {
@@ -56,6 +68,9 @@ public final class Annotation: Codable, ObservableObject {
         ownerId = try container.decode(String.self, forKey: .ownerId)
         documentId = try container.decode(UUID.self, forKey: .documentId)
         selectionBox = try container.decode(SelectionBox.self, forKey: .selectionBox)
+        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
 
         // Note: AnnotationPart protocol has to be split into concrete types to decode
         parts = []
@@ -74,6 +89,9 @@ public final class Annotation: Codable, ObservableObject {
         try container.encode(ownerId, forKey: .ownerId)
         try container.encode(documentId, forKey: .documentId)
         try container.encode(selectionBox, forKey: .selectionBox)
+        try container.encodeIfPresent(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
 
         // Note: AnnotationPart protocol has to be split into concrete types to encode
         let texts = parts.compactMap({ $0 as? AnnotationText })
@@ -265,6 +283,9 @@ extension Annotation {
 extension Annotation: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Annotation(id: \(id), origin: \(origin), width: \(width), " +
-        "parts: \(parts), ownerId: \(ownerId), documentId: \(documentId))"
+        "parts: \(parts), ownerId: \(ownerId), documentId: \(documentId)), " +
+        "createdAt: \(String(describing: createdAt)), " +
+        "updatedAt: \(String(describing: updatedAt)), " +
+        "deleteAt: \(String(describing: deletedAt))"
     }
 }

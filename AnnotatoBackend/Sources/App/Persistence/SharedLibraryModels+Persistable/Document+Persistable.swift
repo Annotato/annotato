@@ -8,7 +8,10 @@ extension Document: Persistable {
             ownerId: managedEntity.ownerId,
             baseFileUrl: managedEntity.baseFileUrl,
             annotations: managedEntity.annotationEntities.map(Annotation.fromManagedEntity),
-            id: managedEntity.id
+            id: managedEntity.id,
+            createdAt: managedEntity.createdAt,
+            updatedAt: managedEntity.updatedAt,
+            deletedAt: managedEntity.deletedAt
         )
     }
 }
