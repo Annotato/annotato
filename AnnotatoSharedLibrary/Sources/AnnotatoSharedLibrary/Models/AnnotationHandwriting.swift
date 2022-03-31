@@ -57,5 +57,14 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
     public func remove() {
         isRemoved = true
     }
+}
 
+extension AnnotationHandwriting: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "AnnotationHandwriting(id: \(id), height: \(height), " +
+        "order: \(order), annotationId: \(annotationId)), " +
+        "createdAt: \(String(describing: createdAt)), " +
+        "updatedAt: \(String(describing: updatedAt)), " +
+        "deleteAt: \(String(describing: deletedAt))"
+    }
 }
