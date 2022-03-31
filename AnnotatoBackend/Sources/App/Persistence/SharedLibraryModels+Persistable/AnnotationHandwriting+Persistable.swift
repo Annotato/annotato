@@ -8,7 +8,10 @@ extension AnnotationHandwriting: Persistable {
             height: managedEntity.height,
             annotationId: managedEntity.$annotationEntity.id,
             handwriting: managedEntity.handwriting,
-            id: managedEntity.id
+            id: managedEntity.id,
+            createdAt: managedEntity.createdAt,
+            updatedAt: managedEntity.updatedAt,
+            deletedAt: managedEntity.deletedAt
         )
     }
 }

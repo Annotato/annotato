@@ -6,6 +6,9 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
     public var order: Int
     public var height: Double
     public var annotationId: UUID
+    public let createdAt: Date?
+    public let updatedAt: Date?
+    public let deletedAt: Date?
 
     public private(set) var handwriting: Data
 
@@ -20,13 +23,19 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
         height: Double,
         annotationId: UUID,
         handwriting: Data,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id ?? UUID()
         self.order = order
         self.height = height
         self.annotationId = annotationId
         self.handwriting = handwriting
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 
     // Define manually as we do not want all properties to be encoded/decoded
@@ -36,6 +45,9 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
         case height
         case annotationId
         case handwriting
+        case createdAt
+        case updatedAt
+        case deletedAt
     }
 
     public func setHandwriting(to newHandwriting: Data) {

@@ -36,13 +36,19 @@ final class AnnotationHandwritingEntity: Model {
         height: Double,
         order: Int,
         annotationId: AnnotationEntity.IDValue,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.handwriting = handwriting
         self.height = height
         self.order = order
         self.$annotationEntity.id = annotationId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 }
 
@@ -53,7 +59,10 @@ extension AnnotationHandwritingEntity: PersistedEntity {
             height: model.height,
             order: model.order,
             annotationId: model.annotationId,
-            id: model.id
+            id: model.id,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+            deletedAt: model.deletedAt
         )
     }
 }
