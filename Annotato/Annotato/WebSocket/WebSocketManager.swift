@@ -101,7 +101,7 @@ class WebSocketManager {
         do {
             AnnotatoLogger.info("Handling response data...")
 
-            let message = try JSONDecoder().decode(AnnotatoMessage.self, from: data)
+            let message = try JSONDateDecoder().decode(AnnotatoMessage.self, from: data)
 
             switch message.type {
             case .crudDocument:

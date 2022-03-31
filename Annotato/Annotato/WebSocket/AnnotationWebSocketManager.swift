@@ -11,7 +11,7 @@ class AnnotationWebSocketManager: ObservableObject {
         do {
             AnnotatoLogger.info("Handling annotation response data...")
 
-            let message = try JSONDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
+            let message = try JSONDateDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
             let annotation = message.annotation
 
             // Defensive resets

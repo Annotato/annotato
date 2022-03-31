@@ -16,7 +16,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         do {
             let responseData = try await httpService.get(url: RemoteDocumentsPersistence.documentsUrl,
                                                          params: ["userId": userId])
-            return try JSONDecoder().decode([Document].self, from: responseData)
+            return try JSONDateDecoder().decode([Document].self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching own documents: \(String(describing: error))")
             return nil
@@ -28,7 +28,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         do {
             let responseData = try await httpService.get(url: RemoteDocumentsPersistence.sharedDocumentsUrl,
                                                          params: ["userId": userId])
-            return try JSONDecoder().decode([Document].self, from: responseData)
+            return try JSONDateDecoder().decode([Document].self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching shared documents: \(String(describing: error))")
             return nil
@@ -40,7 +40,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         do {
             let responseData =
                 try await httpService.get(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(documentId)")
-            return try JSONDecoder().decode(Document.self, from: responseData)
+            return try JSONDateDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching document: \(String(describing: error))")
             return nil
@@ -58,7 +58,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         do {
             let responseData =
                 try await httpService.post(url: RemoteDocumentsPersistence.documentsUrl, data: requestData)
-            return try JSONDecoder().decode(Document.self, from: responseData)
+            return try JSONDateDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When creating document: \(String(describing: error))")
             return nil
@@ -77,7 +77,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
             let responseData =
                 try await httpService.put(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)",
                                           data: requestData)
-            return try JSONDecoder().decode(Document.self, from: responseData)
+            return try JSONDateDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When updating document: \(String(describing: error))")
             return nil
@@ -89,7 +89,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         do {
             let responseData =
                 try await httpService.delete(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)")
-            return try JSONDecoder().decode(Document.self, from: responseData)
+            return try JSONDateDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When deleting document: \(String(describing: error))")
             return nil

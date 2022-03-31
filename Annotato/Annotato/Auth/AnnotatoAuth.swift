@@ -51,7 +51,7 @@ extension AnnotatoAuth {
 
     private func fetchLocalUserCredentials() -> AnnotatoUser? {
         guard let savedUser = UserDefaults.standard.object(forKey: savedUserKey) as? Data,
-              let decodedUser = try? JSONDecoder().decode(AnnotatoUser.self, from: savedUser) else {
+              let decodedUser = try? JSONDateDecoder().decode(AnnotatoUser.self, from: savedUser) else {
             return nil
         }
 
