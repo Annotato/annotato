@@ -9,7 +9,7 @@ final class AnnotationTextEntity: Model {
     var id: UUID?
 
     @Field(key: "type")
-    var type: Int
+    var type: Int64
 
     @Field(key: "content")
     var content: String
