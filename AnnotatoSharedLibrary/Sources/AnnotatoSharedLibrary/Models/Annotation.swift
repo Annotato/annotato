@@ -26,9 +26,9 @@ public final class Annotation: Codable, ObservableObject {
         ownerId: String,
         documentId: UUID,
         id: UUID? = nil,
-        createdAt: Date?,
-        updatedAt: Date?,
-        deletedAt: Date?
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id ?? UUID()
         self.origin = origin
