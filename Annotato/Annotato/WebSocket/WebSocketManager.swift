@@ -79,7 +79,7 @@ class WebSocketManager {
         do {
             AnnotatoLogger.info("Sending message: \(message) through websocket connection...")
 
-            let data = try JSONEncoder().encode(message)
+            let data = try JSONCustomEncoder().encode(message)
             socket?.send(.data(data)) { error in
                 if let error = error {
                     AnnotatoLogger.error(
@@ -101,7 +101,7 @@ class WebSocketManager {
         do {
             AnnotatoLogger.info("Handling response data...")
 
-            let message = try JSONDateDecoder().decode(AnnotatoMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: data)
 
             switch message.type {
             case .crudDocument:

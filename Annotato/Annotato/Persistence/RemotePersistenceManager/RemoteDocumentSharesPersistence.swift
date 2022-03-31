@@ -21,7 +21,7 @@ struct RemoteDocumentSharesPersistence: DocumentSharesPersistence {
         do {
             let responseData =
                 try await httpService.post(url: RemoteDocumentSharesPersistence.documentSharesUrl, data: requestData)
-            return try JSONDateDecoder().decode(DocumentShare.self, from: responseData)
+            return try JSONCustomDecoder().decode(DocumentShare.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When creating document share: \(error.localizedDescription)")
             return nil
@@ -30,7 +30,7 @@ struct RemoteDocumentSharesPersistence: DocumentSharesPersistence {
 
     private func encodeDocumentShare(_ documentShare: DocumentShare) -> Data? {
         do {
-            let data = try JSONEncoder().encode(documentShare)
+            let data = try JSONCustomEncoder().encode(documentShare)
             return data
         } catch {
             AnnotatoLogger.error("Could not encode DocumentShare into JSON. \(error.localizedDescription)",

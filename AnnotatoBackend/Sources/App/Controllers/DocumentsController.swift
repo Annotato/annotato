@@ -28,7 +28,7 @@ struct DocumentsController {
     }
 
     static func create(req: Request) async throws -> Document {
-        let document = try req.content.decode(Document.self, using: JSONDateDecoder())
+        let document = try req.content.decode(Document.self, using: JSONCustomDecoder())
 
         return try await DocumentsDataAccess.create(db: req.db, document: document)
     }
@@ -41,7 +41,7 @@ struct DocumentsController {
 
     static func update(req: Request) async throws -> Document {
         let documentId = try ControllersUtil.getIdFromParams(request: req)
-        let document = try req.content.decode(Document.self, using: JSONDateDecoder())
+        let document = try req.content.decode(Document.self, using: JSONCustomDecoder())
 
         return try await DocumentsDataAccess.update(db: req.db, documentId: documentId, document: document)
     }

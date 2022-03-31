@@ -10,7 +10,7 @@ class DocumentWebSocketController {
         do {
             Self.logger.info("Processing crud document data...")
 
-            let message = try JSONDateDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
             let document = message.document
 
             switch message.subtype {

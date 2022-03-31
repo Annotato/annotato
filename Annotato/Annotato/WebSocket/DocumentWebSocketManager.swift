@@ -11,7 +11,7 @@ class DocumentWebSocketManager: ObservableObject {
         do {
             AnnotatoLogger.info("Handling document response data...")
 
-            let message = try JSONDateDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
             let document = message.document
 
             // Defensive resets

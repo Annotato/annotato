@@ -10,7 +10,7 @@ class AnnotationWebSocketController {
         do {
             Self.logger.info("Processing crud annotation data...")
 
-            let message = try JSONDateDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
             let annotation = message.annotation
 
             switch message.subtype {

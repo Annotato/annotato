@@ -42,7 +42,7 @@ extension AnnotatoAuth {
 
     private func storeCredentialsLocally() {
         guard let currentUser = currentUser,
-              let encodedUser = try? JSONEncoder().encode(currentUser) else {
+              let encodedUser = try? JSONCustomEncoder().encode(currentUser) else {
             return
         }
 
@@ -51,7 +51,7 @@ extension AnnotatoAuth {
 
     private func fetchLocalUserCredentials() -> AnnotatoUser? {
         guard let savedUser = UserDefaults.standard.object(forKey: savedUserKey) as? Data,
-              let decodedUser = try? JSONDateDecoder().decode(AnnotatoUser.self, from: savedUser) else {
+              let decodedUser = try? JSONCustomDecoder().decode(AnnotatoUser.self, from: savedUser) else {
             return nil
         }
 
