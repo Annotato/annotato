@@ -6,7 +6,10 @@ extension DocumentShare: Persistable {
         Self(
             documentId: managedEntity.$documentEntity.id,
             recipientId: managedEntity.recipientId,
-            id: managedEntity.id
+            id: managedEntity.id,
+            createdAt: managedEntity.createdAt,
+            updatedAt: managedEntity.updatedAt,
+            deletedAt: managedEntity.deletedAt
         )
     }
 }

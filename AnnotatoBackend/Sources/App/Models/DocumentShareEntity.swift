@@ -28,16 +28,29 @@ final class DocumentShareEntity: Model {
     init(
         documentId: DocumentEntity.IDValue,
         recipientId: String,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.$documentEntity.id = documentId
         self.recipientId = recipientId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 }
 
 extension DocumentShareEntity: PersistedEntity {
     static func fromModel(_ model: DocumentShare) -> Self {
-        Self(documentId: model.documentId, recipientId: model.recipientId, id: model.id)
+        Self(
+            documentId: model.documentId,
+            recipientId: model.recipientId,
+            id: model.id,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+            deletedAt: model.deletedAt
+        )
     }
 }
