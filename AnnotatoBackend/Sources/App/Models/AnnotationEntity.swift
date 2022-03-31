@@ -49,7 +49,10 @@ final class AnnotationEntity: Model {
         width: Double,
         ownerId: String,
         documentId: DocumentEntity.IDValue,
-        id: UUID? = nil
+        id: UUID? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        deletedAt: Date? = nil
     ) {
         self.id = id
         self.originX = originX
@@ -57,6 +60,9 @@ final class AnnotationEntity: Model {
         self.width = width
         self.ownerId = ownerId
         self.$documentEntity.id = documentId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
     }
 }
 
@@ -68,7 +74,10 @@ extension AnnotationEntity: PersistedEntity {
             width: model.width,
             ownerId: model.ownerId,
             documentId: model.documentId,
-            id: model.id
+            id: model.id,
+            createdAt: model.createdAt,
+            updatedAt: model.updatedAt,
+            deletedAt: model.deletedAt
         )
     }
 }
