@@ -16,7 +16,3 @@ class DocumentPdfView: PDFView {
         self.document = viewModel.document
     }
 }
-
-extension DocumentPdfView {
-
-}
