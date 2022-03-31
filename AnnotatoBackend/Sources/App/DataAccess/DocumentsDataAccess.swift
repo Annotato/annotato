@@ -1,6 +1,7 @@
 import Vapor
 import Fluent
 import AnnotatoSharedLibrary
+import Foundation
 
 struct DocumentsDataAccess {
     static func listOwn(db: Database, userId: String) async throws -> [Document] {
@@ -83,5 +84,9 @@ struct DocumentsDataAccess {
         }
 
         return Document.fromManagedEntity(documentEntity)
+    }
+
+    static func isFoundIncludingDeleted(db: Database, documentId: UUID) async -> Bool {
+        (try? await DocumentEntity.findIncludingDeleted(documentId, on: db).get() != nil) != nil
     }
 }
