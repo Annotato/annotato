@@ -86,7 +86,7 @@ class AnnotationView: UIView {
 
             DispatchQueue.main.async {
                 self?.frame.origin = origin
-                self?.linkLine?.movePointB(to: origin)
+                self?.linkLine?.moveEnd(to: origin)
             }
         }).store(in: &cancellables)
 

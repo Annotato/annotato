@@ -35,20 +35,20 @@ class Line: UIView {
             return
         }
 
-        let reframedPointA = superview.convert(start, to: self)
-        let reframedPointB = superview.convert(end, to: self)
-        context.move(to: reframedPointA)
-        context.addLine(to: reframedPointB)
+        let reframedStart = superview.convert(start, to: self)
+        let reframedEnd = superview.convert(end, to: self)
+        context.move(to: reframedStart)
+        context.addLine(to: reframedEnd)
         context.strokePath()
     }
 
-    func movePointA(to newPoint: CGPoint) {
+    func moveStart(to newPoint: CGPoint) {
         start = newPoint
         reframe()
         setNeedsDisplay()
     }
 
-    func movePointB(to newPoint: CGPoint) {
+    func moveEnd(to newPoint: CGPoint) {
         end = newPoint
         reframe()
         setNeedsDisplay()
