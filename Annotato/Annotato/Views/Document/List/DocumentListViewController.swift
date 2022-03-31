@@ -105,6 +105,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     func didTapLogOutButton() {
         presentWarningAlert(alertTitle: "Log Out",
                             warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
+            WebSocketManager.shared.resetSocket()
             AnnotatoAuth().logOut()
             self?.goToAuth(asNewRootViewController: true)
         })
