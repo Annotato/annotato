@@ -29,6 +29,9 @@ final class AnnotationEntity: Model {
     @Children(for: \.$annotationEntity)
     var annotationHandwritingEntities: [AnnotationHandwritingEntity]
 
+    @OptionalChild(for: \.$annotationEntity)
+    var selectionBox: SelectionBoxEntity?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 

@@ -5,6 +5,7 @@ public final class Annotation: Codable, ObservableObject {
     public let id: UUID
     public private(set) var width: Double
     public private(set) var parts: [AnnotationPart]
+    public private(set) var selectionBox: SelectionBox
     public let ownerId: String
     public let documentId: UUID
 
@@ -18,6 +19,7 @@ public final class Annotation: Codable, ObservableObject {
         origin: CGPoint,
         width: Double,
         parts: [AnnotationPart],
+        selectionBox: SelectionBox,
         ownerId: String,
         documentId: UUID,
         id: UUID? = nil
@@ -26,6 +28,7 @@ public final class Annotation: Codable, ObservableObject {
         self.origin = origin
         self.width = width
         self.parts = parts
+        self.selectionBox = selectionBox
         self.ownerId = ownerId
         self.documentId = documentId
 
@@ -39,6 +42,7 @@ public final class Annotation: Codable, ObservableObject {
         case origin
         case width
         case texts
+        case selectionBox
         case handwritings
         case ownerId
         case documentId
@@ -51,6 +55,7 @@ public final class Annotation: Codable, ObservableObject {
         width = try container.decode(Double.self, forKey: .width)
         ownerId = try container.decode(String.self, forKey: .ownerId)
         documentId = try container.decode(UUID.self, forKey: .documentId)
+        selectionBox = try container.decode(SelectionBox.self, forKey: .selectionBox)
 
         // Note: AnnotationPart protocol has to be split into concrete types to decode
         parts = []
@@ -68,6 +73,7 @@ public final class Annotation: Codable, ObservableObject {
         try container.encode(width, forKey: .width)
         try container.encode(ownerId, forKey: .ownerId)
         try container.encode(documentId, forKey: .documentId)
+        try container.encode(selectionBox, forKey: .selectionBox)
 
         // Note: AnnotationPart protocol has to be split into concrete types to encode
         let texts = parts.compactMap({ $0 as? AnnotationText })

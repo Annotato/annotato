@@ -33,6 +33,7 @@ private func addAndRunMigrations(app: Application) throws {
     app.migrations.add(CreateDocuments())
     app.migrations.add(CreateAnnotations())
     app.migrations.add(CreateAnnotationText())
+    app.migrations.add(CreateSelectionBoxes())
     app.migrations.add(CreateDocumentShares())
     app.migrations.add(CreateAnnotationHandwritings())
 

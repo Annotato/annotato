@@ -20,6 +20,10 @@ extension AnnotationEntity {
             let annotationHandwritingEntity = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
             try await annotationHandwritingEntity.customCreate(on: tx)
         }
+
+        let selectionBox = annotation.selectionBox
+        let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
+        try await selectionBoxEntity.customCreate(on: tx)
     }
 
     /// Updates the AnnotationEntity instance. Use this function to cascade updates.
@@ -52,6 +56,14 @@ extension AnnotationEntity {
             }
         }
 
+        let selectionBox = annotation.selectionBox
+        if let selectionBoxEntity = try await SelectionBoxEntity.find(selectionBox.id, on: tx).get() {
+            try await selectionBoxEntity.customUpdate(on: tx, usingUpdatedModel: selectionBox)
+        } else {
+            let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
+            try await selectionBoxEntity.customCreate(on: tx)
+        }
+
         try await self.update(on: tx).get()
     }
 
@@ -64,6 +76,8 @@ extension AnnotationEntity {
             try await textEntity.customDelete(on: tx)
         }
 
+        try await selectionBox?.customDelete(on: tx)
+
         for handwritingEntity in annotationHandwritingEntities {
             try await handwritingEntity.customDelete(on: tx)
         }
@@ -73,6 +87,7 @@ extension AnnotationEntity {
 
     func loadAssociations(on db: Database) async throws {
         try await self.$annotationTextEntities.load(on: db).get()
+        try await self.$selectionBox.load(on: db).get()
         try await self.$annotationHandwritingEntities.load(on: db).get()
     }
 

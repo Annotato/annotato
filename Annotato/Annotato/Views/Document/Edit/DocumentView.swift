@@ -9,6 +9,7 @@ class DocumentView: UIView {
 
     private var pdfView: DocumentPdfView
     private var annotationViews: [AnnotationView]
+    private var selectionBoxView: UIView?
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -57,6 +58,23 @@ class DocumentView: UIView {
                 self?.renderNewAnnotation(viewModel: addedAnnotation)
             }
         }).store(in: &cancellables)
+
+        viewModel.$selectionBoxFrame.sink(receiveValue: { [weak self] newSelectionBoxFrame in
+            guard let newSelectionBoxFrame = newSelectionBoxFrame else {
+                self?.selectionBoxView?.removeFromSuperview()
+                return
+            }
+            self?.replaceSelectionBox(newSelectionBoxFrame: newSelectionBoxFrame)
+        }).store(in: &cancellables)
+    }
+
+    private func replaceSelectionBox(newSelectionBoxFrame: CGRect) {
+        selectionBoxView?.removeFromSuperview()
+        let newSelectionBoxView = UIView(frame: newSelectionBoxFrame)
+        newSelectionBoxView.layer.borderWidth = 2.0
+        newSelectionBoxView.layer.borderColor = UIColor.systemGray2.cgColor
+        selectionBoxView = newSelectionBoxView
+        pdfView.documentView?.addSubview(newSelectionBoxView)
     }
 
     private func addObservers() {
@@ -75,25 +93,63 @@ class DocumentView: UIView {
         isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tapGestureRecognizer)
+
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        addGestureRecognizer(panGestureRecognizer)
+    }
+
+    @objc
+    private func didPan(_ sender: UIPanGestureRecognizer) {
+        guard let pdfInnerDocumentView = pdfView.documentView else {
+            return
+        }
+
+        if sender.state == .ended {
+            viewModel.addAnnotation(bounds: pdfInnerDocumentView.bounds)
+            selectionBoxView?.removeFromSuperview()
+        }
+
+        let touchPoint = sender.location(in: self)
+        let pointInPdf = self.convert(touchPoint, to: pdfInnerDocumentView)
+
+        guard pdfInnerDocumentView.bounds.contains(pointInPdf) else {
+            return
+        }
+
+        if sender.state == .began {
+            viewModel.setSelectionBoxStartPoint(point: pointInPdf)
+        }
+
+        if sender.state != .cancelled {
+            viewModel.setSelectionBoxEndPoint(point: pointInPdf)
+        }
     }
 
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
-        let touchPoint = sender.location(in: self)
         viewModel.setAllAnnotationsOutOfFocus()
-        addAnnotationIfWithinPdfBounds(at: touchPoint)
-    }
 
-    private func addAnnotationIfWithinPdfBounds(at pointInDocument: CGPoint) {
-        let pointInPdf = self.convert(pointInDocument, to: pdfView.documentView)
         guard let pdfInnerDocumentView = pdfView.documentView else {
             return
         }
-        viewModel.addAnnotationIfWithinBounds(center: pointInPdf, bounds: pdfInnerDocumentView.bounds)
-    }
 
+        let touchPoint = sender.location(in: self)
+        let pointInPdf = self.convert(touchPoint, to: pdfInnerDocumentView)
+
+        guard pdfInnerDocumentView.bounds.contains(pointInPdf) else {
+            return
+        }
+
+        viewModel.setSelectionBoxStartPoint(point: pointInPdf)
+        viewModel.setSelectionBoxEndPoint(point: pointInPdf)
+        viewModel.addAnnotation(bounds: pdfInnerDocumentView.bounds)
+    }
+}
+
+// MARK: Adding new annotations
+extension DocumentView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annotationView = AnnotationView(viewModel: viewModel)
+        let annotationView = AnnotationView(parentView: pdfView.documentView, viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView.documentView?.addSubview(annotationView)
     }
@@ -104,30 +160,11 @@ extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
     private func showAnnotationsOfVisiblePages() {
-        let visiblePages = pdfView.visiblePages
-
         let annotationsToShow = annotationViews.filter({
-            annotationIsInVisiblePages(annotation: $0, visiblePages: visiblePages)
+            pdfView.visiblePagesContains(view: $0)
         })
         for annotation in annotationsToShow {
-            bringAnnotationToFront(annotation: annotation)
+            annotation.bringToFrontOfSuperview()
         }
-    }
-
-    private func annotationIsInVisiblePages(
-        annotation: AnnotationView,
-        visiblePages: [PDFPage]
-    ) -> Bool {
-        guard let centerInDocument = pdfView.documentView?.convert(annotation.center, to: self) else {
-            return false
-        }
-        guard let pageContainingAnnotation = pdfView.page(for: centerInDocument, nearest: true) else {
-            return false
-        }
-        return visiblePages.contains(pageContainingAnnotation)
-    }
-
-    private func bringAnnotationToFront(annotation: AnnotationView) {
-        annotation.superview?.bringSubviewToFront(annotation)
     }
 }

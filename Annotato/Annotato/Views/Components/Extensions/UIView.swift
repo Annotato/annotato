@@ -28,6 +28,10 @@ extension UIView {
         addSubview(newSubview)
     }
 
+    func bringToFrontOfSuperview() {
+        self.superview?.bringSubviewToFront(self)
+    }
+
     class func makeToggleableSystemButton(systemName: String, color: UIColor) -> ToggleableButton {
         let button = ToggleableButton()
         button.setImage(UIImage(systemName: systemName), for: .normal)

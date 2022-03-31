@@ -14,6 +14,7 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
+    private(set) var selectionBox: SelectionBoxViewModel
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
@@ -40,6 +41,7 @@ class AnnotationViewModel: ObservableObject {
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: .zero, width: model.width, height: 50.0)
         self.parts = []
+        self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.palette.parentViewModel = self
 
         populatePartViewModels(model: model)
@@ -137,17 +139,6 @@ class AnnotationViewModel: ObservableObject {
 
         }.store(in: &webSocketCancellables)
     }
-
-    func hasExceededBounds(bounds: CGRect) -> Bool {
-        let hasExceededTop = maximizedFrame.minY < bounds.minY
-        let hasExceededBottom = maximizedFrame.maxY > bounds.maxY
-        let hasExceededLeft = maximizedFrame.minX < bounds.minX
-        let hasExceededRight = maximizedFrame.maxX > bounds.maxX
-        if hasExceededTop || hasExceededBottom || hasExceededLeft || hasExceededRight {
-            return true
-        }
-        return false
-    }
 }
 
 extension AnnotationViewModel {
@@ -197,6 +188,10 @@ extension AnnotationViewModel {
     // Note: partsFrame is with respect to scrollFrame
     var partsFrame: CGRect {
         CGRect(x: .zero, y: .zero, width: model.width, height: model.partHeights)
+    }
+
+    func hasExceededBounds(bounds: CGRect) -> Bool {
+        !bounds.contains(frame)
     }
 }
 
@@ -303,6 +298,7 @@ extension AnnotationViewModel {
 extension AnnotationViewModel {
     func didDelete() {
         isRemoved = true
+        selectionBox.didDelete()
         document?.removeAnnotation(annotation: self)
     }
 

@@ -9,8 +9,11 @@ class DocumentViewModel: ObservableObject {
 
     private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
+    private var selectionStartPoint: CGPoint?
+    private var selectionEndPoint: CGPoint?
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
+    @Published private(set) var selectionBoxFrame: CGRect?
 
     init?(model: Document) {
         guard let baseFileUrl = URL(string: model.baseFileUrl) else {
@@ -68,32 +71,70 @@ class DocumentViewModel: ObservableObject {
 }
 
 extension DocumentViewModel {
-    func addAnnotationIfWithinBounds(center: CGPoint, bounds: CGRect) {
-        guard let currentUser = AnnotatoAuth().currentUser else {
+    func setSelectionBoxStartPoint(point: CGPoint) {
+        selectionStartPoint = point
+        updateSelectionBoxFrame()
+    }
+
+    func setSelectionBoxEndPoint(point: CGPoint) {
+        selectionEndPoint = point
+        updateSelectionBoxFrame()
+    }
+
+    private func updateSelectionBoxFrame() {
+        guard let selectionStartPoint = selectionStartPoint,
+              let selectionEndPoint = selectionEndPoint else {
+            selectionBoxFrame = nil
             return
         }
 
-        let newAnnotationWidth = 300.0
+        selectionBoxFrame = CGRect(startPoint: selectionStartPoint, endPoint: selectionEndPoint)
+    }
+
+    private func resetSelectionPoints() {
+        selectionStartPoint = nil
+        selectionEndPoint = nil
+        selectionBoxFrame = nil
+    }
+
+    func addAnnotation(bounds: CGRect) {
+        guard let selectionStartPoint = selectionStartPoint,
+              let selectionEndPoint = selectionEndPoint,
+              let selectionBoxFrame = selectionBoxFrame,
+              let currentUser = AnnotatoAuth().currentUser else {
+            return
+        }
+
+        resetSelectionPoints()
+
+        let annotationId = UUID()
+        let annotationWidth = 300.0
+        let selectionBox = SelectionBox(startPoint: selectionStartPoint,
+                                        endPoint: selectionEndPoint,
+                                        annotationId: annotationId)
+
         let newAnnotation = Annotation(
-            origin: .zero,
-            width: newAnnotationWidth,
+            origin: selectionBoxFrame.center,
+            width: annotationWidth,
             parts: [],
+            selectionBox: selectionBox,
             ownerId: currentUser.uid,
             documentId: model.id,
-            id: UUID()
+            id: annotationId
         )
+
         model.addAnnotation(annotation: newAnnotation)
 
         let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
-        annotationViewModel.center = center
-
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
-            model.removeAnnotation(annotation: newAnnotation)
-            return
+            let boundsMidX = bounds.midX
+            let annotationY = annotationViewModel.frame.midY
+            annotationViewModel.center = CGPoint(x: boundsMidX, y: annotationY)
         }
 
         annotationViewModel.enterEditMode()
         annotationViewModel.enterMaximizedMode()
+
         annotations.append(annotationViewModel)
         addedAnnotation = annotationViewModel
         setUpSubscriberForAnnotation(annotation: annotationViewModel)

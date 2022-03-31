@@ -4,9 +4,12 @@ import Combine
 class AnnotationView: UIView {
     private(set) var viewModel: AnnotationViewModel
 
+    private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
+    private var selectionBox: SelectionBoxView
+    private var linkLine: Line?
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -14,17 +17,20 @@ class AnnotationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationViewModel) {
+    init(parentView: UIView?, viewModel: AnnotationViewModel) {
         self.viewModel = viewModel
+        self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
+        self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
         super.init(frame: viewModel.frame)
-
+        initializeSiblingViews()
         initializeSubviews()
         setUpSubscribers()
         addGestureRecognizers()
         self.layer.borderWidth = 1.0
+        self.layer.zPosition = 2.0
         self.layer.borderColor = UIColor.systemBlue.cgColor
     }
 
@@ -57,6 +63,21 @@ class AnnotationView: UIView {
         }
     }
 
+    private func initializeSiblingViews() {
+        initializeSelectionBox()
+        initializeLine()
+    }
+
+    private func initializeSelectionBox() {
+        parentView?.addSubview(selectionBox)
+    }
+
+    private func initializeLine() {
+        let linkLine = Line(start: viewModel.selectionBox.startPoint, end: viewModel.origin)
+        self.linkLine = linkLine
+        parentView?.addSubview(linkLine)
+    }
+
     private func setUpSubscribers() {
         viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
             guard let origin = self?.viewModel.origin else {
@@ -65,6 +86,7 @@ class AnnotationView: UIView {
 
             DispatchQueue.main.async {
                 self?.frame.origin = origin
+                self?.linkLine?.moveEnd(to: origin)
             }
         }).store(in: &cancellables)
 
@@ -85,6 +107,7 @@ class AnnotationView: UIView {
             if isRemoved {
                 DispatchQueue.main.async {
                     self?.removeFromSuperview()
+                    self?.linkLine?.removeFromSuperview()
                 }
             }
         }).store(in: &cancellables)
