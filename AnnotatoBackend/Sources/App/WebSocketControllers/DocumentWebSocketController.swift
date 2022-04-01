@@ -93,7 +93,7 @@ class DocumentWebSocketController {
         }
     }
 
-    private static func sendToAllAppropriateClients<T: Codable>(
+    static func sendToAllAppropriateClients<T: Codable>(
         db: Database,
         userId: String,
         document: Document,

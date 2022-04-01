@@ -110,7 +110,7 @@ class AnnotationWebSocketController {
         }
     }
 
-    private static func sendToAllAppropriateClients<T: Codable>(
+    static func sendToAllAppropriateClients<T: Codable>(
         db: Database,
         userId: String,
         annotation: Annotation,
