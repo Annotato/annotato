@@ -3,6 +3,7 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager {
     static let shared = WebSocketManager()
+    private static let lastOnlineUserDefaultsKey = "lastOnline"
     private static let unavailableDestinationHostErrorCode = 54
     private static let unconnectedSocketErrorCode = 57
     private static let connectionTimeOutErrorCode = 60
@@ -11,7 +12,6 @@ class WebSocketManager {
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
     private(set) var isConnected = false
-    private(set) var lastOnline: Date?
 
     private init() { }
 
@@ -54,7 +54,7 @@ class WebSocketManager {
                 if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
                     errorCode == WebSocketManager.unconnectedSocketErrorCode ||
                     errorCode == WebSocketManager.connectionTimeOutErrorCode {
-                    self.lastOnline = Date()
+                    self.setLastOnline(to: Date())
                     self.isConnected = false
                 }
             case .success(let message):
@@ -75,6 +75,18 @@ class WebSocketManager {
             // We need to re-register the callback closure after a message is received
             self.listen()
         }
+    }
+
+    private func setLastOnline(to lastOnline: Date) {
+        UserDefaults.standard.set(lastOnline, forKey: WebSocketManager.lastOnlineUserDefaultsKey)
+    }
+
+    func getLastOnline() -> Date? {
+        guard let lastOnline = UserDefaults.standard.object(
+            forKey: WebSocketManager.lastOnlineUserDefaultsKey) as? Date else {
+            return nil
+        }
+        return lastOnline
     }
 
     func send<T: Codable>(message: T) {
