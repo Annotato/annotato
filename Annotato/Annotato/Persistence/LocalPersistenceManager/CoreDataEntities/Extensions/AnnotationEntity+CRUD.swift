@@ -10,7 +10,7 @@ extension AnnotationEntity {
                 .read(annotationTextEntityId: annotationText.id) {
                 annotationTextEntity.customUpdate(usingUpdatedModel: annotationText)
             } else {
-                _ = AnnotationTextEntity.fromModel(annotationText)
+                addToAnnotationTextEntities(AnnotationTextEntity.fromModel(annotationText))
             }
         }
 
@@ -20,7 +20,7 @@ extension AnnotationEntity {
                 .read(annotationHandwritingEntityId: annotationHandwriting.id) {
                 annotationHandwritingEntity.customUpdate(usingUpdatedModel: annotationHandwriting)
             } else {
-                _ = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
+                addToAnnotationHandwritingEntities(AnnotationHandwritingEntity.fromModel(annotationHandwriting))
             }
         }
 

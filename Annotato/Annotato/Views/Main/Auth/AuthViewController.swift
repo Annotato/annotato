@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary // TODO: REMOVE AFTER TESTING
 
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
@@ -41,6 +42,207 @@ class AuthViewController: UIViewController, Navigable {
             string: "Display Name",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
+
+        // TODO: REMOVE AFTER TESTING
+
+        // testCreateAnnotation()
+
+        // testUpdateAnnotation()
+
+        // testCreateDocument()
+
+        testUpdateDocument()
+    }
+
+    // TODO: REMOVE AFTER TESTING
+
+    private func testUpdateAnnotation() {
+        let docUUID = UUID(uuidString: "33629713-2871-4a0a-9935-0a7eae0c28d0")!
+        let a1UUID = UUID(uuidString: "82e6ab7d-c17e-49cb-9f7d-a28135e4092b")!
+        let a2UUID = UUID(uuidString: "b2afe130-597f-4853-9162-2c8e6f9d401e")!
+
+        let selectionBoxA1 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a1UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+        let selectionBoxA2 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+
+        let part = AnnotationText(type: .plainText, content: "I love this stupid testing", height: 100,
+                                  order: 1, annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                  updatedAt: nil, deletedAt: nil)
+
+        var annotation1 = Annotation(origin: .zero, width: 100, parts: [], selectionBox: selectionBoxA1,
+                                     ownerId: "owner", documentId: docUUID, id: a1UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        var annotation2 = Annotation(origin: .zero, width: 100, parts: [part],
+                                     selectionBox: selectionBoxA2,
+                                     ownerId: "owner", documentId: docUUID, id: a2UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        let document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+                                annotations: [], id: docUUID, createdAt: Date(), updatedAt: nil,
+                                deletedAt: nil)
+
+        // Create Doc
+        _ = LocalDocumentsPersistence().createDocument(document: document)
+
+        // Create A1
+        _ = LocalAnnotationsPersistence().createAnnotation(annotation: annotation1)
+
+        // Create A2
+        _ = LocalAnnotationsPersistence().createAnnotation(annotation: annotation2)
+
+        annotation1 = Annotation(origin: annotation1.origin, width: annotation1.width,
+                                 parts: annotation1.parts, selectionBox: selectionBoxA1,
+                                 ownerId: "ownerUpdated", documentId: docUUID, id: a1UUID,
+                                 createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        annotation2 = Annotation(origin: annotation2.origin, width: annotation2.width,
+                                 parts: annotation2.parts, selectionBox: selectionBoxA2,
+                                 ownerId: "ownerUpdate", documentId: docUUID, id: a2UUID,
+                                 createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        _ = LocalAnnotationsPersistence().updateAnnotation(annotation: annotation1)
+        _ = LocalAnnotationsPersistence().updateAnnotation(annotation: annotation2)
+    }
+
+    private func testCreateAnnotation() {
+        let docUUID = UUID(uuidString: "33629713-2871-4a0a-9935-0a7eae0c28d0")!
+        let a1UUID = UUID(uuidString: "82e6ab7d-c17e-49cb-9f7d-a28135e4092b")!
+        let a2UUID = UUID(uuidString: "b2afe130-597f-4853-9162-2c8e6f9d401e")!
+
+        let selectionBoxA1 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a1UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+        let selectionBoxA2 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+
+        let part = AnnotationText(type: .plainText, content: "I love this stupid testing", height: 100,
+                                  order: 1, annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                  updatedAt: nil, deletedAt: nil)
+
+        let annotation1 = Annotation(origin: .zero, width: 100, parts: [], selectionBox: selectionBoxA1,
+                                     ownerId: "owner", documentId: docUUID, id: a1UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        let annotation2 = Annotation(origin: .zero, width: 100, parts: [part],
+                                     selectionBox: selectionBoxA2,
+                                     ownerId: "owner", documentId: docUUID, id: a2UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        let document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+                                annotations: [], id: docUUID, createdAt: Date(), updatedAt: nil,
+                                deletedAt: nil)
+
+        _ = LocalDocumentsPersistence().createDocument(document: document)
+
+        // Without parts
+        _ = LocalAnnotationsPersistence().createAnnotation(annotation: annotation1)
+
+        // With parts
+        // _ = LocalAnnotationsPersistence().createAnnotation(annotation: annotation2)
+
+    }
+
+    private func testCreateDocument() {
+        let docUUID = UUID(uuidString: "33629713-2871-4a0a-9935-0a7eae0c28d0")!
+        let a1UUID = UUID(uuidString: "82e6ab7d-c17e-49cb-9f7d-a28135e4092b")!
+        let a2UUID = UUID(uuidString: "b2afe130-597f-4853-9162-2c8e6f9d401e")!
+
+        let selectionBoxA1 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a1UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+        let selectionBoxA2 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+
+        let part = AnnotationText(type: .plainText, content: "I love this stupid testing", height: 100,
+                                  order: 1, annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                  updatedAt: nil, deletedAt: nil)
+
+        let annotation1 = Annotation(origin: .zero, width: 100, parts: [],
+                                     selectionBox: selectionBoxA1,
+                                     ownerId: "owner", documentId: docUUID, id: a1UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        let annotation2 = Annotation(origin: .zero, width: 100, parts: [part],
+                                     selectionBox: selectionBoxA2,
+                                     ownerId: "owner", documentId: docUUID, id: a2UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        // MARK: CREATE
+
+        // Create document ✅
+        // let document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+        //                        annotations: [], id: docUUID, createdAt: Date(), updatedAt: nil,
+        //                        deletedAt: nil)
+
+        // Create document with annotation ✅
+        // let document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+        //                        annotations: [annotation1], id: docUUID, createdAt: Date(),
+        //                        updatedAt: nil,deletedAt: nil)
+
+        // Create document with annotation with some parts inside ✅
+        // let document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+        //                         annotations: [annotation2], id: docUUID, createdAt: Date(),
+        //                         updatedAt: nil, deletedAt: nil)
+
+        // LocalDocumentsPersistence().createDocument(document: document)
+    }
+
+    private func testUpdateDocument() {
+        let docUUID = UUID(uuidString: "33629713-2871-4a0a-9935-0a7eae0c28d0")!
+        let a1UUID = UUID(uuidString: "82e6ab7d-c17e-49cb-9f7d-a28135e4092b")!
+        let a2UUID = UUID(uuidString: "b2afe130-597f-4853-9162-2c8e6f9d401e")!
+
+        let selectionBoxA1 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a1UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+        let selectionBoxA2 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+
+        let part = AnnotationText(type: .plainText, content: "I love this stupid testing", height: 100,
+                                  order: 1, annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                  updatedAt: nil, deletedAt: nil)
+
+        let annotation1 = Annotation(origin: .zero, width: 100, parts: [],
+                                     selectionBox: selectionBoxA1,
+                                     ownerId: "owner", documentId: docUUID, id: a1UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        let annotation2 = Annotation(origin: .zero, width: 100, parts: [part],
+                                     selectionBox: selectionBoxA2,
+                                     ownerId: "owner", documentId: docUUID, id: a2UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        var document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+                                annotations: [], id: docUUID, createdAt: Date(), updatedAt: nil,
+                                deletedAt: nil)
+
+        // Create Doc
+        //   _ = LocalDocumentsPersistence().createDocument(document: document)
+
+        // document = Document(name: "testUpdated", ownerId: "owner", baseFileUrl: "file",
+        //                     annotations: [], id: docUUID, createdAt: Date(), updatedAt: nil,
+        //                     deletedAt: nil)
+
+        // _ = LocalDocumentsPersistence().updateDocument(document: document)
+
+        // document = Document(name: "testUpdated", ownerId: "owner", baseFileUrl: "file",
+        //                     annotations: [annotation1], id: docUUID, createdAt: Date(),
+        //                     updatedAt: nil, deletedAt: nil)
+
+        // _ = LocalDocumentsPersistence().updateDocument(document: document)
+
+        // document = Document(name: "testUpdated", ownerId: "owner", baseFileUrl: "file",
+        //                     annotations: [annotation1, annotation2], id: docUUID, createdAt: Date(),
+        //                     updatedAt: nil, deletedAt: nil)
+
+        // _ = LocalDocumentsPersistence().updateDocument(document: document)
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
