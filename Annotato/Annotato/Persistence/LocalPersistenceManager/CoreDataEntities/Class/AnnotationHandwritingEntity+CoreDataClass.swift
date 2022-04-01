@@ -2,4 +2,4 @@ import Foundation
 import CoreData
 
 @objc(AnnotationHandwritingEntity)
-public class AnnotationHandwritingEntity: NSManagedObject { }
+public final class AnnotationHandwritingEntity: NSManagedObject { }

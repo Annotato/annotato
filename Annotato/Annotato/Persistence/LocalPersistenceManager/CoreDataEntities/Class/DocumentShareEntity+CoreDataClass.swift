@@ -2,4 +2,4 @@ import Foundation
 import CoreData
 
 @objc(DocumentShareEntity)
-public class DocumentShareEntity: NSManagedObject { }
+public final class DocumentShareEntity: NSManagedObject { }

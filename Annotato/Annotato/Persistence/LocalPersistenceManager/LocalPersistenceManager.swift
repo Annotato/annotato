@@ -6,6 +6,10 @@ struct LocalPersistenceManager {
         LocalPersistenceManager.shared.container.viewContext
     }
 
+    static func makeCoreDataEntity<T: Persistable>(class: T.Type) -> T.ManagedEntity {
+        T.ManagedEntity(context: sharedContext)
+    }
+
     private static let shared = LocalPersistenceManager()
 
     private static let containerName = "AnnotatoLocal"
