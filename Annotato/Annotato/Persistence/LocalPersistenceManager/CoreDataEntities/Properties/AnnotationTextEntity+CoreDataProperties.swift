@@ -24,4 +24,8 @@ extension AnnotationTextEntity: Identifiable {
     var annotationId: UUID {
         annotationEntity.id
     }
+
+    static func removeDeletedAnnotationTextEntities(_ entities: [AnnotationTextEntity]) -> [AnnotationTextEntity] {
+        entities.filter({ $0.deletedAt != nil })
+    }
 }

@@ -11,7 +11,7 @@ struct LocalDocumentEntityDataAccess {
         do {
             let documentEntities = try context.fetch(request)
 
-            return documentEntities
+            return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
             AnnotatoLogger.error("When fetching own document entities.",
                                  context: "LocalDocumentEntityDataAccess::listOwn")
@@ -26,7 +26,7 @@ struct LocalDocumentEntityDataAccess {
         do {
             let documentEntities = try context.fetch(request)
 
-            return documentEntities
+            return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
             AnnotatoLogger.error("When fetching shared document entities.",
                                  context: "LocalDocumentEntityDataAccess::listShared")

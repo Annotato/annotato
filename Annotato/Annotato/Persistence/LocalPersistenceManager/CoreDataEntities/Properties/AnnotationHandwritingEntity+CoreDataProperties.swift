@@ -22,4 +22,10 @@ extension AnnotationHandwritingEntity: Identifiable {
     var annotationId: UUID {
         annotationEntity.id
     }
+
+    static func removeDeletedAnnotationHandwritingEntities(
+        _ entities: [AnnotationHandwritingEntity]
+    ) -> [AnnotationHandwritingEntity] {
+        entities.filter({ $0.deletedAt != nil })
+    }
 }

@@ -34,5 +34,18 @@ extension DocumentEntity {
 }
 
 extension DocumentEntity: Identifiable {
+    static func removeDeletedDocumentEntities(_ entities: [DocumentEntity]) -> [DocumentEntity] {
+        let undeletedDocumentEntities = entities.filter({ $0.deletedAt != nil })
 
+        for undeletedDocumentEntity in undeletedDocumentEntities {
+            let annotationEntites = Array(undeletedDocumentEntity.annotationEntities)
+
+            let undeletedAnnotationEntities = AnnotationEntity
+                .removeDeletedAnnotationEntities(annotationEntites)
+
+            undeletedDocumentEntity.annotationEntities = Set<AnnotationEntity>(undeletedAnnotationEntities)
+        }
+
+        return undeletedDocumentEntities
+    }
 }
