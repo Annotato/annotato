@@ -53,6 +53,7 @@ class WebSocketManager {
                 if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
                     errorCode == WebSocketManager.unconnectedSocketErrorCode ||
                     errorCode == WebSocketManager.connectionTimeOutErrorCode {
+                    self.storeLastOnlineLocally(to: Date())
                     self.isConnected = false
                 }
             case .success(let message):
@@ -118,5 +119,28 @@ class WebSocketManager {
                 context: "WebSocketManager:handleResponseData:"
             )
         }
+    }
+}
+
+// MARK: Storing last online time in UserDefaults
+extension WebSocketManager {
+    private static let lastOnlineKey = "lastOnline"
+
+    private func storeLastOnlineLocally(to lastOnline: Date) {
+        UserDefaults.standard.set(lastOnline, forKey: WebSocketManager.lastOnlineKey)
+    }
+
+    func getLastOnline() -> Date? {
+        if isConnected {
+            return Date()
+        }
+        guard let lastOnline = UserDefaults.standard.object(
+            forKey: WebSocketManager.lastOnlineKey) as? Date else {
+            let value = UserDefaults.standard.object(forKey: WebSocketManager.lastOnlineKey)
+            AnnotatoLogger.error("Failed to read last online from user defaults. We get: \(String(describing: value))",
+                                 context: "WebSocketManager::getLastOnline")
+            return nil
+        }
+        return lastOnline
     }
 }
