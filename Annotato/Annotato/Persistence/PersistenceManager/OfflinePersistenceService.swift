@@ -21,14 +21,17 @@ struct OfflinePersistenceService: PersistenceService {
     }
 
     func createDocument(document: Document) async -> Document? {
+        document.createdAt = Date()
         await localPersistence.documents.createDocument(document: document)
     }
 
     func updateDocument(document: Document) async -> Document? {
+        document.updatedAt = Date()
         await localPersistence.documents.updateDocument(document: document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
+        document.deletedAt = Date()
         await localPersistence.documents.deleteDocument(document: document)
     }
 
