@@ -10,6 +10,19 @@ extension Annotation: Persistable {
             .map(AnnotationHandwriting.fromManagedEntity)
         let parts: [AnnotationPart] = textParts + handwritingParts
 
-        // TODO: SELECTION BOX
+        let selectionBox = SelectionBox.fromManagedEntity(managedEntity.selectionBoxEntity)
+
+        return Self(
+            origin: CGPoint(x: managedEntity.originX, y: managedEntity.originY),
+            width: managedEntity.width,
+            parts: parts,
+            selectionBox: selectionBox,
+            ownerId: managedEntity.ownerId,
+            documentId: managedEntity.documentId,
+            id: managedEntity.id,
+            createdAt: managedEntity.createdAt,
+            updatedAt: managedEntity.updatedAt,
+            deletedAt: managedEntity.deletedAt
+        )
     }
 }

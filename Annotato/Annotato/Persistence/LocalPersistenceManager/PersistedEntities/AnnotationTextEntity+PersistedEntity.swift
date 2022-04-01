@@ -15,7 +15,9 @@ extension AnnotationTextEntity: PersistedEntity {
             entity.annotationEntity = annotationEntity
         }
 
-        // TODO: Set Timestamps
+        entity.createdAt = model.createdAt
+        entity.updatedAt = model.updatedAt
+        entity.deletedAt = model.deletedAt
 
         return entity
     }

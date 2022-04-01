@@ -1,10 +1,9 @@
 import Foundation
 import CoreData
 
-
 extension SelectionBoxEntity {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<SelectionBoxEntity> {
-        return NSFetchRequest<SelectionBoxEntity>(entityName: "SelectionBoxEntity")
+        NSFetchRequest<SelectionBoxEntity>(entityName: "SelectionBoxEntity")
     }
 
     @NSManaged public var id: UUID
