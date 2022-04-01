@@ -12,7 +12,7 @@
         <relationship name="annotationHandwritingEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationHandwritingEntity" inverseName="annotationEntity" inverseEntity="AnnotationHandwritingEntity"/>
         <relationship name="annotationTextEntities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnnotationTextEntity" inverseName="annotationEntity" inverseEntity="AnnotationTextEntity"/>
         <relationship name="documentEntity" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="annotationEntities" inverseEntity="DocumentEntity"/>
-        <relationship name="selectionBoxEntity" maxCount="1" deletionRule="Nullify" destinationEntity="SelectionBoxEntity"/>
+        <relationship name="selectionBoxEntity" maxCount="1" deletionRule="Nullify" destinationEntity="SelectionBoxEntity" inverseName="annotationEntity" inverseEntity="SelectionBoxEntity"/>
     </entity>
     <entity name="AnnotationHandwritingEntity" representedClassName="AnnotationHandwritingEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -54,7 +54,7 @@
         <attribute name="startPointX" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="startPointY" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="annotationEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity"/>
+        <relationship name="annotationEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="selectionBoxEntity" inverseEntity="AnnotationEntity"/>
     </entity>
     <elements>
         <element name="AnnotationEntity" positionX="-54" positionY="9" width="128" height="209"/>
