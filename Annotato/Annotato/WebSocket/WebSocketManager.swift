@@ -11,6 +11,7 @@ class WebSocketManager {
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
     private(set) var isConnected = false
+    private(set) var lastOnline: Date?
 
     private init() { }
 
@@ -53,6 +54,7 @@ class WebSocketManager {
                 if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
                     errorCode == WebSocketManager.unconnectedSocketErrorCode ||
                     errorCode == WebSocketManager.connectionTimeOutErrorCode {
+                    self.lastOnline = Date()
                     self.isConnected = false
                 }
             case .success(let message):
