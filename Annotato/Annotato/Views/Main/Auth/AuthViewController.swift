@@ -1,6 +1,8 @@
 import UIKit
 import AnnotatoSharedLibrary // TODO: REMOVE AFTER TESTING
 
+// TODO: REMOVE AFTER TESTING
+// swiftlint:disable type_body_length
 class AuthViewController: UIViewController, Navigable {
     private let auth = AnnotatoAuth()
 
@@ -51,7 +53,11 @@ class AuthViewController: UIViewController, Navigable {
 
         // testCreateDocument()
 
-        testUpdateDocument()
+        // testUpdateDocument()
+
+        // testGetDocument()
+
+        // testGetOwnSharedDocuments()
     }
 
     // TODO: REMOVE AFTER TESTING
@@ -243,6 +249,66 @@ class AuthViewController: UIViewController, Navigable {
         //                     updatedAt: nil, deletedAt: nil)
 
         // _ = LocalDocumentsPersistence().updateDocument(document: document)
+    }
+
+    func testGetDocument() {
+        let docUUID = UUID(uuidString: "33629713-2871-4a0a-9935-0a7eae0c28d0")!
+        let a1UUID = UUID(uuidString: "82e6ab7d-c17e-49cb-9f7d-a28135e4092b")!
+        let a2UUID = UUID(uuidString: "b2afe130-597f-4853-9162-2c8e6f9d401e")!
+
+        // Deleted
+        let selectionBoxA1 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a1UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: Date())
+
+        let selectionBoxA2 = SelectionBox(startPoint: .zero, endPoint: .zero,
+                                          annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                          updatedAt: nil, deletedAt: nil)
+
+        let part = AnnotationText(type: .plainText, content: "I love this stupid testing", height: 100,
+                                  order: 1, annotationId: a2UUID, id: UUID(), createdAt: Date(),
+                                  updatedAt: nil, deletedAt: nil)
+
+        // Deleted
+        let annotation1 = Annotation(origin: .zero, width: 100, parts: [],
+                                     selectionBox: selectionBoxA1,
+                                     ownerId: "owner", documentId: docUUID, id: a1UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: Date())
+
+        let annotation2 = Annotation(origin: .zero, width: 100, parts: [part],
+                                     selectionBox: selectionBoxA2,
+                                     ownerId: "owner", documentId: docUUID, id: a2UUID,
+                                     createdAt: Date(), updatedAt: nil, deletedAt: nil)
+
+        let document = Document(name: "test", ownerId: "owner", baseFileUrl: "file",
+                                annotations: [annotation1, annotation2],
+                                id: docUUID, createdAt: Date(), updatedAt: nil,
+                                deletedAt: nil)
+
+        _ = LocalDocumentsPersistence().createDocument(document: document)
+
+        print("Get", LocalDocumentsPersistence().getDocument(documentId: docUUID))
+    }
+
+    func testGetOwnSharedDocuments() {
+        let doc1UUID = UUID(uuidString: "33629713-2871-4a0a-9935-0a7eae0c28d0")!
+        let doc2UUID = UUID(uuidString: "82e6ab7d-c17e-49cb-9f7d-a28135e4092b")!
+
+        let document1 = Document(name: "user1", ownerId: "user1", baseFileUrl: "file",
+                                 annotations: [],
+                                 id: doc1UUID, createdAt: Date(), updatedAt: nil,
+                                 deletedAt: nil)
+
+        let document2 = Document(name: "notuser1", ownerId: "user2", baseFileUrl: "file",
+                                 annotations: [],
+                                 id: doc2UUID, createdAt: Date(), updatedAt: nil,
+                                 deletedAt: nil)
+
+        _ = LocalDocumentsPersistence().createDocument(document: document1)
+        _ = LocalDocumentsPersistence().createDocument(document: document2)
+
+        print("OWN", LocalDocumentsPersistence().getOwnDocuments(userId: "user1"))
+        print("SHARED", LocalDocumentsPersistence().getSharedDocuments(userId: "user1"))
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
