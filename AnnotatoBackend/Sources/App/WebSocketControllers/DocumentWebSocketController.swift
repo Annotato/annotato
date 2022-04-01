@@ -15,21 +15,20 @@ class DocumentWebSocketController {
 
             switch message.subtype {
             case .createDocument:
-                await Self.handleCreateDocument(userId: userId, db: db, document: document)
+                _ = await Self.handleCreateDocument(userId: userId, db: db, document: document)
             case .readDocument:
                 await Self.handleReadDocument(userId: userId, db: db, document: document)
             case .updateDocument:
-                await Self.handleUpdateDocument(userId: userId, db: db, document: document)
+                _ = await Self.handleUpdateDocument(userId: userId, db: db, document: document)
             case .deleteDocument:
-                await Self.handleDeleteDocument(userId: userId, db: db, document: document)
+                _ = await Self.handleDeleteDocument(userId: userId, db: db, document: document)
             }
-
         } catch {
             Self.logger.error("Error when handling incoming crud document data. \(error.localizedDescription)")
         }
     }
 
-    private static func handleCreateDocument(userId: String, db: Database, document: Document) async {
+    private static func handleCreateDocument(userId: String, db: Database, document: Document) async -> Document? {
         do {
             Self.logger.info("Processing create document data...")
 
@@ -40,8 +39,10 @@ class DocumentWebSocketController {
                 db: db, userId: userId, document: newDocument, message: response
             )
 
+            return newDocument
         } catch {
             Self.logger.error("Error when creating document. \(error.localizedDescription)")
+            return nil
         }
     }
 
@@ -55,13 +56,12 @@ class DocumentWebSocketController {
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: readDocument, message: response
             )
-
         } catch {
             Self.logger.error("Error when reading document. \(error.localizedDescription)")
         }
     }
 
-    private static func handleUpdateDocument(userId: String, db: Database, document: Document) async {
+    private static func handleUpdateDocument(userId: String, db: Database, document: Document) async -> Document? {
         do {
             Self.logger.info("Processing update document data...")
 
@@ -72,12 +72,15 @@ class DocumentWebSocketController {
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: updatedDocument, message: response
             )
+
+            return updatedDocument
         } catch {
             Self.logger.error("Error when updating document. \(error.localizedDescription)")
+            return nil
         }
     }
 
-    private static func handleDeleteDocument(userId: String, db: Database, document: Document) async {
+    private static func handleDeleteDocument(userId: String, db: Database, document: Document) async -> Document? {
         do {
             Self.logger.info("Processing delete document data...")
 
@@ -88,8 +91,10 @@ class DocumentWebSocketController {
                 db: db, userId: userId, document: deletedDocument, message: response
             )
 
+            return deletedDocument
         } catch {
             Self.logger.error("Error when deleting document. \(error.localizedDescription)")
+            return nil
         }
     }
 
@@ -99,29 +104,17 @@ class DocumentWebSocketController {
         var responseDocuments: [Document] = []
 
         for document in documents {
-            let resolvedDocument: Document
-            let responseToOtherClients: AnnotatoCrudDocumentMessage
+            let resolvedDocument: Document?
 
             if document.isDeleted {
-                resolvedDocument = try await DocumentsDataAccess.delete(
-                    db: db, documentId: document.id)
-                responseToOtherClients = AnnotatoCrudDocumentMessage(
-                    subtype: .deleteDocument, document: resolvedDocument)
+                resolvedDocument = await Self.handleDeleteDocument(userId: userId, db: db, document: document)
             } else if await DocumentsDataAccess.canFindWithDeleted(db: db, documentId: document.id) {
-                resolvedDocument = try await DocumentsDataAccess.update(
-                    db: db, documentId: document.id, document: document)
-                responseToOtherClients = AnnotatoCrudDocumentMessage(
-                    subtype: .updateDocument, document: resolvedDocument)
+                resolvedDocument = await Self.handleUpdateDocument(userId: userId, db: db, document: document)
             } else {
-                resolvedDocument = try await DocumentsDataAccess.create(db: db, document: document)
-                responseToOtherClients = AnnotatoCrudDocumentMessage(
-                    subtype: .createDocument, document: resolvedDocument)
+                resolvedDocument = await Self.handleCreateDocument(userId: userId, db: db, document: document)
             }
 
-            await Self.sendToAllAppropriateClients(
-                db: db, userId: userId, document: resolvedDocument, message: responseToOtherClients
-            )
-            responseDocuments.append(resolvedDocument)
+            responseDocuments.appendIfNotNil(resolvedDocument)
         }
 
         return responseDocuments
