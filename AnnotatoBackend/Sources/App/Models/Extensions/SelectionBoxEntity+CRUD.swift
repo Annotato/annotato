@@ -13,6 +13,11 @@ extension SelectionBoxEntity {
     ///   - tx: The database instance in a transaction.
     ///   - selectionBox: The updated SelectionBox instance.
     func customUpdate(on tx: Database, usingUpdatedModel selectionBox: SelectionBox) async throws {
+        if selectionBox.isDeleted {
+            return
+        }
+
+        try await self.restore(on: tx)
         self.copyPropertiesOf(otherEntity: SelectionBoxEntity.fromModel(selectionBox))
         try await self.update(on: tx).get()
     }

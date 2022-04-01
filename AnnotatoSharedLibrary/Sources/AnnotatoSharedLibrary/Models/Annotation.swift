@@ -12,6 +12,10 @@ public final class Annotation: Codable, ObservableObject {
     public private(set) var updatedAt: Date?
     public private(set) var deletedAt: Date?
 
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
     @Published public private(set) var addedMarkdownPart: AnnotationText?

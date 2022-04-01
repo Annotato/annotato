@@ -10,6 +10,10 @@ public final class Document: Codable {
     public private(set) var updatedAt: Date?
     public private(set) var deletedAt: Date?
 
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     public required init(
         name: String,
         ownerId: String,

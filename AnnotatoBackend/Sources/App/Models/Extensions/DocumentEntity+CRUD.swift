@@ -20,12 +20,17 @@ extension DocumentEntity {
     ///   - tx: The database instance in a transaction.
     ///   - document: The updated Document instance.
     func customUpdate(on tx: Database, usingUpdatedModel document: Document) async throws {
+        if document.isDeleted {
+            return
+        }
+
+        try await self.restore(on: tx)
         try await self.loadAssociations(on: tx)
         try await self.pruneOldAssociations(on: tx, usingUpdatedModel: document)
         self.copyPropertiesOf(otherEntity: DocumentEntity.fromModel(document))
 
         for annotation in document.annotations {
-            if let annotationEntity = try await AnnotationEntity.find(annotation.id, on: tx).get() {
+            if let annotationEntity = try await AnnotationEntity.findIncludingDeleted(annotation.id, on: tx).get() {
                 try await annotationEntity.customUpdate(on: tx, usingUpdatedModel: annotation)
             } else {
                 let annotationEntity = AnnotationEntity.fromModel(annotation)
