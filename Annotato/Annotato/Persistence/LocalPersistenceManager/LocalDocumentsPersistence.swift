@@ -3,13 +3,23 @@ import AnnotatoSharedLibrary
 
 struct LocalDocumentsPersistence: DocumentsPersistence {
     func getOwnDocuments(userId: String) -> [Document]? {
-        // TODO: Implementation
-        return nil
+        guard let documentEntities = LocalDocumentEntityDataAccess.listOwn(userId: userId) else {
+            AnnotatoLogger.error("When getting own document.",
+                                 context: "LocalDocumentsPersistence::getOwnDocuments")
+            return nil
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
     }
 
     func getSharedDocuments(userId: String) -> [Document]? {
-        // TODO: Implementation
-        return nil
+        guard let documentEntities = LocalDocumentEntityDataAccess.listShared(userId: userId) else {
+            AnnotatoLogger.error("When getting shared document.",
+                                 context: "LocalDocumentsPersistence::getSharedDocuments")
+            return nil
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
     }
 
     func getDocument(documentId: UUID) -> Document? {

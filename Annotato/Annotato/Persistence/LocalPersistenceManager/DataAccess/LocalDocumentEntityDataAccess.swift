@@ -4,6 +4,36 @@ import AnnotatoSharedLibrary
 struct LocalDocumentEntityDataAccess {
     static let context = LocalPersistenceManager.sharedContext
 
+    static func listOwn(userId: String) -> [DocumentEntity]? {
+        let request = DocumentEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ownerId == %@", userId)
+
+        do {
+            let documentEntities = try context.fetch(request)
+
+            return documentEntities
+        } catch {
+            AnnotatoLogger.error("When fetching own document entities.",
+                                 context: "LocalDocumentEntityDataAccess::listOwn")
+            return nil
+        }
+    }
+
+    static func listShared(userId: String) -> [DocumentEntity]? {
+        let request = DocumentEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "ownerId <> %@", userId)
+
+        do {
+            let documentEntities = try context.fetch(request)
+
+            return documentEntities
+        } catch {
+            AnnotatoLogger.error("When fetching shared document entities.",
+                                 context: "LocalDocumentEntityDataAccess::listShared")
+            return nil
+        }
+    }
+
     static func create(document: Document) -> DocumentEntity? {
         let documentEntity = DocumentEntity.fromModel(document)
 
