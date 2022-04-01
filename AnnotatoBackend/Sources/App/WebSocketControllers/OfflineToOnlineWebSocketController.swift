@@ -30,10 +30,10 @@ class OfflineToOnlineWebSocketController {
     ) async {
         do {
             let responseDocuments = try await DocumentsDataAccess
-                .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
+                .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
 
             let responseAnnotations = try await AnnotationDataAccess
-                .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
+                .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
 
             let response = AnnotatoOfflineToOnlineMessage(
                 mergeStrategy: .keepServerVersion,
@@ -59,16 +59,13 @@ class OfflineToOnlineWebSocketController {
             let overriddenDocuments = await DocumentWebSocketController
                 .handleOverrideServerDocuments(userId: userId, db: db, documents: message.documents)
 
-            let newServerDocumentsWhileOffline = try await DocumentsDataAccess
-                .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
-
-            let responseDocuments = overriddenDocuments + newServerDocumentsWhileOffline
+            let responseDocuments = overriddenDocuments
 
             let overriddenAnnotations = await AnnotationWebSocketController
                 .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
 
             let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
-                .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
+                .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
 
             let responseAnnotations = overriddenAnnotations + newServerAnnotationsWhileOffline
 

@@ -99,7 +99,9 @@ class DocumentWebSocketController {
     }
 
     static func handleOverrideServerDocuments(
-        userId: String, db: Database, documents: [Document]
+        userId: String,
+        db: Database,
+        documents: [Document]
     ) async -> [Document] {
         var responseDocuments: [Document] = []
 

@@ -1,14 +1,32 @@
 import Vapor
 import Fluent
 import AnnotatoSharedLibrary
+import Foundation
 
 struct AnnotationDataAccess {
-    static func listEntitiesCreatedAfterDateWithDeleted(db: Database, date: Date) async throws -> [Annotation] {
-        let annotationEntities = try await AnnotationEntity
+    static func listEntitiesCreatedAfterDateWithDeleted(
+        db: Database,
+        date: Date,
+        userId: String
+    ) async throws -> [Annotation] {
+        let ownDocumentAnnotationEntities = try await AnnotationEntity
             .query(on: db)
+            .join(DocumentEntity.self, on: \AnnotationEntity.$documentEntity.$id == \DocumentEntity.$id)
+            .filter(DocumentEntity.self, \DocumentEntity.$ownerId == userId)
             .filter(\.$createdAt > date)
             .withDeleted()
             .all().get()
+
+        let sharedDocumentAnnotationEntities = try await AnnotationEntity
+            .query(on: db)
+            .join(DocumentEntity.self, on: \AnnotationEntity.$documentEntity.$id == \DocumentEntity.$id)
+            .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .filter(\.$createdAt > date)
+            .withDeleted()
+            .all().get()
+
+        let annotationEntities = ownDocumentAnnotationEntities + sharedDocumentAnnotationEntities
 
         for annotationEntity in annotationEntities {
             try await annotationEntity.loadAssociationsWithDeleted(on: db)
@@ -17,12 +35,29 @@ struct AnnotationDataAccess {
         return annotationEntities.map(Annotation.fromManagedEntity)
     }
 
-    static func listEntitiesUpdatedAfterDateWithDeleted(db: Database, date: Date) async throws -> [Annotation] {
-        let annotationEntities = try await AnnotationEntity
+    static func listEntitiesUpdatedAfterDateWithDeleted(
+        db: Database,
+        date: Date,
+        userId: String
+    ) async throws -> [Annotation] {
+        let ownDocumentAnnotationEntities = try await AnnotationEntity
             .query(on: db)
+            .join(DocumentEntity.self, on: \AnnotationEntity.$documentEntity.$id == \DocumentEntity.$id)
+            .filter(DocumentEntity.self, \DocumentEntity.$ownerId == userId)
             .filter(\.$updatedAt > date)
             .withDeleted()
             .all().get()
+
+        let sharedDocumentAnnotationEntities = try await AnnotationEntity
+            .query(on: db)
+            .join(DocumentEntity.self, on: \AnnotationEntity.$documentEntity.$id == \DocumentEntity.$id)
+            .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .filter(\.$updatedAt > date)
+            .withDeleted()
+            .all().get()
+
+        let annotationEntities = ownDocumentAnnotationEntities + sharedDocumentAnnotationEntities
 
         for annotationEntity in annotationEntities {
             try await annotationEntity.loadAssociationsWithDeleted(on: db)
