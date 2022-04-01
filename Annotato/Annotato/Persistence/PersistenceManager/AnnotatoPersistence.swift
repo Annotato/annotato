@@ -1,12 +1,19 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct AnnotatoPersistence: PersistenceManager {
-    static let shared = AnnotatoPersistence()
+struct AnnotatoPersistence {
+    static var currentPersistenceManager: PersistenceManager {
+        if WebSocketManager.shared.isConnected {
+            onlinePersistenceManager
+        } else {
+            offlinePersistenceManager
+        }
+    }
     static let remotePersistence: PersistenceManager = RemotePersistenceManager()
     static let localPersistence: PersistenceManager = LocalPersistenceManager.shared
 
+    static let onlinePersistenceManager: PersistenceService = OnlinePersistenceManager(remotePersistence: remotePersistence, localPersistence: localPersistence)
+    static let offlinePersistenceManager: PersistenceService = OfflinePersistenceManager(localPersistence: localPersistence)
+
     private init() { }
-    var documents: DocumentsPersistence = AnnotatoDocumentsPersistence()
-    var documentShares: DocumentSharesPersistence = AnnotatoDocumentSharesPersistence()
 }

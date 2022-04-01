@@ -89,7 +89,6 @@ struct AnnotatoDocumentsPersistence: DocumentsPersistence {
                                      context: "AnnotatoPersistence::createDocument")
                 return nil
             }
-            // TODO: Set valid bit to 1
             return createdDocumentLocal
 
         } else {
@@ -101,7 +100,6 @@ struct AnnotatoDocumentsPersistence: DocumentsPersistence {
                                      context: "AnnotatoPersistence::createDocument")
                 return nil
             }
-            // TODO: Set valid bit to 0
             return savedDocumentLocal
         }
     }
@@ -124,7 +122,6 @@ struct AnnotatoDocumentsPersistence: DocumentsPersistence {
                                      context: "AnnotatoPersistence::updateDocument")
                 return nil
             }
-            // TODO: Set valid bit to 1
             return updatedDocumentLocal
 
         } else {
@@ -136,7 +133,6 @@ struct AnnotatoDocumentsPersistence: DocumentsPersistence {
                                      context: "AnnotatoPersistence::updateDocument")
                 return nil
             }
-            // TODO: Set valid bit to 0
             return updatedDocumentLocal
         }
     }
@@ -157,7 +153,6 @@ struct AnnotatoDocumentsPersistence: DocumentsPersistence {
                 AnnotatoLogger.error("Failed to delete document locally")
                 return nil
             }
-            // TODO: Set valid bit to 1 indicating that this deletion does not need to be pushed to remote
             return deletedDocumentLocal
 
         } else {
@@ -168,7 +163,6 @@ struct AnnotatoDocumentsPersistence: DocumentsPersistence {
                 AnnotatoLogger.error("Failed to delete document locally")
                 return nil
             }
-            // TODO: Set valid bit to 0 indicating that this deletion needs to be pushed to remote
             return deletedDocumentLocal
         }
     }
