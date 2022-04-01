@@ -30,21 +30,24 @@ class OfflineToOnlineWebSocketController {
         db: Database,
         message: AnnotatoOfflineToOnlineMessage
     ) async {
-        Self.logger.info("Processing keep server data...")
+        do {
+            let responseDocuments = try await DocumentsDataAccess
+                .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
 
-        let responseDocuments: [Document] = await DocumentWebSocketController
-            .handleKeepServerDocuments(userId: userId, db: db, documents: message.documents)
+            let responseAnnotations = try await AnnotationDataAccess
+                .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
 
-        let responseAnnotations: [Annotation] = await AnnotationWebSocketController.handleKeepServerAnnotations(
-            userId: userId, db: db, annotations: message.annotations)
+            let response = AnnotatoOfflineToOnlineMessage(
+                mergeStrategy: .keepServerVersion,
+                lastOnlineAt: message.lastOnlineAt,
+                documents: responseDocuments,
+                annotations: responseAnnotations
+            )
 
-        let response = AnnotatoOfflineToOnlineMessage(
-            mergeStrategy: .keepServerVersion,
-            documents: responseDocuments,
-            annotations: responseAnnotations
-        )
-
-        await Self.sendBackToSender(userId: userId, message: response)
+            await Self.sendBackToSender(userId: userId, message: response)
+        } catch {
+            Self.logger.error("Error when keeping server data. \(error.localizedDescription)")
+        }
     }
 
     private static func handleOverrideServerVersion(
@@ -62,6 +65,7 @@ class OfflineToOnlineWebSocketController {
 
         let response = AnnotatoOfflineToOnlineMessage(
             mergeStrategy: .overrideServerVersion,
+            lastOnlineAt: message.lastOnlineAt,
             documents: responseDocuments,
             annotations: responseAnnotations
         )

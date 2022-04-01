@@ -18,6 +18,20 @@ struct AnnotationDataAccess {
         return annotationEntities.map(Annotation.fromManagedEntity)
     }
 
+    static func listEntitiesUpdatedAfterDateWithDeleted(db: Database, date: Date) async throws -> [Annotation] {
+        let annotationEntities = try await AnnotationEntity
+            .query(on: db)
+            .filter(\.$updatedAt > date)
+            .withDeleted()
+            .all().get()
+
+        for annotationEntity in annotationEntities {
+            try await annotationEntity.loadAssociationsWithDeleted(on: db)
+        }
+
+        return annotationEntities.map(Annotation.fromManagedEntity)
+    }
+
     static func create(db: Database, annotation: Annotation) async throws -> Annotation {
         let annotationEntity = AnnotationEntity.fromModel(annotation)
 
