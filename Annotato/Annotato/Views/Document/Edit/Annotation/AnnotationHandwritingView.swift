@@ -37,20 +37,28 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
 
     private func setUpSubscribers() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
-            self?.drawingGestureRecognizer.isEnabled = isEditing
+            DispatchQueue.main.async {
+                self?.drawingGestureRecognizer.isEnabled = isEditing
+            }
         }).store(in: &cancellables)
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
-                self?.removeFromSuperview()
+                DispatchQueue.main.async {
+                    self?.removeFromSuperview()
+                }
             }
         }).store(in: &cancellables)
 
         viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
-            self?.drawingGestureRecognizer.isEnabled = isSelected
+            DispatchQueue.main.async {
+                self?.drawingGestureRecognizer.isEnabled = isSelected
+            }
             if isSelected {
-                self?.becomeFirstResponder()
-                self?.showSelected()
+                DispatchQueue.main.async {
+                    self?.becomeFirstResponder()
+                    self?.showSelected()
+                }
             }
         }).store(in: &cancellables)
     }

@@ -81,21 +81,29 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
 
     private func setUpSubscribers() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
-            self?.switchView(basedOn: isEditing)
+            DispatchQueue.main.async {
+                self?.switchView(basedOn: isEditing)
+            }
         }).store(in: &cancellables)
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
-                self?.removeFromSuperview()
+                DispatchQueue.main.async {
+                    self?.removeFromSuperview()
+                }
             }
         }).store(in: &cancellables)
 
         viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
             if isSelected {
-                self?.editView.becomeFirstResponder()
-                self?.editView.showSelected()
+                DispatchQueue.main.async {
+                    self?.editView.becomeFirstResponder()
+                    self?.editView.showSelected()
+                }
             } else {
-                self?.editView.resignFirstResponder()
+                DispatchQueue.main.async {
+                    self?.editView.resignFirstResponder()
+                }
             }
         }).store(in: &cancellables)
     }

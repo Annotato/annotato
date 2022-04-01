@@ -85,9 +85,13 @@ class AnnotationPaletteView: UIToolbar {
         }).store(in: &cancellables)
 
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
-            self?.annotationTypeButtons.forEach { $0.isHidden = !isEditing }
+            DispatchQueue.main.async {
+                self?.annotationTypeButtons.forEach { $0.isHidden = !isEditing }
+            }
             self?.editOrViewButton.isSelected = isEditing
-            self?.minimizeOrMaximizeButton.isHidden = isEditing
+            DispatchQueue.main.async {
+                self?.minimizeOrMaximizeButton.isHidden = isEditing
+            }
         }).store(in: &cancellables)
 
         viewModel.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
