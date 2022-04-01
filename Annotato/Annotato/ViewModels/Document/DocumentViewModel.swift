@@ -15,12 +15,9 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
 
-    init?(model: Document) {
-        guard let baseFileUrl = URL(string: model.baseFileUrl) else {
-            return nil
-        }
+    init(model: Document) {
         self.model = model
-        self.pdfDocument = PdfViewModel(baseFileUrl: baseFileUrl)
+        self.pdfDocument = PdfViewModel(document: model)
         self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
         setUpSubscribers()
     }

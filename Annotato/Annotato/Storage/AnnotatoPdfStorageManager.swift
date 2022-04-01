@@ -34,6 +34,8 @@ class AnnotatoPdfStorageManager {
                 completion(document)
             }
         }
+
+        LocalStorage().uploadPdf(fileSystemUrl: fileSystemUrl, withName: name, withId: documentId, completion: { _ in })
     }
 
     func deletePdf(document: Document, completion: @escaping (Document) -> Void) {

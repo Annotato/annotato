@@ -4,7 +4,7 @@ public final class Document: Codable {
     public var id: UUID
     public private(set) var name: String
     public let ownerId: String
-    public let baseFileUrl: String
+    public let baseFileUrl: String?
     public private(set) var annotations: [Annotation]
     public private(set) var createdAt: Date?
     public private(set) var updatedAt: Date?
@@ -63,7 +63,14 @@ extension Document {
         self.deletedAt = deletedAt
         for annotation in annotations {
             annotation.setDeletedAt(to: deletedAt)
-        }
+        }    
+    }
+}
+
+extension Document {
+    public var localFileUrl: URL {
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return directory.appendingPathComponent(id.uuidString).appendingPathExtension(".pdf")
     }
 }
 
