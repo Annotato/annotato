@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-struct OfflinePersistenceManager: PersistenceService {
+struct OfflinePersistenceService: PersistenceService {
     private let localPersistence: PersistenceManager
 
     init(localPersistence: PersistenceManager) {
@@ -33,6 +33,7 @@ struct OfflinePersistenceManager: PersistenceService {
     }
 
     func createDocumentShare(documentShare: DocumentShare) async -> DocumentShare? {
-        await localPersistence.documentShares.createDocumentShare(documentShare: documentShare)
+        // MARK: Not supporting this function
+        return nil
     }
 }
