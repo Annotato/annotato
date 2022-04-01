@@ -12,7 +12,6 @@ class FirebaseStorage: AnnotatoStorageService {
 
     func uploadPdf(
         fileSystemUrl: URL,
-        withName name: String,
         withId documentId: UUID,
         completion: @escaping (URL) -> Void
     ) {
@@ -52,7 +51,7 @@ class FirebaseStorage: AnnotatoStorageService {
         }
     }
 
-    func deletePdf(document: Document, completion: @escaping () -> Void) {
+    func deletePdf(document: Document) {
         let pdfRef = storageRef.child(document.id.uuidString)
         pdfRef.delete { error in
             if let error = error {
@@ -65,7 +64,6 @@ class FirebaseStorage: AnnotatoStorageService {
             }
 
             AnnotatoLogger.info("Deleted PDF: \(document) from FB.")
-            completion()
         }
     }
 }

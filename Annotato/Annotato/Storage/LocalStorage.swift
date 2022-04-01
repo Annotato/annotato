@@ -10,9 +10,8 @@ class LocalStorage: AnnotatoStorageService {
 
     func uploadPdf(
         fileSystemUrl: URL,
-        withName name: String,
         withId documentId: UUID,
-        completion: @escaping (URL) -> Void
+        completion: @escaping (URL) -> Void = { _ in }
     ) {
         do {
             let urlInDocumentsDirectory = appDocumentsDirectory
@@ -21,19 +20,25 @@ class LocalStorage: AnnotatoStorageService {
 
             try FileManager.default.copyItem(at: fileSystemUrl, to: urlInDocumentsDirectory)
 
-            completion(urlInDocumentsDirectory)
+            AnnotatoLogger.info("Uploaded PDF with fileSystemUrl: \(fileSystemUrl) to local documents directory")
+            delegate?.uploadDidSucceed()
         } catch {
             AnnotatoLogger.error("When trying to upload PDF. \(error.localizedDescription)",
                                  context: "LocalStorage::uploadPdf")
+            delegate?.uploadDidFail(error)
         }
     }
 
-    func deletePdf(document: Document, completion: @escaping () -> Void) {
+    func deletePdf(document: Document) {
         do {
             try FileManager.default.removeItem(at: document.localFileUrl)
+
+            AnnotatoLogger.info("Deleted PDF: \(document) from local documents directory.")
+            delegate?.uploadDidSucceed()
         } catch {
             AnnotatoLogger.error("When trying to delete PDF. \(error.localizedDescription)",
                                  context: "LocalStorage::deletePdf")
+            delegate?.uploadDidFail(error)
         }
     }
 }

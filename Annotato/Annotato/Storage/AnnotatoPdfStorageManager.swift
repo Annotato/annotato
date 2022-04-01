@@ -2,52 +2,60 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class AnnotatoPdfStorageManager {
-    private var storageService: AnnotatoStorageService
-    private let api = AnnotatoPersistence.currentPersistenceService
+    private var localStorageService: AnnotatoStorageService
+    private var remoteStorageService: AnnotatoStorageService
+    private let api = RemoteDocumentsPersistence() // TODO: Replace with Persistence wrapper
 
     init() {
-        storageService = FirebaseStorage()
+        localStorageService = LocalStorage()
+        remoteStorageService = FirebaseStorage()
     }
 
     var delegate: AnnotatoStorageDelegate? {
-        get { storageService.delegate }
-        set { storageService.delegate = newValue }
+        didSet {
+            localStorageService.delegate = delegate
+            remoteStorageService.delegate = delegate
+        }
     }
 
     func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (Document) -> Void) {
+        guard let userId = AnnotatoAuth().currentUser?.uid else {
+            AnnotatoLogger.error("When getting current user's ID", context: "AnnotatoPdfStorageManager::uploadPdf")
+            return
+        }
+
         let documentId = UUID()
 
-        storageService.uploadPdf(fileSystemUrl: fileSystemUrl, withName: name, withId: documentId) { url in
-            guard let userId = AnnotatoAuth().currentUser?.uid else {
-                AnnotatoLogger.error("When getting current user's ID", context: "AnnotatoPdfStorageManager::uploadPdf")
+        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId, completion: { _ in })
+
+        var remoteFileUrl: URL?
+        remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId) { url in
+            remoteFileUrl = url
+        }
+
+        let document = Document(name: name, ownerId: userId, baseFileUrl: remoteFileUrl?.absoluteString, id: documentId)
+
+        Task {
+            guard let document = await self.api.createDocument(document: document) else {
                 return
             }
 
-            let document = Document(name: name, ownerId: userId, baseFileUrl: url.absoluteString, id: documentId)
-
-            Task {
-                guard let document = await self.api.createDocument(document: document) else {
-                    return
-                }
-
-                AnnotatoLogger.info("Created backend document entry: \(document)")
-                completion(document)
-            }
+            AnnotatoLogger.info("Created backend document entry: \(document)")
+            completion(document)
         }
-
-        LocalStorage().uploadPdf(fileSystemUrl: fileSystemUrl, withName: name, withId: documentId, completion: { _ in })
     }
 
     func deletePdf(document: Document, completion: @escaping (Document) -> Void) {
-        storageService.deletePdf(document: document) {
-            Task {
-                guard let document = await self.api.deleteDocument(document: document) else {
-                    return
-                }
+        localStorageService.deletePdf(document: document)
+        remoteStorageService.deletePdf(document: document)
 
-                AnnotatoLogger.info("Deleted backend document entry: \(document)")
-                completion(document)
+        Task {
+            guard let document = await self.api.deleteDocument(document: document) else {
+                return
             }
+
+            AnnotatoLogger.info("Deleted backend document entry: \(document)")
+            completion(document)
         }
     }
 }

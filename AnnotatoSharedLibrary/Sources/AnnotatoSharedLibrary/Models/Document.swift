@@ -70,7 +70,7 @@ extension Document {
 extension Document {
     public var localFileUrl: URL {
         let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return directory.appendingPathComponent(id.uuidString).appendingPathExtension(".pdf")
+        return directory.appendingPathComponent(id.uuidString).appendingPathExtension("pdf")
     }
 }
 

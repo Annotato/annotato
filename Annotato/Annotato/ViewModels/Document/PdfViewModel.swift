@@ -6,15 +6,12 @@ class PdfViewModel {
     let document: PDFDocument
 
     init(document: Document) {
-        var pdfDocument: PDFDocument?
+        var pdfDocument = PDFDocument(url: document.localFileUrl)
 
-        if let remoteFileUrlString = document.baseFileUrl,
+        if pdfDocument == nil,
+           let remoteFileUrlString = document.baseFileUrl,
            let remoteFileUrl = URL(string: remoteFileUrlString) {
             pdfDocument = PDFDocument(url: remoteFileUrl)
-        }
-
-        if pdfDocument == nil {
-            pdfDocument = PDFDocument(url: document.localFileUrl)
         }
 
         guard let pdfDocument = pdfDocument else {
