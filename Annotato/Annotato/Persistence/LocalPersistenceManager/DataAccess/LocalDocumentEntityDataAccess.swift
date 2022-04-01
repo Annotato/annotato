@@ -53,7 +53,8 @@ struct LocalDocumentEntityDataAccess {
         request.predicate = NSPredicate(format: "id == %@", documentId.uuidString)
 
         do {
-            let documentEntities = try context.fetch(request)
+            var documentEntities = try context.fetch(request)
+            documentEntities = DocumentEntity.removeDeletedDocumentEntities(documentEntities)
 
             return documentEntities.first
         } catch {

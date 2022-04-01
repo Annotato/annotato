@@ -58,7 +58,7 @@ extension AnnotationEntity: Identifiable {
     }
 
     static func removeDeletedAnnotationEntities(_ entities: [AnnotationEntity]) -> [AnnotationEntity] {
-        let undeletedAnnotations = entities.filter({ $0.deletedAt != nil })
+        let undeletedAnnotations = entities.filter({ $0.deletedAt == nil })
 
         for undeletedAnnotation in undeletedAnnotations {
             let textEntities = Array(undeletedAnnotation.annotationTextEntities)

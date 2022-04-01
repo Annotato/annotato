@@ -26,6 +26,6 @@ extension AnnotationHandwritingEntity: Identifiable {
     static func removeDeletedAnnotationHandwritingEntities(
         _ entities: [AnnotationHandwritingEntity]
     ) -> [AnnotationHandwritingEntity] {
-        entities.filter({ $0.deletedAt != nil })
+        entities.filter({ $0.deletedAt == nil })
     }
 }
