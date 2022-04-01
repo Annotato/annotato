@@ -1,17 +1,9 @@
 import Foundation
 
 extension AnnotationHandwritingEntity {
-    func customCreate(date: Date) {
-        self.createdAt = date
-    }
-
     func customUpdate(date: Date, usingUpdatedEntity updatedAnnotationHandwritingEntity: AnnotationHandwritingEntity) {
         self.copyPropertiesOf(otherEntity: updatedAnnotationHandwritingEntity)
         self.updatedAt = date
-    }
-
-    func customDelete(date: Date) {
-        self.deletedAt = date
     }
 
     private func copyPropertiesOf(otherEntity: AnnotationHandwritingEntity) {
