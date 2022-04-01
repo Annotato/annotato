@@ -7,7 +7,7 @@ struct CreateDocuments: Migration {
             .id()
             .field("name", .string, .required)
             .field("owner_id", .string, .required)
-            .field("base_file_url", .string, .required)
+            .field("base_file_url", .string)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)
             .field("deleted_at", .datetime)

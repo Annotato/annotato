@@ -17,7 +17,7 @@ public final class Document: Codable {
     public required init(
         name: String,
         ownerId: String,
-        baseFileUrl: String,
+        baseFileUrl: String?,
         annotations: [Annotation] = [],
         id: UUID? = nil,
         createdAt: Date? = nil,
