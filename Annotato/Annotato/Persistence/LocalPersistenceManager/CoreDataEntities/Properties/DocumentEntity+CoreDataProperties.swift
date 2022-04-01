@@ -33,21 +33,6 @@ extension DocumentEntity {
     @NSManaged public func removeFromAnnotationEntities(_ values: Set<AnnotationEntity>)
 }
 
-// MARK: Generated accessors for documentShareEntities
-extension DocumentEntity {
-    @objc(addDocumentShareEntitiesObject:)
-    @NSManaged public func addToDocumentShareEntities(_ value: DocumentShareEntity)
-
-    @objc(removeDocumentShareEntitiesObject:)
-    @NSManaged public func removeFromDocumentShareEntities(_ value: DocumentShareEntity)
-
-    @objc(addDocumentShareEntities:)
-    @NSManaged public func addToDocumentShareEntities(_ values: Set<DocumentShareEntity>)
-
-    @objc(removeDocumentShareEntities:)
-    @NSManaged public func removeFromDocumentShareEntities(_ values: Set<DocumentShareEntity>)
-}
-
 extension DocumentEntity: Identifiable {
 
 }
