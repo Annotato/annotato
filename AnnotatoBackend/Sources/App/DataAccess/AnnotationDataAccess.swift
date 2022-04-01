@@ -45,7 +45,7 @@ struct AnnotationDataAccess {
     }
 
     static func delete(db: Database, annotationId: UUID) async throws -> Annotation {
-        guard let annotationEntity = try await AnnotationEntity.find(annotationId, on: db).get() else {
+        guard let annotationEntity = try await AnnotationEntity.findIncludingDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .delete,
                                               modelType: String(describing: Annotation.self),
                                               modelId: annotationId)

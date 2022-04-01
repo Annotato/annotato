@@ -76,7 +76,8 @@ extension AnnotationEntity {
     /// Deletes the AnnotationEntity instance. Use this function to cascade deletes.
     /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
-        try await self.loadAssociations(on: tx)
+        try await self.restore(on: tx)
+        try await self.loadAssociationsWithDeleted(on: tx)
 
         for textEntity in annotationTextEntities {
             try await textEntity.customDelete(on: tx)
@@ -95,6 +96,12 @@ extension AnnotationEntity {
         try await self.$annotationTextEntities.load(on: db).get()
         try await self.$selectionBox.load(on: db).get()
         try await self.$annotationHandwritingEntities.load(on: db).get()
+    }
+
+    func loadAssociationsWithDeleted(on db: Database) async throws {
+        try await self.$annotationTextEntities.loadWithDeleted(on: db).get()
+        try await self.$selectionBox.loadWithDeleted(on: db).get()
+        try await self.$annotationHandwritingEntities.loadWithDeleted(on: db).get()
     }
 
     func copyPropertiesOf(otherEntity: AnnotationEntity) {

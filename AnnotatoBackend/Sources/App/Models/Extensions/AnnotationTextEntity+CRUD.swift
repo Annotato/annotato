@@ -25,6 +25,7 @@ extension AnnotationTextEntity {
     /// Deletes the AnnotationTextEntity instance.
     /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
+        try await self.restore(on: tx)
         try await self.delete(on: tx).get()
     }
 
