@@ -110,7 +110,41 @@ class AnnotationWebSocketController {
         }
     }
 
-    static func sendToAllAppropriateClients<T: Codable>(
+    static func handleOverrideServerAnnotations(
+        userId: String, db: Database, annotations: [Annotation]
+    ) async throws -> [Annotation] {
+        var responseAnnotations: [Annotation] = []
+
+        for annotation in annotations {
+            let resolvedAnnotation: Annotation
+            let responseToOtherClients: AnnotatoCrudAnnotationMessage
+
+            if annotation.isDeleted {
+                resolvedAnnotation = try await AnnotationDataAccess.delete(
+                    db: db, annotationId: annotation.id)
+                responseToOtherClients = AnnotatoCrudAnnotationMessage(
+                    subtype: .deleteAnnotation, annotation: resolvedAnnotation)
+            } else if await AnnotationDataAccess.canFindWithDeleted(db: db, annotationId: annotation.id) {
+                resolvedAnnotation = try await AnnotationDataAccess.update(
+                    db: db, annotationId: annotation.id, annotation: annotation)
+                responseToOtherClients = AnnotatoCrudAnnotationMessage(
+                    subtype: .updateAnnotation, annotation: resolvedAnnotation)
+            } else {
+                resolvedAnnotation = try await AnnotationDataAccess.create(db: db, annotation: annotation)
+                responseToOtherClients = AnnotatoCrudAnnotationMessage(
+                    subtype: .createAnnotation, annotation: resolvedAnnotation)
+            }
+
+            await AnnotationWebSocketController.sendToAllAppropriateClients(
+                db: db, userId: userId, annotation: resolvedAnnotation, message: responseToOtherClients
+            )
+            responseAnnotations.append(resolvedAnnotation)
+        }
+
+        return responseAnnotations
+    }
+
+    private static func sendToAllAppropriateClients<T: Codable>(
         db: Database,
         userId: String,
         annotation: Annotation,

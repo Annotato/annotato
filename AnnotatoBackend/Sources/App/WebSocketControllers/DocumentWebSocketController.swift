@@ -93,7 +93,41 @@ class DocumentWebSocketController {
         }
     }
 
-    static func sendToAllAppropriateClients<T: Codable>(
+    static func handleOverrideServerDocuments(
+        userId: String, db: Database, documents: [Document]
+    ) async throws -> [Document] {
+        var responseDocuments: [Document] = []
+
+        for document in documents {
+            let resolvedDocument: Document
+            let responseToOtherClients: AnnotatoCrudDocumentMessage
+
+            if document.isDeleted {
+                resolvedDocument = try await DocumentsDataAccess.delete(
+                    db: db, documentId: document.id)
+                responseToOtherClients = AnnotatoCrudDocumentMessage(
+                    subtype: .deleteDocument, document: resolvedDocument)
+            } else if await DocumentsDataAccess.canFindWithDeleted(db: db, documentId: document.id) {
+                resolvedDocument = try await DocumentsDataAccess.update(
+                    db: db, documentId: document.id, document: document)
+                responseToOtherClients = AnnotatoCrudDocumentMessage(
+                    subtype: .updateDocument, document: resolvedDocument)
+            } else {
+                resolvedDocument = try await DocumentsDataAccess.create(db: db, document: document)
+                responseToOtherClients = AnnotatoCrudDocumentMessage(
+                    subtype: .createDocument, document: resolvedDocument)
+            }
+
+            await Self.sendToAllAppropriateClients(
+                db: db, userId: userId, document: resolvedDocument, message: responseToOtherClients
+            )
+            responseDocuments.append(resolvedDocument)
+        }
+
+        return responseDocuments
+    }
+
+    private static func sendToAllAppropriateClients<T: Codable>(
         db: Database,
         userId: String,
         document: Document,
