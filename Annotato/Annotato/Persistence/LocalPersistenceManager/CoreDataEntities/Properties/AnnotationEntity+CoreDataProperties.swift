@@ -14,6 +14,7 @@ extension AnnotationEntity {
 
     // Relations
     @NSManaged public var documentEntity: DocumentEntity
+    @NSManaged public var selectionBoxEntity: SelectionBoxEntity
     @NSManaged public var annotationTextEntities: Set<AnnotationTextEntity>
     @NSManaged public var annotationHandwritingEntities: Set<AnnotationHandwritingEntity>
 

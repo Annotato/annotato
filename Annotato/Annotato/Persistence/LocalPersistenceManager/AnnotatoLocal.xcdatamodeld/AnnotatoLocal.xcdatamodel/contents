@@ -54,7 +54,7 @@
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="documentEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DocumentEntity" inverseName="documentShareEntities" inverseEntity="DocumentEntity"/>
     </entity>
-    <entity name="SelectionBoxEntity" representedClassName="SelectionBoxEntity" syncable="YES" codeGenerationType="class">
+    <entity name="SelectionBoxEntity" representedClassName="SelectionBoxEntity" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endPointX" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
