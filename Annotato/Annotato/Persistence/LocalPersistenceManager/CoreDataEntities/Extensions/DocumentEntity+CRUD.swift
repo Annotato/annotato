@@ -8,7 +8,7 @@ extension DocumentEntity {
             if let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: annotation.id) {
                 annotationEntity.customUpdate(usingUpdatedModel: annotation)
             } else {
-                _ = AnnotationEntity.fromModel(annotation)
+                addToAnnotationEntities(AnnotationEntity.fromModel(annotation))
             }
         }
     }
