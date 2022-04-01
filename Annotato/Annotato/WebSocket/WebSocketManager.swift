@@ -3,7 +3,6 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager {
     static let shared = WebSocketManager()
-    private static let lastOnlineUserDefaultsKey = "lastOnline"
     private static let unavailableDestinationHostErrorCode = 54
     private static let unconnectedSocketErrorCode = 57
     private static let connectionTimeOutErrorCode = 60
@@ -54,7 +53,7 @@ class WebSocketManager {
                 if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
                     errorCode == WebSocketManager.unconnectedSocketErrorCode ||
                     errorCode == WebSocketManager.connectionTimeOutErrorCode {
-                    self.setLastOnline(to: Date())
+                    self.storeLastOnlineLocally(to: Date())
                     self.isConnected = false
                 }
             case .success(let message):
@@ -75,18 +74,6 @@ class WebSocketManager {
             // We need to re-register the callback closure after a message is received
             self.listen()
         }
-    }
-
-    private func setLastOnline(to lastOnline: Date) {
-        UserDefaults.standard.set(lastOnline, forKey: WebSocketManager.lastOnlineUserDefaultsKey)
-    }
-
-    func getLastOnline() -> Date? {
-        guard let lastOnline = UserDefaults.standard.object(
-            forKey: WebSocketManager.lastOnlineUserDefaultsKey) as? Date else {
-            return nil
-        }
-        return lastOnline
     }
 
     func send<T: Codable>(message: T) {
@@ -132,5 +119,28 @@ class WebSocketManager {
                 context: "WebSocketManager:handleResponseData:"
             )
         }
+    }
+}
+
+// MARK: Storing last online time in UserDefaults
+extension WebSocketManager {
+    private static let lastOnlineKey = "lastOnline"
+
+    private func storeLastOnlineLocally(to lastOnline: Date) {
+        UserDefaults.standard.set(lastOnline, forKey: WebSocketManager.lastOnlineKey)
+    }
+
+    func getLastOnline() -> Date? {
+        if isConnected {
+            return Date()
+        }
+        guard let lastOnline = UserDefaults.standard.object(
+            forKey: WebSocketManager.lastOnlineKey) as? Date else {
+            let value = UserDefaults.standard.object(forKey: WebSocketManager.lastOnlineKey)
+            AnnotatoLogger.error("Failed to read last online from user defaults. We get: \(String(describing: value))",
+                                 context: "WebSocketManager::getLastOnline")
+            return nil
+        }
+        return lastOnline
     }
 }
