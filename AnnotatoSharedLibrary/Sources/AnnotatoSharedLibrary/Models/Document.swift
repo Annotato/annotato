@@ -6,9 +6,9 @@ public final class Document: Codable {
     public let ownerId: String
     public let baseFileUrl: String
     public private(set) var annotations: [Annotation]
-    public let createdAt: Date?
-    public let updatedAt: Date?
-    public let deletedAt: Date?
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     public required init(
         name: String,
