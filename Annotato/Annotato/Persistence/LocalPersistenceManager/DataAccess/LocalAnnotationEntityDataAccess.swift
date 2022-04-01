@@ -27,7 +27,7 @@ struct LocalAnnotationEntityDataAccess {
 
             return annotationEntities.first
         } catch {
-            AnnotatoLogger.error("When reading annotation entity.",
+            AnnotatoLogger.error("When reading annotation entity. \(String(describing: error))",
                                  context: "LocalAnnotationDataAccess::read")
             return nil
         }
@@ -45,7 +45,7 @@ struct LocalAnnotationEntityDataAccess {
         do {
             try context.save()
         } catch {
-            AnnotatoLogger.error("When updating annotation entity.",
+            AnnotatoLogger.error("When updating annotation entity. \(String(describing: error))",
                                  context: "LocalAnnotationEntityDataAccess::update")
             return nil
         }

@@ -13,7 +13,7 @@ struct LocalDocumentEntityDataAccess {
 
             return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
-            AnnotatoLogger.error("When fetching own document entities.",
+            AnnotatoLogger.error("When fetching own document entities. \(String(describing: error))",
                                  context: "LocalDocumentEntityDataAccess::listOwn")
             return nil
         }
@@ -28,7 +28,7 @@ struct LocalDocumentEntityDataAccess {
 
             return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
-            AnnotatoLogger.error("When fetching shared document entities.",
+            AnnotatoLogger.error("When fetching shared document entities. \(String(describing: error))",
                                  context: "LocalDocumentEntityDataAccess::listShared")
             return nil
         }
@@ -57,7 +57,7 @@ struct LocalDocumentEntityDataAccess {
 
             return documentEntities.first
         } catch {
-            AnnotatoLogger.error("When fetching document entity.",
+            AnnotatoLogger.error("When fetching document entity. \(String(describing: error))",
                                  context: "LocalDocumentEntityDataAccess::read")
             return nil
         }
@@ -75,7 +75,7 @@ struct LocalDocumentEntityDataAccess {
         do {
             try context.save()
         } catch {
-            AnnotatoLogger.error("When updating document entity.",
+            AnnotatoLogger.error("When updating document entity. \(String(describing: error))",
                                  context: "LocalDocumentEntityDataAccess::update")
             return nil
         }

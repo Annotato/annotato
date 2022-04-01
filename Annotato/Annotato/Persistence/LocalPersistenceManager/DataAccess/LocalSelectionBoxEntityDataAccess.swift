@@ -13,7 +13,7 @@ struct LocalSelectionBoxEntityDataAccess {
 
             return selectionBoxEntities.first
         } catch {
-            AnnotatoLogger.error("When reading selection box entity.",
+            AnnotatoLogger.error("When reading selection box entity. \(String(describing: error))",
                                  context: "LocalSelectionBoxEntityDataAccess::read")
             return nil
         }

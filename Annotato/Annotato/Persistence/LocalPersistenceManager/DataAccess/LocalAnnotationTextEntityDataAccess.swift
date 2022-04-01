@@ -13,7 +13,7 @@ struct LocalAnnotationTextEntityDataAccess {
 
             return annotationTextEntities.first
         } catch {
-            AnnotatoLogger.error("When reading annotation text entity.",
+            AnnotatoLogger.error("When reading annotation text entity. \(String(describing: error))",
                                  context: "LocalAnnotationTextEntityDataAccess::read")
             return nil
         }
