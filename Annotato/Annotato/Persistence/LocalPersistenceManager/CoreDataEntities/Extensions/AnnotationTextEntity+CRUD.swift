@@ -1,18 +1,24 @@
-import Foundation
+import AnnotatoSharedLibrary
 
 extension AnnotationTextEntity {
-    func customUpdate(date: Date, usingUpdatedEntity updatedAnnotationTextEntity: AnnotationTextEntity) {
-        self.copyPropertiesOf(otherEntity: updatedAnnotationTextEntity)
-        self.updatedAt = date
+    func customUpdate(usingUpdatedModel annotationText: AnnotationText) {
+        self.copyPropertiesOf(updatedModel: annotationText)
     }
 
-    private func copyPropertiesOf(otherEntity: AnnotationTextEntity) {
-        precondition(id == otherEntity.id)
+    private func copyPropertiesOf(updatedModel annotationText: AnnotationText) {
+        precondition(id == annotationText.id)
 
-        type = otherEntity.type
-        content = otherEntity.content
-        height = otherEntity.height
-        order = otherEntity.order
-        annotationEntity = otherEntity.annotationEntity
+        type = annotationText.type
+        content = annotationText.content
+        height = annotationText.height
+        order = Int64(annotationText.order)
+
+        if let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: annotationText.annotationId) {
+            self.annotationEntity = annotationEntity
+        }
+
+        createdAt = annotationText.createdAt
+        updatedAt = annotationText.updatedAt
+        deletedAt = annotationText.deletedAt
     }
 }

@@ -1,17 +1,24 @@
-import Foundation
+import AnnotatoSharedLibrary
 
 extension AnnotationHandwritingEntity {
-    func customUpdate(date: Date, usingUpdatedEntity updatedAnnotationHandwritingEntity: AnnotationHandwritingEntity) {
-        self.copyPropertiesOf(otherEntity: updatedAnnotationHandwritingEntity)
-        self.updatedAt = date
+    func customUpdate(usingUpdatedModel annotationHandwriting: AnnotationHandwriting) {
+        self.copyPropertiesOf(updatedModel: annotationHandwriting)
     }
 
-    private func copyPropertiesOf(otherEntity: AnnotationHandwritingEntity) {
-        precondition(id == otherEntity.id)
+    private func copyPropertiesOf(updatedModel annotationHandwriting: AnnotationHandwriting) {
+        precondition(id == annotationHandwriting.id)
 
-        handwriting = otherEntity.handwriting
-        height = otherEntity.height
-        order = otherEntity.order
-        annotationEntity = otherEntity.annotationEntity
+        handwriting = annotationHandwriting.handwriting
+        height = annotationHandwriting.height
+        order = Int64(annotationHandwriting.order)
+
+        if let annotationEntity = LocalAnnotationEntityDataAccess
+            .read(annotationId: annotationHandwriting.annotationId) {
+            self.annotationEntity = annotationEntity
+        }
+
+        createdAt = annotationHandwriting.createdAt
+        updatedAt = annotationHandwriting.updatedAt
+        deletedAt = annotationHandwriting.deletedAt
     }
 }
