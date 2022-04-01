@@ -13,10 +13,8 @@ extension AnnotationTextEntity {
     @NSManaged public var height: Double
     @NSManaged public var content: String
 
-    // Relations
     @NSManaged public var annotationEntity: AnnotationEntity
 
-    // Timestamps
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?

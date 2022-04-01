@@ -11,11 +11,9 @@ extension DocumentEntity {
     @NSManaged public var ownerId: String
     @NSManaged public var baseFileUrl: String
 
-    // Relations
     @NSManaged public var annotationEntities: Set<AnnotationEntity>
     @NSManaged public var documentShareEntities: Set<DocumentShareEntity>
 
-    // Timestamps
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?
