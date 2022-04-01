@@ -11,7 +11,7 @@ struct LocalDocumentEntityDataAccess {
             try context.save()
         } catch {
             AnnotatoLogger.error("When creating document: \(String(describing: error))",
-                                 context: "LocalDocumentsPersistence::createDocument")
+                                 context: "LocalDocumentsPersistence::create")
             return nil
         }
 
