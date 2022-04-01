@@ -1,5 +1,5 @@
 struct RemotePersistenceManager {
-    private static let shouldUseLocalEndpoint = true
+    private static let shouldUseLocalEndpoint = false
 
     // HTTP
     private static let localApiEndpoint = "http://127.0.0.1:8080"
