@@ -56,7 +56,7 @@ struct DocumentsDataAccess {
     }
 
     static func update(db: Database, documentId: UUID, document: Document) async throws -> Document {
-        guard let documentEntity = try await DocumentEntity.findIncludingDeleted(documentId, on: db).get() else {
+        guard let documentEntity = try await DocumentEntity.findWithDeleted(documentId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .update,
                                               modelType: String(describing: Document.self),
                                               modelId: documentId)
@@ -86,7 +86,7 @@ struct DocumentsDataAccess {
         return Document.fromManagedEntity(documentEntity)
     }
 
-    static func canFindIncludingDeleted(db: Database, documentId: UUID) async -> Bool {
-        (try? await DocumentEntity.findIncludingDeleted(documentId, on: db).get()) != nil
+    static func canFindWithDeleted(db: Database, documentId: UUID) async -> Bool {
+        (try? await DocumentEntity.findWithDeleted(documentId, on: db).get()) != nil
     }
 }

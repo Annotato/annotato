@@ -30,7 +30,7 @@ extension DocumentEntity {
         self.copyPropertiesOf(otherEntity: DocumentEntity.fromModel(document))
 
         for annotation in document.annotations {
-            if let annotationEntity = try await AnnotationEntity.findIncludingDeleted(annotation.id, on: tx).get() {
+            if let annotationEntity = try await AnnotationEntity.findWithDeleted(annotation.id, on: tx).get() {
                 try await annotationEntity.customUpdate(on: tx, usingUpdatedModel: annotation)
             } else {
                 let annotationEntity = AnnotationEntity.fromModel(annotation)

@@ -43,7 +43,7 @@ class OfflineToOnlineWebSocketController {
                 if document.isDeleted {
                     resolvedDocument = try await DocumentsDataAccess.delete(
                         db: db, documentId: document.id)
-                } else if await DocumentsDataAccess.canFindIncludingDeleted(db: db, documentId: document.id) {
+                } else if await DocumentsDataAccess.canFindWithDeleted(db: db, documentId: document.id) {
                     resolvedDocument = try await DocumentsDataAccess.update(
                         db: db, documentId: document.id, document: document)
                 } else {
@@ -62,7 +62,7 @@ class OfflineToOnlineWebSocketController {
                 if annotation.isDeleted {
                     resolvedAnnotation = try await AnnotationDataAccess.delete(
                         db: db, annotationId: annotation.id)
-                } else if await AnnotationDataAccess.canFindIncludingDeleted(db: db, annotationId: annotation.id) {
+                } else if await AnnotationDataAccess.canFindWithDeleted(db: db, annotationId: annotation.id) {
                     resolvedAnnotation = try await AnnotationDataAccess.update(
                         db: db, annotationId: annotation.id, annotation: annotation)
                 } else {

@@ -28,7 +28,7 @@ struct AnnotationDataAccess {
     }
 
     static func update(db: Database, annotationId: UUID, annotation: Annotation) async throws -> Annotation {
-        guard let annotationEntity = try await AnnotationEntity.findIncludingDeleted(annotationId, on: db).get() else {
+        guard let annotationEntity = try await AnnotationEntity.findWithDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .update,
                                               modelType: String(describing: Annotation.self),
                                               modelId: annotationId)
@@ -45,7 +45,7 @@ struct AnnotationDataAccess {
     }
 
     static func delete(db: Database, annotationId: UUID) async throws -> Annotation {
-        guard let annotationEntity = try await AnnotationEntity.findIncludingDeleted(annotationId, on: db).get() else {
+        guard let annotationEntity = try await AnnotationEntity.findWithDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .delete,
                                               modelType: String(describing: Annotation.self),
                                               modelId: annotationId)
@@ -58,7 +58,7 @@ struct AnnotationDataAccess {
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
-    static func canFindIncludingDeleted(db: Database, annotationId: UUID) async -> Bool {
-        (try? await AnnotationEntity.findIncludingDeleted(annotationId, on: db).get()) != nil
+    static func canFindWithDeleted(db: Database, annotationId: UUID) async -> Bool {
+        (try? await AnnotationEntity.findWithDeleted(annotationId, on: db).get()) != nil
     }
 }

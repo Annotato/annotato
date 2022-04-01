@@ -43,7 +43,7 @@ extension AnnotationEntity {
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
         for annotationText in annotationTexts {
             if let annotationTextEntity = try await AnnotationTextEntity
-                .findIncludingDeleted(annotationText.id, on: tx).get() {
+                .findWithDeleted(annotationText.id, on: tx).get() {
                 try await annotationTextEntity.customUpdate(on: tx, usingUpdatedModel: annotationText)
             } else {
                 let annotationTextEntity = AnnotationTextEntity.fromModel(annotationText)
@@ -54,7 +54,7 @@ extension AnnotationEntity {
         let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
         for annotationHandwriting in annotationHandwritings {
             if let annotationHandwritingEntity = try await AnnotationHandwritingEntity
-                .findIncludingDeleted(annotationHandwriting.id, on: tx).get() {
+                .findWithDeleted(annotationHandwriting.id, on: tx).get() {
                 try await annotationHandwritingEntity.customUpdate(on: tx, usingUpdatedModel: annotationHandwriting)
             } else {
                 let annotationHandwritingEntity = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
@@ -63,7 +63,7 @@ extension AnnotationEntity {
         }
 
         let selectionBox = annotation.selectionBox
-        if let selectionBoxEntity = try await SelectionBoxEntity.findIncludingDeleted(selectionBox.id, on: tx).get() {
+        if let selectionBoxEntity = try await SelectionBoxEntity.findWithDeleted(selectionBox.id, on: tx).get() {
             try await selectionBoxEntity.customUpdate(on: tx, usingUpdatedModel: selectionBox)
         } else {
             let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
