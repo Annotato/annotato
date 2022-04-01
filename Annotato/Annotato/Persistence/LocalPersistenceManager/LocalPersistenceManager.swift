@@ -37,4 +37,8 @@ extension LocalPersistenceManager: PersistenceManager {
     var documentShares: DocumentSharesPersistence {
         LocalDocumentSharesPersistence()
     }
+
+    var annotations: AnnotationsPersistence {
+        LocalAnnotationsPersistence()
+    }
 }
