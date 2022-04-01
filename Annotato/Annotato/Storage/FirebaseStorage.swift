@@ -10,11 +10,7 @@ class FirebaseStorage: AnnotatoStorageService {
 
     weak var delegate: AnnotatoStorageDelegate?
 
-    func uploadPdf(
-        fileSystemUrl: URL,
-        withId documentId: UUID,
-        completion: @escaping (URL) -> Void
-    ) {
+    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID, completion: @escaping (URL) -> Void) {
         let pdfRef = storageRef.child(documentId.uuidString)
 
         // swiftlint:disable closure_body_length
