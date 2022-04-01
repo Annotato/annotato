@@ -16,14 +16,35 @@ class OfflineToOnlineWebSocketController {
             case .duplicateConflicts:
                 print("duplicate conflicts")
             case .keepServerVersion:
-                print("keep server version")
+                await handleKeepServerVersion(userId: userId, db: db, message: message)
             case .overrideServerVersion:
                 await Self.handleOverrideServerVersion(userId: userId, db: db, message: message)
             }
         } catch {
-            print(String(describing: error))
             Self.logger.error("Error when handling incoming offline to online data. \(error.localizedDescription)")
         }
+    }
+
+    private static func handleKeepServerVersion(
+        userId: String,
+        db: Database,
+        message: AnnotatoOfflineToOnlineMessage
+    ) async {
+        Self.logger.info("Processing keep server data...")
+
+        let responseDocuments: [Document] = await DocumentWebSocketController
+            .handleKeepServerDocuments(userId: userId, db: db, documents: message.documents)
+
+        let responseAnnotations: [Annotation] = await AnnotationWebSocketController.handleKeepServerAnnotations(
+            userId: userId, db: db, annotations: message.annotations)
+
+        let response = AnnotatoOfflineToOnlineMessage(
+            mergeStrategy: .keepServerVersion,
+            documents: responseDocuments,
+            annotations: responseAnnotations
+        )
+
+        await Self.sendBackToSender(userId: userId, message: response)
     }
 
     private static func handleOverrideServerVersion(
@@ -31,25 +52,21 @@ class OfflineToOnlineWebSocketController {
         db: Database,
         message: AnnotatoOfflineToOnlineMessage
     ) async {
-        do {
-            Self.logger.info("Processing override server data...")
+        Self.logger.info("Processing override server data...")
 
-            let responseDocuments: [Document] = try await DocumentWebSocketController
-                .handleOverrideServerDocuments(userId: userId, db: db, documents: message.documents)
+        let responseDocuments: [Document] = await DocumentWebSocketController
+            .handleOverrideServerDocuments(userId: userId, db: db, documents: message.documents)
 
-            let responseAnnotations: [Annotation] = try await AnnotationWebSocketController
-                .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
+        let responseAnnotations: [Annotation] = await AnnotationWebSocketController
+            .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
 
-            let response = AnnotatoOfflineToOnlineMessage(
-                mergeStrategy: .overrideServerVersion,
-                documents: responseDocuments,
-                annotations: responseAnnotations
-            )
+        let response = AnnotatoOfflineToOnlineMessage(
+            mergeStrategy: .overrideServerVersion,
+            documents: responseDocuments,
+            annotations: responseAnnotations
+        )
 
-            await Self.sendBackToSender(userId: userId, message: response)
-        } catch {
-            Self.logger.error("Error when overriding server version. \(error.localizedDescription)")
-        }
+        await Self.sendBackToSender(userId: userId, message: response)
     }
 
     private static func sendBackToSender<T: Codable>(userId: String, message: T) async {

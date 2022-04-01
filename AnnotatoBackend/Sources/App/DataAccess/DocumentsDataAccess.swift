@@ -31,6 +31,21 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
+    static func listWithDeleted(db: Database, documentIds: [UUID]) async throws -> [Document] {
+        let documentEntities = try await DocumentEntity
+            .query(on: db)
+            .filter(\.$id ~~ documentIds)
+            .withDeleted()
+            .all()
+            .get()
+
+        for documentEntity in documentEntities {
+            try await documentEntity.loadAssociationsWithDeleted(on: db)
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
+    }
+
     static func create(db: Database, document: Document) async throws -> Document {
         let documentEntity = DocumentEntity.fromModel(document)
 

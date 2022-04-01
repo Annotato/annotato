@@ -116,11 +116,23 @@ class AnnotationWebSocketController {
         }
     }
 
+    static func handleKeepServerAnnotations(
+        userId: String, db: Database, annotations: [Annotation]
+    ) async -> [Annotation] {
+        do {
+            let annotationIds = annotations.map { $0.id }
+            return try await AnnotationDataAccess.listWithDeleted(db: db, annotationIds: annotationIds)
+        } catch {
+            Self.logger.error("Error when fetching server annotations. \(error.localizedDescription)")
+            return []
+        }
+    }
+
     static func handleOverrideServerAnnotations(
         userId: String,
         db: Database,
         annotations: [Annotation]
-    ) async throws -> [Annotation] {
+    ) async -> [Annotation] {
         var responseAnnotations: [Annotation] = []
 
         for annotation in annotations {

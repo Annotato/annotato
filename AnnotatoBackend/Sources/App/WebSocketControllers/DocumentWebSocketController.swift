@@ -98,9 +98,21 @@ class DocumentWebSocketController {
         }
     }
 
+    static func handleKeepServerDocuments(
+        userId: String, db: Database, documents: [Document]
+    ) async -> [Document] {
+        do {
+            let documentIds = documents.map { $0.id }
+            return try await DocumentsDataAccess.listWithDeleted(db: db, documentIds: documentIds)
+        } catch {
+            Self.logger.error("Error when fetching server documents. \(error.localizedDescription)")
+            return []
+        }
+    }
+
     static func handleOverrideServerDocuments(
         userId: String, db: Database, documents: [Document]
-    ) async throws -> [Document] {
+    ) async -> [Document] {
         var responseDocuments: [Document] = []
 
         for document in documents {
