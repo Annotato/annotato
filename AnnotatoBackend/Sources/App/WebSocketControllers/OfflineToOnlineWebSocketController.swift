@@ -13,8 +13,6 @@ class OfflineToOnlineWebSocketController {
             let message = try JSONCustomDecoder().decode(AnnotatoOfflineToOnlineMessage.self, from: data)
 
             switch message.mergeStrategy {
-            case .duplicateConflicts:
-                print("duplicate conflicts")
             case .keepServerVersion:
                 await handleKeepServerVersion(userId: userId, db: db, message: message)
             case .overrideServerVersion:
@@ -69,8 +67,8 @@ class OfflineToOnlineWebSocketController {
             let overriddenAnnotations = await AnnotationWebSocketController
                 .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
 
-            let newServerAnnotationsWhileOffline = try await AnnotationDataAccess.listEntitiesCreatedAfterDateWithDeleted(
-                db: db, date: message.lastOnlineAt)
+            let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
+                .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
 
             let responseAnnotations = overriddenAnnotations + newServerAnnotationsWhileOffline
 
