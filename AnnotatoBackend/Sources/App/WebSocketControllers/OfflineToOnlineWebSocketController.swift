@@ -55,22 +55,36 @@ class OfflineToOnlineWebSocketController {
         db: Database,
         message: AnnotatoOfflineToOnlineMessage
     ) async {
-        Self.logger.info("Processing override server data...")
+        do {
+            Self.logger.info("Processing override server data...")
 
-        let responseDocuments: [Document] = await DocumentWebSocketController
-            .handleOverrideServerDocuments(userId: userId, db: db, documents: message.documents)
+            let overriddenDocuments = await DocumentWebSocketController
+                .handleOverrideServerDocuments(userId: userId, db: db, documents: message.documents)
 
-        let responseAnnotations: [Annotation] = await AnnotationWebSocketController
-            .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
+            let newServerDocumentsWhileOffline = try await DocumentsDataAccess
+                .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt)
 
-        let response = AnnotatoOfflineToOnlineMessage(
-            mergeStrategy: .overrideServerVersion,
-            lastOnlineAt: message.lastOnlineAt,
-            documents: responseDocuments,
-            annotations: responseAnnotations
-        )
+            let responseDocuments = overriddenDocuments + newServerDocumentsWhileOffline
 
-        await Self.sendBackToSender(userId: userId, message: response)
+            let overriddenAnnotations = await AnnotationWebSocketController
+                .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
+
+            let newServerAnnotationsWhileOffline = try await AnnotationDataAccess.listEntitiesCreatedAfterDateWithDeleted(
+                db: db, date: message.lastOnlineAt)
+
+            let responseAnnotations = overriddenAnnotations + newServerAnnotationsWhileOffline
+
+            let response = AnnotatoOfflineToOnlineMessage(
+                mergeStrategy: .overrideServerVersion,
+                lastOnlineAt: message.lastOnlineAt,
+                documents: responseDocuments,
+                annotations: responseAnnotations
+            )
+
+            await Self.sendBackToSender(userId: userId, message: response)
+        } catch {
+            Self.logger.error("Error when overriding server data. \(error.localizedDescription)")
+        }
     }
 
     private static func sendBackToSender<T: Codable>(userId: String, message: T) async {

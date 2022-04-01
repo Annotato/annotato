@@ -31,6 +31,20 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
+    static func listEntitiesCreatedAfterDateWithDeleted(db: Database, date: Date) async throws -> [Document] {
+        let documentEntities = try await DocumentEntity
+            .query(on: db)
+            .filter(\.$createdAt > date)
+            .withDeleted()
+            .all().get()
+
+        for documentEntity in documentEntities {
+            try await documentEntity.loadAssociationsWithDeleted(on: db)
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
+    }
+
     static func listEntitiesUpdatedAfterDateWithDeleted(db: Database, date: Date) async throws -> [Document] {
         let documentEntities = try await DocumentEntity
             .query(on: db)
