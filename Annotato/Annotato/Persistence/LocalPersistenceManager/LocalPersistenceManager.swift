@@ -26,6 +26,9 @@ struct LocalPersistenceManager {
                 fatalError(errorMessage)
             }
         }
+
+        AnnotatoLogger.info("Core data container attached. \(container.persistentStoreDescriptions)",
+                            context: "LocalPersistenceManager::init")
     }
 }
 
