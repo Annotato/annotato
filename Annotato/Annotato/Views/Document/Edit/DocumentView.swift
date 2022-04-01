@@ -61,10 +61,14 @@ class DocumentView: UIView {
 
         viewModel.$selectionBoxFrame.sink(receiveValue: { [weak self] newSelectionBoxFrame in
             guard let newSelectionBoxFrame = newSelectionBoxFrame else {
-                self?.selectionBoxView?.removeFromSuperview()
+                DispatchQueue.main.async {
+                    self?.selectionBoxView?.removeFromSuperview()
+                }
                 return
             }
-            self?.replaceSelectionBox(newSelectionBoxFrame: newSelectionBoxFrame)
+            DispatchQueue.main.async {
+                self?.replaceSelectionBox(newSelectionBoxFrame: newSelectionBoxFrame)
+            }
         }).store(in: &cancellables)
     }
 

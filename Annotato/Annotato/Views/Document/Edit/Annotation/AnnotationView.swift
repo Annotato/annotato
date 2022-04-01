@@ -100,7 +100,9 @@ class AnnotationView: UIView {
             guard let addedPart = addedPart else {
                 return
             }
-            self?.parts.addArrangedSubview(addedPart.toView())
+            DispatchQueue.main.async {
+                self?.parts.addArrangedSubview(addedPart.toView())
+            }
         }).store(in: &cancellables)
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in

@@ -24,21 +24,29 @@ class AnnotationTextView: UITextView, AnnotationPartView {
 
     private func setUpSubscribers() {
         viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
-            self?.isEditable = isEditing
+            DispatchQueue.main.async {
+                self?.isEditable = isEditing
+            }
         }).store(in: &cancellables)
 
         viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
-                self?.removeFromSuperview()
+                DispatchQueue.main.async {
+                    self?.removeFromSuperview()
+                }
             }
         }).store(in: &cancellables)
 
         viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
             if isSelected {
-                self?.becomeFirstResponder()
-                self?.showSelected()
+                DispatchQueue.main.async {
+                    self?.becomeFirstResponder()
+                    self?.showSelected()
+                }
             } else {
-                self?.resignFirstResponder()
+                DispatchQueue.main.async {
+                    self?.resignFirstResponder()
+                }
             }
         }).store(in: &cancellables)
     }
