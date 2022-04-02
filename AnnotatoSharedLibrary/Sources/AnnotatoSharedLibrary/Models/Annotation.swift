@@ -320,3 +320,15 @@ extension Annotation {
         }
     }
 }
+
+extension Annotation: Equatable {
+    public static func == (lhs: Annotation, rhs: Annotation) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension Annotation: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

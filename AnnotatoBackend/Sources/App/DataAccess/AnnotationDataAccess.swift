@@ -4,6 +4,20 @@ import AnnotatoSharedLibrary
 import Foundation
 
 struct AnnotationDataAccess {
+    static func listWithDeleted(db: Database, annotationIds: [UUID]) async throws -> [Annotation] {
+        let annotationEntities = try await AnnotationEntity
+            .query(on: db)
+            .filter(\.$id ~~ annotationIds)
+            .withDeleted()
+            .all().get()
+
+        for annotationEntity in annotationEntities {
+            try await annotationEntity.loadAssociationsWithDeleted(on: db)
+        }
+
+        return annotationEntities.map(Annotation.fromManagedEntity)
+    }
+
     static func listEntitiesCreatedAfterDateWithDeleted(
         db: Database,
         date: Date,

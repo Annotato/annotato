@@ -29,11 +29,21 @@ class OfflineToOnlineWebSocketController {
         message: AnnotatoOfflineToOnlineMessage
     ) async {
         do {
-            let responseDocuments = try await DocumentsDataAccess
+            let updatedServerDocuments = try await DocumentsDataAccess
                 .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
 
-            let responseAnnotations = try await AnnotationDataAccess
+            let serverVersionOfUserDocuments = try await DocumentsDataAccess
+                .listWithDeleted(db: db, documentIds: message.documents.map { $0.id })
+
+            let responseDocuments = Array(Set(updatedServerDocuments).union(Set(serverVersionOfUserDocuments)))
+
+            let updatedServerAnnotations = try await AnnotationDataAccess
                 .listEntitiesUpdatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
+
+            let serverVersionOfUserAnnotations = try await AnnotationDataAccess
+                .listWithDeleted(db: db, annotationIds: message.annotations.map { $0.id })
+
+            let responseAnnotations = Array(Set(updatedServerAnnotations).union(Set(serverVersionOfUserAnnotations)))
 
             let response = AnnotatoOfflineToOnlineMessage(
                 mergeStrategy: .keepServerVersion,
