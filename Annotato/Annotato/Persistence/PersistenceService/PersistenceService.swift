@@ -1,1 +1,1 @@
-protocol PersistenceService: AnnotationsPersistence, DocumentsPersistence, DocumentSharesPersistence, AnnotatoPdfStorageManager { }
+protocol PersistenceService: AnnotationsPersistence, DocumentsPersistence, DocumentSharesPersistence, PDFStorageManager { }

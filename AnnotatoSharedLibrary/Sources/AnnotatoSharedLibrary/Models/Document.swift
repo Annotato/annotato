@@ -77,7 +77,7 @@ extension Document {
 extension Document: CustomStringConvertible {
     public var description: String {
         "Document(id: \(id), name: \(name), ownerId: \(ownerId), " +
-        "baseFileUrl: \(baseFileUrl), annotations: \(annotations)), " +
+        "baseFileUrl: \(String(describing: baseFileUrl)), annotations: \(annotations)), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"
