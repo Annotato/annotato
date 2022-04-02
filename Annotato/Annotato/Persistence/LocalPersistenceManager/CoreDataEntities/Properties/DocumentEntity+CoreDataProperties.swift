@@ -11,11 +11,8 @@ extension DocumentEntity {
     @NSManaged public var ownerId: String
     @NSManaged public var baseFileUrl: String
 
-    // Relations
     @NSManaged public var annotationEntities: Set<AnnotationEntity>
-    @NSManaged public var documentShareEntities: Set<DocumentShareEntity>
 
-    // Timestamps
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?
@@ -36,21 +33,19 @@ extension DocumentEntity {
     @NSManaged public func removeFromAnnotationEntities(_ values: Set<AnnotationEntity>)
 }
 
-// MARK: Generated accessors for documentShareEntities
-extension DocumentEntity {
-    @objc(addDocumentShareEntitiesObject:)
-    @NSManaged public func addToDocumentShareEntities(_ value: DocumentShareEntity)
-
-    @objc(removeDocumentShareEntitiesObject:)
-    @NSManaged public func removeFromDocumentShareEntities(_ value: DocumentShareEntity)
-
-    @objc(addDocumentShareEntities:)
-    @NSManaged public func addToDocumentShareEntities(_ values: Set<DocumentShareEntity>)
-
-    @objc(removeDocumentShareEntities:)
-    @NSManaged public func removeFromDocumentShareEntities(_ values: Set<DocumentShareEntity>)
-}
-
 extension DocumentEntity: Identifiable {
+    static func removeDeletedDocumentEntities(_ entities: [DocumentEntity]) -> [DocumentEntity] {
+        let undeletedDocumentEntities = entities.filter({ $0.deletedAt == nil })
 
+        for undeletedDocumentEntity in undeletedDocumentEntities {
+            let annotationEntites = Array(undeletedDocumentEntity.annotationEntities)
+
+            let undeletedAnnotationEntities = AnnotationEntity
+                .removeDeletedAnnotationEntities(annotationEntites)
+
+            undeletedDocumentEntity.annotationEntities = Set<AnnotationEntity>(undeletedAnnotationEntities)
+        }
+
+        return undeletedDocumentEntities
+    }
 }

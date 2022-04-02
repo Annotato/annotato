@@ -11,10 +11,8 @@ extension AnnotationHandwritingEntity {
     @NSManaged public var height: Double
     @NSManaged public var handwriting: Data
 
-    // Relations
     @NSManaged public var annotationEntity: AnnotationEntity
 
-    // Timestamps
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?
@@ -23,5 +21,11 @@ extension AnnotationHandwritingEntity {
 extension AnnotationHandwritingEntity: Identifiable {
     var annotationId: UUID {
         annotationEntity.id
+    }
+
+    static func removeDeletedAnnotationHandwritingEntities(
+        _ entities: [AnnotationHandwritingEntity]
+    ) -> [AnnotationHandwritingEntity] {
+        entities.filter({ $0.deletedAt == nil })
     }
 }

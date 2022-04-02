@@ -2,4 +2,4 @@ import Foundation
 import CoreData
 
 @objc(AnnotationEntity)
-public class AnnotationEntity: NSManagedObject { }
+public final class AnnotationEntity: NSManagedObject { }

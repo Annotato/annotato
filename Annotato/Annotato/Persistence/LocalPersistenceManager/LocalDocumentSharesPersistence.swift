@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 struct LocalDocumentSharesPersistence: DocumentSharesPersistence {
     func createDocumentShare(documentShare: DocumentShare) -> DocumentShare? {
-        // TODO: Implementation
+        fatalError("Should not create DocumentShare in local persistence!")
         return nil
     }
 }

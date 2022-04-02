@@ -12,12 +12,11 @@ extension AnnotationEntity {
     @NSManaged public var originX: Double
     @NSManaged public var originY: Double
 
-    // Relations
     @NSManaged public var documentEntity: DocumentEntity
+    @NSManaged public var selectionBoxEntity: SelectionBoxEntity
     @NSManaged public var annotationTextEntities: Set<AnnotationTextEntity>
     @NSManaged public var annotationHandwritingEntities: Set<AnnotationHandwritingEntity>
 
-    // Timestamps
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var deletedAt: Date?
@@ -56,5 +55,26 @@ extension AnnotationEntity {
 extension AnnotationEntity: Identifiable {
     var documentId: UUID {
         documentEntity.id
+    }
+
+    static func removeDeletedAnnotationEntities(_ entities: [AnnotationEntity]) -> [AnnotationEntity] {
+        let undeletedAnnotations = entities.filter({ $0.deletedAt == nil })
+
+        for undeletedAnnotation in undeletedAnnotations {
+            let textEntities = Array(undeletedAnnotation.annotationTextEntities)
+            let handwritingEntities = Array(undeletedAnnotation.annotationHandwritingEntities)
+
+            let undeletedTextEntities = AnnotationTextEntity
+                .removeDeletedAnnotationTextEntities(textEntities)
+            let undeletedHandwritingEntities = AnnotationHandwritingEntity
+                .removeDeletedAnnotationHandwritingEntities(handwritingEntities)
+
+            undeletedAnnotation.annotationTextEntities = Set<AnnotationTextEntity>(undeletedTextEntities)
+            undeletedAnnotation.annotationHandwritingEntities = Set<AnnotationHandwritingEntity>(
+                undeletedHandwritingEntities
+            )
+        }
+
+        return undeletedAnnotations
     }
 }

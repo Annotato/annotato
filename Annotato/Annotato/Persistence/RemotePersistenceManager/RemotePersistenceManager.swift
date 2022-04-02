@@ -17,6 +17,10 @@ extension RemotePersistenceManager: PersistenceManager {
         RemoteDocumentsPersistence()
     }
 
+    var annotations: AnnotationsPersistence {
+        RemoteAnnotationsPersistence()
+    }
+
     var documentShares: DocumentSharesPersistence {
         RemoteDocumentSharesPersistence()
     }
