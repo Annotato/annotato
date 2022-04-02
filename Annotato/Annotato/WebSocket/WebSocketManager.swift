@@ -28,6 +28,7 @@ class WebSocketManager {
         AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
 
         listen()
+        checkConnection()
         socket?.resume()
     }
 
@@ -38,10 +39,37 @@ class WebSocketManager {
         socket = nil
     }
 
+    func checkConnection() {
+        socket?.sendPing { error in
+            if error != nil {
+                AnnotatoLogger.error("Websocket connection failed to receive ping from server.")
+
+                if self.isConnected {
+                    let currentDate = Date()
+
+                    AnnotatoLogger.info("Setting last online time to \(currentDate)")
+                    self.storeLastOnlineLocally(to: currentDate)
+                    self.isConnected = false
+                }
+
+                self.isConnected = false
+                sleep(2)
+                self.checkConnection()
+                return
+            }
+
+            self.isConnected = true
+
+            print("Received ping")
+
+            sleep(2)
+            self.checkConnection()
+        }
+    }
+
     func listen() {
         AnnotatoLogger.info("Websocket connection listening for events...")
 
-        // swiftlint:disable closure_body_length
         socket?.receive { [weak self] result in
             guard let self = self else {
                 return
@@ -49,13 +77,6 @@ class WebSocketManager {
             switch result {
             case .failure(let error):
                 AnnotatoLogger.error(error.localizedDescription)
-                let errorCode = (error as NSError).code
-                if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
-                    errorCode == WebSocketManager.unconnectedSocketErrorCode ||
-                    errorCode == WebSocketManager.connectionTimeOutErrorCode {
-                    self.storeLastOnlineLocally(to: Date())
-                    self.isConnected = false
-                }
             case .success(let message):
                 self.isConnected = true
                 switch message {
