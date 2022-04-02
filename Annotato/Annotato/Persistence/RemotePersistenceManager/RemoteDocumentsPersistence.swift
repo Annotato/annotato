@@ -69,7 +69,7 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
     func updateDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not updated",
-                                 context: "RemoteDocumentsPersistence::createDocument")
+                                 context: "RemoteDocumentsPersistence::updateDocument")
             return nil
         }
 

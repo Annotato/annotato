@@ -5,9 +5,9 @@ public final class AnnotationText: Codable, AnnotationPart {
     public var order: Int
     public var height: Double
     public let annotationId: UUID
-    public let createdAt: Date?
-    public let updatedAt: Date?
-    public let deletedAt: Date?
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     public let type: AnnotationText.TextType
     public private(set) var content: String

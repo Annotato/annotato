@@ -6,9 +6,9 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
     public var order: Int
     public var height: Double
     public var annotationId: UUID
-    public let createdAt: Date?
-    public let updatedAt: Date?
-    public let deletedAt: Date?
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     public private(set) var handwriting: Data
 

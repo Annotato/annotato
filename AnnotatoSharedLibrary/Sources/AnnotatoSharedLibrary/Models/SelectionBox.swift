@@ -6,9 +6,9 @@ public final class SelectionBox: Codable, ObservableObject {
     public let id: UUID
     public let startPoint: CGPoint
     public var annotationId: UUID
-    public let createdAt: Date?
-    public let updatedAt: Date?
-    public let deletedAt: Date?
+    public private(set) var createdAt: Date?
+    public private(set) var updatedAt: Date?
+    public private(set) var deletedAt: Date?
 
     @Published public private(set) var endPoint: CGPoint
 
@@ -64,6 +64,21 @@ public final class SelectionBox: Codable, ObservableObject {
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
+    }
+}
+
+// MARK: Timestamps
+extension SelectionBox {
+    public func setCreatedAt(to createdAt: Date) {
+        self.createdAt = createdAt
+    }
+
+    public func setUpdatedAt(to updatedAt: Date) {
+        self.updatedAt = updatedAt
+    }
+
+    public func setDeletedAt(to deletedAt: Date) {
+        self.deletedAt = deletedAt
     }
 }
 
