@@ -30,11 +30,11 @@ class LocalStorage: AnnotatoStorageService {
             try FileManager.default.removeItem(at: document.localFileUrl)
 
             AnnotatoLogger.info("Deleted PDF: \(document) from local documents directory.")
-            delegate?.uploadDidSucceed()
+            delegate?.deleteDidSucceed()
         } catch {
             AnnotatoLogger.error("When trying to delete PDF. \(error.localizedDescription)",
                                  context: "LocalStorage::deletePdf")
-            delegate?.uploadDidFail(error)
+            delegate?.deleteDidFail(error)
         }
     }
 }
