@@ -3,17 +3,17 @@ import AnnotatoSharedLibrary
 
 struct AnnotatoPersistence {
     static var currentPersistenceService: PersistenceService {
-        WebSocketManager.shared.isConnected ? onlinePersistenceManager : offlinePersistenceManager
+        WebSocketManager.shared.isConnected ? onlinePersistenceService : offlinePersistenceService
     }
 
-    static let remotePersistence: PersistenceManager = RemotePersistenceManager()
-    static let localPersistence: PersistenceManager = LocalPersistenceManager.shared
+    private static let remotePersistence: PersistenceManager = RemotePersistenceManager()
+    private static let localPersistence: PersistenceManager = LocalPersistenceManager.shared
 
-    static let onlinePersistenceManager: PersistenceService = OnlinePersistenceService(
+    private static let onlinePersistenceService: PersistenceService = OnlinePersistenceService(
         remotePersistence: remotePersistence,
         localPersistence: localPersistence
     )
-    static let offlinePersistenceManager: PersistenceService = OfflinePersistenceService(
+    private static let offlinePersistenceService: PersistenceService = OfflinePersistenceService(
         localPersistence: localPersistence
     )
 

@@ -8,9 +8,9 @@ public final class Annotation: Codable, ObservableObject {
     public private(set) var selectionBox: SelectionBox
     public let ownerId: String
     public let documentId: UUID
-    public let createdAt: Date?
-    public let updatedAt: Date?
-    public let deletedAt: Date?
+    public private(set) var createdAt: Date?
+    public private(set) var updatedAt: Date?
+    public private(set) var deletedAt: Date?
 
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
@@ -287,5 +287,23 @@ extension Annotation: CustomDebugStringConvertible {
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"
+    }
+}
+
+// MARK: Timestamps
+extension Annotation {
+    public func setCreatedAt(to createdAt: Date) {
+        self.createdAt = createdAt
+        selectionBox.setCreatedAt(to: createdAt)
+    }
+
+    public func setUpdatedAt(to updatedAt: Date) {
+        self.updatedAt = updatedAt
+        selectionBox.setUpdatedAt(to: updatedAt)
+    }
+
+    public func setDeletedAt(to deletedAt: Date) {
+        self.deletedAt = deletedAt
+        selectionBox.setDeletedAt(to: deletedAt)
     }
 }

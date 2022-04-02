@@ -1,13 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-struct OfflinePersistenceService: PersistenceService {
-    private let localPersistence: PersistenceManager
-
-    init(localPersistence: PersistenceManager) {
-        self.localPersistence = localPersistence
-    }
-
+extension OfflinePersistenceService: DocumentsPersistence {
     func getOwnDocuments(userId: String) async -> [Document]? {
         await localPersistence.documents.getOwnDocuments(userId: userId)
     }
@@ -21,22 +15,17 @@ struct OfflinePersistenceService: PersistenceService {
     }
 
     func createDocument(document: Document) async -> Document? {
-        document.createdAt = Date()
+        document.setCreatedAt(to: Date())
         return await localPersistence.documents.createDocument(document: document)
     }
 
     func updateDocument(document: Document) async -> Document? {
-        document.updatedAt = Date()
+        document.setUpdatedAt(to: Date())
         return await localPersistence.documents.updateDocument(document: document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
-        document.deletedAt = Date()
+        document.setDeletedAt(to: Date())
         return await localPersistence.documents.deleteDocument(document: document)
-    }
-
-    func createDocumentShare(documentShare: DocumentShare) async -> DocumentShare? {
-        // MARK: Not supporting this function
-        return nil
     }
 }

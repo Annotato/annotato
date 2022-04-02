@@ -6,9 +6,9 @@ public final class Document: Codable {
     public let ownerId: String
     public let baseFileUrl: String
     public private(set) var annotations: [Annotation]
-    public var createdAt: Date?
-    public var updatedAt: Date?
-    public var deletedAt: Date?
+    public private(set) var createdAt: Date?
+    public private(set) var updatedAt: Date?
+    public private(set) var deletedAt: Date?
 
     public required init(
         name: String,
@@ -36,6 +36,30 @@ public final class Document: Codable {
 
     public func removeAnnotation(annotation: Annotation) {
         annotations.removeAll(where: { $0.id == annotation.id })
+    }
+}
+
+// MARK: Timestamps
+extension Document {
+    public func setCreatedAt(to createdAt: Date) {
+        self.createdAt = createdAt
+        for annotation in annotations {
+            annotation.setCreatedAt(to: createdAt)
+        }
+    }
+
+    public func setUpdatedAt(to updatedAt: Date) {
+        self.updatedAt = updatedAt
+        for annotation in annotations {
+            annotation.setUpdatedAt(to: updatedAt)
+        }
+    }
+
+    public func setDeletedAt(to deletedAt: Date) {
+        self.deletedAt = deletedAt
+        for annotation in annotations {
+            annotation.setDeletedAt(to: deletedAt)
+        }
     }
 }
 
