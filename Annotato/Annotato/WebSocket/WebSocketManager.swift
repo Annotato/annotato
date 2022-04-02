@@ -98,12 +98,6 @@ class WebSocketManager {
             // We need to re-register the callback closure after a message is received
             self.listen()
         }
-        if self.isConnected {
-            AnnotatoLogger.info("Connected. Updating last online time")
-            self.storeLastOnlineLocally(to: Date())
-        } else {
-            AnnotatoLogger.info("Not connected, so not updating last online time")
-        }
     }
 
     func send<T: Codable>(message: T) {
