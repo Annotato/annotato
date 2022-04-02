@@ -63,7 +63,7 @@ extension Document {
         self.deletedAt = deletedAt
         for annotation in annotations {
             annotation.setDeletedAt(to: deletedAt)
-        }    
+        }
     }
 }
 

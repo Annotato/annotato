@@ -4,12 +4,12 @@ import AnnotatoSharedLibrary
 class AnnotatoOnlinePdfStorageManager: AnnotatoPdfStorageManager {
     private var localStorageService: AnnotatoStorageService
     private var remoteStorageService: AnnotatoStorageService
-    private let onlinePersistenceService: OnlinePersistenceService
+    private let persistenceService: PersistenceService
 
-    init(onlinePersistenceService: OnlinePersistenceService) {
+    init(persistenceService: PersistenceService) {
         localStorageService = LocalStorage()
         remoteStorageService = FirebaseStorage()
-        self.onlinePersistenceService = onlinePersistenceService
+        self.persistenceService = persistenceService
     }
 
     var delegate: AnnotatoStorageDelegate? {
@@ -33,7 +33,7 @@ class AnnotatoOnlinePdfStorageManager: AnnotatoPdfStorageManager {
             let document = Document(name: name, ownerId: userId, baseFileUrl: url.absoluteString, id: documentId)
 
             Task {
-                guard let document = await persistenceService.createDocument(document: document) else {
+                guard let document = await self.persistenceService.createDocument(document: document) else {
                     return
                 }
 
@@ -48,7 +48,7 @@ class AnnotatoOnlinePdfStorageManager: AnnotatoPdfStorageManager {
         remoteStorageService.deletePdf(document: document)
 
         Task {
-            guard let document = await self.onlinePersistenceService.deleteDocument(document: document) else {
+            guard let document = await self.persistenceService.deleteDocument(document: document) else {
                 return
             }
 
