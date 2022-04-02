@@ -30,6 +30,7 @@ class WebSocketManager {
         listen()
         socket?.resume()
         pingServer()
+        beginInfiniteLoopForLastOnlineUpdating()
     }
 
     func resetSocket() {
@@ -46,10 +47,21 @@ class WebSocketManager {
                 return
             }
             if err == nil {
+                AnnotatoLogger.info("Successful ping, setting connectivity and last online")
                 self.isConnected = true
+                self.storeLastOnlineLocally(to: Date())
             }
-            print("Response pong from the server: " + String(describing: err))
         })
+    }
+
+    private func beginInfiniteLoopForLastOnlineUpdating() {
+        DispatchQueue.global(qos: .background).async {
+            while true {
+                if self.isConnected {
+                    self.storeLastOnlineLocally(to: Date())
+                }
+            }
+        }
     }
 
     func listen() {
@@ -67,7 +79,6 @@ class WebSocketManager {
                 if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
                     errorCode == WebSocketManager.unconnectedSocketErrorCode ||
                     errorCode == WebSocketManager.connectionTimeOutErrorCode {
-                    print("Setting isConnected to false")
                     self.isConnected = false
                 }
             case .success(let message):
@@ -87,9 +98,11 @@ class WebSocketManager {
             // We need to re-register the callback closure after a message is received
             self.listen()
         }
-        print("Last online time updating")
         if self.isConnected {
+            AnnotatoLogger.info("Connected. Updating last online time")
             self.storeLastOnlineLocally(to: Date())
+        } else {
+            AnnotatoLogger.info("Not connected, so not updating last online time")
         }
     }
 
