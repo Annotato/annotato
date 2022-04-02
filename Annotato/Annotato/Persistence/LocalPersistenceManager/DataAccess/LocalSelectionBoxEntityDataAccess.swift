@@ -6,10 +6,9 @@ struct LocalSelectionBoxEntityDataAccess {
 
     static func read(selectionBoxId: UUID) -> SelectionBoxEntity? {
         let request = SelectionBoxEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", selectionBoxId.uuidString)
 
         do {
-            let selectionBoxEntities = try context.fetch(request)
+            let selectionBoxEntities = try context.fetch(request).filter { $0.id == selectionBoxId }
 
             return selectionBoxEntities.first
         } catch {

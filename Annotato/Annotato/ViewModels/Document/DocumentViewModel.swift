@@ -139,28 +139,17 @@ extension DocumentViewModel {
         addedAnnotation = annotationViewModel
         setUpSubscriberForAnnotation(annotation: annotationViewModel)
 
-        broadcastAnnotationCreate(annotation: newAnnotation)
+        Task {
+            await AnnotatoPersistence.currentPersistenceService.createAnnotation(annotation: newAnnotation)
+        }
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {
         model.removeAnnotation(annotation: annotation.model)
         annotations.removeAll(where: { $0.model.id == annotation.model.id })
 
-        broadcastAnnotationDelete(annotation: annotation.model)
-    }
-}
-
-// MARK: WebSocket Actions
-extension DocumentViewModel {
-    func broadcastAnnotationCreate(annotation: Annotation) {
-        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: annotation)
-
-        WebSocketManager.shared.send(message: webSocketMessage)
-    }
-
-    func broadcastAnnotationDelete(annotation: Annotation) {
-        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: annotation)
-
-        WebSocketManager.shared.send(message: webSocketMessage)
+        Task {
+            await AnnotatoPersistence.currentPersistenceService.deleteAnnotation(annotation: annotation.model)
+        }
     }
 }

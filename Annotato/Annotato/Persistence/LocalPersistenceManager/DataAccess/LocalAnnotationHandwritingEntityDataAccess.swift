@@ -6,10 +6,10 @@ struct LocalAnnotationHandwritingEntityDataAccess {
 
     static func read(annotationHandwritingEntityId: UUID) -> AnnotationHandwritingEntity? {
         let request = AnnotationHandwritingEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", annotationHandwritingEntityId.uuidString)
 
         do {
             let annotationHandwritingEntities = try context.fetch(request)
+                .filter { $0.id == annotationHandwritingEntityId }
 
             return annotationHandwritingEntities.first
         } catch {

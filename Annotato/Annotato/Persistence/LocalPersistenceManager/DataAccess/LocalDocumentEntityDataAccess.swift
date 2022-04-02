@@ -6,10 +6,9 @@ struct LocalDocumentEntityDataAccess {
 
     static func listOwn(userId: String) -> [DocumentEntity]? {
         let request = DocumentEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ownerId == %@", userId)
 
         do {
-            let documentEntities = try context.fetch(request)
+            let documentEntities = try context.fetch(request).filter { $0.ownerId == userId }
 
             return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
@@ -21,10 +20,9 @@ struct LocalDocumentEntityDataAccess {
 
     static func listShared(userId: String) -> [DocumentEntity]? {
         let request = DocumentEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ownerId <> %@", userId)
 
         do {
-            let documentEntities = try context.fetch(request)
+            let documentEntities = try context.fetch(request).filter { $0.ownerId != userId }
 
             return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
@@ -50,10 +48,9 @@ struct LocalDocumentEntityDataAccess {
 
     static func read(documentId: UUID) -> DocumentEntity? {
         let request = DocumentEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", documentId.uuidString)
 
         do {
-            var documentEntities = try context.fetch(request)
+            var documentEntities = try context.fetch(request).filter { $0.id == documentId }
             documentEntities = DocumentEntity.removeDeletedDocumentEntities(documentEntities)
 
             return documentEntities.first
