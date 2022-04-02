@@ -1,5 +1,8 @@
 # Annotato
 
+[![SwiftLint](https://github.com/Annotato/annotato/actions/workflows/swiftlint.yml/badge.svg)](https://github.com/Annotato/annotato/actions/workflows/swiftlint.yml)
+[![Swift Build](https://github.com/Annotato/annotato/actions/workflows/build.yml/badge.svg)](https://github.com/Annotato/annotato/actions/workflows/build.yml)
+
 The following workflow was inspired from https://github.com/Dynavity/dynavity.
 
 ## Setting up XcodeGen
