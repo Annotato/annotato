@@ -128,8 +128,9 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             return
         }
 
-        AnnotatoPdfStorageManager().uploadPdf(fileSystemUrl: selectedFileUrl,
-                                              withName: selectedFileUrl.lastPathComponent) { [weak self] document in
+        AnnotatoPersistence().currentPersistenceService.uploadPdf(
+            fileSystemUrl: selectedFileUrl, withName: selectedFileUrl.lastPathComponent
+        ) { [weak self] document in
             DispatchQueue.main.async {
                 self?.goToDocumentEdit(documentId: document.id)
             }

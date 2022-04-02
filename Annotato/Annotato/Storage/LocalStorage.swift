@@ -8,7 +8,7 @@ class LocalStorage: AnnotatoStorageService {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 
-    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID, completion: @escaping (URL?) -> Void) {
+    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID, completion: @escaping (URL) -> Void) {
         do {
             let urlInDocumentsDirectory = appDocumentsDirectory
                 .appendingPathComponent(documentId.uuidString)
