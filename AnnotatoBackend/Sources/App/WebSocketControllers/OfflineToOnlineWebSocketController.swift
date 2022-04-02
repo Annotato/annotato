@@ -66,18 +66,11 @@ class OfflineToOnlineWebSocketController {
         do {
             Self.logger.info("Processing override server data...")
 
-            let overriddenDocuments = await DocumentWebSocketController
-                .handleOverrideServerDocuments(userId: userId, db: db, documents: message.documents)
+            let responseDocuments = try await DocumentWebSocketController
+                .handleOverrideServerDocuments(userId: userId, db: db, message: message)
 
-            let responseDocuments = overriddenDocuments
-
-            let overriddenAnnotations = await AnnotationWebSocketController
-                .handleOverrideServerAnnotations(userId: userId, db: db, annotations: message.annotations)
-
-            let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
-                .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
-
-            let responseAnnotations = overriddenAnnotations + newServerAnnotationsWhileOffline
+            let responseAnnotations = try await AnnotationWebSocketController
+                .handleOverrideServerAnnotations(userId: userId, db: db, message: message)
 
             let response = AnnotatoOfflineToOnlineMessage(
                 mergeStrategy: .overrideServerVersion,

@@ -119,11 +119,11 @@ class AnnotationWebSocketController {
     static func handleOverrideServerAnnotations(
         userId: String,
         db: Database,
-        annotations: [Annotation]
-    ) async -> [Annotation] {
+        message: AnnotatoOfflineToOnlineMessage
+    ) async throws -> [Annotation] {
         var responseAnnotations: [Annotation] = []
 
-        for annotation in annotations {
+        for annotation in message.annotations {
             let resolvedAnnotation: Annotation?
 
             if annotation.isDeleted {
@@ -135,6 +135,13 @@ class AnnotationWebSocketController {
             }
 
             responseAnnotations.appendIfNotNil(resolvedAnnotation)
+        }
+
+        let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
+            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
+
+        for annotation in newServerAnnotationsWhileOffline {
+            _ = await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
         }
 
         return responseAnnotations

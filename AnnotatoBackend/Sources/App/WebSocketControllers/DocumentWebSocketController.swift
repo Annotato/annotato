@@ -101,11 +101,11 @@ class DocumentWebSocketController {
     static func handleOverrideServerDocuments(
         userId: String,
         db: Database,
-        documents: [Document]
+        message: AnnotatoOfflineToOnlineMessage
     ) async -> [Document] {
         var responseDocuments: [Document] = []
 
-        for document in documents {
+        for document in message.documents {
             let resolvedDocument: Document?
 
             if document.isDeleted {
@@ -117,6 +117,13 @@ class DocumentWebSocketController {
             }
 
             responseDocuments.appendIfNotNil(resolvedDocument)
+        }
+
+        let newServerDocumentsWhileOffline = try await DocumentsDataAccess
+            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
+
+        for document in newServerDocumentsWhileOffline {
+            _ = await Self.handleDeleteDocument(userId: userId, db: db, document: Document)
         }
 
         return responseDocuments
