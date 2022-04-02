@@ -28,20 +28,17 @@ class AnnotatoPdfStorageManager {
 
         localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId, completion: { _ in })
 
-        var remoteFileUrl: URL?
-        remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId) { url in
-            remoteFileUrl = url
-        }
+        remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId) { remoteFileUrl in
+            let document = Document(name: name, ownerId: userId, baseFileUrl: remoteFileUrl?.absoluteString, id: documentId)
 
-        let document = Document(name: name, ownerId: userId, baseFileUrl: remoteFileUrl?.absoluteString, id: documentId)
+            Task {
+                guard let document = await self.api.createDocument(document: document) else {
+                    return
+                }
 
-        Task {
-            guard let document = await self.api.createDocument(document: document) else {
-                return
+                AnnotatoLogger.info("Created backend document entry: \(document)")
+                completion(document)
             }
-
-            AnnotatoLogger.info("Created backend document entry: \(document)")
-            completion(document)
         }
     }
 

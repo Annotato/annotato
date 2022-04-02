@@ -10,7 +10,7 @@ class FirebaseStorage: AnnotatoStorageService {
 
     weak var delegate: AnnotatoStorageDelegate?
 
-    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID, completion: @escaping (URL) -> Void) {
+    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID, completion: @escaping (URL?) -> Void) {
         let pdfRef = storageRef.child(documentId.uuidString)
 
         // swiftlint:disable closure_body_length
@@ -20,6 +20,7 @@ class FirebaseStorage: AnnotatoStorageService {
                     "When uploading PDF with fileSystemUrl: \(fileSystemUrl) to FB. \(error.localizedDescription)",
                     context: "FirebaseStorage::uploadPdf"
                 )
+                completion(nil)
                 self.delegate?.uploadDidFail(error)
                 return
             }
@@ -31,6 +32,7 @@ class FirebaseStorage: AnnotatoStorageService {
                         "When getting FB URL of PDF with fileSystemUrl: \(fileSystemUrl)." +
                         "\(error.localizedDescription)",
                         context: "FirebaseStorage::uploadPdf")
+                    completion(nil)
                     return
                 }
 
@@ -38,6 +40,7 @@ class FirebaseStorage: AnnotatoStorageService {
                     AnnotatoLogger.error(
                         "Missing FB URL for PDF with fileSystemUrl: \(fileSystemUrl).",
                         context: "FirebaseStorage::uploadPdf")
+                    completion(nil)
                     return
                 }
 
