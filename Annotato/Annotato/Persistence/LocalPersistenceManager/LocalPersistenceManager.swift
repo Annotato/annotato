@@ -10,7 +10,7 @@ struct LocalPersistenceManager {
         T.ManagedEntity(context: sharedContext)
     }
 
-    private static let shared = LocalPersistenceManager()
+    static let shared = LocalPersistenceManager()
 
     private static let containerName = "AnnotatoLocal"
 
