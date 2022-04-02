@@ -6,6 +6,7 @@ class WebSocketManager {
     private static let unavailableDestinationHostErrorCode = 54
     private static let unconnectedSocketErrorCode = 57
     private static let connectionTimeOutErrorCode = 60
+    private static let offlineInternetConnection = -1_009
 
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
@@ -30,7 +31,7 @@ class WebSocketManager {
         listen()
         socket?.resume()
         pingServer()
-        beginInfiniteLoopForLastOnlineUpdating()
+        timerTriggerToUpdateLastOnline()
     }
 
     func resetSocket() {
@@ -41,27 +42,33 @@ class WebSocketManager {
     }
 
     private func pingServer() {
-        AnnotatoLogger.info("Pinging the server...")
-        socket?.sendPing(pongReceiveHandler: { [weak self] err in
+        guard let socket = socket else {
+            self.isConnected = false
+            return
+        }
+        socket.sendPing(pongReceiveHandler: { [weak self] err in
             guard let self = self else {
                 return
             }
             if err == nil {
-                AnnotatoLogger.info("Successful ping, setting connectivity and last online")
                 self.isConnected = true
                 self.storeLastOnlineLocally(to: Date())
+            } else {
+                self.isConnected = false
             }
         })
     }
 
-    private func beginInfiniteLoopForLastOnlineUpdating() {
-        DispatchQueue.global(qos: .background).async {
-            while true {
-                if self.isConnected {
-                    self.storeLastOnlineLocally(to: Date())
-                }
+    private func timerTriggerToUpdateLastOnline() {
+        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true, block: { _ in
+            self.pingServer()
+            if self.isConnected {
+                self.storeLastOnlineLocally(to: Date())
+            } else {
+                self.resetSocket()
+                self.setUpSocket()
             }
-        }
+        })
     }
 
     func listen() {
@@ -74,11 +81,12 @@ class WebSocketManager {
             }
             switch result {
             case .failure(let error):
-                AnnotatoLogger.error(error.localizedDescription)
                 let errorCode = (error as NSError).code
+                AnnotatoLogger.error(error.localizedDescription + " errorCode: \(errorCode)")
                 if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
                     errorCode == WebSocketManager.unconnectedSocketErrorCode ||
-                    errorCode == WebSocketManager.connectionTimeOutErrorCode {
+                    errorCode == WebSocketManager.connectionTimeOutErrorCode ||
+                    errorCode == WebSocketManager.offlineInternetConnection {
                     self.isConnected = false
                 }
             case .success(let message):
