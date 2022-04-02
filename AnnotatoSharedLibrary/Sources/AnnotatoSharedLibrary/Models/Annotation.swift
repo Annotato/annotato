@@ -295,15 +295,24 @@ extension Annotation {
     public func setCreatedAt(to createdAt: Date) {
         self.createdAt = createdAt
         selectionBox.setCreatedAt(to: createdAt)
+        for part in parts {
+            part.setCreatedAt(to: createdAt)
+        }
     }
 
     public func setUpdatedAt(to updatedAt: Date) {
         self.updatedAt = updatedAt
         selectionBox.setUpdatedAt(to: updatedAt)
+        for part in parts {
+            part.setUpdatedAt(to: updatedAt)
+        }
     }
 
     public func setDeletedAt(to deletedAt: Date) {
         self.deletedAt = deletedAt
         selectionBox.setDeletedAt(to: deletedAt)
+        for part in parts {
+            part.setDeletedAt(to: deletedAt)
+        }
     }
 }
