@@ -102,7 +102,7 @@ class DocumentWebSocketController {
         userId: String,
         db: Database,
         message: AnnotatoOfflineToOnlineMessage
-    ) async -> [Document] {
+    ) async throws -> [Document] {
         var responseDocuments: [Document] = []
 
         for document in message.documents {
@@ -123,7 +123,7 @@ class DocumentWebSocketController {
             .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
 
         for document in newServerDocumentsWhileOffline {
-            _ = await Self.handleDeleteDocument(userId: userId, db: db, document: Document)
+            _ = await Self.handleDeleteDocument(userId: userId, db: db, document: document)
         }
 
         return responseDocuments
