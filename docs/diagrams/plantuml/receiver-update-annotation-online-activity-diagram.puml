@@ -1,0 +1,21 @@
+@startuml
+
+start
+:Hong Yao's websocket receives response data;
+:annotationManager.handleResponseData() is called;
+note right
+Decodes the message and realizes that it
+is an update annotation message
+end note
+:Assign the updated annotation to a published attribute;
+:annotationViewModel which subscribes will be notified;
+
+if (annotationViewModel.id == newAnnotation.id?) then (yes)
+    :update own annotation view;
+else (no)
+    :do nothing;
+endif
+
+stop
+
+@enduml
