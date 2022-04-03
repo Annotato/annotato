@@ -10,7 +10,8 @@ extension SelectionBoxEntity: PersistedEntity {
         entity.endPointX = model.endPoint.x
         entity.endPointY = model.endPoint.y
 
-        if let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: model.annotationId) {
+        if let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: model.annotationId,
+                                                                       withDeleted: true) {
             entity.annotationEntity = annotationEntity
         }
 

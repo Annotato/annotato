@@ -75,7 +75,9 @@ class AnnotationViewModel: ObservableObject {
     func translateCenter(by translation: CGPoint) {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
-        broadcastAnnotationUpdate()
+        Task {
+            await AnnotatoPersistence.currentPersistenceService.updateAnnotation(annotation: model)
+        }
     }
 
     private func setUpSubscribers() {
@@ -219,7 +221,9 @@ extension AnnotationViewModel {
             part.enterViewMode()
         }
 
-        broadcastAnnotationUpdate()
+        Task {
+            await AnnotatoPersistence.currentPersistenceService.updateAnnotation(annotation: model)
+        }
     }
 
     func resize() {
@@ -309,14 +313,5 @@ extension AnnotationViewModel {
     func outOfFocus() {
         isInFocus = false
         enterMinimizedMode()
-    }
-}
-
-// MARK: WebSocket Actions
-extension AnnotationViewModel {
-    func broadcastAnnotationUpdate() {
-        let webSocketMessage = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: model)
-
-        WebSocketManager.shared.send(message: webSocketMessage)
     }
 }

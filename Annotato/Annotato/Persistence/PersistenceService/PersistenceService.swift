@@ -1,1 +1,1 @@
-protocol PersistenceService: DocumentsPersistence, DocumentSharesPersistence { }
+protocol PersistenceService: AnnotationsPersistence, DocumentsPersistence, DocumentSharesPersistence { }

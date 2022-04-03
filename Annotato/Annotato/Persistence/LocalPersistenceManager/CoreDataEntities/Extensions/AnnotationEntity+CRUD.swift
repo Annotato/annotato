@@ -36,12 +36,12 @@ extension AnnotationEntity {
         precondition(id == annotation.id)
 
         originX = annotation.origin.x
-        originY = annotation.origin.x
+        originY = annotation.origin.y
         width = annotation.width
         ownerId = annotation.ownerId
 
         if let documentEntity = LocalDocumentEntityDataAccess
-            .read(documentId: annotation.documentId) {
+            .read(documentId: annotation.documentId, withDeleted: true) {
             self.documentEntity = documentEntity
         }
 

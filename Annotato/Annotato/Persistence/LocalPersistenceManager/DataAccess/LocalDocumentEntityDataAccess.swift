@@ -6,10 +6,9 @@ struct LocalDocumentEntityDataAccess {
 
     static func listOwn(userId: String) -> [DocumentEntity]? {
         let request = DocumentEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ownerId == %@", userId)
 
         do {
-            let documentEntities = try context.fetch(request)
+            let documentEntities = try context.fetch(request).filter { $0.ownerId == userId }
 
             return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
@@ -21,10 +20,9 @@ struct LocalDocumentEntityDataAccess {
 
     static func listShared(userId: String) -> [DocumentEntity]? {
         let request = DocumentEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "ownerId <> %@", userId)
 
         do {
-            let documentEntities = try context.fetch(request)
+            let documentEntities = try context.fetch(request).filter { $0.ownerId != userId }
 
             return DocumentEntity.removeDeletedDocumentEntities(documentEntities)
         } catch {
@@ -35,6 +33,7 @@ struct LocalDocumentEntityDataAccess {
     }
 
     static func create(document: Document) -> DocumentEntity? {
+        context.rollback()
         let documentEntity = DocumentEntity.fromModel(document)
 
         do {
@@ -48,13 +47,14 @@ struct LocalDocumentEntityDataAccess {
         return documentEntity
     }
 
-    static func read(documentId: UUID) -> DocumentEntity? {
+    static func read(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
         let request = DocumentEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", documentId.uuidString)
 
         do {
-            var documentEntities = try context.fetch(request)
-            documentEntities = DocumentEntity.removeDeletedDocumentEntities(documentEntities)
+            var documentEntities = try context.fetch(request).filter { $0.id == documentId }
+            if !withDeleted {
+                documentEntities = DocumentEntity.removeDeletedDocumentEntities(documentEntities)
+            }
 
             return documentEntities.first
         } catch {
@@ -65,7 +65,8 @@ struct LocalDocumentEntityDataAccess {
     }
 
     static func update(documentId: UUID, document: Document) -> DocumentEntity? {
-        guard let documentEntity = LocalDocumentEntityDataAccess.read(documentId: documentId) else {
+        context.rollback()
+        guard let documentEntity = LocalDocumentEntityDataAccess.read(documentId: documentId, withDeleted: true) else {
             AnnotatoLogger.error("When finding existing document entity.",
                                  context: "LocalDocumentEntityDataAccess::update")
             return nil
