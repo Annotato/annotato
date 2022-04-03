@@ -32,13 +32,12 @@ struct DocumentSharesDataAccess {
         db: Database,
         documentShare: DocumentShare
     ) async throws -> DocumentShare? {
-        // swiftlint:disable:next first_where
         guard let documentShareEntity = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentShare.documentId)
             .filter(\.$recipientId == documentShare.recipientId)
-            .first()
-            .get()
+            .withDeleted()
+            .first().get()
         else {
             return nil
         }
@@ -50,6 +49,7 @@ struct DocumentSharesDataAccess {
         let documentShareEntities = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentId)
+            .withDeleted()
             .all().get()
 
         return documentShareEntities.map(DocumentShare.fromManagedEntity)

@@ -87,19 +87,19 @@ struct AnnotationDataAccess {
             try await annotationEntity.customCreate(on: tx, usingModel: annotation)
         }
 
-        try await annotationEntity.loadAssociations(on: db)
+        try await annotationEntity.loadAssociationsWithDeleted(on: db)
 
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
     static func read(db: Database, annotationId: UUID) async throws -> Annotation {
-        guard let annotationEntity = try await AnnotationEntity.find(annotationId, on: db).get() else {
+        guard let annotationEntity = try await AnnotationEntity.findWithDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .read,
                                               modelType: String(describing: Annotation.self),
                                               modelId: annotationId)
         }
 
-        try await annotationEntity.loadAssociations(on: db)
+        try await annotationEntity.loadAssociationsWithDeleted(on: db)
 
         return Annotation.fromManagedEntity(annotationEntity)
     }
@@ -116,7 +116,7 @@ struct AnnotationDataAccess {
         }
 
         // Load again as there might be new entities created
-        try await annotationEntity.loadAssociations(on: db)
+        try await annotationEntity.loadAssociationsWithDeleted(on: db)
 
         return Annotation.fromManagedEntity(annotationEntity)
     }
