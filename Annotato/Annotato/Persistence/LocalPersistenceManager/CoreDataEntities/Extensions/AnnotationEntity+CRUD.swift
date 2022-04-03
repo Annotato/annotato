@@ -36,7 +36,7 @@ extension AnnotationEntity {
         precondition(id == annotation.id)
 
         originX = annotation.origin.x
-        originY = annotation.origin.x
+        originY = annotation.origin.y
         width = annotation.width
         ownerId = annotation.ownerId
 
