@@ -26,22 +26,48 @@ Package Models {
         documentId: UUID
     }
 
-    Class AnnotationText {
+    Interface AnnotationPart <<protocol>> {
         id: UUID
-        content: String
+        order: Int
         height: Double
+        annotationId: UUID
+        isEmpty: Bool
+        --
+        remove()
+    }
+
+    Class AnnotationText {
+        type: AnnotationText.TextType
+        content: String
+    }
+
+    Class AnnotationHandwriting {
+        handwriting: Data
+    }
+
+    Class SelectionBox {
+        id: UUID
+        startPoint: CGPoint
+        endPoint: CGPoint
         annotationId: UUID
     }
 
-    Enum AnnotationType <<enum>> {
-        plainText
-        markdown
+    Class DocumentShare {
+        id: UUID
+        documentId: UUID
+        recipientId: String
     }
+
+    User "owner" *--> "*" Document
+    User "recipient\n0..*" -- "0..*" Document
+    (Document, User) . DocumentShare
+    Document *-> "*" Annotation
+    Annotation *-> "*" AnnotationPart
+    AnnotationHandwriting .up.|> AnnotationPart
+    AnnotationText .up.|> AnnotationPart
+    Annotation *-> "1" SelectionBox
 }
 
-AnnotationText .> AnnotationType
-User *-> "*" Document
-Document *-> "*" Annotation
-Annotation *-> "*" AnnotationText
+
 
 @enduml
