@@ -1,0 +1,17 @@
+@startuml
+
+start
+:Darren drags annotation;
+:annotationViewModel.broadcastAnnotationUpdate() is called;
+note right
+Updated annotation is sent
+to Darren's websocket
+end note
+:Server websocket for Darren receives the message;
+:annotationWebSocketController.handleUpdateAnnotation() is called;
+:Updated annotation is saved to remote database;
+:Updated annotation is sent to all other clients that
+have access to the document;
+stop
+
+@enduml

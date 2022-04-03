@@ -1,0 +1,22 @@
+@startuml
+
+start
+:User imports valid pdf from ipad;
+://offline//PersistenceService.uploadPdf();
+:Pdf file copied from original location to app's
+documents directory;
+://offline//PersistenceService.createDocument();
+note right
+Creates the document
+in local
+end note
+:Navigate to document edit view;
+:DocumentController.loadDocument();
+note right
+Gets the Document from
+local
+end note
+:Render the document edit view;
+stop
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+
+start
+:User imports valid pdf from ipad;
+://online//PersistenceService.uploadPdf();
+:Pdf file copied from original location to app's
+documents directory;
+:Pdf file is uploaded to Firebase;
+://online//PersistenceService.createDocument();
+note right
+First creates the document remotely
+on server, then create locally
+end note
+
+:Navigate to document edit view;
+:DocumentController.loadDocument();
+note right
+Gets the Document from remote
+end note
+:Render the document edit view;
+stop
+
+@enduml
