@@ -23,6 +23,10 @@ final class DocumentShareEntity: Model {
     @Timestamp(key: "deleted_at", on: .delete)
     var deletedAt: Date?
 
+    var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     init() { }
 
     init(

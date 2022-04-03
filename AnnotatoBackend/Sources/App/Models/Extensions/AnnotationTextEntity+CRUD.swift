@@ -13,10 +13,14 @@ extension AnnotationTextEntity {
     ///   - tx: The database instance in a transaction.
     ///   - annotationText: The updated AnnotationText instance.
     func customUpdate(on tx: Database, usingUpdatedModel annotationText: AnnotationText) async throws {
-        if annotationText.isDeleted {
+        if annotationText.isDeleted && !self.isDeleted {
+            try await self.customDelete(on: tx)
             return
         }
 
+        if annotationText.isDeleted {
+            return
+        }
         try await self.restore(on: tx)
         self.copyPropertiesOf(otherEntity: AnnotationTextEntity.fromModel(annotationText))
         try await self.update(on: tx).get()

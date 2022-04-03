@@ -139,7 +139,7 @@ struct DocumentsDataAccess {
         }
 
         // Load again as there might be new entities created
-        try await documentEntity.loadAssociations(on: db)
+        try await documentEntity.loadAssociationsWithDeleted(on: db)
 
         return Document.fromManagedEntity(documentEntity)
     }

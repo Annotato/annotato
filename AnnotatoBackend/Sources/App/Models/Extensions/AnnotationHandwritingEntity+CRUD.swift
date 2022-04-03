@@ -13,6 +13,11 @@ extension AnnotationHandwritingEntity {
     ///   - tx: The database instance in a transaction.
     ///   - annotationHandwriting: The updated AnnotationHandwriting instance.
     func customUpdate(on tx: Database, usingUpdatedModel annotationHandwriting: AnnotationHandwriting) async throws {
+        if annotationHandwriting.isDeleted && !self.isDeleted {
+            try await self.customDelete(on: tx)
+            return
+        }
+
         if annotationHandwriting.isDeleted {
             return
         }

@@ -31,6 +31,11 @@ extension AnnotationEntity {
     ///   - tx: The database instance in a transaction.
     ///   - annotation: The updated Annotation instance.
     func customUpdate(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
+        if annotation.isDeleted && !self.isDeleted {
+            try await self.customDelete(on: tx)
+            return
+        }
+
         if annotation.isDeleted {
             return
         }

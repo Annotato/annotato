@@ -20,6 +20,11 @@ extension DocumentEntity {
     ///   - tx: The database instance in a transaction.
     ///   - document: The updated Document instance.
     func customUpdate(on tx: Database, usingUpdatedModel document: Document) async throws {
+        if document.isDeleted && !self.isDeleted {
+            try await self.customDelete(on: tx)
+            return
+        }
+
         if document.isDeleted {
             return
         }
