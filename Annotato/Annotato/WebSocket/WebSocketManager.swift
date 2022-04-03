@@ -60,7 +60,7 @@ class WebSocketManager {
     }
 
     private func timerTriggerToUpdateLastOnline() {
-        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true, block: { _ in
+        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true, block: { _ in
             self.pingServer()
             if self.isConnected {
                 self.storeLastOnlineLocally(to: Date())

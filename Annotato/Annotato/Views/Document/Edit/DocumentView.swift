@@ -131,6 +131,14 @@ class DocumentView: UIView {
 
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
+        let isConnected = WebSocketManager.shared.isConnected
+        let lastOnlineTimeFromWebSocketManager = WebSocketManager.shared.getLastOnline()
+        let lastOnlineTimeFromUserDefaults = UserDefaults.standard.object(
+            forKey: "lastOnline")
+        print("isConnected: \(isConnected)")
+        print("lastOnlineTimeFromWebSocketManager: \(lastOnlineTimeFromWebSocketManager)")
+        print("lastOnlineTimeFromUserDefaults: \(lastOnlineTimeFromUserDefaults)")
+
         viewModel.setAllAnnotationsOutOfFocus()
 
         guard let pdfInnerDocumentView = pdfView.documentView else {
