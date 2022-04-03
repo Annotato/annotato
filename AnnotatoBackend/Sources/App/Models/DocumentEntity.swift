@@ -15,7 +15,7 @@ final class DocumentEntity: Model {
     var ownerId: String
 
     @Field(key: "base_file_url")
-    var baseFileUrl: String
+    var baseFileUrl: String?
 
     @Children(for: \.$documentEntity)
     var annotationEntities: [AnnotationEntity]
@@ -38,7 +38,7 @@ final class DocumentEntity: Model {
     init(
         name: String,
         ownerId: String,
-        baseFileUrl: String,
+        baseFileUrl: String?,
         id: UUID? = nil,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,

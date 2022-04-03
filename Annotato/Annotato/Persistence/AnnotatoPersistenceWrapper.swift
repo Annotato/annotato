@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct AnnotatoPersistence {
+struct AnnotatoPersistenceWrapper {
     static var currentPersistenceService: PersistenceService {
         WebSocketManager.shared.isConnected ? onlinePersistenceService : offlinePersistenceService
     }

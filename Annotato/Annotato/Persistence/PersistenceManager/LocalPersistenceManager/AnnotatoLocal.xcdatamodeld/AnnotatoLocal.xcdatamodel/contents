@@ -36,7 +36,7 @@
         <relationship name="annotationEntity" maxCount="1" deletionRule="Nullify" destinationEntity="AnnotationEntity" inverseName="annotationTextEntities" inverseEntity="AnnotationEntity"/>
     </entity>
     <entity name="DocumentEntity" representedClassName="DocumentEntity" syncable="YES">
-        <attribute name="baseFileUrl" attributeType="String"/>
+        <attribute name="baseFileUrl" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
