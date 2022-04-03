@@ -1,0 +1,72 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package "Without Dependency Inversion" {
+    Class "Annotation" as A {
+        id: UUID
+        origin: Point
+        width: Double
+        ownerId: String
+        documentId: UUID
+    }
+
+    Class "AnnotationText" as AT {
+        id: UUID
+        order: Int
+        height: Double
+        annotationId: UUID
+        isEmpty: Bool
+
+        type: AnnotationText.TextType
+        content: String
+    }
+
+    Class "AnnotationHandwriting" as AH {
+        id: UUID
+        order: Int
+        height: Double
+        annotationId: UUID
+        isEmpty: Bool
+
+        handwriting: Data
+    }
+}
+
+A *--> "*" AT
+A *--> "*" AH
+
+Package "With Dependency Inversion" {
+    Class Annotation {
+        id: UUID
+        origin: Point
+        width: Double
+        ownerId: String
+        documentId: UUID
+    }
+
+    Interface AnnotationPart <<protocol>> {
+        id: UUID
+        order: Int
+        height: Double
+        annotationId: UUID
+        isEmpty: Bool
+    }
+
+    Class AnnotationText {
+        type: AnnotationText.TextType
+        content: String
+    }
+
+    Class AnnotationHandwriting {
+        handwriting: Data
+    }
+}
+
+Annotation *-down-> "*" AnnotationPart
+AnnotationText .up.|> AnnotationPart
+AnnotationHandwriting .up.|> AnnotationPart
+
+@enduml

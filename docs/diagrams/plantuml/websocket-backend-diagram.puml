@@ -1,0 +1,54 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package WebSocket {
+    class WebSocketController {
+        openConnections: [String: WebSocket]
+        --
+        handleIncomingConnection(req: Request, socket: WebSocket)
+
+        sendAll(recipientIds: [String], message: Codable)
+
+        ( - ) handleBinaryData(userId: String, db: Database)
+
+        ( - ) handleTextData(userId: String, db: Database)
+
+        ( - ) handleIncomingData(userId: String, data: Data, db: Database)
+    }
+
+    class DocumentWebSocketController {
+        handleCrudAnnotationData(userId: String, data: Data, db: Database)
+
+        handleCreateDocument(userId: String, data: Data, db: Database)
+
+        handleReadDocument(userId: String, data: Data, db: Database)
+
+        handleUpdateDocument(userId: String, data: Data, db: Database)
+
+        handleDeleteDocument(userId: String, data: Data, db: Database)
+
+        ( - ) sendToAllAppropriateClients(db: Database, userId: String, document: Document, message: Codable)
+    }
+
+    class AnnotationWebSocketController {
+        handleCrudAnnotationData(userId: String, data: Data, db: Database)
+
+        handleCreateAnnotation(userId: String, data: Data, db: Database)
+
+        handleReadAnnotation(userId: String, data: Data, db: Database)
+
+        handleUpdateAnnotation(userId: String, data: Data, db: Database)
+
+        handleDeleteAnnotation(userId: String, data: Data, db: Database)
+
+        ( - ) sendToAllAppropriateClients(db: Database, userId: String, annotation: Annotation, message: Codable)
+    }
+
+    WebSocketController ..> DocumentWebSocketController
+    WebSocketController ..> AnnotationWebSocketController
+}
+
+@enduml

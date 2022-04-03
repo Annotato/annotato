@@ -1,0 +1,63 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package Persistence {
+
+    Interface PersistenceManager <<protocol>> { }
+
+    Interface AnnotationsPersistence <<protocol>> { }
+    Interface DocumentsPersistence <<protocol>> { }
+    Interface DocumentSharesPersistence <<protocol>> { }
+    Interface PDFStorageManager <<protocol>> { }
+
+    Interface PersistenceService <<protocol>> { }
+    Class OfflinePersistenceService { }
+    Class OnlinePersistenceService { }
+
+    Class LocalPersistenceManager { }
+    Class RemotePersistenceManager { }
+
+    Class "\t\t\t\t\t\t\t AnnotatoPersistenceWrapper \t\t\t\t\t\t\t" as AnnotatoPersistenceWrapper{ }
+
+    Class OnlinePDFStorageManager { }
+
+    Class OfflinePDFStorageManager { }
+}
+
+AnnotatoPersistenceWrapper *-> "currentPersistenceService" PersistenceService
+
+OfflinePersistenceService .up.|> PersistenceService
+OnlinePersistenceService .up.|> PersistenceService
+
+PersistenceService -up-|> AnnotationsPersistence
+PersistenceService -up-|> DocumentsPersistence
+PersistenceService -up-|> DocumentSharesPersistence
+PersistenceService -up-|> PDFStorageManager
+
+OfflinePersistenceService *-down-> LocalPersistenceManager
+OnlinePersistenceService *-down-> LocalPersistenceManager
+OnlinePersistenceService *-down-> RemotePersistenceManager
+
+OfflinePersistenceService .down.> OfflinePDFStorageManager
+OnlinePersistenceService .down.> OnlinePDFStorageManager
+
+LocalPersistenceManager .up|> PersistenceManager
+RemotePersistenceManager .up.|> PersistenceManager
+PersistenceManager *-down-> AnnotationsPersistence
+PersistenceManager *-down-> DocumentsPersistence
+PersistenceManager *-down-> DocumentSharesPersistence
+
+OnlinePDFStorageManager .up|> PDFStorageManager
+OfflinePDFStorageManager .up|> PDFStorageManager
+
+'Represents clients of Persistence'
+Class HiddenOutside #FFFFFF
+HiddenOutside ..> AnnotatoPersistenceWrapper
+
+PersistenceManager -up[hidden]> AnnotatoPersistenceWrapper
+OnlinePersistenceService -right[hidden]> PDFStorageManager
+
+@enduml

@@ -1,5 +1,6 @@
 @startuml
 !include style.puml
+!include <office/Users/user>
 skinparam arrowThickness 1.1
 skinparam arrowColor VIEW_COLOR
 skinparam classBackgroundColor VIEW_COLOR
@@ -11,36 +12,50 @@ Package Views {
     Class DocumentListToolbarView
     Class DocumentListCollectionView
     Class DocumentListCollectionCellView
+    Class DocumentListImportMenu
+    Class UIDocumentPickerView
+    Class DocumentCodeImportView
 
     Class DocumentEditView
     Class DocumentEditToolbarView
     Class DocumentView
     Class DocumentPDFView
+    Class ShareView
 
     Class AnnotationView
     Class AnnotationPaletteView
     Interface AnnotationPartView <<protocol>>
     Class AnnotationMarkdownView
     Class AnnotationTextView
+    Class AnnotationHandwritingView
+    Class SelectionBoxView
+    Class PKCanvasView
 }
 
 AuthView --down> "segues into" DocumentListView
 
 DocumentListView *-down-> "1" DocumentListToolbarView
 DocumentListView *-down-> "1" DocumentListCollectionView
+DocumentListView *-down--> "1" DocumentListImportMenu
 DocumentListCollectionView *-> "*" DocumentListCollectionCellView
 
 DocumentListCollectionCellView -down-> "segues into" DocumentEditView
 
+DocumentListImportMenu --down> "can present" UIDocumentPickerView
+DocumentListImportMenu --down> "can present" DocumentCodeImportView
+
 DocumentEditView *-down--> "1" DocumentEditToolbarView
 DocumentEditView *-down-> "1" DocumentView
+DocumentEditToolbarView -down-> "can present" ShareView
 DocumentView *-down-> "1" DocumentPDFView
-DocumentView *-down-> "*" AnnotationView
+DocumentPDFView *-down-> "*" AnnotationView
+DocumentPDFView *-down-> "*" SelectionBoxView
 
 AnnotationView *-down-> "1" AnnotationPaletteView
 AnnotationView *-down-> "*" AnnotationPartView
 AnnotationMarkdownView .up.|>  AnnotationPartView
 AnnotationTextView .up.|> AnnotationPartView
-
+AnnotationHandwritingView .up.|> AnnotationPartView
+AnnotationHandwritingView -up-|> PKCanvasView
 
 @enduml

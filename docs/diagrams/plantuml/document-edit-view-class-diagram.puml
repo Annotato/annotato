@@ -1,5 +1,6 @@
 @startuml
 !include style.puml
+
 skinparam arrowThickness 1.1
 skinparam arrowColor VIEW_COLOR
 skinparam classBackgroundColor VIEW_COLOR
@@ -9,22 +10,30 @@ Package "Document Edit View" {
     Class DocumentEditToolbarView
     Class DocumentView
     Class DocumentPDFView
+    Class ShareView
 
     Class AnnotationView
     Class AnnotationPaletteView
     Interface AnnotationPartView <<protocol>>
     Class AnnotationMarkdownView
     Class AnnotationTextView
+    Class AnnotationHandwritingView
+    Class SelectionBoxView
+    Class PKCanvasView
 }
 
 DocumentEditViewController *-down--> "1" DocumentEditToolbarView
 DocumentEditViewController *-down-> "1" DocumentView
+DocumentEditToolbarView -down-> "can present" ShareView
 DocumentView *-down-> "1" DocumentPDFView
-DocumentView *-down-> "*" AnnotationView
+DocumentPDFView *-down-> "*" AnnotationView
+DocumentPDFView *-down-> "*" SelectionBoxView
 
 AnnotationView *-down-> "1" AnnotationPaletteView
 AnnotationView *-down-> "*" AnnotationPartView
 AnnotationMarkdownView .up.|>  AnnotationPartView
 AnnotationTextView .up.|> AnnotationPartView
+AnnotationHandwritingView .up.|> AnnotationPartView
+AnnotationHandwritingView -up-|> PKCanvasView
 
 @enduml
