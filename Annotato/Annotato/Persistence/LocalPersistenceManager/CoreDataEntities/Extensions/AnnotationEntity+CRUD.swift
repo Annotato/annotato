@@ -41,7 +41,7 @@ extension AnnotationEntity {
         ownerId = annotation.ownerId
 
         if let documentEntity = LocalDocumentEntityDataAccess
-            .read(documentId: annotation.documentId) {
+            .read(documentId: annotation.documentId, withDeleted: true) {
             self.documentEntity = documentEntity
         }
 
