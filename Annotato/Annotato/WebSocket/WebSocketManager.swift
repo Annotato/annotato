@@ -31,7 +31,22 @@ class WebSocketManager {
         listen()
         socket?.resume()
         pingServer()
-        timerTriggerToUpdateLastOnline()
+//        timerTriggerToUpdateLastOnline()
+        queryNetworkManager()
+        startTimerToQueryNetworkStatus()
+    }
+
+    private func startTimerToQueryNetworkStatus() {
+        Timer.scheduledTimer(withTimeInterval: 7.0, repeats: true, block: { _ in
+            print("Querying the network manager")
+            self.queryNetworkManager()
+        })
+    }
+
+    private func queryNetworkManager() {
+        let isConnected = NetworkManager.sharedInstance.reachability.connection != .unavailable
+        print("connection status: \(isConnected)")
+        print("Connectivity status: \(isConnected)")
     }
 
     func resetSocket() {
@@ -48,23 +63,29 @@ class WebSocketManager {
         }
         socket.sendPing(pongReceiveHandler: { [weak self] err in
             guard let self = self else {
+                print("Ponging self==self return")
                 return
             }
             if err == nil {
+                print("no error from pong")
                 self.isConnected = true
                 self.storeLastOnlineLocally(to: Date())
             } else {
+                print("error from pong")
                 self.isConnected = false
             }
         })
     }
 
     private func timerTriggerToUpdateLastOnline() {
-        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true, block: { _ in
+        Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true, block: { _ in
+            print("Pinging the server")
             self.pingServer()
             if self.isConnected {
+                print("is connected, updating time")
                 self.storeLastOnlineLocally(to: Date())
             } else {
+                print("resetting socket and set up socket")
                 self.resetSocket()
                 self.setUpSocket()
             }
