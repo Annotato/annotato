@@ -9,10 +9,16 @@ Package "Document List View" {
     Class DocumentListToolbarView
     Class DocumentListCollectionView
     Class DocumentListCollectionCellView
+    Class DocumentListImportMenu
+    Class DocumentCodeImportView
+    Class UIDocumentPickerView
 }
 
 DocumentListViewController *-down-> "1" DocumentListToolbarView
+DocumentListViewController *-down-> "1" DocumentListImportMenu
 DocumentListViewController *-down-> "1" DocumentListCollectionView
 DocumentListCollectionView *--> "*" DocumentListCollectionCellView
+DocumentListImportMenu --down> "can present" UIDocumentPickerView
+DocumentListImportMenu --down> "can present" DocumentCodeImportView
 
 @enduml
