@@ -137,7 +137,7 @@ extension DocumentViewModel {
         setUpSubscriberForAnnotation(annotation: annotationViewModel)
 
         Task {
-            await AnnotatoPersistence.currentPersistenceService.createAnnotation(annotation: newAnnotation)
+            await AnnotatoPersistenceWrapper.currentPersistenceService.createAnnotation(annotation: newAnnotation)
         }
     }
 
@@ -146,7 +146,7 @@ extension DocumentViewModel {
         annotations.removeAll(where: { $0.model.id == annotation.model.id })
 
         Task {
-            await AnnotatoPersistence.currentPersistenceService.deleteAnnotation(annotation: annotation.model)
+            await AnnotatoPersistenceWrapper.currentPersistenceService.deleteAnnotation(annotation: annotation.model)
         }
     }
 }
