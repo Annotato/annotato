@@ -10,6 +10,10 @@ public final class SelectionBox: Codable, ObservableObject {
     public private(set) var updatedAt: Date?
     public private(set) var deletedAt: Date?
 
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     @Published public private(set) var endPoint: CGPoint
 
     public required init(

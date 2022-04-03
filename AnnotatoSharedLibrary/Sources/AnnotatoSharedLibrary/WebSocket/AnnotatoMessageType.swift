@@ -21,7 +21,6 @@ public enum AnnotatoCrudAnnotationMessageType: String, Codable {
 
 /// Merge Strategies of `AnnotatoOfflineToOnlineMessage`
 public enum AnnotatoOfflineToOnlineMergeStrategy: String, Codable {
-    case duplicateConflicts
     case overrideServerVersion
     case keepServerVersion
 }

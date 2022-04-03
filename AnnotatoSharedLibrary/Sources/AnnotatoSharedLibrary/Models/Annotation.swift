@@ -12,6 +12,10 @@ public final class Annotation: Codable, ObservableObject {
     public private(set) var updatedAt: Date?
     public private(set) var deletedAt: Date?
 
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
     @Published public private(set) var addedMarkdownPart: AnnotationText?
@@ -314,5 +318,17 @@ extension Annotation {
         for part in parts {
             part.setDeletedAt(to: deletedAt)
         }
+    }
+}
+
+extension Annotation: Equatable {
+    public static func == (lhs: Annotation, rhs: Annotation) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension Annotation: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

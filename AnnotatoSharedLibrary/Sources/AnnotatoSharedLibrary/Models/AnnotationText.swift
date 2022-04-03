@@ -16,6 +16,10 @@ public final class AnnotationText: Codable, AnnotationPart {
         content.isEmpty
     }
 
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     @Published public private(set) var isRemoved = false
 
     public required init(

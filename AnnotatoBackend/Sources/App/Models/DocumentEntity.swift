@@ -29,6 +29,10 @@ final class DocumentEntity: Model {
     @Timestamp(key: "deleted_at", on: .delete)
     var deletedAt: Date?
 
+    var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     init() { }
 
     init(

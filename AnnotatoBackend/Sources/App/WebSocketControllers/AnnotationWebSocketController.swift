@@ -15,13 +15,13 @@ class AnnotationWebSocketController {
 
             switch message.subtype {
             case .createAnnotation:
-                await Self.handleCreateAnnotation(userId: userId, db: db, annotation: annotation)
+                _ = await Self.handleCreateAnnotation(userId: userId, db: db, annotation: annotation)
             case .readAnnotation:
                 await Self.handleReadAnnotation(userId: userId, db: db, annotation: annotation)
             case .updateAnnotation:
-                await Self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
+                _ = await Self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
             case .deleteAnnotation:
-                await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
+                _ = await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
             }
 
         } catch {
@@ -33,7 +33,7 @@ class AnnotationWebSocketController {
         userId: String,
         db: Database,
         annotation: Annotation
-    ) async {
+    ) async -> Annotation? {
         do {
             Self.logger.info("Processing create annotation data...")
 
@@ -44,8 +44,10 @@ class AnnotationWebSocketController {
                 db: db, userId: userId, annotation: newAnnotation, message: response
             )
 
+            return newAnnotation
         } catch {
             Self.logger.error("Error when creating annotation. \(error.localizedDescription)")
+            return nil
         }
     }
 
@@ -73,7 +75,7 @@ class AnnotationWebSocketController {
         userId: String,
         db: Database,
         annotation: Annotation
-    ) async {
+    ) async -> Annotation? {
         do {
             Self.logger.info("Processing update annotation data...")
 
@@ -85,8 +87,10 @@ class AnnotationWebSocketController {
                 db: db, userId: userId, annotation: updatedAnnotation, message: response
             )
 
+            return updatedAnnotation
         } catch {
             Self.logger.error("Error when updating annotation. \(error.localizedDescription)")
+            return nil
         }
     }
 
@@ -94,7 +98,7 @@ class AnnotationWebSocketController {
         userId: String,
         db: Database,
         annotation: Annotation
-    ) async {
+    ) async -> Annotation? {
         do {
             Self.logger.info("Processing delete annotation data...")
 
@@ -105,9 +109,42 @@ class AnnotationWebSocketController {
                 db: db, userId: userId, annotation: deletedAnnotation, message: response
             )
 
+            return deletedAnnotation
         } catch {
             Self.logger.error("Error when deleting annotation. \(error.localizedDescription)")
+            return nil
         }
+    }
+
+    static func handleOverrideServerAnnotations(
+        userId: String,
+        db: Database,
+        message: AnnotatoOfflineToOnlineMessage
+    ) async throws -> [Annotation] {
+        var responseAnnotations: [Annotation] = []
+
+        for annotation in message.annotations {
+            let resolvedAnnotation: Annotation?
+
+            if annotation.isDeleted {
+                resolvedAnnotation = await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
+            } else if await AnnotationDataAccess.canFindWithDeleted(db: db, annotationId: annotation.id) {
+                resolvedAnnotation = await Self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
+            } else {
+                resolvedAnnotation = await Self.handleCreateAnnotation(userId: userId, db: db, annotation: annotation)
+            }
+
+            responseAnnotations.appendIfNotNil(resolvedAnnotation)
+        }
+
+        let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
+            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
+
+        for annotation in newServerAnnotationsWhileOffline {
+            _ = await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
+        }
+
+        return responseAnnotations
     }
 
     private static func sendToAllAppropriateClients<T: Codable>(

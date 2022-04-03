@@ -75,9 +75,9 @@ class WebSocketController {
             case .crudAnnotation:
                 await AnnotationWebSocketController.handleCrudAnnotationData(userId: userId, data: data, db: db)
             case .offlineToOnline:
-                print("Not implemented yet. Do nothing.")
+                await OfflineToOnlineWebSocketController.handleOfflineToOnlineResolution(
+                    userId: userId, data: data, db: db)
             }
-
         } catch {
             Self.logger.error("Error when handling incoming data. \(error.localizedDescription)")
         }

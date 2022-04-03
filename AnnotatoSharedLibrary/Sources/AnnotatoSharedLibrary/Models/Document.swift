@@ -10,6 +10,10 @@ public final class Document: Codable {
     public private(set) var updatedAt: Date?
     public private(set) var deletedAt: Date?
 
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     public required init(
         name: String,
         ownerId: String,
@@ -70,5 +74,17 @@ extension Document: CustomStringConvertible {
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"
+    }
+}
+
+extension Document: Equatable {
+    public static func == (lhs: Document, rhs: Document) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension Document: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

@@ -31,13 +31,24 @@ extension AnnotationEntity {
     ///   - tx: The database instance in a transaction.
     ///   - annotation: The updated Annotation instance.
     func customUpdate(on tx: Database, usingUpdatedModel annotation: Annotation) async throws {
+        if annotation.isDeleted && !self.isDeleted {
+            try await self.customDelete(on: tx)
+            return
+        }
+
+        if annotation.isDeleted {
+            return
+        }
+
+        try await self.restore(on: tx)
         try await self.loadAssociations(on: tx)
         try await self.pruneOldAssociations(on: tx, usingUpdatedModel: annotation)
         self.copyPropertiesOf(otherEntity: AnnotationEntity.fromModel(annotation))
 
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
         for annotationText in annotationTexts {
-            if let annotationTextEntity = try await AnnotationTextEntity.find(annotationText.id, on: tx).get() {
+            if let annotationTextEntity = try await AnnotationTextEntity
+                .findWithDeleted(annotationText.id, on: tx).get() {
                 try await annotationTextEntity.customUpdate(on: tx, usingUpdatedModel: annotationText)
             } else {
                 let annotationTextEntity = AnnotationTextEntity.fromModel(annotationText)
@@ -47,8 +58,8 @@ extension AnnotationEntity {
 
         let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
         for annotationHandwriting in annotationHandwritings {
-            if let annotationHandwritingEntity = try await AnnotationHandwritingEntity.find(annotationHandwriting.id,
-                                                                                            on: tx).get() {
+            if let annotationHandwritingEntity = try await AnnotationHandwritingEntity
+                .findWithDeleted(annotationHandwriting.id, on: tx).get() {
                 try await annotationHandwritingEntity.customUpdate(on: tx, usingUpdatedModel: annotationHandwriting)
             } else {
                 let annotationHandwritingEntity = AnnotationHandwritingEntity.fromModel(annotationHandwriting)
@@ -57,7 +68,7 @@ extension AnnotationEntity {
         }
 
         let selectionBox = annotation.selectionBox
-        if let selectionBoxEntity = try await SelectionBoxEntity.find(selectionBox.id, on: tx).get() {
+        if let selectionBoxEntity = try await SelectionBoxEntity.findWithDeleted(selectionBox.id, on: tx).get() {
             try await selectionBoxEntity.customUpdate(on: tx, usingUpdatedModel: selectionBox)
         } else {
             let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
@@ -70,7 +81,8 @@ extension AnnotationEntity {
     /// Deletes the AnnotationEntity instance. Use this function to cascade deletes.
     /// - Parameter tx: The database instance in a transaction.
     func customDelete(on tx: Database) async throws {
-        try await self.loadAssociations(on: tx)
+        try await self.restore(on: tx)
+        try await self.loadAssociationsWithDeleted(on: tx)
 
         for textEntity in annotationTextEntities {
             try await textEntity.customDelete(on: tx)
@@ -89,6 +101,12 @@ extension AnnotationEntity {
         try await self.$annotationTextEntities.load(on: db).get()
         try await self.$selectionBox.load(on: db).get()
         try await self.$annotationHandwritingEntities.load(on: db).get()
+    }
+
+    func loadAssociationsWithDeleted(on db: Database) async throws {
+        try await self.$annotationTextEntities.loadWithDeleted(on: db).get()
+        try await self.$selectionBox.loadWithDeleted(on: db).get()
+        try await self.$annotationHandwritingEntities.loadWithDeleted(on: db).get()
     }
 
     func copyPropertiesOf(otherEntity: AnnotationEntity) {
