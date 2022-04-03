@@ -53,7 +53,7 @@ PersistenceManager *-down-> DocumentSharesPersistence
 OnlinePDFStorageManager .up|> PDFStorageManager
 OfflinePDFStorageManager .up|> PDFStorageManager
 
-'Represents clients of the StorageService'
+'Represents clients of Persistence'
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> AnnotatoPersistenceWrapper
 

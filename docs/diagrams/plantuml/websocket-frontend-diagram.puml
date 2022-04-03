@@ -1,0 +1,45 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+
+Package WebSocket {
+    class WebSocketManager {
+        {static} shared: WebSocketManager
+        ( - ) socket
+        isConnected: Bool
+        --
+        setUpSocket()
+        resetSocket()
+        listen()
+        send(message: Codable)
+        ( - ) handleResponseData(data: Data)
+    }
+
+    class DocumentWebSocketManager {
+        newDocument: Document?
+        updatedDocument: Document?
+        deletedDocument: Document?
+        --
+        handleResponseData(data: Data)
+    }
+
+    class AnnotationWebSocketManager {
+        newAnnotation: Annotation?
+        updatedAnnotation: Annotation?
+        deletedAnnotation: Annotation?
+        --
+        handleResponseData(data: Data)
+    }
+
+    WebSocketManager *--> "1" DocumentWebSocketManager
+    WebSocketManager *--> "1" AnnotationWebSocketManager
+}
+
+Class HiddenOutside #FFFFFF
+HiddenOutside .right.> DocumentWebSocketManager
+Class HiddenOutside1 #FFFFFF
+HiddenOutside1 .left.> AnnotationWebSocketManager
+
+@enduml
