@@ -96,6 +96,12 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         }
     }
 
+    func createOrUpdateDocumentForLocal(document: Document) async -> Document? {
+        AnnotatoLogger.error("This function should not be called",
+                             context: "RemoteDocumentsPersistence::createOrUpdateDocumentForLocal")
+        return nil
+    }
+
     private func encodeDocument(_ document: Document) -> Data? {
         do {
             let data = try JSONCustomEncoder().encode(document)

@@ -33,4 +33,13 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
 
         return Annotation.fromManagedEntity(deletedAnnotation)
     }
+
+    func createOrUpdateAnnotationForLocal(annotation: Annotation) -> Annotation? {
+        if let _ = LocalAnnotationEntityDataAccess.read(annotationId: annotation.id,
+                                                        withDeleted: true) {
+            return updateAnnotation(annotation: annotation)
+        } else {
+            return createAnnotation(annotation: annotation)
+        }
+    }
 }

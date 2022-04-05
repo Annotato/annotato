@@ -16,4 +16,10 @@ extension OfflinePersistenceService: AnnotationsPersistence {
         annotation.setDeletedAt(to: Date())
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
+
+    func createOrUpdateAnnotationForLocal(annotation: Annotation) async -> Annotation? {
+        AnnotatoLogger.error("This function should not be called",
+                             context: "OfflinePersistenceService::createOrUpdateAnnotationForLocal")
+        return nil
+    }
 }
