@@ -1,20 +1,16 @@
 import Foundation
 import CoreGraphics
 
-public final class Annotation: Codable, ObservableObject {
+public final class Annotation: Codable, Timestampable, ObservableObject {
     public let id: UUID
     public private(set) var width: Double
     public private(set) var parts: [AnnotationPart]
     public private(set) var selectionBox: SelectionBox
     public let ownerId: String
     public let documentId: UUID
-    public private(set) var createdAt: Date?
-    public private(set) var updatedAt: Date?
-    public private(set) var deletedAt: Date?
-
-    public var isDeleted: Bool {
-        deletedAt != nil
-    }
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     var nonDeletedParts: [AnnotationPart] {
         parts.filter({ !$0.isDeleted })

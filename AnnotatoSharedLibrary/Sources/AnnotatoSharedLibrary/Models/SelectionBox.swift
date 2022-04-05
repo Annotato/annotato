@@ -2,17 +2,13 @@ import Foundation
 import Combine
 import CoreGraphics
 
-public final class SelectionBox: Codable, ObservableObject {
+public final class SelectionBox: Codable, Timestampable, ObservableObject {
     public let id: UUID
     public let startPoint: CGPoint
     public var annotationId: UUID
-    public private(set) var createdAt: Date?
-    public private(set) var updatedAt: Date?
-    public private(set) var deletedAt: Date?
-
-    public var isDeleted: Bool {
-        deletedAt != nil
-    }
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     @Published public private(set) var endPoint: CGPoint
 
@@ -68,21 +64,6 @@ public final class SelectionBox: Codable, ObservableObject {
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
-    }
-}
-
-// MARK: Timestamps
-extension SelectionBox {
-    public func setCreatedAt(to createdAt: Date) {
-        self.createdAt = createdAt
-    }
-
-    public func setUpdatedAt(to updatedAt: Date) {
-        self.updatedAt = updatedAt
-    }
-
-    public func setDeletedAt(to deletedAt: Date) {
-        self.deletedAt = deletedAt
     }
 }
 

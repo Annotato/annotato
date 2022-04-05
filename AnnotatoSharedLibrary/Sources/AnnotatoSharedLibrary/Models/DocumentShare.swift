@@ -1,12 +1,12 @@
 import Foundation
 
-public final class DocumentShare: Codable {
+public final class DocumentShare: Codable, Timestampable {
     public let id: UUID
     public private(set) var documentId: UUID
     public private(set) var recipientId: String
-    public let createdAt: Date?
-    public let updatedAt: Date?
-    public let deletedAt: Date?
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     public required init(
         documentId: UUID,
