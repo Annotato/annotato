@@ -8,4 +8,5 @@ protocol DocumentsPersistence {
     func createDocument(document: Document) async -> Document?
     func updateDocument(document: Document) async -> Document?
     func deleteDocument(document: Document) async -> Document?
+    func createOrUpdateDocuments(documents: [Document]) -> [Document]?
 }

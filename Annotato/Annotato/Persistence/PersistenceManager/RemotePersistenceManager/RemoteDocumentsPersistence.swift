@@ -96,6 +96,11 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         }
     }
 
+    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
+        fatalError("RemoteDocumentsPersistence::createOrUpdateDocuments: This function should not be called")
+        return nil
+    }
+
     private func encodeDocument(_ document: Document) -> Data? {
         do {
             let data = try JSONCustomEncoder().encode(document)

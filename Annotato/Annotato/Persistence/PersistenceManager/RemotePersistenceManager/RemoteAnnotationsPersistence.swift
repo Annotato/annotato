@@ -8,7 +8,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
 
         WebSocketManager.shared.send(message: webSocketMessage)
 
-        // We do not get any reponse for the sender from the websocket
+        // We do not get any response for the sender from the websocket
         return nil
     }
 
@@ -19,7 +19,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
 
         WebSocketManager.shared.send(message: webSocketMessage)
 
-        // We do not get any reponse for the sender from the websocket
+        // We do not get any response for the sender from the websocket
         return nil
     }
 
@@ -30,7 +30,12 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
 
         WebSocketManager.shared.send(message: webSocketMessage)
 
-        // We do not get any reponse for the sender from the websocket
+        // We do not get any response for the sender from the websocket
+        return nil
+    }
+
+    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+        fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotations: This function should not be called")
         return nil
     }
 }

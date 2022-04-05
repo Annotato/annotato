@@ -28,4 +28,8 @@ extension OfflinePersistenceService: DocumentsPersistence {
         document.setDeletedAt(to: Date())
         return await localPersistence.documents.deleteDocument(document: document)
     }
+
+    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
+        localPersistence.documents.createOrUpdateDocuments(documents: documents)
+    }
 }

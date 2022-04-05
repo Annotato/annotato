@@ -13,4 +13,8 @@ extension OnlinePersistenceService: AnnotationsPersistence {
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
         await remotePersistence.annotations.deleteAnnotation(annotation: annotation)
     }
+
+    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+        localPersistence.annotations.createOrUpdateAnnotations(annotations: annotations)
+    }
 }

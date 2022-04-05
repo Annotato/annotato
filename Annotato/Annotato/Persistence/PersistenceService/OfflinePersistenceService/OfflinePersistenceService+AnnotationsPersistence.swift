@@ -16,4 +16,8 @@ extension OfflinePersistenceService: AnnotationsPersistence {
         annotation.setDeletedAt(to: Date())
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
+
+    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+        localPersistence.annotations.createOrUpdateAnnotations(annotations: annotations)
+    }
 }
