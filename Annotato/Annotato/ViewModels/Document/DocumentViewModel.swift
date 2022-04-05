@@ -109,6 +109,10 @@ extension DocumentViewModel {
     }
 
     func receiveNewAnnotation(newAnnotation: Annotation) {
+        guard !newAnnotation.isDeleted else {
+            return
+        }
+
         self.model.addAnnotation(annotation: newAnnotation)
         let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
         self.annotations.append(annotationViewModel)
@@ -117,7 +121,11 @@ extension DocumentViewModel {
 
     func receiveUpdateAnnotation(updatedAnnotation: Annotation) {
         if let annotationViewModel = annotations.first(where: { $0.id == updatedAnnotation.id }) {
-            annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
+            if updatedAnnotation.isDeleted {
+                receiveDeleteAnnotation(deletedAnnotation: updatedAnnotation)
+            } else {
+                annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
+            }
         } else {
             let annotationViewModel = AnnotationViewModel(model: updatedAnnotation, document: self)
             self.annotations.append(annotationViewModel)
@@ -135,6 +143,10 @@ extension DocumentViewModel {
     }
 
     func receiveDeleteAnnotation(deletedAnnotation: Annotation) {
+        guard deletedAnnotation.isDeleted else {
+            return
+        }
+
         model.removeAnnotation(annotation: deletedAnnotation)
         let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
         annotationViewModel?.receiveDelete()

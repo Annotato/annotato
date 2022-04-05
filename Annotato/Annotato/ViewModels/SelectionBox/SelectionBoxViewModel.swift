@@ -26,6 +26,10 @@ class SelectionBoxViewModel: ObservableObject {
     }
 
     func receiveDelete() {
+        guard model.isDeleted else {
+            return
+        }
+
         self.isRemoved = true
     }
 }
