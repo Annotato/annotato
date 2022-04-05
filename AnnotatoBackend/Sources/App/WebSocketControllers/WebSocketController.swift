@@ -84,13 +84,12 @@ class WebSocketController {
     }
 
     private static func addToOpenConnectionsIfNotConnected(userId: String, webSocket: WebSocket) {
-        guard openConnections[userId] == nil else {
-            Self.logger.error("Client with \(userId) already has an open connection! Closing WebSocket connection...")
-            _ = webSocket.close()
-            return
+        if openConnections[userId] != nil {
+            Self.logger.error("Closing previous WebSocket connection for user with id \(userId)...")
+            _ = openConnections[userId]?.close()
         }
 
-        Self.logger.info("Adding websocket connection for user with id \(userId)")
+        Self.logger.info("Adding new websocket connection for user with id \(userId)")
 
         openConnections[userId] = webSocket
     }
