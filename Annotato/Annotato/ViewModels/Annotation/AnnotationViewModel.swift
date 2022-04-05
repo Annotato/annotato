@@ -49,8 +49,9 @@ class AnnotationViewModel: ObservableObject {
     }
 
     private func populatePartViewModels(model: Annotation) {
-        for part in model.parts {
+        for part in model.parts where !part.isDeleted {
             let partViewModel: AnnotationPartViewModel
+
             switch part {
             case let textPart as AnnotationText:
                 switch textPart.type {

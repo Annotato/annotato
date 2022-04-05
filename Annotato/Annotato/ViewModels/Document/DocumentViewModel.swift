@@ -17,7 +17,9 @@ class DocumentViewModel: ObservableObject {
     init(model: Document) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
-        self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
+        self.annotations = model.annotations
+            .filter { !$0.isDeleted }
+            .map { AnnotationViewModel(model: $0, document: self) }
     }
 
     func setAllAnnotationsOutOfFocus() {

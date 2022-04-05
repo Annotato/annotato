@@ -7,7 +7,9 @@ struct DocumentController {
             return []
         }
 
-        return documents.map { DocumentListViewModel(document: $0, isShared: false) }
+        return documents
+            .filter { !$0.isDeleted }
+            .map { DocumentListViewModel(document: $0, isShared: false) }
     }
 
     static func loadSharedDocuments(userId: String) async -> [DocumentListViewModel] {
@@ -16,7 +18,9 @@ struct DocumentController {
             return []
         }
 
-        return documents.map { DocumentListViewModel(document: $0, isShared: true) }
+        return documents
+            .filter { !$0.isDeleted }
+            .map { DocumentListViewModel(document: $0, isShared: true) }
     }
 
     static func loadAllDocuments(userId: String) async -> [DocumentListViewModel] {
@@ -27,7 +31,7 @@ struct DocumentController {
         return sortedDocuments
     }
 
-    static func loadDocument(documentId: UUID) async -> DocumentViewModel? {
+    static func loadDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
         let document = await AnnotatoPersistenceWrapper.currentPersistenceService.getDocument(documentId: documentId)
         guard let document = document else {
             return nil
@@ -36,7 +40,7 @@ struct DocumentController {
         return DocumentViewModel(model: document)
     }
 
-    @discardableResult static func updateDocument(document: DocumentViewModel) async -> DocumentViewModel? {
+    @discardableResult static func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
         let updatedDocument = await AnnotatoPersistenceWrapper
             .currentPersistenceService.updateDocument(document: document.model)
         guard let updatedDocument = updatedDocument else {

@@ -14,6 +14,10 @@ public protocol AnnotationPart: AnyObject, Codable {
 }
 
 extension AnnotationPart {
+    public var isDeleted: Bool {
+        deletedAt != nil
+    }
+
     public func setHeight(to newHeight: Double) {
         self.height = newHeight
     }

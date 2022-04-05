@@ -31,7 +31,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documentViewModel = await DocumentController.loadDocument(documentId: documentId)
+            documentViewModel = await DocumentController.loadDocumentWithDeleted(documentId: documentId)
             stopSpinner()
 
             initializeDocumentView()
@@ -80,7 +80,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 return
             }
 
-            await DocumentController.updateDocument(document: documentViewModel)
+            await DocumentController.updateDocumentWithDeleted(document: documentViewModel)
         }
     }
 }
