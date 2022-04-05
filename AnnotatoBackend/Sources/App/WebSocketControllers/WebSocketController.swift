@@ -16,14 +16,13 @@ class WebSocketController {
         }
 
         req.logger.info("Client with ID: \(userId) connected!")
-        addToOpenConnectionsIfNotConnected(userId: userId, webSocket: webSocket)
+        addToOpenConnections(userId: userId, incomingWebSocket: webSocket)
 
         webSocket.onBinary(handleBinaryData(userId: userId, db: req.db))
         webSocket.onText(handleTextData(userId: userId, db: req.db))
 
         webSocket.onClose.whenComplete { _ in
-            req.logger.info("Client with ID: \(userId) disconnected!")
-            Self.handleClosedConnection(userId: userId)
+            Self.logger.info("Closed websocket connection for user with id \(userId)")
         }
     }
 
@@ -83,22 +82,15 @@ class WebSocketController {
         }
     }
 
-    private static func addToOpenConnectionsIfNotConnected(userId: String, webSocket: WebSocket) {
-        guard openConnections[userId] == nil else {
-            Self.logger.error("Client with \(userId) already has an open connection! Closing WebSocket connection...")
-            _ = webSocket.close()
-            return
+    private static func addToOpenConnections(userId: String, incomingWebSocket: WebSocket) {
+        if let existingWebSocket = openConnections[userId] {
+            Self.logger.error("Closing previous WebSocket connection for user with id \(userId)...")
+            _ = existingWebSocket.close()
+            openConnections.removeValue(forKey: userId)
         }
 
-        Self.logger.info("Adding websocket connection for user with id \(userId)")
+        Self.logger.info("Adding new websocket connection for user with id \(userId)")
 
-        openConnections[userId] = webSocket
-    }
-
-    private static func handleClosedConnection(userId: String) {
-        Self.logger.info("Closing websocket connection for user with id \(userId)")
-
-        _ = openConnections[userId]?.close()
-        openConnections.removeValue(forKey: userId)
+        openConnections[userId] = incomingWebSocket
     }
 }

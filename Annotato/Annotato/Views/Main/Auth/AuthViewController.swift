@@ -95,6 +95,7 @@ extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
     }
 
     func logInDidSucceed() {
+        WebSocketManager.shared.setUpSocket()
         goToDocumentList(asNewRootViewController: true)
     }
 

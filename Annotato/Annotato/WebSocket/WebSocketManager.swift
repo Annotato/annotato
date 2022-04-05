@@ -3,14 +3,10 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager {
     static let shared = WebSocketManager()
-    private static let unavailableDestinationHostErrorCode = 54
-    private static let unconnectedSocketErrorCode = 57
-    private static let connectionTimeOutErrorCode = 60
 
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
-    private(set) var isConnected = false
 
     private init() { }
 
@@ -41,38 +37,26 @@ class WebSocketManager {
     func listen() {
         AnnotatoLogger.info("Websocket connection listening for events...")
 
-        // swiftlint:disable closure_body_length
         socket?.receive { [weak self] result in
-            guard let self = self else {
-                return
-            }
             switch result {
             case .failure(let error):
                 AnnotatoLogger.error(error.localizedDescription)
-                let errorCode = (error as NSError).code
-                if errorCode == WebSocketManager.unavailableDestinationHostErrorCode ||
-                    errorCode == WebSocketManager.unconnectedSocketErrorCode ||
-                    errorCode == WebSocketManager.connectionTimeOutErrorCode {
-                    self.storeLastOnlineLocally(to: Date())
-                    self.isConnected = false
-                }
             case .success(let message):
-                self.isConnected = true
                 switch message {
                 case .data(let data):
-                    self.handleResponseData(data: data)
+                    self?.handleResponseData(data: data)
                 case .string(let str):
                     guard let data = str.data(using: .utf8) else {
                         return
                     }
-                    self.handleResponseData(data: data)
+                    self?.handleResponseData(data: data)
                 @unknown default:
                     break
                 }
             }
 
             // We need to re-register the callback closure after a message is received
-            self.listen()
+            self?.listen()
         }
     }
 
@@ -85,7 +69,7 @@ class WebSocketManager {
                 if let error = error {
                     AnnotatoLogger.error(
                         "While sending data. \(error.localizedDescription).",
-                        context: "WebSocketManager:send:"
+                        context: "WebSocketManager::send"
                     )
                 }
             }
@@ -93,7 +77,7 @@ class WebSocketManager {
         } catch {
             AnnotatoLogger.error(
                 "When sending data. \(error.localizedDescription).",
-                context: "WebSocketManager:send:"
+                context: "WebSocketManager::send"
             )
         }
     }
@@ -116,31 +100,8 @@ class WebSocketManager {
         } catch {
             AnnotatoLogger.error(
                 "When handling reponse data. \(error.localizedDescription).",
-                context: "WebSocketManager:handleResponseData:"
+                context: "WebSocketManager::handleResponseData"
             )
         }
-    }
-}
-
-// MARK: Storing last online time in UserDefaults
-extension WebSocketManager {
-    private static let lastOnlineKey = "lastOnline"
-
-    private func storeLastOnlineLocally(to lastOnline: Date) {
-        UserDefaults.standard.set(lastOnline, forKey: WebSocketManager.lastOnlineKey)
-    }
-
-    func getLastOnline() -> Date? {
-        if isConnected {
-            return Date()
-        }
-        guard let lastOnline = UserDefaults.standard.object(
-            forKey: WebSocketManager.lastOnlineKey) as? Date else {
-            let value = UserDefaults.standard.object(forKey: WebSocketManager.lastOnlineKey)
-            AnnotatoLogger.error("Failed to read last online from user defaults. We get: \(String(describing: value))",
-                                 context: "WebSocketManager::getLastOnline")
-            return nil
-        }
-        return lastOnline
     }
 }
