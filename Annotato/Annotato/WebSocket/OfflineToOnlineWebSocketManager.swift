@@ -21,4 +21,21 @@ class OfflineToOnlineWebSocketManager {
                                  context: "OfflineToOnlineWebSocketManager::handleResponseData")
         }
     }
+
+    func sendOnlineMessage(mergeStrategy: AnnotatoOfflineToOnlineMergeStrategy) {
+        guard let lastOnlineDatetime = NetworkMonitor.shared.getLastOnlineDatetime() else {
+            return
+        }
+
+        let documents = LocalPersistenceManager.shared
+            .fetchDocumentsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
+        let annotations = LocalPersistenceManager.shared
+            .fetchAnnoationsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
+
+        let message = AnnotatoOfflineToOnlineMessage(mergeStrategy: mergeStrategy,
+                                                     lastOnlineAt: lastOnlineDatetime,
+                                                     documents: documents, annotations: annotations)
+
+        WebSocketManager.shared.send(message: message)
+    }
 }

@@ -47,15 +47,13 @@ extension UIViewController {
                                                 preferredStyle: .alert)
 
         alertController.addAction(UIAlertAction(title: "Discard Local Changes",
-                                                style: .default) { [weak self] _ in
-            print("Discarding local changes...")
-            self?.viewWillAppear(true)
+                                                style: .default) { _ in
+            OfflineToOnlineWebSocketManager().sendOnlineMessage(mergeStrategy: .keepServerVersion)
         })
 
         alertController.addAction(UIAlertAction(title: "Override with Local Changes",
-                                                style: .default) { [weak self] _ in
-            print("Overriding with local changes...")
-            self?.viewWillAppear(true)
+                                                style: .default) { _ in
+            OfflineToOnlineWebSocketManager().sendOnlineMessage(mergeStrategy: .keepServerVersion)
         })
 
         return alertController

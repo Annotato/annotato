@@ -15,6 +15,14 @@ extension Timestampable {
         deletedAt != nil
     }
 
+    public func wasUpdated(after date: Date) -> Bool {
+        guard let updatedAt = updatedAt else {
+            return false
+        }
+
+        return updatedAt > date
+    }
+
     public func setCreatedAt(to createdAt: Date) {
         self.createdAt = createdAt
     }

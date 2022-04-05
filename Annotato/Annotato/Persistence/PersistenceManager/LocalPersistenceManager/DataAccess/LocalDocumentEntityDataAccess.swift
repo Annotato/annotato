@@ -32,6 +32,20 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
+    static func listUpdatedAfterDate(date: Date) -> [DocumentEntity]? {
+        let request = DocumentEntity.fetchRequest()
+
+        do {
+            let documentEntities = try context.fetch(request).filter { $0.wasUpdated(after: date) }
+
+            return documentEntities
+        } catch {
+            AnnotatoLogger.error("When fetching updated document entities after date. \(String(describing: error))",
+                                 context: "LocalDocumentEntityDataAccess::listUpdatedAfterDate")
+            return nil
+        }
+    }
+
     static func create(document: Document) -> DocumentEntity? {
         context.performAndWait {
             context.rollback()
