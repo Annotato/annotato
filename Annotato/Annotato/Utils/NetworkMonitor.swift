@@ -5,10 +5,11 @@ class NetworkMonitor {
     static let shared = NetworkMonitor()
 
     private(set) var isConnected = false
+    private let queue = DispatchQueue.global()
     private let monitor = NWPathMonitor()
 
     func start() {
-        monitor.start(queue: DispatchQueue.global())
+        monitor.start(queue: queue)
         monitor.pathUpdateHandler = { [weak self] path in
             AnnotatoLogger.info("Detected a change in internet connection status...")
 

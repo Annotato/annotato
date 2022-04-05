@@ -21,6 +21,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeImportMenu()
         view.bringSubviewToFront(importMenu)
 
+        NetworkMonitor.shared.start()
         WebSocketManager.shared.setUpSocket()
     }
 
