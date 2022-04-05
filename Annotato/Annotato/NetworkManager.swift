@@ -1,4 +1,3 @@
-import Reachability
 import Network
 
 class NetworkManager {
