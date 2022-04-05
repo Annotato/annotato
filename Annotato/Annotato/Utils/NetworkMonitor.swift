@@ -16,7 +16,15 @@ class NetworkMonitor {
                 return
             }
 
-            self.isConnected = path.status == .satisfied
+            let isCurrentlyConnected = path.status == .satisfied
+
+            // If user goes from offline to online, re-establish websocket connection
+            if !self.isConnected && isCurrentlyConnected {
+                WebSocketManager.shared.resetSocket()
+                WebSocketManager.shared.setUpSocket()
+            }
+
+            self.isConnected = isCurrentlyConnected
             AnnotatoLogger.info("Setting isConnected to \(self.isConnected)")
 
             if !self.isConnected {
