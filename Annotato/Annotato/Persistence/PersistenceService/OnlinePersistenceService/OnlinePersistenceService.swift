@@ -10,18 +10,18 @@ struct OnlinePersistenceService: PersistenceService {
         self.localPersistence = localPersistence
     }
 
-    func fastForwardLocalDocuments(documents: [Document]) async {
+    func fastForwardLocalDocuments(documents: [Document]) {
         for document in documents {
-            guard let _ = await self.createOrUpdateDocumentForLocal(document: document) else {
+            guard self.createOrUpdateDocumentForLocal(document: document) != nil else {
                 AnnotatoLogger.error("Error when syncing this document to local: \(document)")
                 continue
             }
         }
     }
 
-    func fastForwardLocalAnnotations(annotations: [Annotation]) async {
+    func fastForwardLocalAnnotations(annotations: [Annotation]) {
         for annotation in annotations {
-            guard let _ = await self.createOrUpdateAnnotationForLocal(annotation: annotation) else {
+            guard self.createOrUpdateAnnotationForLocal(annotation: annotation) != nil else {
                 AnnotatoLogger.error("Error when syncing this annotation to local: \(annotation)")
                 continue
             }

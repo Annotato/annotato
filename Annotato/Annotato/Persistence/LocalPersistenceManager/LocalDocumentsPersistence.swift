@@ -66,8 +66,8 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func createOrUpdateDocumentForLocal(document: Document) -> Document? {
-        if let _ = LocalDocumentEntityDataAccess.read(documentId: document.id,
-                                                      withDeleted: true) {
+        if LocalDocumentEntityDataAccess.read(documentId: document.id,
+                                              withDeleted: true) != nil {
             return updateDocument(document: document)
         } else {
             return createDocument(document: document)

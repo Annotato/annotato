@@ -8,13 +8,13 @@ struct OfflinePersistenceService: PersistenceService {
         self.localPersistence = localPersistence
     }
 
-    func fastForwardLocalDocuments(documents: [Document]) async {
+    func fastForwardLocalDocuments(documents: [Document]) {
         AnnotatoLogger.error("This function should not be called",
                              context: "OfflinePersistenceService::fastForwardLocalDocuments")
         return
     }
 
-    func fastForwardLocalAnnotations(annotations: [Annotation]) async {
+    func fastForwardLocalAnnotations(annotations: [Annotation]) {
         AnnotatoLogger.error("This function should not be called",
                              context: "OfflinePersistenceService::fastForwardLocalAnnotations")
         return

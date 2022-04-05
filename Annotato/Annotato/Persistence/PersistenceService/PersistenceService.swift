@@ -1,6 +1,6 @@
 import AnnotatoSharedLibrary
 
 protocol PersistenceService: AnnotationsPersistence, DocumentsPersistence, DocumentSharesPersistence {
-    func fastForwardLocalDocuments(documents: [Document]) async
-    func fastForwardLocalAnnotations(annotations: [Annotation]) async
+    func fastForwardLocalDocuments(documents: [Document])
+    func fastForwardLocalAnnotations(annotations: [Annotation])
 }
