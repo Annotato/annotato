@@ -51,4 +51,13 @@ extension OnlinePersistenceService: DocumentsPersistence {
         }
         return deletedDocumentLocal
     }
+
+    func createOrUpdateDocumentForLocal(document: Document) -> Document? {
+        guard let localDocumentsPersistence = localPersistence.documents as? LocalDocumentsPersistence else {
+            AnnotatoLogger.error("Cannot cast local documents persistence",
+                                 context: "OnlinePersistenceService::createOrUpdateDocumentForLocal")
+            return nil
+        }
+        return localDocumentsPersistence.createOrUpdateDocumentForLocal(document: document)
+    }
 }

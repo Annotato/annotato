@@ -64,4 +64,13 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
 
         return Document.fromManagedEntity(deletedDocument)
     }
+
+    func createOrUpdateDocumentForLocal(document: Document) -> Document? {
+        if LocalDocumentEntityDataAccess.read(documentId: document.id,
+                                              withDeleted: true) != nil {
+            return updateDocument(document: document)
+        } else {
+            return createDocument(document: document)
+        }
+    }
 }

@@ -7,6 +7,8 @@ class WebSocketManager {
     private(set) var socket: URLSessionWebSocketTask?
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
+    let offlineToOnlineManager = OfflineToOnlineWebSocketManager()
+    private(set) var isConnected = false
 
     private init() { }
 
@@ -94,7 +96,7 @@ class WebSocketManager {
             case .crudAnnotation:
                 annotationManager.handleResponseData(data: data)
             case .offlineToOnline:
-                print("Not implemented yet. Do nothing.")
+                offlineToOnlineManager.handleResponseData(data: data)
             }
 
         } catch {

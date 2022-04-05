@@ -28,4 +28,10 @@ extension OfflinePersistenceService: DocumentsPersistence {
         document.setDeletedAt(to: Date())
         return await localPersistence.documents.deleteDocument(document: document)
     }
+
+    func createOrUpdateDocumentForLocal(document: Document) async -> Document? {
+        AnnotatoLogger.error("This function should not be called",
+                             context: "OfflinePersistenceService::createOrUpdateDocumentForLocal")
+        return nil
+    }
 }
