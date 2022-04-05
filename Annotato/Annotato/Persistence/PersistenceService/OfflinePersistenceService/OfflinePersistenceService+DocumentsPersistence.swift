@@ -29,9 +29,8 @@ extension OfflinePersistenceService: DocumentsPersistence {
         return await localPersistence.documents.deleteDocument(document: document)
     }
 
-    func createOrUpdateDocumentForLocal(document: Document) async -> Document? {
-        AnnotatoLogger.error("This function should not be called",
-                             context: "OfflinePersistenceService::createOrUpdateDocumentForLocal")
+    func createOrUpdateDocumentsForLocal(documents: [Document]) -> [Document]? {
+        fatalError("OfflinePersistenceService::createOrUpdateDocumentForLocal: This function should not be called")
         return nil
     }
 }

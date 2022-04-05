@@ -96,9 +96,8 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         }
     }
 
-    func createOrUpdateDocumentForLocal(document: Document) async -> Document? {
-        AnnotatoLogger.error("This function should not be called",
-                             context: "RemoteDocumentsPersistence::createOrUpdateDocumentForLocal")
+    func createOrUpdateDocumentsForLocal(documents: [Document]) -> [Document]? {
+        fatalError("RemoteDocumentsPersistence::createOrUpdateDocumentForLocal: This function should not be called")
         return nil
     }
 

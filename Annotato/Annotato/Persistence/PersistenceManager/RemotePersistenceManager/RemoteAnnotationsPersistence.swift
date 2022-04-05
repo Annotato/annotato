@@ -34,9 +34,8 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
         return nil
     }
 
-    func createOrUpdateAnnotationForLocal(annotation: Annotation) async -> Annotation? {
-        AnnotatoLogger.error("This function should not be called",
-                             context: "RemoteAnnotationsPersistence::createOrUpdateAnnotationForLocal")
+    func createOrUpdateAnnotationsForLocal(annotations: [Annotation]) -> [Annotation]? {
+        fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotationForLocal: This function should not be called")
         return nil
     }
 }

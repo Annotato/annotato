@@ -32,7 +32,17 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
         return Annotation.fromManagedEntity(deletedAnnotation)
     }
 
-    func createOrUpdateAnnotationForLocal(annotation: Annotation) -> Annotation? {
+    func createOrUpdateAnnotationsForLocal(annotations: [Annotation]) -> [Annotation]? {
+        var savedAnnotations: [Annotation] = []
+        for annotation in annotations {
+            if let savedAnnotation = createOrUpdateAnnotationForLocal(annotation: annotation) {
+                savedAnnotations.append(savedAnnotation)
+            }
+        }
+        return savedAnnotations
+    }
+
+    private func createOrUpdateAnnotationForLocal(annotation: Annotation) -> Annotation? {
         if LocalAnnotationEntityDataAccess.read(annotationId: annotation.id,
                                                 withDeleted: true) != nil {
             return updateAnnotation(annotation: annotation)

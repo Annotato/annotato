@@ -17,9 +17,8 @@ extension OfflinePersistenceService: AnnotationsPersistence {
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
-    func createOrUpdateAnnotationForLocal(annotation: Annotation) async -> Annotation? {
-        AnnotatoLogger.error("This function should not be called",
-                             context: "OfflinePersistenceService::createOrUpdateAnnotationForLocal")
+    func createOrUpdateAnnotationsForLocal(annotations: [Annotation]) -> [Annotation]? {
+        fatalError("OfflinePersistenceService::createOrUpdateAnnotationForLocal: This function should not be called")
         return nil
     }
 }
