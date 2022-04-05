@@ -21,6 +21,7 @@ struct OnlinePersistenceService: PersistenceService {
     }
 
     func fastForwardLocalAnnotations(annotations: [Annotation]) {
+        print("Online fast forwarding local annotations")
         for annotation in annotations {
             guard self.createOrUpdateAnnotationForLocal(annotation: annotation) != nil else {
                 AnnotatoLogger.error("Error when syncing this annotation to local: \(annotation)")
