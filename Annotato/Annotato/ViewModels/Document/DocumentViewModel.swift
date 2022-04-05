@@ -17,7 +17,9 @@ class DocumentViewModel: ObservableObject {
     init(model: Document) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
-        self.annotations = model.annotations.map { AnnotationViewModel(model: $0, document: self) }
+        self.annotations = model.annotations
+            .filter { !$0.isDeleted }
+            .map { AnnotationViewModel(model: $0, document: self) }
     }
 
     func setAllAnnotationsOutOfFocus() {
@@ -107,6 +109,10 @@ extension DocumentViewModel {
     }
 
     func receiveNewAnnotation(newAnnotation: Annotation) {
+        guard !newAnnotation.isDeleted else {
+            return
+        }
+
         self.model.addAnnotation(annotation: newAnnotation)
         let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
         self.annotations.append(annotationViewModel)
@@ -115,12 +121,21 @@ extension DocumentViewModel {
 
     func receiveUpdateAnnotation(updatedAnnotation: Annotation) {
         if let annotationViewModel = annotations.first(where: { $0.id == updatedAnnotation.id }) {
-            annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
+            if updatedAnnotation.isDeleted {
+                receiveDeleteAnnotation(deletedAnnotation: updatedAnnotation)
+            } else {
+                annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
+            }
         } else {
-            let annotationViewModel = AnnotationViewModel(model: updatedAnnotation, document: self)
-            self.annotations.append(annotationViewModel)
-            self.addedAnnotation = annotationViewModel
+            receiveRestoreDeletedAnnotation(annotation: updatedAnnotation)
         }
+    }
+
+    private func receiveRestoreDeletedAnnotation(annotation: Annotation) {
+        model.receiveRestoreDeletedAnnotation(annotation: annotation)
+        let annotationViewModel = AnnotationViewModel(model: annotation, document: self)
+        self.annotations.append(annotationViewModel)
+        self.addedAnnotation = annotationViewModel
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {
@@ -133,6 +148,10 @@ extension DocumentViewModel {
     }
 
     func receiveDeleteAnnotation(deletedAnnotation: Annotation) {
+        guard deletedAnnotation.isDeleted else {
+            return
+        }
+
         model.removeAnnotation(annotation: deletedAnnotation)
         let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
         annotationViewModel?.receiveDelete()

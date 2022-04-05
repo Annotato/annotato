@@ -49,8 +49,9 @@ class AnnotationViewModel: ObservableObject {
     }
 
     private func populatePartViewModels(model: Annotation) {
-        for part in model.parts {
+        for part in model.parts where !part.isDeleted {
             let partViewModel: AnnotationPartViewModel
+
             switch part {
             case let textPart as AnnotationText:
                 switch textPart.type {
@@ -122,8 +123,14 @@ extension AnnotationViewModel {
         }
     }
 
+    var partsTotalHeight: Double {
+        parts.reduce(0, { acc, part in
+            acc + part.height
+        })
+    }
+
     var height: Double {
-        min(palette.height + model.partHeights, maxHeight)
+        min(palette.height + partsTotalHeight, maxHeight)
     }
 
     var minimizedHeight: Double {
@@ -152,12 +159,12 @@ extension AnnotationViewModel {
 
     // Note: scrollFrame is with respect to this frame
     var scrollFrame: CGRect {
-        CGRect(x: .zero, y: palette.height, width: model.width, height: model.partHeights)
+        CGRect(x: .zero, y: palette.height, width: model.width, height: partsTotalHeight)
     }
 
     // Note: partsFrame is with respect to scrollFrame
     var partsFrame: CGRect {
-        CGRect(x: .zero, y: .zero, width: model.width, height: model.partHeights)
+        CGRect(x: .zero, y: .zero, width: model.width, height: partsTotalHeight)
     }
 
     func hasExceededBounds(bounds: CGRect) -> Bool {
@@ -275,11 +282,19 @@ extension AnnotationViewModel {
     }
 
     func receiveDelete() {
+        guard model.isDeleted else {
+            return
+        }
+
         isRemoved = true
         selectionBox.receiveDelete()
     }
 
     func receiveUpdate(updatedAnnotation: Annotation) {
+        guard !model.isDeleted else {
+            return
+        }
+
         self.model = updatedAnnotation
 
         self.cancellables = []

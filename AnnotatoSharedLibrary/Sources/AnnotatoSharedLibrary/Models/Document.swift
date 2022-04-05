@@ -41,6 +41,11 @@ public final class Document: Codable {
     public func removeAnnotation(annotation: Annotation) {
         annotations.removeAll(where: { $0.id == annotation.id })
     }
+
+    public func receiveRestoreDeletedAnnotation(annotation: Annotation) {
+        annotations.removeAll(where: { $0.id == annotation.id })
+        annotations.append(annotation)
+    }
 }
 
 // MARK: Timestamps
