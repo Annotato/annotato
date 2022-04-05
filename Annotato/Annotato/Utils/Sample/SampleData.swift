@@ -7,8 +7,6 @@ class SampleData {
         Document(name: "Clean Code", ownerId: "owner123", baseFileUrl: firebasePdfUrlString, id: UUID())
     }
 
-    static var examplePdfDocument = PdfViewModel(baseFileUrl: exampleUrlLab01Qns)
-
     static var exampleUrlLab01Qns: URL {
         guard let baseFileUrl = Bundle.main.url(forResource: "Lab01Qns", withExtension: "pdf") else {
             fatalError("example baseFileUrl not valid")

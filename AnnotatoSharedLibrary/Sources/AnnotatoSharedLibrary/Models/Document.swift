@@ -4,7 +4,7 @@ public final class Document: Codable {
     public var id: UUID
     public private(set) var name: String
     public let ownerId: String
-    public let baseFileUrl: String
+    public let baseFileUrl: String?
     public private(set) var annotations: [Annotation]
     public private(set) var createdAt: Date?
     public private(set) var updatedAt: Date?
@@ -17,7 +17,7 @@ public final class Document: Codable {
     public required init(
         name: String,
         ownerId: String,
-        baseFileUrl: String,
+        baseFileUrl: String?,
         annotations: [Annotation] = [],
         id: UUID? = nil,
         createdAt: Date? = nil,
@@ -67,10 +67,17 @@ extension Document {
     }
 }
 
+extension Document {
+    public var localFileUrl: URL {
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return directory.appendingPathComponent(id.uuidString).appendingPathExtension("pdf")
+    }
+}
+
 extension Document: CustomStringConvertible {
     public var description: String {
         "Document(id: \(id), name: \(name), ownerId: \(ownerId), " +
-        "baseFileUrl: \(baseFileUrl), annotations: \(annotations)), " +
+        "baseFileUrl: \(String(describing: baseFileUrl)), annotations: \(annotations)), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"

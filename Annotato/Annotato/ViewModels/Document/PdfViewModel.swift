@@ -1,14 +1,27 @@
-import UIKit
 import PDFKit
+import AnnotatoSharedLibrary
 
 class PdfViewModel {
     let autoScales = true
     let document: PDFDocument
 
-    init(baseFileUrl: URL) {
-        guard let document = PDFDocument(url: baseFileUrl) else {
+    init(document: Document) {
+        var pdfDocument = PDFDocument(url: document.localFileUrl)
+
+        if pdfDocument == nil,
+           let remoteFileUrlString = document.baseFileUrl,
+           let remoteFileUrl = URL(string: remoteFileUrlString) {
+            pdfDocument = PDFDocument(url: remoteFileUrl)
+        }
+
+        guard let pdfDocument = pdfDocument else {
+            AnnotatoLogger.error("Could not load document")
+            // TODO: Handle failed init more gracefully
             fatalError("No such document")
         }
-        self.document = document
+
+        self.document = pdfDocument
+        AnnotatoLogger.info("Loaded PDFDocument with document URL: \(String(describing: pdfDocument.documentURL))",
+                            context: "PdfViewModel::init")
     }
 }
