@@ -103,7 +103,8 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
 extension DocumentEditViewController {
     func setUpWebSocketSubscribers() {
         WebSocketManager.shared.annotationManager.$newAnnotation.sink { [weak self] newAnnotation in
-            guard let newAnnotation = newAnnotation else {
+            guard let newAnnotation = newAnnotation,
+                  newAnnotation.documentId == self?.documentId else {
                 return
             }
 
@@ -111,7 +112,8 @@ extension DocumentEditViewController {
         }.store(in: &cancellables)
 
         WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
-            guard let updatedAnnotation = updatedAnnotation else {
+            guard let updatedAnnotation = updatedAnnotation,
+                  updatedAnnotation.documentId == self?.documentId else {
                 return
             }
 
@@ -119,7 +121,8 @@ extension DocumentEditViewController {
         }.store(in: &cancellables)
 
         WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
-            guard let deletedAnnotation = deletedAnnotation else {
+            guard let deletedAnnotation = deletedAnnotation,
+                  deletedAnnotation.documentId == self?.documentId else {
                 return
             }
 
