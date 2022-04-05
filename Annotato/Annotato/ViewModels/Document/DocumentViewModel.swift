@@ -127,10 +127,15 @@ extension DocumentViewModel {
                 annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
             }
         } else {
-            let annotationViewModel = AnnotationViewModel(model: updatedAnnotation, document: self)
-            self.annotations.append(annotationViewModel)
-            self.addedAnnotation = annotationViewModel
+            receiveRestoreDeletedAnnotation(annotation: updatedAnnotation)
         }
+    }
+
+    private func receiveRestoreDeletedAnnotation(annotation: Annotation) {
+        model.receiveRestoreDeletedAnnotation(annotation: annotation)
+        let annotationViewModel = AnnotationViewModel(model: annotation, document: self)
+        self.annotations.append(annotationViewModel)
+        self.addedAnnotation = annotationViewModel
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {
