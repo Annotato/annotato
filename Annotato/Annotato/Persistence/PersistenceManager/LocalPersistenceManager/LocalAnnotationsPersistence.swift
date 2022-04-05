@@ -34,11 +34,11 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
 
     func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
         annotations.compactMap({ annotation in
-            createOrUpdateAnnotationForLocal(annotation: annotation)
+            createOrUpdateAnnotation(annotation: annotation)
         })
     }
 
-    private func createOrUpdateAnnotationForLocal(annotation: Annotation) -> Annotation? {
+    private func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
         if LocalAnnotationEntityDataAccess.read(annotationId: annotation.id,
                                                 withDeleted: true) != nil {
             return updateAnnotation(annotation: annotation)

@@ -67,11 +67,11 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
 
     func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
         documents.compactMap({ document in
-            createOrUpdateDocumentForLocal(document: document)
+            createOrUpdateDocument(document: document)
         })
     }
 
-    private func createOrUpdateDocumentForLocal(document: Document) -> Document? {
+    private func createOrUpdateDocument(document: Document) -> Document? {
         if LocalDocumentEntityDataAccess.read(documentId: document.id,
                                               withDeleted: true) != nil {
             return updateDocument(document: document)
