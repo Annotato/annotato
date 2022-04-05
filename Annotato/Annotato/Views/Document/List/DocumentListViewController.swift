@@ -1,5 +1,4 @@
 import UIKit
-import AnnotatoSharedLibrary
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     let spinner = UIActivityIndicatorView(style: .large)

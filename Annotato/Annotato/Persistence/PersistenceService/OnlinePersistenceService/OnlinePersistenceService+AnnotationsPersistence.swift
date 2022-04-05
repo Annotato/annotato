@@ -16,7 +16,7 @@ extension OnlinePersistenceService: AnnotationsPersistence {
 
     func createOrUpdateAnnotationForLocal(annotation: Annotation) -> Annotation? {
         guard let localAnnotationsPersistence = localPersistence.annotations as? LocalAnnotationsPersistence else {
-            AnnotatoLogger.error("Cannot cast local documents persistence",
+            AnnotatoLogger.error("Cannot cast local annotations persistence",
                                  context: "OnlinePersistenceService::createOrUpdateAnnotationForLocal")
             return nil
         }
