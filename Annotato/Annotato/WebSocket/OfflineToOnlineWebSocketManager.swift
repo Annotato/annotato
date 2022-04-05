@@ -30,7 +30,7 @@ class OfflineToOnlineWebSocketManager {
         let documents = LocalPersistenceManager.shared
             .fetchDocumentsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
         let annotations = LocalPersistenceManager.shared
-            .fetchAnnoationsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
+            .fetchAnnotationsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
 
         let message = AnnotatoOfflineToOnlineMessage(mergeStrategy: mergeStrategy,
                                                      lastOnlineAt: lastOnlineDatetime,

@@ -60,12 +60,12 @@ extension LocalPersistenceManager {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
-    func fetchAnnoationsUpdatedAfterDate(date: Date) -> [Annotation]? {
+    func fetchAnnotationsUpdatedAfterDate(date: Date) -> [Annotation]? {
         let annotationEntities = LocalAnnotationEntityDataAccess.listUpdatedAfterDate(date: date)
 
         guard let annotationEntities = annotationEntities else {
             AnnotatoLogger.error("When getting updated annotations after date",
-                                 context: "LocalPersistenceManager::fetchAnnoationsUpdatedAfterDate")
+                                 context: "LocalPersistenceManager::fetchAnnotationsUpdatedAfterDate")
             return nil
         }
 
