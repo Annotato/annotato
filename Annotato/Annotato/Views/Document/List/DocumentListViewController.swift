@@ -39,7 +39,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             Document(name: "oink", ownerId: "iT8hW92RFWON4kTiNYIdLTxR6JC3",
                      baseFileUrl: "https://firebasestorage.googleapis.com:443/v0/b/annotato-ba051.appspot.com/o/449" +
                      "9132A-1E3C-" + "4CC6-8567-C68C09F501C5?alt=media&token=121a368e-0c67-414e-887f-35573e689cf1",
-                     annotations: [], id: UUID(),
+                     annotations: [], id: UUID(uuidString: "9A98793C-5836-4B2D-84D1-CF6AC2A6B1AF"),
                      createdAt: now, updatedAt: now, deletedAt: nil)
         ]
         AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalDocuments(documents: documents)
