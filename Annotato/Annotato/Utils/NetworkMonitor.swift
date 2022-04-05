@@ -21,7 +21,7 @@ class NetworkMonitor {
 
             if !self.isConnected {
                 let date = Date()
-                AnnotatoLogger.info("Setting last online date to \(date)")
+                AnnotatoLogger.info("Setting last online datetime to \(date)")
                 self.setLastOnlineDatetime(to: date)
             }
         }
