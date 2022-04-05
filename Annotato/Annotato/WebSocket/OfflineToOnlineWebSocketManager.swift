@@ -6,12 +6,9 @@ class OfflineToOnlineWebSocketManager {
         do {
             AnnotatoLogger.info("Handling offline to online response data...")
             let message = try JSONCustomDecoder().decode(AnnotatoOfflineToOnlineMessage.self, from: data)
-            print(String(describing: message))
 
             let documents = message.documents
             let annotations = message.annotations
-            print("documents: \(documents)")
-            print("annotations: \(annotations)")
 
             AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalDocuments(documents: documents)
             AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalAnnotations(annotations: annotations)
