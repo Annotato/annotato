@@ -123,8 +123,14 @@ extension AnnotationViewModel {
         }
     }
 
+    var partsTotalHeight: Double {
+        parts.reduce(0, { acc, part in
+            acc + part.height
+        })
+    }
+
     var height: Double {
-        min(palette.height + model.partHeights, maxHeight)
+        min(palette.height + partsTotalHeight, maxHeight)
     }
 
     var minimizedHeight: Double {
@@ -153,12 +159,12 @@ extension AnnotationViewModel {
 
     // Note: scrollFrame is with respect to this frame
     var scrollFrame: CGRect {
-        CGRect(x: .zero, y: palette.height, width: model.width, height: model.partHeights)
+        CGRect(x: .zero, y: palette.height, width: model.width, height: partsTotalHeight)
     }
 
     // Note: partsFrame is with respect to scrollFrame
     var partsFrame: CGRect {
-        CGRect(x: .zero, y: .zero, width: model.width, height: model.partHeights)
+        CGRect(x: .zero, y: .zero, width: model.width, height: partsTotalHeight)
     }
 
     func hasExceededBounds(bounds: CGRect) -> Bool {

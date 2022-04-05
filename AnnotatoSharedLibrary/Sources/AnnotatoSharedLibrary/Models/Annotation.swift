@@ -16,6 +16,10 @@ public final class Annotation: Codable, ObservableObject {
         deletedAt != nil
     }
 
+    var nonDeletedParts: [AnnotationPart] {
+        parts.filter({ !$0.isDeleted })
+    }
+
     @Published public private(set) var origin: CGPoint
     @Published public private(set) var addedTextPart: AnnotationText?
     @Published public private(set) var addedMarkdownPart: AnnotationText?
@@ -45,7 +49,7 @@ public final class Annotation: Codable, ObservableObject {
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
 
-        if parts.isEmpty {
+        if nonDeletedParts.isEmpty {
             addInitialPart()
         }
     }
@@ -105,10 +109,6 @@ public final class Annotation: Codable, ObservableObject {
         try container.encode(handwritings, forKey: .handwritings)
     }
 
-    public var hasNoParts: Bool {
-        self.parts.isEmpty
-    }
-
     private func addInitialPart() {
         checkRepresentation()
 
@@ -149,14 +149,14 @@ public final class Annotation: Codable, ObservableObject {
     }
 
     public func appendTextPartIfNecessary() {
-        guard let lastPart = parts.last else {
+        guard let lastPart = nonDeletedParts.last else {
             return
         }
 
         removePartIfPossible(part: lastPart)
 
         // The current last part is what we want, return
-        if let currentLastPart = parts.last as? AnnotationText {
+        if let currentLastPart = nonDeletedParts.last as? AnnotationText {
             if currentLastPart.type == .plainText {
                 return
             }
@@ -166,14 +166,14 @@ public final class Annotation: Codable, ObservableObject {
     }
 
     public func appendMarkdownPartIfNecessary() {
-        guard let lastPart = parts.last else {
+        guard let lastPart = nonDeletedParts.last else {
             return
         }
 
         removePartIfPossible(part: lastPart)
 
         // The current last part is what we want, return
-        if let currentLastPart = parts.last as? AnnotationText {
+        if let currentLastPart = nonDeletedParts.last as? AnnotationText {
             if currentLastPart.type == .markdown {
                 return
             }
@@ -205,7 +205,7 @@ public final class Annotation: Codable, ObservableObject {
             type: .plainText,
             content: "",
             height: 30.0,
-            order: parts.count,
+            order: nonDeletedParts.count,
             annotationId: id, id: UUID()
         )
     }
@@ -215,7 +215,7 @@ public final class Annotation: Codable, ObservableObject {
             type: .markdown,
             content: "",
             height: 30.0,
-            order: parts.count,
+            order: nonDeletedParts.count,
             annotationId: id,
             id: UUID()
         )
@@ -223,7 +223,7 @@ public final class Annotation: Codable, ObservableObject {
 
     private func makeNewHandwritingPart() -> AnnotationHandwriting {
         AnnotationHandwriting(
-            order: parts.count,
+            order: nonDeletedParts.count,
             height: 150.0,
             annotationId: id,
             handwriting: Data(),
@@ -233,7 +233,7 @@ public final class Annotation: Codable, ObservableObject {
 
     // Note: Each annotation should have at least 1 part
     private func canRemovePart(part: AnnotationPart) -> Bool {
-        part.isEmpty && parts.count > 1
+        part.isEmpty && nonDeletedParts.count > 1
     }
 
     public func removePartIfPossible(part: AnnotationPart) {
@@ -257,7 +257,7 @@ public final class Annotation: Codable, ObservableObject {
     }
 
     private func maintainOrderOfParts() {
-        parts.enumerated().forEach { idx, part in
+        nonDeletedParts.enumerated().forEach { idx, part in
             part.order = idx
         }
     }
@@ -270,17 +270,9 @@ extension Annotation {
     }
 
     private func checkOrderOfParts() -> Bool {
-        parts.enumerated().allSatisfy { idx, part in
+        nonDeletedParts.enumerated().allSatisfy { idx, part in
             part.order == idx
         }
-    }
-}
-
-extension Annotation {
-    public var partHeights: Double {
-        parts.reduce(0, { acc, part in
-            acc + part.height
-        })
     }
 }
 
