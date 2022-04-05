@@ -24,6 +24,10 @@ class SelectionBoxViewModel: ObservableObject {
     func didDelete() {
         self.isRemoved = true
     }
+
+    func receiveDelete() {
+        self.isRemoved = true
+    }
 }
 
 extension SelectionBoxViewModel {

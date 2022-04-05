@@ -1,15 +1,18 @@
 import UIKit
+import Combine
 
 class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
     let toolbarHeight = 50.0
     var documentViewModel: DocumentViewModel?
+    private var cancellables: Set<AnyCancellable> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         initializeSubviews()
+        setUpWebSocketSubscribers()
     }
 
     func initializeSubviews() {
@@ -93,5 +96,34 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
             return
         }
         goToShare(documentId: documentId)
+    }
+}
+
+// MARK: Websocket
+extension DocumentEditViewController {
+    func setUpWebSocketSubscribers() {
+        WebSocketManager.shared.annotationManager.$newAnnotation.sink { [weak self] newAnnotation in
+            guard let newAnnotation = newAnnotation else {
+                return
+            }
+
+            self?.documentViewModel?.receiveNewAnnotation(newAnnotation: newAnnotation)
+        }.store(in: &cancellables)
+
+        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
+            guard let updatedAnnotation = updatedAnnotation else {
+                return
+            }
+
+            self?.documentViewModel?.receiveUpdateAnnotation(updatedAnnotation: updatedAnnotation)
+        }.store(in: &cancellables)
+
+        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
+            guard let deletedAnnotation = deletedAnnotation else {
+                return
+            }
+
+            self?.documentViewModel?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
+        }.store(in: &cancellables)
     }
 }
