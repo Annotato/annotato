@@ -34,7 +34,6 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func createDocument(document: Document) -> Document? {
-        print("creating document")
         guard let newDocumentEntity = LocalDocumentEntityDataAccess.create(document: document) else {
             AnnotatoLogger.error("When creating document.",
                                  context: "LocalDocumentsPersistence::createDocument")
@@ -45,7 +44,6 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func updateDocument(document: Document) -> Document? {
-        print("updating document")
         guard let updatedDocumentEntity = LocalDocumentEntityDataAccess
             .update(documentId: document.id, document: document) else {
             AnnotatoLogger.error("When updating document.",
@@ -68,13 +66,10 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func createOrUpdateDocumentForLocal(document: Document) -> Document? {
-        print("In local documents persistence, creating or updating this document")
         if LocalDocumentEntityDataAccess.read(documentId: document.id,
                                               withDeleted: true) != nil {
-            print("document exists")
             return updateDocument(document: document)
         } else {
-            print("document doesn't exist")
             return createDocument(document: document)
         }
     }

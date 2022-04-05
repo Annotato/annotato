@@ -23,42 +23,6 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         view.bringSubviewToFront(importMenu)
 
         WebSocketManager.shared.setUpSocket()
-        testFunction()
-    }
-
-    private func testFunction() {
-        print("Test function-----------------\n")
-        print(WebSocketManager.shared.isConnected ? "connected" : "not connected")
-        print(
-            AnnotatoPersistenceWrapper.currentPersistenceService as? OnlinePersistenceService != nil
-            ? "online persistence service"
-            : "offline persistence service"
-        )
-        let now = Date()
-        let annotationUUID = UUID(uuidString: "F8B3CEAA-F2BF-4F4D-8B1A-85A5148D8A3E")!
-        let selectionBoxUUID = UUID(uuidString: "C2793011-459E-49B5-8049-A9EDB47AABFD") == nil
-        ? UUID()
-        : UUID(uuidString: "9A98793C-5836-4B2D-84D1-CF6AC2A6B1AQ")
-
-        print("selection box uuid: \(selectionBoxUUID)")
-
-        let documentUUID = UUID(uuidString: "9A98793C-5836-4B2D-84D1-CF6AC2A6B1AF")!
-        let selectionBox = SelectionBox(startPoint: .zero, endPoint: .zero, annotationId: annotationUUID,
-                                        id: selectionBoxUUID,
-                                        createdAt: now, updatedAt: now, deletedAt: nil)
-        /*
-         parts: [AnnotationText(id: C1FF5821-DC57-435B-8187-1E117F944ECF, type: TextType(rawValue: 0), content: ,
-         height: 30.0, order: 0, annotationId: F8B3CEAA-F2BF-4F4D-8B1A-85A5148D8A3E), createdAt: nil, updatedAt: nil,
-         deleteAt: nil]
-         */
-        let annotations = [
-            Annotation(origin: .zero, width: 100, parts: [],
-                       selectionBox: selectionBox,
-                       ownerId: "iT8hW92RFWON4kTiNYIdLTxR6JC3", documentId: documentUUID, id: annotationUUID,
-                       createdAt: now, updatedAt: now, deletedAt: nil)
-        ]
-        AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalAnnotations(annotations: annotations)
-        print("----------------------")
     }
 
     private func initializeToolbar() {
