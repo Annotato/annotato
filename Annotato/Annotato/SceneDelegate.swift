@@ -30,13 +30,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             guard isConnected else {
                 return
             }
-            
-            guard let currentTopViewController = self?.getCurrentTopViewController() else {
-                return
-            }
 
             DispatchQueue.main.async {
-//                currentTopViewController.present
+                guard let currentTopViewController = self?.getCurrentTopViewController() else {
+                    return
+                }
+
+                currentTopViewController.presentOnlineAlert()
             }
         }).store(in: &cancellables)
     }
