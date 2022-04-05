@@ -9,8 +9,8 @@ class OfflineToOnlineWebSocketManager {
             let documents = message.documents
             let annotations = message.annotations
 
-            AnnotatoPersistence.currentPersistenceService.fastForwardLocalDocuments(documents: documents)
-            AnnotatoPersistence.currentPersistenceService.fastForwardLocalAnnotations(annotations: annotations)
+            AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalDocuments(documents: documents)
+            AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalAnnotations(annotations: annotations)
         } catch {
             AnnotatoLogger.error("When handling response data. \(error.localizedDescription)",
                                  context: "OfflineToOnlineWebSocketManager::handleResponseData")

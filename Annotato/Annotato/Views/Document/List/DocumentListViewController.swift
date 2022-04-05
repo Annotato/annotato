@@ -1,4 +1,5 @@
 import UIKit
+import AnnotatoSharedLibrary
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     let spinner = UIActivityIndicatorView(style: .large)
@@ -22,6 +23,28 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         view.bringSubviewToFront(importMenu)
 
         WebSocketManager.shared.setUpSocket()
+        testFunction()
+    }
+
+    private func testFunction() {
+        print("Test function-----------------\n")
+        print(WebSocketManager.shared.isConnected ? "connected" : "not connected")
+        print(
+            AnnotatoPersistenceWrapper.currentPersistenceService as? OnlinePersistenceService != nil
+            ? "online persistence service"
+            : "offline persistence service"
+        )
+        let now = Date()
+        let documents = [
+            Document(name: "oink", ownerId: "iT8hW92RFWON4kTiNYIdLTxR6JC3",
+                     baseFileUrl: "https://firebasestorage.googleapis.com:443/v0/b/annotato-ba051.appspot.com/o/449" +
+                     "9132A-1E3C-" + "4CC6-8567-C68C09F501C5?alt=media&token=121a368e-0c67-414e-887f-35573e689cf1",
+                     annotations: [], id: UUID(),
+                     createdAt: now, updatedAt: now, deletedAt: nil)
+        ]
+        AnnotatoPersistenceWrapper.currentPersistenceService.fastForwardLocalDocuments(documents: documents)
+        // TODO: Test for annotations too
+        print("----------------------")
     }
 
     private func initializeToolbar() {

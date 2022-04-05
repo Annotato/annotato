@@ -11,7 +11,7 @@ class WebSocketManager {
     let documentManager = DocumentWebSocketManager()
     let annotationManager = AnnotationWebSocketManager()
     let offlineToOnlineManager = OfflineToOnlineWebSocketManager()
-    private(set) var isConnected = false
+    private(set) var isConnected = true
 
     private init() { }
 

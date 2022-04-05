@@ -11,6 +11,7 @@ struct OnlinePersistenceService: PersistenceService {
     }
 
     func fastForwardLocalDocuments(documents: [Document]) {
+        print("Online fast forwarding local documents")
         for document in documents {
             guard self.createOrUpdateDocumentForLocal(document: document) != nil else {
                 AnnotatoLogger.error("Error when syncing this document to local: \(document)")
