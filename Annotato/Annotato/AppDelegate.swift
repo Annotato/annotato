@@ -8,7 +8,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         // Override point for customization after application launch.
 
-        NetworkManager.shared.start()
+        NetworkMonitor.shared.start()
         return true
     }
 
