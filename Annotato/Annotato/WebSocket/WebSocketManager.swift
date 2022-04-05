@@ -69,7 +69,7 @@ class WebSocketManager {
                 if let error = error {
                     AnnotatoLogger.error(
                         "While sending data. \(error.localizedDescription).",
-                        context: "WebSocketManager:send:"
+                        context: "WebSocketManager::send"
                     )
                 }
             }
@@ -77,7 +77,7 @@ class WebSocketManager {
         } catch {
             AnnotatoLogger.error(
                 "When sending data. \(error.localizedDescription).",
-                context: "WebSocketManager:send:"
+                context: "WebSocketManager::send"
             )
         }
     }
@@ -100,7 +100,7 @@ class WebSocketManager {
         } catch {
             AnnotatoLogger.error(
                 "When handling reponse data. \(error.localizedDescription).",
-                context: "WebSocketManager:handleResponseData:"
+                context: "WebSocketManager::handleResponseData"
             )
         }
     }
