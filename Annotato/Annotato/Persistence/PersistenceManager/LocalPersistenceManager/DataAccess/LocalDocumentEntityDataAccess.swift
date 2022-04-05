@@ -33,18 +33,19 @@ struct LocalDocumentEntityDataAccess {
     }
 
     static func create(document: Document) -> DocumentEntity? {
-        context.rollback()
-        let documentEntity = DocumentEntity.fromModel(document)
+        context.performAndWait {
+            context.rollback()
+            let documentEntity = DocumentEntity.fromModel(document)
+            do {
+                try context.save()
+            } catch {
+                AnnotatoLogger.error("When creating document: \(String(describing: error))",
+                                     context: "LocalDocumentsPersistence::create")
+                return nil
+            }
 
-        do {
-            try context.save()
-        } catch {
-            AnnotatoLogger.error("When creating document: \(String(describing: error))",
-                                 context: "LocalDocumentsPersistence::create")
-            return nil
+            return documentEntity
         }
-
-        return documentEntity
     }
 
     static func read(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
@@ -65,24 +66,27 @@ struct LocalDocumentEntityDataAccess {
     }
 
     static func update(documentId: UUID, document: Document) -> DocumentEntity? {
-        context.rollback()
-        guard let documentEntity = LocalDocumentEntityDataAccess.read(documentId: documentId, withDeleted: true) else {
-            AnnotatoLogger.error("When finding existing document entity.",
-                                 context: "LocalDocumentEntityDataAccess::update")
-            return nil
+        context.performAndWait {
+            context.rollback()
+            guard let documentEntity = LocalDocumentEntityDataAccess.read(documentId: documentId,
+                                                                          withDeleted: true) else {
+                AnnotatoLogger.error("When finding existing document entity.",
+                                     context: "LocalDocumentEntityDataAccess::update")
+                return nil
+            }
+
+            documentEntity.customUpdate(usingUpdatedModel: document)
+
+            do {
+                try context.save()
+            } catch {
+                AnnotatoLogger.error("When updating document entity. \(String(describing: error))",
+                                     context: "LocalDocumentEntityDataAccess::update")
+                return nil
+            }
+
+            return documentEntity
         }
-
-        documentEntity.customUpdate(usingUpdatedModel: document)
-
-        do {
-            try context.save()
-        } catch {
-            AnnotatoLogger.error("When updating document entity. \(String(describing: error))",
-                                 context: "LocalDocumentEntityDataAccess::update")
-            return nil
-        }
-
-        return documentEntity
     }
 
     static func delete(documentId: UUID, document: Document) -> DocumentEntity? {
