@@ -29,8 +29,7 @@ extension OfflinePersistenceService: DocumentsPersistence {
         return await localPersistence.documents.deleteDocument(document: document)
     }
 
-    func createOrUpdateDocumentsForLocal(documents: [Document]) -> [Document]? {
-        fatalError("OfflinePersistenceService::createOrUpdateDocumentForLocal: This function should not be called")
-        return nil
+    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
+        localPersistence.documents.createOrUpdateDocuments(documents: documents)
     }
 }

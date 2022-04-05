@@ -17,8 +17,7 @@ extension OfflinePersistenceService: AnnotationsPersistence {
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
-    func createOrUpdateAnnotationsForLocal(annotations: [Annotation]) -> [Annotation]? {
-        fatalError("OfflinePersistenceService::createOrUpdateAnnotationForLocal: This function should not be called")
-        return nil
+    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+        localPersistence.annotations.createOrUpdateAnnotations(annotations: annotations)
     }
 }

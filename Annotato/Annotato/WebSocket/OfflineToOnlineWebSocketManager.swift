@@ -10,10 +10,10 @@ class OfflineToOnlineWebSocketManager {
             let documents = message.documents
             let annotations = message.annotations
 
-            _ = AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateDocumentsForLocal(
+            _ = AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateDocuments(
                 documents: documents
             )
-            _ = AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotationsForLocal(
+            _ = AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotations(
                 annotations: annotations
             )
         } catch {

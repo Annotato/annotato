@@ -14,12 +14,7 @@ extension OnlinePersistenceService: AnnotationsPersistence {
         await remotePersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
-    func createOrUpdateAnnotationsForLocal(annotations: [Annotation]) -> [Annotation]? {
-        guard let localAnnotationsPersistence = localPersistence.annotations as? LocalAnnotationsPersistence else {
-            AnnotatoLogger.error("Cannot cast local annotations persistence",
-                                 context: "OnlinePersistenceService::createOrUpdateAnnotationForLocal")
-            return nil
-        }
-        return localAnnotationsPersistence.createOrUpdateAnnotationsForLocal(annotations: annotations)
+    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+        localPersistence.annotations.createOrUpdateAnnotations(annotations: annotations)
     }
 }
