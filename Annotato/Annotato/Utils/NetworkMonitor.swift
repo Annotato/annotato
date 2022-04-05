@@ -7,7 +7,7 @@ class NetworkMonitor {
     private(set) var isConnected = false
     private let monitor = NWPathMonitor()
 
-    func start() {
+    func start(shouldReestablishWsConnection: Bool = true) {
         monitor.start(queue: DispatchQueue.global())
         monitor.pathUpdateHandler = { [weak self] path in
             AnnotatoLogger.info("Detected a change in internet connection status...")
@@ -19,7 +19,7 @@ class NetworkMonitor {
             let isCurrentlyConnected = path.status == .satisfied
 
             // If user goes from offline to online, re-establish websocket connection
-            if !self.isConnected && isCurrentlyConnected {
+            if shouldReestablishWsConnection && !self.isConnected && isCurrentlyConnected {
                 WebSocketManager.shared.resetSocket()
                 WebSocketManager.shared.setUpSocket()
             }
