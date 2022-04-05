@@ -10,7 +10,6 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var model: Annotation
     private var cancellables: Set<AnyCancellable> = []
-    private var webSocketCancellables: Set<AnyCancellable> = []
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
@@ -18,6 +17,7 @@ class AnnotationViewModel: ObservableObject {
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
     private var maxHeight = 300.0
+    private(set) var isInFocus = false
 
     var id: UUID {
         model.id
@@ -32,7 +32,6 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var addedPart: AnnotationPartViewModel?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
-    @Published private(set) var isInFocus = false
     @Published private(set) var modelWasUpdated = false
 
     init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
@@ -47,7 +46,6 @@ class AnnotationViewModel: ObservableObject {
         populatePartViewModels(model: model)
 
         setUpSubscribers()
-        setUpWebSocketSubscribers()
     }
 
     private func populatePartViewModels(model: Annotation) {
@@ -110,36 +108,6 @@ class AnnotationViewModel: ObservableObject {
             self?.parts.removeAll(where: { $0.id == removedPart?.id })
             self?.resize()
         }).store(in: &cancellables)
-    }
-
-    private func setUpWebSocketSubscribers() {
-        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
-            guard let deletedAnnotation = deletedAnnotation,
-            deletedAnnotation.id == self?.model.id else {
-                return
-            }
-
-            self?.didDelete()
-        }.store(in: &webSocketCancellables)
-
-        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
-            guard let updatedAnnotation = updatedAnnotation,
-            updatedAnnotation.id == self?.model.id else {
-                return
-            }
-
-            self?.model = updatedAnnotation
-
-            self?.cancellables = []
-            self?.setUpSubscribers()
-
-            self?.positionDidChange = true
-
-            self?.parts = []
-            self?.populatePartViewModels(model: updatedAnnotation)
-            self?.modelWasUpdated = true
-
-        }.store(in: &webSocketCancellables)
     }
 }
 
@@ -306,8 +274,27 @@ extension AnnotationViewModel {
         document?.removeAnnotation(annotation: self)
     }
 
+    func receiveDelete() {
+        isRemoved = true
+        selectionBox.receiveDelete()
+    }
+
+    func receiveUpdate(updatedAnnotation: Annotation) {
+        self.model = updatedAnnotation
+
+        self.cancellables = []
+        self.setUpSubscribers()
+
+        self.positionDidChange = true
+
+        self.parts = []
+        self.populatePartViewModels(model: updatedAnnotation)
+        self.modelWasUpdated = true
+    }
+
     func inFocus() {
         isInFocus = true
+        document?.setAllOtherAnnotationsOutOfFocus(except: self)
     }
 
     func outOfFocus() {
