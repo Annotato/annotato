@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     return
                 }
 
-                currentTopViewController.presentOnlineAlert()
+                (currentTopViewController as? Navigable)?.goToOfflineToOnline()
             }
         }).store(in: &cancellables)
     }

@@ -60,6 +60,6 @@ extension UIViewController {
     }
 
     func presentOnlineAlert() {
-        present(onlineAlertController, animated: true)
+
     }
 }
