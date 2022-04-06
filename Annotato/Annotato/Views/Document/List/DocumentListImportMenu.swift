@@ -1,8 +1,11 @@
 import UIKit
+import Combine
 
 class DocumentListImportMenu: UIStackView {
     weak var actionDelegate: DocumentListImportMenuDelegate?
     private let buttonHeight = 30.0
+    private var cancellables: Set<AnyCancellable> = []
+    private var fromCodeButton = UIButton()
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -17,13 +20,15 @@ class DocumentListImportMenu: UIStackView {
         self.layer.cornerRadius = 15.0
         self.distribution = .fillProportionally
 
+        setUpSubscribers()
         initializeSubviews()
     }
 
     private func initializeSubviews() {
         let fromIpadButton = makeFromIpadButton()
         let divider = makeDivider()
-        let fromCodeButton = makeFromCodeButton()
+        fromCodeButton = makeFromCodeButton()
+        fromCodeButton.isEnabled = NetworkMonitor.shared.isConnected
 
         self.addArrangedSubview(fromIpadButton)
         self.addArrangedSubview(divider)
@@ -69,5 +74,13 @@ class DocumentListImportMenu: UIStackView {
     private func didTapFromCodeButton() {
         actionDelegate?.didTapFromCodeButton()
         self.isHidden = true
+    }
+
+    private func setUpSubscribers() {
+        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] isConnected in
+            DispatchQueue.main.async {
+                self?.fromCodeButton.isEnabled = isConnected
+            }
+        }).store(in: &cancellables)
     }
 }
