@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol AnnotationPart: AnyObject, Codable, Timestampable {
+public protocol AnnotationPart: Codable, Timestampable {
     var id: UUID { get }
     var order: Int { get set }
     var height: Double { get set }

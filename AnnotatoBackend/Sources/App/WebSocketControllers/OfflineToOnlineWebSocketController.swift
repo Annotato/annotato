@@ -46,6 +46,7 @@ class OfflineToOnlineWebSocketController {
             let responseAnnotations = Array(Set(updatedServerAnnotations).union(Set(serverVersionOfUserAnnotations)))
 
             let response = AnnotatoOfflineToOnlineMessage(
+                senderId: userId,
                 mergeStrategy: .keepServerVersion,
                 lastOnlineAt: message.lastOnlineAt,
                 documents: responseDocuments,
@@ -73,6 +74,7 @@ class OfflineToOnlineWebSocketController {
                 .handleOverrideServerAnnotations(userId: userId, db: db, message: message)
 
             let response = AnnotatoOfflineToOnlineMessage(
+                senderId: userId, 
                 mergeStrategy: .overrideServerVersion,
                 lastOnlineAt: message.lastOnlineAt,
                 documents: responseDocuments,
