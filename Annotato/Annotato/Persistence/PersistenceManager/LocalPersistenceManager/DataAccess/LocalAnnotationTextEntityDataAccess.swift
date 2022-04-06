@@ -5,16 +5,20 @@ struct LocalAnnotationTextEntityDataAccess {
     static let context = LocalPersistenceManager.sharedContext
 
     static func read(annotationTextEntityId: UUID) -> AnnotationTextEntity? {
-        let request = AnnotationTextEntity.fetchRequest()
+        context.performAndWait {
+            context.rollback()
 
-        do {
-            let annotationTextEntities = try context.fetch(request).filter { $0.id == annotationTextEntityId }
+            let request = AnnotationTextEntity.fetchRequest()
 
-            return annotationTextEntities.first
-        } catch {
-            AnnotatoLogger.error("When reading annotation text entity. \(String(describing: error))",
-                                 context: "LocalAnnotationTextEntityDataAccess::read")
-            return nil
+            do {
+                let annotationTextEntities = try context.fetch(request).filter { $0.id == annotationTextEntityId }
+
+                return annotationTextEntities.first
+            } catch {
+                AnnotatoLogger.error("When reading annotation text entity. \(String(describing: error))",
+                                     context: "LocalAnnotationTextEntityDataAccess::read")
+                return nil
+            }
         }
     }
 }

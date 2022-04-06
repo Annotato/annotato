@@ -5,17 +5,21 @@ struct LocalAnnotationHandwritingEntityDataAccess {
     static let context = LocalPersistenceManager.sharedContext
 
     static func read(annotationHandwritingEntityId: UUID) -> AnnotationHandwritingEntity? {
-        let request = AnnotationHandwritingEntity.fetchRequest()
+        context.performAndWait {
+            context.rollback()
 
-        do {
-            let annotationHandwritingEntities = try context.fetch(request)
-                .filter { $0.id == annotationHandwritingEntityId }
+            let request = AnnotationHandwritingEntity.fetchRequest()
 
-            return annotationHandwritingEntities.first
-        } catch {
-            AnnotatoLogger.error("When reading annotation handwriting entity. \(String(describing: error))",
-                                 context: "LocalAnnotationHandwritingEntityDataAccess::read")
-            return nil
+            do {
+                let annotationHandwritingEntities = try context.fetch(request)
+                    .filter { $0.id == annotationHandwritingEntityId }
+
+                return annotationHandwritingEntities.first
+            } catch {
+                AnnotatoLogger.error("When reading annotation handwriting entity. \(String(describing: error))",
+                                     context: "LocalAnnotationHandwritingEntityDataAccess::read")
+                return nil
+            }
         }
     }
 }

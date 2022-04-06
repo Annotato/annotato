@@ -5,16 +5,20 @@ struct LocalSelectionBoxEntityDataAccess {
     static let context = LocalPersistenceManager.sharedContext
 
     static func read(selectionBoxId: UUID) -> SelectionBoxEntity? {
-        let request = SelectionBoxEntity.fetchRequest()
+        context.performAndWait {
+            context.rollback()
 
-        do {
-            let selectionBoxEntities = try context.fetch(request).filter { $0.id == selectionBoxId }
+            let request = SelectionBoxEntity.fetchRequest()
 
-            return selectionBoxEntities.first
-        } catch {
-            AnnotatoLogger.error("When reading selection box entity. \(String(describing: error))",
-                                 context: "LocalSelectionBoxEntityDataAccess::read")
-            return nil
+            do {
+                let selectionBoxEntities = try context.fetch(request).filter { $0.id == selectionBoxId }
+
+                return selectionBoxEntities.first
+            } catch {
+                AnnotatoLogger.error("When reading selection box entity. \(String(describing: error))",
+                                     context: "LocalSelectionBoxEntityDataAccess::read")
+                return nil
+            }
         }
     }
 }

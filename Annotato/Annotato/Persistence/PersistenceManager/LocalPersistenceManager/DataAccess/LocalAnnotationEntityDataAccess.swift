@@ -5,23 +5,29 @@ struct LocalAnnotationEntityDataAccess {
     static let context = LocalPersistenceManager.sharedContext
 
     static func listUpdatedAfterDate(date: Date) -> [AnnotationEntity]? {
-        let request = AnnotationEntity.fetchRequest()
+        context.performAndWait {
+            context.rollback()
 
-        do {
-            let annotationEntities = try context.fetch(request).filter { $0.wasUpdated(after: date) }
+            let request = AnnotationEntity.fetchRequest()
 
-            return annotationEntities
-        } catch {
-            AnnotatoLogger.error("When fetching updated document entities after date. \(String(describing: error))",
-                                 context: "LocalDocumentEntityDataAccess::listUpdatedAfterDate")
-            return nil
+            do {
+                let annotationEntities = try context.fetch(request).filter { $0.wasUpdated(after: date) }
+
+                return annotationEntities
+            } catch {
+                AnnotatoLogger.error("When fetching updated document entities after date. \(String(describing: error))",
+                                     context: "LocalDocumentEntityDataAccess::listUpdatedAfterDate")
+                return nil
+            }
         }
     }
 
     static func create(annotation: Annotation) -> AnnotationEntity? {
         context.performAndWait {
             context.rollback()
+
             let annotationEntity = AnnotationEntity.fromModel(annotation)
+
             do {
                 try context.save()
             } catch {
@@ -35,25 +41,30 @@ struct LocalAnnotationEntityDataAccess {
     }
 
     static func read(annotationId: UUID, withDeleted: Bool) -> AnnotationEntity? {
-        let request = AnnotationEntity.fetchRequest()
+        context.performAndWait {
+            context.rollback()
 
-        do {
-            var annotationEntities = try context.fetch(request).filter { $0.id == annotationId }
-            if !withDeleted {
-                annotationEntities = AnnotationEntity.removeDeletedAnnotationEntities(annotationEntities)
+            let request = AnnotationEntity.fetchRequest()
+
+            do {
+                var annotationEntities = try context.fetch(request).filter { $0.id == annotationId }
+                if !withDeleted {
+                    annotationEntities = AnnotationEntity.removeDeletedAnnotationEntities(annotationEntities)
+                }
+
+                return annotationEntities.first
+            } catch {
+                AnnotatoLogger.error("When reading annotation entity. \(String(describing: error))",
+                                     context: "LocalAnnotationDataAccess::read")
+                return nil
             }
-
-            return annotationEntities.first
-        } catch {
-            AnnotatoLogger.error("When reading annotation entity. \(String(describing: error))",
-                                 context: "LocalAnnotationDataAccess::read")
-            return nil
         }
     }
 
     static func update(annotationId: UUID, annotation: Annotation) -> AnnotationEntity? {
         context.performAndWait {
             context.rollback()
+
             guard let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: annotationId,
                                                                               withDeleted: true) else {
                 AnnotatoLogger.error("When finding existing annotation entity.",
