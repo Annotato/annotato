@@ -22,7 +22,6 @@ class NetworkMonitor: ObservableObject {
 
             // If user goes from offline to online, re-establish websocket connection
             if !self.isConnected && isCurrentlyConnected {
-                WebSocketManager.shared.resetSocket()
                 WebSocketManager.shared.setUpSocket()
             }
 

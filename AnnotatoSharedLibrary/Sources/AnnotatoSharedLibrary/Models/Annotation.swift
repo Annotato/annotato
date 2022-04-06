@@ -45,7 +45,7 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
 
-        if nonDeletedParts.isEmpty {
+        if parts.isEmpty {
             addInitialPart()
         }
     }
