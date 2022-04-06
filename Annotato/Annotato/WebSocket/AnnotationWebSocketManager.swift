@@ -3,7 +3,6 @@ import AnnotatoSharedLibrary
 
 class AnnotationWebSocketManager: ObservableObject {
     @Published private(set) var newAnnotation: Annotation?
-    @Published private(set) var readAnnotation: Annotation?
     @Published private(set) var updatedAnnotation: Annotation?
     @Published private(set) var deletedAnnotation: Annotation?
 
@@ -11,12 +10,11 @@ class AnnotationWebSocketManager: ObservableObject {
         do {
             AnnotatoLogger.info("Handling annotation response data...")
 
-            let message = try JSONCustomDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCudAnnotationMessage.self, from: data)
             let annotation = message.annotation
 
             // Defensive resets
             newAnnotation = nil
-            readAnnotation = nil
             updatedAnnotation = nil
             deletedAnnotation = nil
 
@@ -24,9 +22,6 @@ class AnnotationWebSocketManager: ObservableObject {
             case .createAnnotation:
                 newAnnotation = annotation
                 AnnotatoLogger.info("Annotation was created. \(annotation)")
-            case .readAnnotation:
-                readAnnotation = annotation
-                AnnotatoLogger.info("Annotation was read. \(annotation)")
             case .updateAnnotation:
                 updatedAnnotation = annotation
                 AnnotatoLogger.info("Annotation was updated. \(annotation)")

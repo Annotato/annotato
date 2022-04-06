@@ -10,14 +10,12 @@ class DocumentWebSocketController {
         do {
             Self.logger.info("Processing crud document data...")
 
-            let message = try JSONCustomDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCudDocumentMessage.self, from: data)
             let document = message.document
 
             switch message.subtype {
             case .createDocument:
                 _ = await Self.handleCreateDocument(userId: userId, db: db, document: document)
-            case .readDocument:
-                await Self.handleReadDocument(userId: userId, db: db, document: document)
             case .updateDocument:
                 _ = await Self.handleUpdateDocument(userId: userId, db: db, document: document)
             case .deleteDocument:
@@ -33,7 +31,7 @@ class DocumentWebSocketController {
             Self.logger.info("Processing create document data...")
 
             let newDocument = try await DocumentsDataAccess.create(db: db, document: document)
-            let response = AnnotatoCrudDocumentMessage(subtype: .createDocument, document: newDocument)
+            let response = AnnotatoCudDocumentMessage(subtype: .createDocument, document: newDocument)
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: newDocument, message: response
@@ -46,28 +44,13 @@ class DocumentWebSocketController {
         }
     }
 
-    private static func handleReadDocument(userId: String, db: Database, document: Document) async {
-        do {
-            Self.logger.info("Processing read document data...")
-
-            let readDocument = try await DocumentsDataAccess.read(db: db, documentId: document.id)
-            let response = AnnotatoCrudDocumentMessage(subtype: .readDocument, document: readDocument)
-
-            await Self.sendToAllAppropriateClients(
-                db: db, userId: userId, document: readDocument, message: response
-            )
-        } catch {
-            Self.logger.error("Error when reading document. \(error.localizedDescription)")
-        }
-    }
-
     private static func handleUpdateDocument(userId: String, db: Database, document: Document) async -> Document? {
         do {
             Self.logger.info("Processing update document data...")
 
             let updatedDocument = try await DocumentsDataAccess
                 .update(db: db, documentId: document.id, document: document)
-            let response = AnnotatoCrudDocumentMessage(subtype: .updateDocument, document: updatedDocument)
+            let response = AnnotatoCudDocumentMessage(subtype: .updateDocument, document: updatedDocument)
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: updatedDocument, message: response
@@ -85,7 +68,7 @@ class DocumentWebSocketController {
             Self.logger.info("Processing delete document data...")
 
             let deletedDocument = try await DocumentsDataAccess.delete(db: db, documentId: document.id)
-            let response = AnnotatoCrudDocumentMessage(subtype: .deleteDocument, document: deletedDocument)
+            let response = AnnotatoCudDocumentMessage(subtype: .deleteDocument, document: deletedDocument)
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: deletedDocument, message: response

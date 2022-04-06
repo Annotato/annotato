@@ -10,14 +10,12 @@ class AnnotationWebSocketController {
         do {
             Self.logger.info("Processing crud annotation data...")
 
-            let message = try JSONCustomDecoder().decode(AnnotatoCrudAnnotationMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCudAnnotationMessage.self, from: data)
             let annotation = message.annotation
 
             switch message.subtype {
             case .createAnnotation:
                 _ = await Self.handleCreateAnnotation(userId: userId, db: db, annotation: annotation)
-            case .readAnnotation:
-                await Self.handleReadAnnotation(userId: userId, db: db, annotation: annotation)
             case .updateAnnotation:
                 _ = await Self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
             case .deleteAnnotation:
@@ -38,7 +36,7 @@ class AnnotationWebSocketController {
             Self.logger.info("Processing create annotation data...")
 
             let newAnnotation = try await AnnotationDataAccess.create(db: db, annotation: annotation)
-            let response = AnnotatoCrudAnnotationMessage(subtype: .createAnnotation, annotation: newAnnotation)
+            let response = AnnotatoCudAnnotationMessage(subtype: .createAnnotation, annotation: newAnnotation)
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, annotation: newAnnotation, message: response
@@ -48,26 +46,6 @@ class AnnotationWebSocketController {
         } catch {
             Self.logger.error("Error when creating annotation. \(error.localizedDescription)")
             return nil
-        }
-    }
-
-    private static func handleReadAnnotation(
-        userId: String,
-        db: Database,
-        annotation: Annotation
-    ) async {
-        do {
-            Self.logger.info("Processing read annotation data...")
-
-            let readAnnotation = try await AnnotationDataAccess.read(db: db, annotationId: annotation.id)
-            let response = AnnotatoCrudAnnotationMessage(subtype: .readAnnotation, annotation: readAnnotation)
-
-            await Self.sendToAllAppropriateClients(
-                db: db, userId: userId, annotation: readAnnotation, message: response
-            )
-
-        } catch {
-            Self.logger.error("Error when reading annotation. \(error.localizedDescription)")
         }
     }
 
@@ -81,7 +59,7 @@ class AnnotationWebSocketController {
 
             let updatedAnnotation = try await AnnotationDataAccess
                 .update(db: db, annotationId: annotation.id, annotation: annotation)
-            let response = AnnotatoCrudAnnotationMessage(subtype: .updateAnnotation, annotation: updatedAnnotation)
+            let response = AnnotatoCudAnnotationMessage(subtype: .updateAnnotation, annotation: updatedAnnotation)
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, annotation: updatedAnnotation, message: response
@@ -103,7 +81,7 @@ class AnnotationWebSocketController {
             Self.logger.info("Processing delete annotation data...")
 
             let deletedAnnotation = try await AnnotationDataAccess.delete(db: db, annotationId: annotation.id)
-            let response = AnnotatoCrudAnnotationMessage(subtype: .deleteAnnotation, annotation: deletedAnnotation)
+            let response = AnnotatoCudAnnotationMessage(subtype: .deleteAnnotation, annotation: deletedAnnotation)
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, annotation: deletedAnnotation, message: response

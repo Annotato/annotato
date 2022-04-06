@@ -3,18 +3,16 @@ public enum AnnotatoMessageType: String, Codable {
     case crudDocument, crudAnnotation, offlineToOnline
 }
 
-/// Subtypes of `AnnotatoCrudDocumentMessage`
-public enum AnnotatoCrudDocumentMessageType: String, Codable {
+/// Subtypes of `AnnotatoCudDocumentMessage`
+public enum AnnotatoCudDocumentMessageType: String, Codable {
     case createDocument
-    case readDocument
     case updateDocument
     case deleteDocument
 }
 
-/// Subtypes of `AnnotatoCrudAnnotationMessage`
-public enum AnnotatoCrudAnnotationMessageType: String, Codable {
+/// Subtypes of `AnnotatoCudAnnotationMessage`
+public enum AnnotatoCudAnnotationMessageType: String, Codable {
     case createAnnotation
-    case readAnnotation
     case updateAnnotation
     case deleteAnnotation
 }
