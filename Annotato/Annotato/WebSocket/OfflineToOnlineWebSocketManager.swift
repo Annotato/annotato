@@ -28,6 +28,7 @@ class OfflineToOnlineWebSocketManager {
 
     func sendOnlineMessage(mergeStrategy: AnnotatoOfflineToOnlineMergeStrategy) {
         guard let lastOnlineDatetime = NetworkMonitor.shared.getLastOnlineDatetime() else {
+            isResolvingChanges = false
             return
         }
 

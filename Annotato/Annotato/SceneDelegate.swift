@@ -31,6 +31,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 return
             }
 
+            guard AnnotatoAuth().currentUser != nil else {
+                return
+            }
+
             DispatchQueue.main.async {
                 guard let currentTopViewController = self?.getCurrentTopViewController() else {
                     return
