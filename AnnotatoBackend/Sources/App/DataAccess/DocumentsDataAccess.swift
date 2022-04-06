@@ -157,6 +157,9 @@ struct DocumentsDataAccess {
             try await documentEntity.customDelete(on: tx)
         }
 
+        // Load again as associations might be deleted
+        try await documentEntity.loadAssociationsWithDeleted(on: db)
+
         return Document.fromManagedEntity(documentEntity)
     }
 

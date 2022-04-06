@@ -132,6 +132,9 @@ struct AnnotationDataAccess {
             try await annotationEntity.customDelete(on: tx)
         }
 
+        // Load again as associations might be deleted
+        try await annotationEntity.loadAssociationsWithDeleted(on: db)
+
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
