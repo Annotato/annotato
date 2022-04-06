@@ -10,6 +10,9 @@ public func configure(_ app: Application) throws {
     connectDatabase(app: app)
     try addAndRunMigrations(app: app)
 
+    // increase default payload size
+    app.routes.defaultMaxBodySize = "10mb"
+
     // register routes
     try routes(app)
 }
