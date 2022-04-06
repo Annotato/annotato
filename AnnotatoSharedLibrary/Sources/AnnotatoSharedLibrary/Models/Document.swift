@@ -51,6 +51,8 @@ extension Document {
         for annotation in annotations {
             annotation.setCreatedAt(to: createdAt)
         }
+
+        setUpdatedAt(to: createdAt)
     }
 
     public func setUpdatedAt(to updatedAt: Date) {

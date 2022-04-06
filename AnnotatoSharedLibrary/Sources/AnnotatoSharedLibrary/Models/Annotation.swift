@@ -290,6 +290,8 @@ extension Annotation {
         for part in parts {
             part.setCreatedAt(to: createdAt)
         }
+
+        setUpdatedAt(to: createdAt)
     }
 
     public func setUpdatedAt(to updatedAt: Date) {

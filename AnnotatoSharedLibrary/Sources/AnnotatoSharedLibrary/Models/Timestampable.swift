@@ -25,6 +25,8 @@ extension Timestampable {
 
     public func setCreatedAt(to createdAt: Date) {
         self.createdAt = createdAt
+
+        setUpdatedAt(to: createdAt)
     }
 
     public func setUpdatedAt(to updatedAt: Date) {
