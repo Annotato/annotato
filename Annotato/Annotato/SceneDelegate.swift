@@ -36,7 +36,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
 
             DispatchQueue.main.async {
-                guard let currentTopViewController = self?.getCurrentTopViewController() else {
+                guard let currentTopViewController = self?.getCurrentTopViewController(),
+                      !(currentTopViewController is OfflineToOnlineViewController) else {
                     return
                 }
 
