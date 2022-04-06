@@ -65,18 +65,18 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
         return Document.fromManagedEntity(deletedDocument)
     }
 
-    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        documents.compactMap({ document in
-            createOrUpdateDocument(document: document)
-        })
-    }
-
-    private func createOrUpdateDocument(document: Document) -> Document? {
+    func createOrUpdateDocument(document: Document) -> Document? {
         if LocalDocumentEntityDataAccess.read(documentId: document.id,
                                               withDeleted: true) != nil {
             return updateDocument(document: document)
         } else {
             return createDocument(document: document)
         }
+    }
+
+    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
+        documents.compactMap({ document in
+            createOrUpdateDocument(document: document)
+        })
     }
 }

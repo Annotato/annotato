@@ -52,6 +52,10 @@ extension OnlinePersistenceService: DocumentsPersistence {
         return deletedDocumentLocal
     }
 
+    func createOrUpdateDocument(document: Document) -> Document? {
+        localPersistence.documents.createOrUpdateDocument(document: document)
+    }
+
     func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
         localPersistence.documents.createOrUpdateDocuments(documents: documents)
     }

@@ -35,6 +35,7 @@ class DocumentWebSocketManager: ObservableObject {
                 AnnotatoLogger.info("Document was deleted. \(document)")
             }
 
+            _ = LocalPersistenceManager.shared.documents.createOrUpdateDocument(document: document)
         } catch {
             AnnotatoLogger.error(
                 "When handling response data. \(error.localizedDescription).",

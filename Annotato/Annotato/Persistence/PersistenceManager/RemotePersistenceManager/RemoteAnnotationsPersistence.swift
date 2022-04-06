@@ -34,6 +34,11 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
         return nil
     }
 
+    func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
+        fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotation: This function should not be called")
+        return nil
+    }
+
     func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
         fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotations: This function should not be called")
         return nil

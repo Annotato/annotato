@@ -32,18 +32,18 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
         return Annotation.fromManagedEntity(deletedAnnotation)
     }
 
-    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
-        annotations.compactMap({ annotation in
-            createOrUpdateAnnotation(annotation: annotation)
-        })
-    }
-
-    private func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
+    func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
         if LocalAnnotationEntityDataAccess.read(annotationId: annotation.id,
                                                 withDeleted: true) != nil {
             return updateAnnotation(annotation: annotation)
         } else {
             return createAnnotation(annotation: annotation)
         }
+    }
+
+    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+        annotations.compactMap({ annotation in
+            createOrUpdateAnnotation(annotation: annotation)
+        })
     }
 }

@@ -35,6 +35,7 @@ class AnnotationWebSocketManager: ObservableObject {
                 AnnotatoLogger.info("Annotation was deleted. \(annotation)")
             }
 
+            _ = LocalPersistenceManager.shared.annotations.createOrUpdateAnnotation(annotation: annotation)
         } catch {
             AnnotatoLogger.error(
                 "When handling response data. \(error.localizedDescription).",
