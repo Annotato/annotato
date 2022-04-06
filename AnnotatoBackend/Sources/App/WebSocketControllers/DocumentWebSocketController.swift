@@ -92,6 +92,13 @@ class DocumentWebSocketController {
         db: Database,
         message: AnnotatoOfflineToOnlineMessage
     ) async throws -> [Document] {
+        let newServerDocumentsWhileOffline = try await DocumentsDataAccess
+            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
+
+        for document in newServerDocumentsWhileOffline {
+            _ = await Self.handleDeleteDocument(userId: userId, db: db, document: document)
+        }
+
         var responseDocuments: [Document] = []
 
         for document in message.documents {
@@ -106,13 +113,6 @@ class DocumentWebSocketController {
             }
 
             responseDocuments.appendIfNotNil(resolvedDocument)
-        }
-
-        let newServerDocumentsWhileOffline = try await DocumentsDataAccess
-            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
-
-        for document in newServerDocumentsWhileOffline {
-            _ = await Self.handleDeleteDocument(userId: userId, db: db, document: document)
         }
 
         return responseDocuments

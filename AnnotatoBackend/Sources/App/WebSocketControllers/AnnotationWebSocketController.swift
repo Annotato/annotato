@@ -105,6 +105,13 @@ class AnnotationWebSocketController {
         db: Database,
         message: AnnotatoOfflineToOnlineMessage
     ) async throws -> [Annotation] {
+        let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
+            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
+
+        for annotation in newServerAnnotationsWhileOffline {
+            _ = await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
+        }
+
         var responseAnnotations: [Annotation] = []
 
         for annotation in message.annotations {
@@ -119,13 +126,6 @@ class AnnotationWebSocketController {
             }
 
             responseAnnotations.appendIfNotNil(resolvedAnnotation)
-        }
-
-        let newServerAnnotationsWhileOffline = try await AnnotationDataAccess
-            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
-
-        for annotation in newServerAnnotationsWhileOffline {
-            _ = await Self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
         }
 
         return responseAnnotations
