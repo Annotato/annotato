@@ -94,6 +94,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
+
+        // Set up socket when application launches from background (Multi-tasking)
+        WebSocketManager.shared.setUpSocket()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
