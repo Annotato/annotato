@@ -3,6 +3,11 @@ import AnnotatoSharedLibrary
 
 class OfflineToOnlineWebSocketManager {
     @Published private(set) var isResolvingChanges = false
+    private let storageService: AnnotatoStorageService
+
+    init() {
+        self.storageService = FirebaseStorage()
+    }
 
     func handleResponseData(data: Data) {
         do {
@@ -72,6 +77,11 @@ class OfflineToOnlineWebSocketManager {
 
         let documents = LocalPersistenceManager.shared
             .fetchDocumentsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
+
+        for document in documents where document.baseFileUrl == nil {
+            storageService.uploadPdf(fileSystemUrl: document.localFileUrl, withId: document.id)
+        }
+
         let annotations = LocalPersistenceManager.shared
             .fetchAnnotationsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
 

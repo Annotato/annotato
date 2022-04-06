@@ -10,10 +10,9 @@ class FirebaseStorage: AnnotatoStorageService {
 
     weak var delegate: AnnotatoStorageDelegate?
 
-    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID, completion: @escaping (URL) -> Void) {
+    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID) {
         let pdfRef = storageRef.child(documentId.uuidString)
 
-        // swiftlint:disable closure_body_length
         _ = pdfRef.putFile(from: fileSystemUrl, metadata: nil) { _, error in
             if let error = error {
                 AnnotatoLogger.error(
@@ -41,7 +40,6 @@ class FirebaseStorage: AnnotatoStorageService {
                     return
                 }
 
-                completion(url)
                 self.delegate?.uploadDidSucceed()
             }
         }

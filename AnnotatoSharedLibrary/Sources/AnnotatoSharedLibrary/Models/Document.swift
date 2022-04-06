@@ -4,7 +4,7 @@ public final class Document: Codable, Timestampable {
     public var id: UUID
     public private(set) var name: String
     public let ownerId: String
-    public let baseFileUrl: String?
+    public var baseFileUrl: String?
     public private(set) var annotations: [Annotation]
     public var createdAt: Date?
     public var updatedAt: Date?
@@ -13,7 +13,7 @@ public final class Document: Codable, Timestampable {
     public required init(
         name: String,
         ownerId: String,
-        baseFileUrl: String?,
+        baseFileUrl: String? = nil,
         annotations: [Annotation] = [],
         id: UUID? = nil,
         createdAt: Date? = nil,

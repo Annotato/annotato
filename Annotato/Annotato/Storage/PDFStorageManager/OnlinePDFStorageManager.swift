@@ -27,19 +27,19 @@ class OnlinePDFStorageManager: PDFStorageManager {
 
         let documentId = UUID()
 
-        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId, completion: { _ in })
+        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId)
 
-        remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId) { url in
-            let document = Document(name: name, ownerId: userId, baseFileUrl: url.absoluteString, id: documentId)
+        remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId)
 
-            Task {
-                guard let document = await self.persistenceService.createDocument(document: document) else {
-                    return
-                }
+        let document = Document(name: name, ownerId: userId, id: documentId)
 
-                AnnotatoLogger.info("Created backend document entry: \(document)")
-                completion(document)
+        Task {
+            guard let document = await self.persistenceService.createDocument(document: document) else {
+                return
             }
+
+            AnnotatoLogger.info("Created backend document entry: \(document)")
+            completion(document)
         }
     }
 

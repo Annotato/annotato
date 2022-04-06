@@ -25,7 +25,7 @@ class OfflinePDFStorageManager: PDFStorageManager {
 
         let document = Document(name: name, ownerId: userId, baseFileUrl: nil)
 
-        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: document.id, completion: { _ in })
+        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: document.id)
 
         Task {
             guard let document = await self.persistenceService.createDocument(document: document) else {
