@@ -1,18 +1,14 @@
 import Foundation
 
-public final class Document: Codable {
+public final class Document: Codable, Timestampable {
     public var id: UUID
     public private(set) var name: String
     public let ownerId: String
     public let baseFileUrl: String?
     public private(set) var annotations: [Annotation]
-    public private(set) var createdAt: Date?
-    public private(set) var updatedAt: Date?
-    public private(set) var deletedAt: Date?
-
-    public var isDeleted: Bool {
-        deletedAt != nil
-    }
+    public var createdAt: Date?
+    public var updatedAt: Date?
+    public var deletedAt: Date?
 
     public required init(
         name: String,

@@ -1,5 +1,6 @@
 import Foundation
 import CoreData
+import AnnotatoSharedLibrary
 
 struct LocalPersistenceManager {
     static var sharedContext: NSManagedObjectContext {
@@ -43,5 +44,31 @@ extension LocalPersistenceManager: PersistenceManager {
 
     var annotations: AnnotationsPersistence {
         LocalAnnotationsPersistence()
+    }
+}
+
+extension LocalPersistenceManager {
+    func fetchDocumentsUpdatedAfterDate(date: Date) -> [Document]? {
+        let documentEntities = LocalDocumentEntityDataAccess.listUpdatedAfterDate(date: date)
+
+        guard let documentEntities = documentEntities else {
+            AnnotatoLogger.error("When getting updated documents after date",
+                                 context: "LocalPersistenceManager::fetchDocumentsUpdatedAfterDate")
+            return nil
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
+    }
+
+    func fetchAnnotationsUpdatedAfterDate(date: Date) -> [Annotation]? {
+        let annotationEntities = LocalAnnotationEntityDataAccess.listUpdatedAfterDate(date: date)
+
+        guard let annotationEntities = annotationEntities else {
+            AnnotatoLogger.error("When getting updated annotations after date",
+                                 context: "LocalPersistenceManager::fetchAnnotationsUpdatedAfterDate")
+            return nil
+        }
+
+        return annotationEntities.map(Annotation.fromManagedEntity)
     }
 }

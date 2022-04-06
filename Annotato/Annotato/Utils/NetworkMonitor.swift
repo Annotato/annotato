@@ -51,10 +51,6 @@ extension NetworkMonitor {
     }
 
     func getLastOnlineDatetime() -> Date? {
-        if isConnected {
-            return Date()
-        }
-
         guard let lastOnlineDatetime = UserDefaults.standard.object(
             forKey: Self.lastOnlineDatetimeKey
         ) as? Date else {

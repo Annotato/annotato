@@ -8,10 +8,15 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     var documentViewModel: DocumentViewModel?
     private var cancellables: Set<AnyCancellable> = []
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        initializeSubviews()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        initializeSubviews()
         setUpWebSocketSubscribers()
     }
 

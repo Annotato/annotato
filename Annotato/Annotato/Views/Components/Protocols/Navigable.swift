@@ -89,6 +89,14 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
+    func goToOfflineToOnline() {
+        guard let viewController = OfflineToOnlineViewController.instantiateFullScreenFromStoryboard(.main) else {
+            return
+        }
+
+        present(viewController, animated: true)
+    }
+
     func goBack() {
         self.dismiss(animated: true, completion: nil)
     }

@@ -16,10 +16,6 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
         (try? PKDrawing(data: handwriting).bounds.isEmpty) ?? false
     }
 
-    public var isDeleted: Bool {
-        deletedAt != nil
-    }
-
     @Published public private(set) var isRemoved = false
 
     public required init(
