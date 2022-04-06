@@ -282,19 +282,11 @@ extension AnnotationViewModel {
     }
 
     func receiveDelete() {
-        guard model.isDeleted else {
-            return
-        }
-
         isRemoved = true
         selectionBox.receiveDelete()
     }
 
     func receiveUpdate(updatedAnnotation: Annotation) {
-        guard !model.isDeleted else {
-            return
-        }
-
         self.model = updatedAnnotation
 
         self.cancellables = []

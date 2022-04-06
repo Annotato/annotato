@@ -8,6 +8,7 @@ class OfflineToOnlineWebSocketManager {
         do {
             AnnotatoLogger.info("Handling offline to online response data...")
             let message = try JSONCustomDecoder().decode(AnnotatoOfflineToOnlineMessage.self, from: data)
+            AnnotatoLogger.info("Last online time was \(message.lastOnlineAt)...")
 
             let documents = message.documents
             let annotations = message.annotations
