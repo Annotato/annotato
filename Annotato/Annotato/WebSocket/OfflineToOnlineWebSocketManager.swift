@@ -2,6 +2,8 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class OfflineToOnlineWebSocketManager {
+    @Published private(set) var isResolvingChanges = false
+
     func handleResponseData(data: Data) {
         do {
             AnnotatoLogger.info("Handling offline to online response data...")
@@ -15,6 +17,8 @@ class OfflineToOnlineWebSocketManager {
                     .createOrUpdateDocuments(documents: documents)
                 _ = await LocalPersistenceManager.shared.annotations
                     .createOrUpdateAnnotations(annotations: annotations)
+
+                isResolvingChanges = false
             }
         } catch {
             AnnotatoLogger.error("When handling response data. \(error.localizedDescription)",
@@ -26,6 +30,8 @@ class OfflineToOnlineWebSocketManager {
         guard let lastOnlineDatetime = NetworkMonitor.shared.getLastOnlineDatetime() else {
             return
         }
+
+        isResolvingChanges = true
 
         let documents = LocalPersistenceManager.shared
             .fetchDocumentsUpdatedAfterDate(date: lastOnlineDatetime) ?? []

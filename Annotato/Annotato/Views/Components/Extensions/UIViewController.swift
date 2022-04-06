@@ -38,28 +38,3 @@ extension UIViewController {
         margins.layoutFrame
     }
 }
-
-// MARK: Offline To Online
-extension UIViewController {
-    var onlineAlertController: UIAlertController {
-        let alertController = UIAlertController(title: "Welcome back online!",
-                                                message: "Choose your merge strategy.",
-                                                preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Discard Local Changes",
-                                                style: .default) { _ in
-            OfflineToOnlineWebSocketManager().sendOnlineMessage(mergeStrategy: .keepServerVersion)
-        })
-
-        alertController.addAction(UIAlertAction(title: "Override with Local Changes",
-                                                style: .default) { _ in
-            OfflineToOnlineWebSocketManager().sendOnlineMessage(mergeStrategy: .keepServerVersion)
-        })
-
-        return alertController
-    }
-
-    func presentOnlineAlert() {
-
-    }
-}

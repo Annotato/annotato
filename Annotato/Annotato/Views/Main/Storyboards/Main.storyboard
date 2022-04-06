@@ -170,7 +170,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="131.70731707317074" y="116.94915254237289"/>
+            <point key="canvasLocation" x="131.45161290322579" y="116.76963812886143"/>
         </scene>
         <!--Offline To Online View Controller-->
         <scene sceneID="zUB-5W-Oll">
@@ -181,8 +181,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome back online!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tL3-1v-ecI">
-                                <rect key="frame" x="203" y="417" width="338.5" height="71.5"/>
-                                <fontDescription key="fontDescription" name="SavoyeLetPlain" family="Savoye LET" pointSize="60"/>
+                                <rect key="frame" x="146.5" y="348" width="451.5" height="95.5"/>
+                                <fontDescription key="fontDescription" name="SavoyeLetPlain" family="Savoye LET" pointSize="80"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -194,32 +194,48 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iLJ-l6-Tbt">
                                 <rect key="frame" x="286" y="608" width="172" height="31"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Discard Local Changes"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Discard Local Changes" cornerStyle="capsule">
+                                    <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
                                 <connections>
                                     <action selector="didTapDiscardLocalChanges:" destination="enP-z1-ZGl" eventType="touchUpInside" id="dWM-bQ-GjS"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLa-iv-erm">
                                 <rect key="frame" x="267" y="658" width="210" height="31"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Override with Local Changes"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Override with Local Changes" cornerStyle="capsule">
+                                    <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
                                 <connections>
                                     <action selector="didTapOverrideWithLocalChanges:" destination="enP-z1-ZGl" eventType="touchUpInside" id="Phg-kw-vpC"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your local changes may have diverged from the server's changes." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xua-Wx-GH7">
+                                <rect key="frame" x="74" y="496.5" width="596" height="26"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="OwW-AX-cLs"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="0.94509803920000002" green="0.91372549020000005" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="iLJ-l6-Tbt" firstAttribute="centerY" secondItem="OwW-AX-cLs" secondAttribute="centerY" multiplier="1.1" constant="-2" id="4cd-yl-MCw"/>
                             <constraint firstItem="tL3-1v-ecI" firstAttribute="centerX" secondItem="OwW-AX-cLs" secondAttribute="centerX" id="8AN-YS-1LQ"/>
                             <constraint firstItem="eLa-iv-erm" firstAttribute="centerY" secondItem="iLJ-l6-Tbt" secondAttribute="centerY" constant="50" id="Al4-Ki-X5k"/>
                             <constraint firstItem="iLJ-l6-Tbt" firstAttribute="centerX" secondItem="6YI-xc-Rzz" secondAttribute="centerX" id="Nmy-sd-2TT"/>
                             <constraint firstItem="HXS-4P-Yj8" firstAttribute="centerY" secondItem="OwW-AX-cLs" secondAttribute="centerY" constant="-2" id="Qky-Fv-Dc6"/>
+                            <constraint firstItem="Xua-Wx-GH7" firstAttribute="centerX" secondItem="OwW-AX-cLs" secondAttribute="centerX" id="RpV-vt-aeF"/>
                             <constraint firstItem="HXS-4P-Yj8" firstAttribute="centerX" secondItem="OwW-AX-cLs" secondAttribute="centerX" id="daH-fE-9QX"/>
                             <constraint firstItem="eLa-iv-erm" firstAttribute="centerX" secondItem="6YI-xc-Rzz" secondAttribute="centerX" id="hFD-BD-9k8"/>
-                            <constraint firstItem="tL3-1v-ecI" firstAttribute="centerY" secondItem="OwW-AX-cLs" secondAttribute="centerY" multiplier="0.8" constant="-2" id="ylc-m1-MTC"/>
+                            <constraint firstItem="Xua-Wx-GH7" firstAttribute="centerY" secondItem="OwW-AX-cLs" secondAttribute="centerY" multiplier="0.9" constant="-2" id="rmr-Xe-cOT"/>
+                            <constraint firstItem="tL3-1v-ecI" firstAttribute="centerY" secondItem="OwW-AX-cLs" secondAttribute="centerY" multiplier="0.7" constant="-2" id="ylc-m1-MTC"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -231,9 +247,6 @@
     <resources>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemFillColor">
             <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
