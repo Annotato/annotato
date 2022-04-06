@@ -11,7 +11,7 @@ struct RemoteDocumentSharesPersistence: DocumentSharesPersistence {
     }
 
     // MARK: CREATE
-    func createDocumentShare(documentShare: DocumentShare) async -> DocumentShare? {
+    func createDocumentShare(documentShare: DocumentShare) async -> Document? {
         guard let requestData = encodeDocumentShare(documentShare) else {
             AnnotatoLogger.error("DocumentShare was not created",
                                  context: "RemoteDocumentSharesPersistence::createDocumentShare")
@@ -21,7 +21,7 @@ struct RemoteDocumentSharesPersistence: DocumentSharesPersistence {
         do {
             let responseData =
                 try await httpService.post(url: RemoteDocumentSharesPersistence.documentSharesUrl, data: requestData)
-            return try JSONCustomDecoder().decode(DocumentShare.self, from: responseData)
+            return try JSONCustomDecoder().decode(Document.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When creating document share: \(error.localizedDescription)")
             return nil
