@@ -3,7 +3,6 @@ import AnnotatoSharedLibrary
 
 class DocumentWebSocketManager: ObservableObject {
     @Published private(set) var newDocument: Document?
-    @Published private(set) var readDocument: Document?
     @Published private(set) var updatedDocument: Document?
     @Published private(set) var deletedDocument: Document?
 
@@ -11,12 +10,11 @@ class DocumentWebSocketManager: ObservableObject {
         do {
             AnnotatoLogger.info("Handling document response data...")
 
-            let message = try JSONCustomDecoder().decode(AnnotatoCrudDocumentMessage.self, from: data)
+            let message = try JSONCustomDecoder().decode(AnnotatoCudDocumentMessage.self, from: data)
             let document = message.document
 
             // Defensive resets
             newDocument = nil
-            readDocument = nil
             updatedDocument = nil
             deletedDocument = nil
 
@@ -24,9 +22,6 @@ class DocumentWebSocketManager: ObservableObject {
             case .createDocument:
                 newDocument = document
                 AnnotatoLogger.info("Document was created. \(document)")
-            case .readDocument:
-                readDocument = document
-                AnnotatoLogger.info("Document was read. \(document)")
             case .updateDocument:
                 updatedDocument = document
                 AnnotatoLogger.info("Document was updated. \(document)")

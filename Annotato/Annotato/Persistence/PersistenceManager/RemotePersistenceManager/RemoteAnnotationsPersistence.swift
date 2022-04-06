@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     func createAnnotation(annotation: Annotation) async -> Annotation? {
-        let webSocketMessage = AnnotatoCrudAnnotationMessage(
+        let webSocketMessage = AnnotatoCudAnnotationMessage(
             subtype: .createAnnotation, annotation: annotation
         )
 
@@ -13,7 +13,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        let webSocketMessage = AnnotatoCrudAnnotationMessage(
+        let webSocketMessage = AnnotatoCudAnnotationMessage(
             subtype: .updateAnnotation, annotation: annotation
         )
 
@@ -24,7 +24,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        let webSocketMessage = AnnotatoCrudAnnotationMessage(
+        let webSocketMessage = AnnotatoCudAnnotationMessage(
             subtype: .deleteAnnotation, annotation: annotation
         )
 
