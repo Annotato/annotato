@@ -43,5 +43,7 @@ extension Timestampable {
 
     public func setDeletedAt(to deletedAt: Date) {
         self.deletedAt = deletedAt
+
+        setUpdatedAt(to: deletedAt)
     }
 }

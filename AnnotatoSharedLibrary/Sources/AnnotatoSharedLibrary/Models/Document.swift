@@ -67,6 +67,8 @@ extension Document {
         for annotation in annotations {
             annotation.setDeletedAt(to: deletedAt)
         }
+
+        setUpdatedAt(to: deletedAt)
     }
 }
 

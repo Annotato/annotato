@@ -308,6 +308,8 @@ extension Annotation {
         for part in parts {
             part.setDeletedAt(to: deletedAt)
         }
+
+        setUpdatedAt(to: deletedAt)
     }
 }
 
