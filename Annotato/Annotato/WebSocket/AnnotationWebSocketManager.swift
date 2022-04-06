@@ -12,11 +12,21 @@ class AnnotationWebSocketManager: ObservableObject {
 
             let message = try JSONCustomDecoder().decode(AnnotatoCudAnnotationMessage.self, from: data)
             let annotation = message.annotation
+            let senderId = message.senderId
 
             // Defensive resets
             newAnnotation = nil
             updatedAnnotation = nil
             deletedAnnotation = nil
+
+            Task {
+                _ = await LocalPersistenceManager.shared.annotations
+                    .createOrUpdateAnnotation(annotation: annotation)
+            }
+
+            guard senderId != AnnotatoAuth().currentUser?.uid else {
+                return
+            }
 
             switch message.subtype {
             case .createAnnotation:
@@ -28,11 +38,6 @@ class AnnotationWebSocketManager: ObservableObject {
             case .deleteAnnotation:
                 deletedAnnotation = annotation
                 AnnotatoLogger.info("Annotation was deleted. \(annotation)")
-            }
-
-            Task {
-                _ = await LocalPersistenceManager.shared.annotations
-                    .createOrUpdateAnnotation(annotation: annotation)
             }
         } catch {
             AnnotatoLogger.error(

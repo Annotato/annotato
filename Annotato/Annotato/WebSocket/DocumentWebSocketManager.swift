@@ -12,11 +12,21 @@ class DocumentWebSocketManager: ObservableObject {
 
             let message = try JSONCustomDecoder().decode(AnnotatoCudDocumentMessage.self, from: data)
             let document = message.document
+            let senderId = message.senderId
 
             // Defensive resets
             newDocument = nil
             updatedDocument = nil
             deletedDocument = nil
+
+            Task {
+                _ = await LocalPersistenceManager.shared.documents
+                    .createOrUpdateDocument(document: document)
+            }
+
+            guard senderId != AnnotatoAuth().currentUser?.uid else {
+                return
+            }
 
             switch message.subtype {
             case .createDocument:
@@ -28,11 +38,6 @@ class DocumentWebSocketManager: ObservableObject {
             case .deleteDocument:
                 deletedDocument = document
                 AnnotatoLogger.info("Document was deleted. \(document)")
-            }
-
-            Task {
-                _ = await LocalPersistenceManager.shared.documents
-                    .createOrUpdateDocument(document: document)
             }
         } catch {
             AnnotatoLogger.error(

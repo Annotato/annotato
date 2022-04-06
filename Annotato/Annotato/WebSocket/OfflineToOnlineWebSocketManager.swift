@@ -40,7 +40,12 @@ class OfflineToOnlineWebSocketManager {
         let annotations = LocalPersistenceManager.shared
             .fetchAnnotationsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
 
-        let message = AnnotatoOfflineToOnlineMessage(mergeStrategy: mergeStrategy,
+        guard let senderId = AnnotatoAuth().currentUser?.uid else {
+            return
+        }
+
+        let message = AnnotatoOfflineToOnlineMessage(senderId: senderId,
+                                                     mergeStrategy: mergeStrategy,
                                                      lastOnlineAt: lastOnlineDatetime,
                                                      documents: documents, annotations: annotations)
 

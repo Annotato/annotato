@@ -3,45 +3,30 @@ import Foundation
 
 extension OnlinePersistenceService: AnnotationsPersistence {
     func createAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let createdAnnotationRemote = await remotePersistence
+       _ = await remotePersistence
             .annotations
-            .createAnnotation(annotation: annotation) else {
-            return nil
-        }
-        guard let createdAnnotationLocal = await localPersistence
-            .annotations
-            .createAnnotation(annotation: createdAnnotationRemote) else {
-            return nil
-        }
-        return createdAnnotationLocal
+            .createAnnotation(annotation: annotation)
+
+        // Local persistence is done by the websocket manager on receiving a response
+        return nil
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let updatedAnnotationRemote = await remotePersistence
+        _ = await remotePersistence
             .annotations
-            .updateAnnotation(annotation: annotation) else {
-            return nil
-        }
-        guard let updatedAnnotationLocal = await localPersistence
-            .annotations
-            .updateAnnotation(annotation: updatedAnnotationRemote) else {
-            return nil
-        }
-        return updatedAnnotationLocal
+            .updateAnnotation(annotation: annotation)
+
+        // Local persistence is done by the websocket manager on receiving a response
+        return nil
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let deletedAnnotationRemote = await remotePersistence
+        _ = await remotePersistence
             .annotations
-            .deleteAnnotation(annotation: annotation) else {
-            return nil
-        }
-        guard let deletedAnnotationLocal = await localPersistence
-            .annotations
-            .deleteAnnotation(annotation: deletedAnnotationRemote) else {
-            return nil
-        }
-        return deletedAnnotationLocal
+            .deleteAnnotation(annotation: annotation)
+
+        // Local persistence is done by the websocket manager on receiving a response
+        return nil
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {

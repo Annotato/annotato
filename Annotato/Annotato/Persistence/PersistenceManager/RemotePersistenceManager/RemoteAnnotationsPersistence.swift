@@ -2,8 +2,12 @@ import AnnotatoSharedLibrary
 
 struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     func createAnnotation(annotation: Annotation) async -> Annotation? {
+        guard let senderId = AnnotatoAuth().currentUser?.uid else {
+            return nil
+        }
+
         let webSocketMessage = AnnotatoCudAnnotationMessage(
-            subtype: .createAnnotation, annotation: annotation
+            senderId: senderId, subtype: .createAnnotation, annotation: annotation
         )
 
         WebSocketManager.shared.send(message: webSocketMessage)
@@ -13,8 +17,12 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
+        guard let senderId = AnnotatoAuth().currentUser?.uid else {
+            return nil
+        }
+
         let webSocketMessage = AnnotatoCudAnnotationMessage(
-            subtype: .updateAnnotation, annotation: annotation
+            senderId: senderId, subtype: .updateAnnotation, annotation: annotation
         )
 
         WebSocketManager.shared.send(message: webSocketMessage)
@@ -24,8 +32,12 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
+        guard let senderId = AnnotatoAuth().currentUser?.uid else {
+            return nil
+        }
+
         let webSocketMessage = AnnotatoCudAnnotationMessage(
-            subtype: .deleteAnnotation, annotation: annotation
+            senderId: senderId, subtype: .deleteAnnotation, annotation: annotation
         )
 
         WebSocketManager.shared.send(message: webSocketMessage)
