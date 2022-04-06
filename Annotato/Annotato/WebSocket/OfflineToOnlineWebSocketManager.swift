@@ -10,8 +10,12 @@ class OfflineToOnlineWebSocketManager {
             let documents = message.documents
             let annotations = message.annotations
 
-            _ = LocalPersistenceManager.shared.documents.createOrUpdateDocuments(documents: documents)
-            _ = LocalPersistenceManager.shared.annotations.createOrUpdateAnnotations(annotations: annotations)
+            Task {
+                _ = await LocalPersistenceManager.shared.documents
+                    .createOrUpdateDocuments(documents: documents)
+                _ = await LocalPersistenceManager.shared.annotations
+                    .createOrUpdateAnnotations(annotations: annotations)
+            }
         } catch {
             AnnotatoLogger.error("When handling response data. \(error.localizedDescription)",
                                  context: "OfflineToOnlineWebSocketManager::handleResponseData")

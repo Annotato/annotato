@@ -3,13 +3,13 @@ import Foundation
 
 extension OnlinePersistenceService: DocumentSharesPersistence {
     func createDocumentShare(documentShare: DocumentShare) async -> Document? {
-        guard let sharedDocument = await remotePersistence
+        guard let sharedDocumentRemote = await remotePersistence
             .documentShares
             .createDocumentShare(documentShare: documentShare) else {
             return nil
         }
 
-        _ = await localPersistence.documents.createDocument(document: sharedDocument)
-        return sharedDocument
+        let sharedDocumentLocal = await localPersistence.documents.createDocument(document: sharedDocumentRemote)
+        return sharedDocumentLocal
     }
 }

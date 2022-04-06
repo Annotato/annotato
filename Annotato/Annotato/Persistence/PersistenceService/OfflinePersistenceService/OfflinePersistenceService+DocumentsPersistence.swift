@@ -29,11 +29,23 @@ extension OfflinePersistenceService: DocumentsPersistence {
         return await localPersistence.documents.deleteDocument(document: document)
     }
 
-    func createOrUpdateDocument(document: Document) -> Document? {
-        localPersistence.documents.createOrUpdateDocument(document: document)
+    func createOrUpdateDocument(document: Document) async -> Document? {
+        if LocalDocumentEntityDataAccess.read(documentId: document.id,
+                                              withDeleted: true) != nil {
+            return await updateDocument(document: document)
+        } else {
+            return await createDocument(document: document)
+        }
     }
 
-    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        localPersistence.documents.createOrUpdateDocuments(documents: documents)
+    func createOrUpdateDocuments(documents: [Document]) async -> [Document]? {
+        var documents: [Document] = []
+        for document in documents {
+            guard let documentToAppend = await self.createOrUpdateDocument(document: document) else {
+                return nil
+            }
+            documents.append(documentToAppend)
+        }
+        return documents
     }
 }

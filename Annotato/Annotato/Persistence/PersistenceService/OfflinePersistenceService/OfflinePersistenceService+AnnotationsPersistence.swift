@@ -17,11 +17,23 @@ extension OfflinePersistenceService: AnnotationsPersistence {
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
-    func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
-        localPersistence.annotations.createOrUpdateAnnotation(annotation: annotation)
+    func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
+        if LocalAnnotationEntityDataAccess.read(annotationId: annotation.id,
+                                                withDeleted: true) != nil {
+            return await self.updateAnnotation(annotation: annotation)
+        } else {
+            return await self.createAnnotation(annotation: annotation)
+        }
     }
 
-    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
-        localPersistence.annotations.createOrUpdateAnnotations(annotations: annotations)
+    func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
+        var annotations: [Annotation] = []
+        for annotation in annotations {
+            guard let annotationToAppend = await self.createOrUpdateAnnotation(annotation: annotation) else {
+                return nil
+            }
+            annotations.append(annotationToAppend)
+        }
+        return annotations
     }
 }

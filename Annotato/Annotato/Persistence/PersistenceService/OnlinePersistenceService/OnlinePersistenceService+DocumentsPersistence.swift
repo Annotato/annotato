@@ -53,10 +53,12 @@ extension OnlinePersistenceService: DocumentsPersistence {
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {
-        localPersistence.documents.createOrUpdateDocument(document: document)
+        fatalError("OnlinePersistenceService::createOrUpdateDocument: This function should not be called")
+        return nil
     }
 
     func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        localPersistence.documents.createOrUpdateDocuments(documents: documents)
+        fatalError("OnlinePersistenceService::createOrUpdateDocuments: This function should not be called")
+        return nil
     }
 }

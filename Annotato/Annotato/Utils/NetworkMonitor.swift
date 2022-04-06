@@ -2,7 +2,7 @@ import Foundation
 import Network
 import Combine
 
-class NetworkMonitor {
+class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
 
     @Published private(set) var isConnected = false
