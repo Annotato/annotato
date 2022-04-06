@@ -13,7 +13,7 @@ extension AnnotationHandwritingEntity {
         order = Int64(annotationHandwriting.order)
 
         if let annotationEntity = LocalAnnotationEntityDataAccess
-            .read(annotationId: annotationHandwriting.annotationId, withDeleted: true) {
+            .readInCurrentContext(annotationId: annotationHandwriting.annotationId, withDeleted: true) {
             self.annotationEntity = annotationEntity
         }
 

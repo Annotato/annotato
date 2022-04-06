@@ -61,12 +61,30 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
+    static func readInCurrentContext(annotationId: UUID, withDeleted: Bool) -> AnnotationEntity? {
+        let request = AnnotationEntity.fetchRequest()
+
+        do {
+            var annotationEntities = try context.fetch(request).filter { $0.id == annotationId }
+            if !withDeleted {
+                annotationEntities = AnnotationEntity.removeDeletedAnnotationEntities(annotationEntities)
+            }
+
+            return annotationEntities.first
+        } catch {
+            AnnotatoLogger.error("When reading annotation entity. \(String(describing: error))",
+                                 context: "LocalAnnotationDataAccess::read")
+            return nil
+        }
+    }
+
     static func update(annotationId: UUID, annotation: Annotation) -> AnnotationEntity? {
         context.performAndWait {
             context.rollback()
 
-            guard let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: annotationId,
-                                                                              withDeleted: true) else {
+            guard let annotationEntity = LocalAnnotationEntityDataAccess
+                .readInCurrentContext(annotationId: annotationId,
+                                      withDeleted: true) else {
                 AnnotatoLogger.error("When finding existing annotation entity.",
                                      context: "LocalAnnotationEntityDataAccess::update")
                 return nil

@@ -10,7 +10,8 @@ extension AnnotationEntity: PersistedEntity {
         entity.originX = model.origin.x
         entity.originY = model.origin.y
 
-        if let documentEntity = LocalDocumentEntityDataAccess.read(documentId: model.documentId, withDeleted: true) {
+        if let documentEntity = LocalDocumentEntityDataAccess.readInCurrentContext(documentId: model.documentId,
+                                                                                   withDeleted: true) {
             entity.documentEntity = documentEntity
         }
 

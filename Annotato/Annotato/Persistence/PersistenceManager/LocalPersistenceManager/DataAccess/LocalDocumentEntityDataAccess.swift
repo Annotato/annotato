@@ -97,12 +97,30 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
+    static func readInCurrentContext(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
+        let request = DocumentEntity.fetchRequest()
+
+        do {
+            var documentEntities = try context.fetch(request).filter { $0.id == documentId }
+            if !withDeleted {
+                documentEntities = DocumentEntity.removeDeletedDocumentEntities(documentEntities)
+            }
+
+            return documentEntities.first
+        } catch {
+            AnnotatoLogger.error("When fetching document entity. \(String(describing: error))",
+                                 context: "LocalDocumentEntityDataAccess::read")
+            return nil
+        }
+    }
+
     static func update(documentId: UUID, document: Document) -> DocumentEntity? {
         context.performAndWait {
             context.rollback()
 
-            guard let documentEntity = LocalDocumentEntityDataAccess.read(documentId: documentId,
-                                                                          withDeleted: true) else {
+            guard let documentEntity = LocalDocumentEntityDataAccess
+                .readInCurrentContext(documentId: documentId,
+                                      withDeleted: true) else {
                 AnnotatoLogger.error("When finding existing document entity.",
                                      context: "LocalDocumentEntityDataAccess::update")
                 return nil

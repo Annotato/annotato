@@ -21,4 +21,18 @@ struct LocalAnnotationTextEntityDataAccess {
             }
         }
     }
+
+    static func readInCurrentContext(annotationTextEntityId: UUID) -> AnnotationTextEntity? {
+        let request = AnnotationTextEntity.fetchRequest()
+
+        do {
+            let annotationTextEntities = try context.fetch(request).filter { $0.id == annotationTextEntityId }
+
+            return annotationTextEntities.first
+        } catch {
+            AnnotatoLogger.error("When reading annotation text entity. \(String(describing: error))",
+                                 context: "LocalAnnotationTextEntityDataAccess::readInCurrentContext")
+            return nil
+        }
+    }
 }

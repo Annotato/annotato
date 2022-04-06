@@ -7,7 +7,7 @@ extension AnnotationEntity {
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
         for annotationText in annotationTexts {
             if let annotationTextEntity = LocalAnnotationTextEntityDataAccess
-                .read(annotationTextEntityId: annotationText.id) {
+                .readInCurrentContext(annotationTextEntityId: annotationText.id) {
                 annotationTextEntity.customUpdate(usingUpdatedModel: annotationText)
             } else {
                 addToAnnotationTextEntities(AnnotationTextEntity.fromModel(annotationText))
@@ -17,7 +17,7 @@ extension AnnotationEntity {
         let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
         for annotationHandwriting in annotationHandwritings {
             if let annotationHandwritingEntity = LocalAnnotationHandwritingEntityDataAccess
-                .read(annotationHandwritingEntityId: annotationHandwriting.id) {
+                .readInCurrentContext(annotationHandwritingEntityId: annotationHandwriting.id) {
                 annotationHandwritingEntity.customUpdate(usingUpdatedModel: annotationHandwriting)
             } else {
                 addToAnnotationHandwritingEntities(AnnotationHandwritingEntity.fromModel(annotationHandwriting))
@@ -25,7 +25,8 @@ extension AnnotationEntity {
         }
 
         let selectionBox = annotation.selectionBox
-        if let selectionBoxEntity = LocalSelectionBoxEntityDataAccess.read(selectionBoxId: selectionBox.id) {
+        if let selectionBoxEntity = LocalSelectionBoxEntityDataAccess
+            .readInCurrentContext(selectionBoxId: selectionBox.id) {
             selectionBoxEntity.customUpdate(usingUpdatedModel: selectionBox)
         } else {
             _ = SelectionBoxEntity.fromModel(selectionBox)
@@ -41,7 +42,7 @@ extension AnnotationEntity {
         ownerId = annotation.ownerId
 
         if let documentEntity = LocalDocumentEntityDataAccess
-            .read(documentId: annotation.documentId, withDeleted: true) {
+            .readInCurrentContext(documentId: annotation.documentId, withDeleted: true) {
             self.documentEntity = documentEntity
         }
 

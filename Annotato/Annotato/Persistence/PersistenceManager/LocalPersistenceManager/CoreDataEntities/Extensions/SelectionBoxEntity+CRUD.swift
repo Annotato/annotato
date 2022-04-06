@@ -13,8 +13,9 @@ extension SelectionBoxEntity {
         endPointX = selectionBox.endPoint.x
         endPointY = selectionBox.endPoint.y
 
-        if let annotationEntity = LocalAnnotationEntityDataAccess.read(annotationId: selectionBox.annotationId,
-                                                                       withDeleted: true) {
+        if let annotationEntity = LocalAnnotationEntityDataAccess
+            .readInCurrentContext(annotationId: selectionBox.annotationId,
+                                  withDeleted: true) {
             self.annotationEntity = annotationEntity
         }
 
