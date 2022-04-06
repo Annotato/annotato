@@ -31,7 +31,9 @@ class DocumentWebSocketController {
             Self.logger.info("Processing create document data...")
 
             let newDocument = try await DocumentsDataAccess.create(db: db, document: document)
-            let response = AnnotatoCudDocumentMessage(senderId: userId, subtype: .createDocument, document: newDocument)
+            let response = AnnotatoCudDocumentMessage(
+                senderId: userId, subtype: .createDocument, document: newDocument
+            )
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: newDocument, message: response
@@ -50,7 +52,9 @@ class DocumentWebSocketController {
 
             let updatedDocument = try await DocumentsDataAccess
                 .update(db: db, documentId: document.id, document: document)
-            let response = AnnotatoCudDocumentMessage(senderId: userId, subtype: .updateDocument, document: updatedDocument)
+            let response = AnnotatoCudDocumentMessage(
+                senderId: userId, subtype: .updateDocument, document: updatedDocument
+            )
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: updatedDocument, message: response
@@ -68,7 +72,9 @@ class DocumentWebSocketController {
             Self.logger.info("Processing delete document data...")
 
             let deletedDocument = try await DocumentsDataAccess.delete(db: db, documentId: document.id)
-            let response = AnnotatoCudDocumentMessage(senderId: userId, subtype: .deleteDocument, document: deletedDocument)
+            let response = AnnotatoCudDocumentMessage(
+                senderId: userId, subtype: .deleteDocument, document: deletedDocument
+            )
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: deletedDocument, message: response

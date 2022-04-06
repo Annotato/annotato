@@ -13,6 +13,7 @@ public class AnnotatoCudDocumentMessage: Codable {
 
 extension AnnotatoCudDocumentMessage: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "AnnotatoCudDocumentMessage(senderId: \(senderId), type: \(type), subtype: \(subtype), document: \(document))"
+        "AnnotatoCudDocumentMessage(senderId: \(senderId), type: \(type), " +
+        "subtype: \(subtype), document: \(document))"
     }
 }

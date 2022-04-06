@@ -36,7 +36,9 @@ class AnnotationWebSocketController {
             Self.logger.info("Processing create annotation data...")
 
             let newAnnotation = try await AnnotationDataAccess.create(db: db, annotation: annotation)
-            let response = AnnotatoCudAnnotationMessage(senderId: userId, subtype: .createAnnotation, annotation: newAnnotation)
+            let response = AnnotatoCudAnnotationMessage(
+                senderId: userId, subtype: .createAnnotation, annotation: newAnnotation
+            )
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, annotation: newAnnotation, message: response
@@ -59,7 +61,9 @@ class AnnotationWebSocketController {
 
             let updatedAnnotation = try await AnnotationDataAccess
                 .update(db: db, annotationId: annotation.id, annotation: annotation)
-            let response = AnnotatoCudAnnotationMessage(senderId: userId, subtype: .updateAnnotation, annotation: updatedAnnotation)
+            let response = AnnotatoCudAnnotationMessage(
+                senderId: userId, subtype: .updateAnnotation, annotation: updatedAnnotation
+            )
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, annotation: updatedAnnotation, message: response
@@ -81,7 +85,9 @@ class AnnotationWebSocketController {
             Self.logger.info("Processing delete annotation data...")
 
             let deletedAnnotation = try await AnnotationDataAccess.delete(db: db, annotationId: annotation.id)
-            let response = AnnotatoCudAnnotationMessage(senderId: userId, subtype: .deleteAnnotation, annotation: deletedAnnotation)
+            let response = AnnotatoCudAnnotationMessage(
+                senderId: userId, subtype: .deleteAnnotation, annotation: deletedAnnotation
+            )
 
             await Self.sendToAllAppropriateClients(
                 db: db, userId: userId, annotation: deletedAnnotation, message: response
