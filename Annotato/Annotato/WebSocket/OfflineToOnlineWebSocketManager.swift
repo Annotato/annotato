@@ -10,14 +10,13 @@ class OfflineToOnlineWebSocketManager {
             let message = try JSONCustomDecoder().decode(AnnotatoOfflineToOnlineMessage.self, from: data)
             AnnotatoLogger.info("Last online time was \(message.lastOnlineAt)...")
 
-            let documents = message.documents
-            let annotations = message.annotations
-
             Task {
-                _ = await LocalPersistenceManager.shared.documents
-                    .createOrUpdateDocuments(documents: documents)
-                _ = await LocalPersistenceManager.shared.annotations
-                    .createOrUpdateAnnotations(annotations: annotations)
+                switch message.mergeStrategy {
+                case .keepServerVersion:
+                    await handleKeepServerResponse(message: message)
+                case .overrideServerVersion:
+                    await handleOverrideServerResponse(message: message)
+                }
 
                 isResolvingChanges = false
             }
@@ -25,6 +24,42 @@ class OfflineToOnlineWebSocketManager {
             AnnotatoLogger.error("When handling response data. \(error.localizedDescription)",
                                  context: "OfflineToOnlineWebSocketManager::handleResponseData")
         }
+    }
+
+    private func handleKeepServerResponse(message: AnnotatoOfflineToOnlineMessage) async {
+        let lastOnlineAt = message.lastOnlineAt
+
+        let newLocalDocumentsWhileOffline = LocalPersistenceManager.shared
+            .fetchDocumentsCreatedAfterDate(date: lastOnlineAt) ?? []
+
+        for document in newLocalDocumentsWhileOffline {
+            _ = await LocalPersistenceManager.shared.documents
+                .deleteDocument(document: document)
+        }
+
+        let newLocalAnnotationsWhileOffline = LocalPersistenceManager.shared
+            .fetchAnnotationsCreatedAfterDate(date: lastOnlineAt) ?? []
+
+        for annotation in newLocalAnnotationsWhileOffline {
+            _ = await LocalPersistenceManager.shared.annotations
+                .deleteAnnotation(annotation: annotation)
+        }
+
+        await createOrUpdateEntities(message: message)
+    }
+
+    private func handleOverrideServerResponse(message: AnnotatoOfflineToOnlineMessage) async {
+        await createOrUpdateEntities(message: message)
+    }
+
+    private func createOrUpdateEntities(message: AnnotatoOfflineToOnlineMessage) async {
+        let documents = message.documents
+        let annotations = message.annotations
+
+        _ = await LocalPersistenceManager.shared.documents
+            .createOrUpdateDocuments(documents: documents)
+        _ = await LocalPersistenceManager.shared.annotations
+            .createOrUpdateAnnotations(annotations: annotations)
     }
 
     func sendOnlineMessage(mergeStrategy: AnnotatoOfflineToOnlineMergeStrategy) {

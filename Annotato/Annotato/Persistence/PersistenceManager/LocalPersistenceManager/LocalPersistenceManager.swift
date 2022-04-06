@@ -48,6 +48,18 @@ extension LocalPersistenceManager: PersistenceManager {
 }
 
 extension LocalPersistenceManager {
+    func fetchDocumentsCreatedAfterDate(date: Date) -> [Document]? {
+        let documentEntities = LocalDocumentEntityDataAccess.listCreatedAfterDate(date: date)
+
+        guard let documentEntities = documentEntities else {
+            AnnotatoLogger.error("When getting created documents after date",
+                                 context: "LocalPersistenceManager::fetchDocumentsCreatedAfterDate")
+            return nil
+        }
+
+        return documentEntities.map(Document.fromManagedEntity)
+    }
+
     func fetchDocumentsUpdatedAfterDate(date: Date) -> [Document]? {
         let documentEntities = LocalDocumentEntityDataAccess.listUpdatedAfterDate(date: date)
 
@@ -58,6 +70,18 @@ extension LocalPersistenceManager {
         }
 
         return documentEntities.map(Document.fromManagedEntity)
+    }
+
+    func fetchAnnotationsCreatedAfterDate(date: Date) -> [Annotation]? {
+        let annotationEntities = LocalAnnotationEntityDataAccess.listCreatedAfterDate(date: date)
+
+        guard let annotationEntities = annotationEntities else {
+            AnnotatoLogger.error("When getting created annotations after date",
+                                 context: "LocalPersistenceManager::fetchAnnotationsCreatedAfterDate")
+            return nil
+        }
+
+        return annotationEntities.map(Annotation.fromManagedEntity)
     }
 
     func fetchAnnotationsUpdatedAfterDate(date: Date) -> [Annotation]? {

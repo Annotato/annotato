@@ -40,6 +40,24 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
+    static func listCreatedAfterDate(date: Date) -> [DocumentEntity]? {
+        context.performAndWait {
+            context.rollback()
+
+            let request = DocumentEntity.fetchRequest()
+
+            do {
+                let documentEntities = try context.fetch(request).filter { $0.wasCreated(after: date) }
+
+                return documentEntities
+            } catch {
+                AnnotatoLogger.error("When fetching created document entities after date. \(String(describing: error))",
+                                     context: "LocalDocumentEntityDataAccess::listCreatedAfterDate")
+                return nil
+            }
+        }
+    }
+
     static func listUpdatedAfterDate(date: Date) -> [DocumentEntity]? {
         context.performAndWait {
             context.rollback()

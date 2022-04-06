@@ -4,6 +4,24 @@ import AnnotatoSharedLibrary
 struct LocalAnnotationEntityDataAccess {
     static let context = LocalPersistenceManager.sharedContext
 
+    static func listCreatedAfterDate(date: Date) -> [AnnotationEntity]? {
+        context.performAndWait {
+            context.rollback()
+
+            let request = AnnotationEntity.fetchRequest()
+
+            do {
+                let annotationEntities = try context.fetch(request).filter { $0.wasCreated(after: date) }
+
+                return annotationEntities
+            } catch {
+                AnnotatoLogger.error("When fetching created document entities after date. \(String(describing: error))",
+                                     context: "LocalDocumentEntityDataAccess::listCreatedAfterDate")
+                return nil
+            }
+        }
+    }
+
     static func listUpdatedAfterDate(date: Date) -> [AnnotationEntity]? {
         context.performAndWait {
             context.rollback()
