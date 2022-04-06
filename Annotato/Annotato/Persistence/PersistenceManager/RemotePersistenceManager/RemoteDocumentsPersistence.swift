@@ -96,6 +96,11 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
         }
     }
 
+    func createOrUpdateDocument(document: Document) -> Document? {
+        fatalError("RemoteDocumentsPersistence::createOrUpdateDocument: This function should not be called")
+        return nil
+    }
+
     func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
         fatalError("RemoteDocumentsPersistence::createOrUpdateDocuments: This function should not be called")
         return nil

@@ -1,10 +1,11 @@
 import Foundation
 import Network
+import Combine
 
-class NetworkMonitor {
+class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
 
-    private(set) var isConnected = false
+    @Published private(set) var isConnected = false
     private let queue = DispatchQueue.global()
     private let monitor = NWPathMonitor()
 
