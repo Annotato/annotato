@@ -6,15 +6,7 @@ class PdfViewModel {
     let document: PDFDocument
 
     init(document: Document) {
-        var pdfDocument = PDFDocument(url: document.localFileUrl)
-
-        if pdfDocument == nil,
-           let remoteFileUrlString = document.baseFileUrl,
-           let remoteFileUrl = URL(string: remoteFileUrlString) {
-            pdfDocument = PDFDocument(url: remoteFileUrl)
-        }
-
-        guard let pdfDocument = pdfDocument else {
+        guard let pdfDocument = PDFDocument(url: document.localFileUrl) else {
             AnnotatoLogger.error("Could not load document")
             // TODO: Handle failed init more gracefully
             fatalError("No such document")

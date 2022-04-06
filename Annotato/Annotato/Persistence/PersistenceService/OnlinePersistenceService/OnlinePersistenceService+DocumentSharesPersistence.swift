@@ -19,13 +19,13 @@ extension OnlinePersistenceService: DocumentSharesPersistence {
     }
 
     private func copyDocumentPDFToLocalStorage(document: Document) async -> Bool {
-        guard let baseFileUrl = document.baseFileUrl else {
-            AnnotatoLogger.error("Remote document's baseFileUrl is nil",
+        guard let downloadURL = await FirebaseStorage().getDownloadURL(documentId: document.id) else {
+            AnnotatoLogger.error("Could not get download URL for document",
                                  context: "OnlinePersistenceService::copyDocumentPDFToLocalStorage")
             return false
         }
 
-        guard let documentPDFData = try? await httpService.get(url: baseFileUrl) else {
+        guard let documentPDFData = try? await httpService.get(url: downloadURL.absoluteString) else {
             AnnotatoLogger.error("Could not retrieve document PDF data using HTTP",
                                  context: "OnlinePersistenceService::copyDocumentPDFToLocalStorage")
             return false

@@ -22,26 +22,9 @@ class FirebaseStorage: AnnotatoStorageService {
                 self.delegate?.uploadDidFail(error)
                 return
             }
-            AnnotatoLogger.info("Uploaded PDF with fileSystemUrl: \(fileSystemUrl) to FB")
 
-            pdfRef.downloadURL { url, error in
-                if let error = error {
-                    AnnotatoLogger.error(
-                        "When getting FB URL of PDF with fileSystemUrl: \(fileSystemUrl)." +
-                        "\(error.localizedDescription)",
-                        context: "FirebaseStorage::uploadPdf")
-                    return
-                }
-
-                guard let url = url else {
-                    AnnotatoLogger.error(
-                        "Missing FB URL for PDF with fileSystemUrl: \(fileSystemUrl).",
-                        context: "FirebaseStorage::uploadPdf")
-                    return
-                }
-
-                self.delegate?.uploadDidSucceed()
-            }
+            AnnotatoLogger.info("Uploaded to Firebase - PDF with fileSystemUrl: \(fileSystemUrl)")
+            self.delegate?.uploadDidSucceed()
         }
     }
 
@@ -58,6 +41,17 @@ class FirebaseStorage: AnnotatoStorageService {
             }
 
             AnnotatoLogger.info("Deleted PDF: \(document) from FB.")
+        }
+    }
+
+    func getDownloadURL(documentId: UUID) async -> URL? {
+        let pdfRef = storageRef.child(documentId.uuidString)
+        do {
+            return try await pdfRef.downloadURL()
+        } catch {
+            AnnotatoLogger.error("Could not get download URL for document with ID \(documentId)",
+                                 context: "FirebaseStorage::getDownloadURL")
+            return nil
         }
     }
 }

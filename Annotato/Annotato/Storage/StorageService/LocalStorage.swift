@@ -16,7 +16,7 @@ class LocalStorage: AnnotatoStorageService {
 
             try FileManager.default.copyItem(at: fileSystemUrl, to: urlInDocumentsDirectory)
 
-            AnnotatoLogger.info("Uploaded PDF with fileSystemUrl: \(fileSystemUrl) to local documents directory")
+            AnnotatoLogger.info("Uploaded to local storage - PDF with fileSystemUrl: \(fileSystemUrl)")
             delegate?.uploadDidSucceed()
         } catch {
             AnnotatoLogger.error("When trying to upload PDF. \(error.localizedDescription)",
