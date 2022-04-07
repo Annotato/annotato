@@ -6,9 +6,7 @@ class WebSocketManager: ObservableObject {
 
     private(set) var socket: URLSessionWebSocketTask?
 
-    @Published private(set) var crudDocumentMessage: Data?
-    @Published private(set) var crudAnnotationMessage: Data?
-    @Published private(set) var offlineToOnlineMessage: Data?
+    @Published private(set) var message: Data?
 
     private init() { }
 
@@ -85,33 +83,11 @@ class WebSocketManager: ObservableObject {
     }
 
     private func publishResponseData(data: Data) {
-        do {
-            AnnotatoLogger.info(
-                "Publishing response data...",
-                context: "WebSocketManager::publishResponseData"
-            )
+        AnnotatoLogger.info(
+            "Publishing response data...",
+            context: "WebSocketManager::publishResponseData"
+        )
 
-            let message = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: data)
-
-            // Defensive Resets
-            crudDocumentMessage = nil
-            crudAnnotationMessage = nil
-            offlineToOnlineMessage = nil
-
-            switch message.type {
-            case .crudDocument:
-                crudDocumentMessage = data
-            case .crudAnnotation:
-                crudAnnotationMessage = data
-            case .offlineToOnline:
-                offlineToOnlineMessage = data
-            }
-
-        } catch {
-            AnnotatoLogger.error(
-                "When handling reponse data. \(error.localizedDescription).",
-                context: "WebSocketManager::handleResponseData"
-            )
-        }
+        message = data
     }
 }
