@@ -1,13 +1,14 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-class WebSocketManager {
+class WebSocketManager: ObservableObject {
     static let shared = WebSocketManager()
 
     private(set) var socket: URLSessionWebSocketTask?
-    let documentManager = DocumentWebSocketManager()
-    let annotationManager = AnnotationWebSocketManager()
-    let offlineToOnlineManager = OfflineToOnlineWebSocketManager()
+
+    @Published private(set) var crudDocumentMessage: Data?
+    @Published private(set) var crudAnnotationMessage: Data?
+    @Published private(set) var offlineToOnlineMessage: Data?
 
     private init() { }
 
@@ -45,12 +46,12 @@ class WebSocketManager {
             case .success(let message):
                 switch message {
                 case .data(let data):
-                    self?.handleResponseData(data: data)
+                    self?.publishResponseData(data: data)
                 case .string(let str):
                     guard let data = str.data(using: .utf8) else {
                         return
                     }
-                    self?.handleResponseData(data: data)
+                    self?.publishResponseData(data: data)
                 @unknown default:
                     break
                 }
@@ -83,19 +84,27 @@ class WebSocketManager {
         }
     }
 
-    private func handleResponseData(data: Data) {
+    private func publishResponseData(data: Data) {
         do {
-            AnnotatoLogger.info("Handling response data...")
+            AnnotatoLogger.info(
+                "Publishing response data...",
+                context: "WebSocketManager::publishResponseData"
+            )
 
             let message = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: data)
 
+            // Defensive Resets
+            crudDocumentMessage = nil
+            crudAnnotationMessage = nil
+            offlineToOnlineMessage = nil
+
             switch message.type {
             case .crudDocument:
-                documentManager.handleResponseData(data: data)
+                crudDocumentMessage = data
             case .crudAnnotation:
-                annotationManager.handleResponseData(data: data)
+                crudAnnotationMessage = data
             case .offlineToOnline:
-                offlineToOnlineManager.handleResponseData(data: data)
+                offlineToOnlineMessage = data
             }
 
         } catch {
