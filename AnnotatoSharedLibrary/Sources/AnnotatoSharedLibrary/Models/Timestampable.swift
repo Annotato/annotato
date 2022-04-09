@@ -31,17 +31,17 @@ extension Timestampable {
         return updatedAt > date
     }
 
-    public func setCreatedAt(to createdAt: Date) {
+    public func setCreatedAt(to createdAt: Date = Date()) {
         self.createdAt = createdAt
 
         setUpdatedAt(to: createdAt)
     }
 
-    public func setUpdatedAt(to updatedAt: Date) {
+    public func setUpdatedAt(to updatedAt: Date = Date()) {
         self.updatedAt = updatedAt
     }
 
-    public func setDeletedAt(to deletedAt: Date) {
+    public func setDeletedAt(to deletedAt: Date = Date()) {
         self.deletedAt = deletedAt
 
         setUpdatedAt(to: deletedAt)

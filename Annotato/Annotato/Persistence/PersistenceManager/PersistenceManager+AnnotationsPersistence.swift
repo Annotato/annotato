@@ -5,21 +5,21 @@ extension PersistenceManager: AnnotationsPersistence {
     func createAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.createAnnotation(annotation: annotation)
 
-        annotation.setCreatedAt(to: Date())
+        annotation.setCreatedAt()
         return await localPersistence.annotations.createAnnotation(annotation: annotation)
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.updateAnnotation(annotation: annotation)
 
-        annotation.setUpdatedAt(to: Date())
+        annotation.setUpdatedAt()
         return await localPersistence.annotations.updateAnnotation(annotation: annotation)
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.deleteAnnotation(annotation: annotation)
 
-        annotation.setDeletedAt(to: Date())
+        annotation.setDeletedAt()
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 

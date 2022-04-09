@@ -32,7 +32,7 @@ extension PersistenceManager: DocumentsPersistence {
             .createDocument(document: document)
 
         if remoteCreatedDocument == nil {
-            document.setCreatedAt(to: Date())
+            document.setCreatedAt()
         }
 
         return await localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
@@ -42,7 +42,7 @@ extension PersistenceManager: DocumentsPersistence {
         let remoteUpdatedDocument = await remotePersistence.documents.updateDocument(document: document)
 
         if remoteUpdatedDocument == nil {
-            document.setUpdatedAt(to: Date())
+            document.setUpdatedAt()
         }
 
         return await localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
@@ -52,7 +52,7 @@ extension PersistenceManager: DocumentsPersistence {
         let remoteDeletedDocument = await remotePersistence.documents.deleteDocument(document: document)
 
         if remoteDeletedDocument == nil {
-            document.setDeletedAt(to: Date())
+            document.setDeletedAt()
         }
 
         return await localPersistence.documents.deleteDocument(document: remoteDeletedDocument ?? document)
