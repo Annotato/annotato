@@ -20,7 +20,7 @@ class DocumentWebSocketManager: ObservableObject {
             deletedDocument = nil
 
             Task {
-                _ = await LocalPersistenceManager.shared.documents
+                _ = await LocalPersistenceService.shared.documents
                     .createOrUpdateDocument(document: document)
             }
 

@@ -1,13 +1,14 @@
 import AnnotatoSharedLibrary
 
-extension AnnotationHandwritingEntity: PersistedEntity {
-    static func fromModel(_ model: AnnotationHandwriting) -> AnnotationHandwritingEntity {
-        let entity = LocalPersistenceManager.makeCoreDataEntity(class: AnnotationHandwriting.self)
+extension SelectionBoxEntity: PersistedEntity {
+    static func fromModel(_ model: SelectionBox) -> SelectionBoxEntity {
+        let entity = LocalPersistenceService.makeCoreDataEntity(class: SelectionBox.self)
 
         entity.id = model.id
-        entity.order = Int64(model.order)
-        entity.height = model.height
-        entity.handwriting = model.handwriting
+        entity.startPointX = model.startPoint.x
+        entity.startPointY = model.startPoint.y
+        entity.endPointX = model.endPoint.x
+        entity.endPointY = model.endPoint.y
 
         if let annotationEntity = LocalAnnotationEntityDataAccess
             .readInCurrentContext(annotationId: model.annotationId,

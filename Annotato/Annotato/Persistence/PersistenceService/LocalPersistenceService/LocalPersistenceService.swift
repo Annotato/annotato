@@ -2,38 +2,38 @@ import Foundation
 import CoreData
 import AnnotatoSharedLibrary
 
-struct LocalPersistenceManager {
+struct LocalPersistenceService {
     static var sharedContext: NSManagedObjectContext {
-        LocalPersistenceManager.shared.container.viewContext
+        LocalPersistenceService.shared.container.viewContext
     }
 
     static func makeCoreDataEntity<T: Persistable>(class: T.Type) -> T.ManagedEntity {
         T.ManagedEntity(context: sharedContext)
     }
 
-    static let shared = LocalPersistenceManager()
+    static let shared = LocalPersistenceService()
 
     private static let containerName = "AnnotatoLocal"
 
     private let container: NSPersistentContainer
 
     private init() {
-        container = NSPersistentContainer(name: LocalPersistenceManager.containerName)
+        container = NSPersistentContainer(name: LocalPersistenceService.containerName)
         container.loadPersistentStores { _, error in
             if let error = error {
                 let errorMessage = "Error loading Core Data: \(error)"
                 AnnotatoLogger.error(errorMessage,
-                                     context: "LocalPersistenceManager::init")
+                                     context: "LocalPersistenceService::init")
                 fatalError(errorMessage)
             }
         }
 
         AnnotatoLogger.info("Core data container attached. \(container.persistentStoreDescriptions)",
-                            context: "LocalPersistenceManager::init")
+                            context: "LocalPersistenceService::init")
     }
 }
 
-extension LocalPersistenceManager: PersistenceManager {
+extension LocalPersistenceService: PersistenceService {
     var documents: DocumentsPersistence {
         LocalDocumentsPersistence()
     }
@@ -47,13 +47,13 @@ extension LocalPersistenceManager: PersistenceManager {
     }
 }
 
-extension LocalPersistenceManager {
+extension LocalPersistenceService {
     func fetchDocumentsCreatedAfterDate(date: Date) -> [Document]? {
         let documentEntities = LocalDocumentEntityDataAccess.listCreatedAfterDate(date: date)
 
         guard let documentEntities = documentEntities else {
             AnnotatoLogger.error("When getting created documents after date",
-                                 context: "LocalPersistenceManager::fetchDocumentsCreatedAfterDate")
+                                 context: "LocalPersistenceService::fetchDocumentsCreatedAfterDate")
             return nil
         }
 
@@ -65,7 +65,7 @@ extension LocalPersistenceManager {
 
         guard let documentEntities = documentEntities else {
             AnnotatoLogger.error("When getting updated documents after date",
-                                 context: "LocalPersistenceManager::fetchDocumentsUpdatedAfterDate")
+                                 context: "LocalPersistenceService::fetchDocumentsUpdatedAfterDate")
             return nil
         }
 
@@ -77,7 +77,7 @@ extension LocalPersistenceManager {
 
         guard let annotationEntities = annotationEntities else {
             AnnotatoLogger.error("When getting created annotations after date",
-                                 context: "LocalPersistenceManager::fetchAnnotationsCreatedAfterDate")
+                                 context: "LocalPersistenceService::fetchAnnotationsCreatedAfterDate")
             return nil
         }
 
@@ -89,7 +89,7 @@ extension LocalPersistenceManager {
 
         guard let annotationEntities = annotationEntities else {
             AnnotatoLogger.error("When getting updated annotations after date",
-                                 context: "LocalPersistenceManager::fetchAnnotationsUpdatedAfterDate")
+                                 context: "LocalPersistenceService::fetchAnnotationsUpdatedAfterDate")
             return nil
         }
 

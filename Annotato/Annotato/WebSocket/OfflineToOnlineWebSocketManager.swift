@@ -34,19 +34,19 @@ class OfflineToOnlineWebSocketManager {
     private func handleKeepServerResponse(message: AnnotatoOfflineToOnlineMessage) async {
         let lastOnlineAt = message.lastOnlineAt
 
-        let newLocalDocumentsWhileOffline = LocalPersistenceManager.shared
+        let newLocalDocumentsWhileOffline = LocalPersistenceService.shared
             .fetchDocumentsCreatedAfterDate(date: lastOnlineAt) ?? []
 
         for document in newLocalDocumentsWhileOffline {
-            _ = await LocalPersistenceManager.shared.documents
+            _ = await LocalPersistenceService.shared.documents
                 .deleteDocument(document: document)
         }
 
-        let newLocalAnnotationsWhileOffline = LocalPersistenceManager.shared
+        let newLocalAnnotationsWhileOffline = LocalPersistenceService.shared
             .fetchAnnotationsCreatedAfterDate(date: lastOnlineAt) ?? []
 
         for annotation in newLocalAnnotationsWhileOffline {
-            _ = await LocalPersistenceManager.shared.annotations
+            _ = await LocalPersistenceService.shared.annotations
                 .deleteAnnotation(annotation: annotation)
         }
 
@@ -61,9 +61,9 @@ class OfflineToOnlineWebSocketManager {
         let documents = message.documents
         let annotations = message.annotations
 
-        _ = await LocalPersistenceManager.shared.documents
+        _ = await LocalPersistenceService.shared.documents
             .createOrUpdateDocuments(documents: documents)
-        _ = await LocalPersistenceManager.shared.annotations
+        _ = await LocalPersistenceService.shared.annotations
             .createOrUpdateAnnotations(annotations: annotations)
     }
 
@@ -75,7 +75,7 @@ class OfflineToOnlineWebSocketManager {
 
         isResolvingChanges = true
 
-        let documents = LocalPersistenceManager.shared
+        let documents = LocalPersistenceService.shared
             .fetchDocumentsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
 
         for document in documents where document.baseFileUrl == nil {
@@ -84,7 +84,7 @@ class OfflineToOnlineWebSocketManager {
             onlineStorageService.uploadPdf(fileSystemUrl: document.localFileUrl, withId: document.id)
         }
 
-        let annotations = LocalPersistenceManager.shared
+        let annotations = LocalPersistenceService.shared
             .fetchAnnotationsUpdatedAfterDate(date: lastOnlineDatetime) ?? []
 
         guard let senderId = AnnotatoAuth().currentUser?.uid else {

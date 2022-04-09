@@ -2,18 +2,15 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct AnnotatoPersistenceWrapper {
-    static var currentPersistenceService: PersistenceService {
-        NetworkMonitor.shared.isConnected ? onlinePersistenceService : offlinePersistenceService
+    static var currentPersistenceManager: PersistenceManager {
+        persistenceManager
     }
 
-    private static let remotePersistence: PersistenceManager = RemotePersistenceManager()
-    private static let localPersistence: PersistenceManager = LocalPersistenceManager.shared
+    private static let remotePersistence: PersistenceService = RemotePersistenceService()
+    private static let localPersistence: PersistenceService = LocalPersistenceService.shared
 
-    private static let onlinePersistenceService: PersistenceService = OnlinePersistenceService(
+    private static let persistenceManager = PersistenceManager(
         remotePersistence: remotePersistence,
-        localPersistence: localPersistence
-    )
-    private static let offlinePersistenceService: PersistenceService = OfflinePersistenceService(
         localPersistence: localPersistence
     )
 

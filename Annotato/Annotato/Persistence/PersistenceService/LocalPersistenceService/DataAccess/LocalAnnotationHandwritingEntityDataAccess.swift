@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalAnnotationHandwritingEntityDataAccess {
-    static let context = LocalPersistenceManager.sharedContext
+    static let context = LocalPersistenceService.sharedContext
 
     static func read(annotationHandwritingEntityId: UUID) -> AnnotationHandwritingEntity? {
         context.performAndWait {

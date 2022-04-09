@@ -1,4 +1,4 @@
-struct RemotePersistenceManager {
+struct RemotePersistenceService {
     private static let shouldUseLocalEndpoint = false
 
     // HTTP
@@ -14,7 +14,7 @@ struct RemotePersistenceManager {
     static let baseWsAPIUrl = shouldUseLocalEndpoint ? localApiWsEndpoint : remoteApiWsEndpoint
 }
 
-extension RemotePersistenceManager: PersistenceManager {
+extension RemotePersistenceService: PersistenceService {
     var documents: DocumentsPersistence {
         RemoteDocumentsPersistence()
     }

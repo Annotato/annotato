@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalSelectionBoxEntityDataAccess {
-    static let context = LocalPersistenceManager.sharedContext
+    static let context = LocalPersistenceService.sharedContext
 
     static func read(selectionBoxId: UUID) -> SelectionBoxEntity? {
         context.performAndWait {

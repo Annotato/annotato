@@ -20,7 +20,7 @@ class AnnotationWebSocketManager: ObservableObject {
             deletedAnnotation = nil
 
             Task {
-                _ = await LocalPersistenceManager.shared.annotations
+                _ = await LocalPersistenceService.shared.annotations
                     .createOrUpdateAnnotation(annotation: annotation)
             }
 

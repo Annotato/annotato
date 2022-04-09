@@ -1,4 +1,5 @@
-import AnnotatoSharedLibrary
-
-protocol PersistenceService: AnnotationsPersistence, DocumentsPersistence, DocumentSharesPersistence,
-                                PDFStorageManager { }
+protocol PersistenceService {
+    var documents: DocumentsPersistence { get }
+    var annotations: AnnotationsPersistence { get }
+    var documentShares: DocumentSharesPersistence { get }
+}
