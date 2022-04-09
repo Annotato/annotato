@@ -3,19 +3,19 @@ import Foundation
 
 extension OnlinePersistenceService: DocumentSharesPersistence {
     func createDocumentShare(documentShare: DocumentShare) async -> Document? {
-        guard let sharedDocumentRemote = await remotePersistence
+        guard let remoteDocument = await remotePersistence
             .documentShares
             .createDocumentShare(documentShare: documentShare) else {
             return nil
         }
 
-        let wasDocumentCopied = await copyDocumentPDFToLocalStorage(document: sharedDocumentRemote)
+        let wasDocumentCopied = await copyDocumentPDFToLocalStorage(document: remoteDocument)
         guard wasDocumentCopied else {
             return nil
         }
 
-        let sharedDocumentLocal = await localPersistence.documents.createDocument(document: sharedDocumentRemote)
-        return sharedDocumentLocal
+        let localSharedDocument = await localPersistence.documents.createDocument(document: remoteDocument)
+        return localSharedDocument
     }
 
     private func copyDocumentPDFToLocalStorage(document: Document) async -> Bool {

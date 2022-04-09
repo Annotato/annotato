@@ -3,53 +3,59 @@ import Foundation
 
 extension OnlinePersistenceService: DocumentsPersistence {
     func getOwnDocuments(userId: String) async -> [Document]? {
-        await remotePersistence.documents.getOwnDocuments(userId: userId)
+        let remoteOwnDocuments = await remotePersistence.documents.getOwnDocuments(userId: userId)
+        guard remoteOwnDocuments != nil else {
+            return await localPersistence.documents.getOwnDocuments(userId: userId)
+        }
+        return remoteOwnDocuments
     }
 
     func getSharedDocuments(userId: String) async -> [Document]? {
-        await remotePersistence.documents.getSharedDocuments(userId: userId)
+        let remoteSharedDocuments = await remotePersistence.documents.getSharedDocuments(userId: userId)
+        guard remoteSharedDocuments != nil else {
+            return await localPersistence.documents.getSharedDocuments(userId: userId)
+        }
+        return remoteSharedDocuments
     }
 
     func getDocument(documentId: UUID) async -> Document? {
-        await remotePersistence.documents.getDocument(documentId: documentId)
+        let remoteDocument = await remotePersistence.documents.getDocument(documentId: documentId)
+        guard remoteDocument != nil else {
+            return await localPersistence.documents.getDocument(documentId: documentId)
+        }
+        return remoteDocument
     }
 
     func createDocument(document: Document) async -> Document? {
-        guard let createdDocumentRemote = await remotePersistence
+        let remoteCreatedDocument = await remotePersistence
             .documents
-            .createDocument(document: document) else {
-            return nil
+            .createDocument(document: document)
+
+        if remoteCreatedDocument == nil {
+            document.setCreatedAt(to: Date())
         }
-        guard let createdDocumentLocal = await localPersistence
-            .documents
-            .createDocument(document: createdDocumentRemote) else {
-            return nil
-        }
-        return createdDocumentLocal
+
+        return await localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
     }
 
     func updateDocument(document: Document) async -> Document? {
-        guard let updatedDocumentRemote = await remotePersistence.documents.updateDocument(document: document) else {
-            return nil
+        let remoteUpdatedDocument = await remotePersistence.documents.updateDocument(document: document)
+
+        if remoteUpdatedDocument == nil {
+            document.setUpdatedAt(to: Date())
         }
-        guard let updatedDocumentLocal = await localPersistence
-            .documents
-            .updateDocument(document: updatedDocumentRemote) else {
-            return nil
-        }
-        return updatedDocumentLocal
+
+        return await localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
-        guard let deletedDocumentRemote = await remotePersistence.documents.deleteDocument(document: document) else {
-            return nil
+        let remoteDeletedDocument = await remotePersistence.documents.deleteDocument(document: document)
+
+        if remoteDeletedDocument == nil {
+            document.setDeletedAt(to: Date())
         }
-        guard let deletedDocumentLocal = await localPersistence
-            .documents
-            .deleteDocument(document: deletedDocumentRemote) else {
-            return nil
-        }
-        return deletedDocumentLocal
+
+        return await localPersistence.documents.deleteDocument(document: remoteDeletedDocument ?? document)
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {

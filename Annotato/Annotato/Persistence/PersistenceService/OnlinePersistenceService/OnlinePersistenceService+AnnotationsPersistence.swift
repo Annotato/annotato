@@ -3,30 +3,24 @@ import Foundation
 
 extension OnlinePersistenceService: AnnotationsPersistence {
     func createAnnotation(annotation: Annotation) async -> Annotation? {
-       _ = await remotePersistence
-            .annotations
-            .createAnnotation(annotation: annotation)
+        _ = await remotePersistence.annotations.createAnnotation(annotation: annotation)
 
-        // Local persistence is done by the websocket manager on receiving a response
-        return nil
+        annotation.setCreatedAt(to: Date())
+        return await localPersistence.annotations.createAnnotation(annotation: annotation)
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remotePersistence
-            .annotations
-            .updateAnnotation(annotation: annotation)
+        _ = await remotePersistence.annotations.updateAnnotation(annotation: annotation)
 
-        // Local persistence is done by the websocket manager on receiving a response
-        return nil
+        annotation.setUpdatedAt(to: Date())
+        return await localPersistence.annotations.updateAnnotation(annotation: annotation)
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remotePersistence
-            .annotations
-            .deleteAnnotation(annotation: annotation)
+        _ = await remotePersistence.annotations.deleteAnnotation(annotation: annotation)
 
-        // Local persistence is done by the websocket manager on receiving a response
-        return nil
+        annotation.setDeletedAt(to: Date())
+        return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
