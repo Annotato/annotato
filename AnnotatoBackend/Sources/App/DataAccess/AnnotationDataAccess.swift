@@ -1,7 +1,7 @@
 import Vapor
 import Fluent
-import AnnotatoSharedLibrary
 import Foundation
+import AnnotatoSharedLibrary
 
 struct AnnotationDataAccess {
     static func listWithDeleted(db: Database, annotationIds: [UUID]) async throws -> [Annotation] {

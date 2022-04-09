@@ -1,3 +1,4 @@
+import Foundation
 import FluentKit
 
 struct CreateSelectionBoxes: Migration {
