@@ -1,7 +1,7 @@
 import Vapor
 import Fluent
-import AnnotatoSharedLibrary
 import Foundation
+import AnnotatoSharedLibrary
 
 struct DocumentsDataAccess {
     static func listOwn(db: Database, userId: String) async throws -> [Document] {

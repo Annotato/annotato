@@ -1,5 +1,5 @@
-import CoreGraphics
 import Foundation
+import CoreGraphics
 import AnnotatoSharedLibrary
 
 extension SelectionBox: Persistable {

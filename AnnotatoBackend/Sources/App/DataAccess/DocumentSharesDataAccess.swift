@@ -1,4 +1,6 @@
-import FluentKit
+import Vapor
+import Fluent
+import Foundation
 import AnnotatoSharedLibrary
 
 struct DocumentSharesDataAccess {
