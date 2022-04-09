@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-extension OnlinePersistenceService: DocumentsPersistence {
+extension PersistenceService: DocumentsPersistence {
     func getOwnDocuments(userId: String) async -> [Document]? {
         let remoteOwnDocuments = await remotePersistence.documents.getOwnDocuments(userId: userId)
         guard remoteOwnDocuments != nil else {
@@ -59,12 +59,12 @@ extension OnlinePersistenceService: DocumentsPersistence {
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {
-        fatalError("OnlinePersistenceService::createOrUpdateDocument: This function should not be called")
+        fatalError("PersistenceService::createOrUpdateDocument: This function should not be called")
         return nil
     }
 
     func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        fatalError("OnlinePersistenceService::createOrUpdateDocuments: This function should not be called")
+        fatalError("PersistenceService::createOrUpdateDocuments: This function should not be called")
         return nil
     }
 }

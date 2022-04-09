@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-extension OnlinePersistenceService: DocumentSharesPersistence {
+extension PersistenceService: DocumentSharesPersistence {
     func createDocumentShare(documentShare: DocumentShare) async -> Document? {
         guard let remoteDocument = await remotePersistence
             .documentShares
@@ -21,20 +21,20 @@ extension OnlinePersistenceService: DocumentSharesPersistence {
     private func copyDocumentPDFToLocalStorage(document: Document) async -> Bool {
         guard let downloadURL = await FirebaseStorage().getDownloadURL(documentId: document.id) else {
             AnnotatoLogger.error("Could not get download URL for document",
-                                 context: "OnlinePersistenceService::copyDocumentPDFToLocalStorage")
+                                 context: "PersistenceService::copyDocumentPDFToLocalStorage")
             return false
         }
 
         guard let documentPDFData = try? await httpService.get(url: downloadURL.absoluteString) else {
             AnnotatoLogger.error("Could not retrieve document PDF data using HTTP",
-                                 context: "OnlinePersistenceService::copyDocumentPDFToLocalStorage")
+                                 context: "PersistenceService::copyDocumentPDFToLocalStorage")
             return false
         }
 
         let wasPDFSavedLocally = LocalStorage().uploadPdf(pdfData: documentPDFData, withId: document.id)
         guard wasPDFSavedLocally else {
             AnnotatoLogger.error("Could not save document PDF to local file system",
-                                 context: "OnlinePersistenceService::copyDocumentPDFToLocalStorage")
+                                 context: "PersistenceService::copyDocumentPDFToLocalStorage")
             return false
         }
 
