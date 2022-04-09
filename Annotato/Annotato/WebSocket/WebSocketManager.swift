@@ -17,7 +17,7 @@ class WebSocketManager {
             return
         }
 
-        guard let url = URL(string: "\(RemotePersistenceManager.baseWsAPIUrl)/ws/\(userId)") else {
+        guard let url = URL(string: "\(RemotePersistenceService.baseWsAPIUrl)/ws/\(userId)") else {
             return
         }
 

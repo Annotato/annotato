@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalAnnotationEntityDataAccess {
-    static let context = LocalPersistenceManager.sharedContext
+    static let context = LocalPersistenceService.sharedContext
 
     static func listCreatedAfterDate(date: Date) -> [AnnotationEntity]? {
         context.performAndWait {

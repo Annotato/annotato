@@ -2,14 +2,14 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct AnnotatoPersistenceWrapper {
-    static var currentPersistenceService: PersistenceService {
-        persistenceService
+    static var currentPersistenceManager: PersistenceManager {
+        persistenceManager
     }
 
-    private static let remotePersistence: PersistenceManager = RemotePersistenceManager()
-    private static let localPersistence: PersistenceManager = LocalPersistenceManager.shared
+    private static let remotePersistence: PersistenceService = RemotePersistenceService()
+    private static let localPersistence: PersistenceService = LocalPersistenceService.shared
 
-    private static let persistenceService = PersistenceService(
+    private static let persistenceManager = PersistenceManager(
         remotePersistence: remotePersistence,
         localPersistence: localPersistence
     )

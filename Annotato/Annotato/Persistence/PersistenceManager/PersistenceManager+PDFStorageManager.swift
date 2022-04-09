@@ -1,20 +1,20 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-extension PersistenceService: PDFStorageManager {
+extension PersistenceManager: PDFStorageManager {
     func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (Document) -> Void) {
-        OnlinePDFStorageManager(persistenceService: self)
+        OnlinePDFStorageManager(PersistenceManager: self)
             .uploadPdf(fileSystemUrl: fileSystemUrl, withName: name, completion: { _ in })
 
-        OfflinePDFStorageManager(persistenceService: self)
+        OfflinePDFStorageManager(PersistenceManager: self)
             .uploadPdf(fileSystemUrl: fileSystemUrl, withName: name, completion: completion)
     }
 
     func deletePdf(document: Document, completion: @escaping (Document) -> Void) {
-        OnlinePDFStorageManager(persistenceService: self)
+        OnlinePDFStorageManager(PersistenceManager: self)
             .deletePdf(document: document, completion: { _ in })
 
-        OfflinePDFStorageManager(persistenceService: self)
+        OfflinePDFStorageManager(PersistenceManager: self)
             .deletePdf(document: document, completion: completion)
     }
 }

@@ -9,7 +9,7 @@ struct DocumentShareController {
 
         let documentShare = DocumentShare(documentId: documentId, recipientId: currentUser.uid)
 
-        return await AnnotatoPersistenceWrapper.currentPersistenceService
+        return await AnnotatoPersistenceWrapper.currentPersistenceManager
             .createDocumentShare(documentShare: documentShare)
     }
 }

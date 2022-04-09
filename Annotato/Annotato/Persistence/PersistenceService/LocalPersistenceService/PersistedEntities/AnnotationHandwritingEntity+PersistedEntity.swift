@@ -1,14 +1,13 @@
 import AnnotatoSharedLibrary
 
-extension AnnotationTextEntity: PersistedEntity {
-    static func fromModel(_ model: AnnotationText) -> AnnotationTextEntity {
-        let entity = LocalPersistenceManager.makeCoreDataEntity(class: AnnotationText.self)
+extension AnnotationHandwritingEntity: PersistedEntity {
+    static func fromModel(_ model: AnnotationHandwriting) -> AnnotationHandwritingEntity {
+        let entity = LocalPersistenceService.makeCoreDataEntity(class: AnnotationHandwriting.self)
 
         entity.id = model.id
-        entity.type = model.type
         entity.order = Int64(model.order)
         entity.height = model.height
-        entity.content = model.content
+        entity.handwriting = model.handwriting
 
         if let annotationEntity = LocalAnnotationEntityDataAccess
             .readInCurrentContext(annotationId: model.annotationId,

@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-extension PersistenceService: AnnotationsPersistence {
+extension PersistenceManager: AnnotationsPersistence {
     func createAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.createAnnotation(annotation: annotation)
 
@@ -24,12 +24,12 @@ extension PersistenceService: AnnotationsPersistence {
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
-        fatalError("PersistenceService::createOrUpdateAnnotation: This function should not be called")
+        fatalError("PersistenceManager::createOrUpdateAnnotation: This function should not be called")
         return nil
     }
 
     func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
-        fatalError("PersistenceService::createOrUpdateAnnotations: This function should not be called")
+        fatalError("PersistenceManager::createOrUpdateAnnotations: This function should not be called")
         return nil
     }
 }
