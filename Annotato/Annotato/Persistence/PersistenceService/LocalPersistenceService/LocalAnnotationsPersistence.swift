@@ -2,8 +2,10 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalAnnotationsPersistence: AnnotationsPersistence {
+    private let localAnnotationEntityDataAccess = LocalAnnotationEntityDataAccess()
+
     func createAnnotation(annotation: Annotation) -> Annotation? {
-        guard let newAnnotationEntity = LocalAnnotationEntityDataAccess.create(annotation: annotation) else {
+        guard let newAnnotationEntity = localAnnotationEntityDataAccess.create(annotation: annotation) else {
             AnnotatoLogger.error("When creating annotation.",
                                  context: "LocalAnnotationsPersistence::createAnnotation")
             return nil
@@ -12,7 +14,7 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func updateAnnotation(annotation: Annotation) -> Annotation? {
-        guard let updatedAnnotationEntity = LocalAnnotationEntityDataAccess
+        guard let updatedAnnotationEntity = localAnnotationEntityDataAccess
             .update(annotationId: annotation.id, annotation: annotation) else {
             AnnotatoLogger.error("When updating annotation.",
                                  context: "LocalAnnotationsPersistence::updateAnnotation")
@@ -22,7 +24,7 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func deleteAnnotation(annotation: Annotation) -> Annotation? {
-        guard let deletedAnnotation = LocalAnnotationEntityDataAccess
+        guard let deletedAnnotation = localAnnotationEntityDataAccess
             .delete(annotationId: annotation.id, annotation: annotation) else {
             AnnotatoLogger.error("When deleting annotation.",
                                  context: "LocalAnnotationsPersistence::deleteAnnotation")
@@ -33,7 +35,7 @@ struct LocalAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
-        if LocalAnnotationEntityDataAccess.read(annotationId: annotation.id,
+        if localAnnotationEntityDataAccess.read(annotationId: annotation.id,
                                                 withDeleted: true) != nil {
             return updateAnnotation(annotation: annotation)
         } else {

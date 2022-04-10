@@ -12,7 +12,7 @@ extension AnnotationHandwritingEntity {
         height = annotationHandwriting.height
         order = Int64(annotationHandwriting.order)
 
-        if let annotationEntity = LocalAnnotationEntityDataAccess
+        if let annotationEntity = Self.localAnnotationEntityDataAccess
             .readInCurrentContext(annotationId: annotationHandwriting.annotationId, withDeleted: true) {
             self.annotationEntity = annotationEntity
         }

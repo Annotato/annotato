@@ -10,7 +10,7 @@ extension AnnotationTextEntity: PersistedEntity {
         entity.height = model.height
         entity.content = model.content
 
-        if let annotationEntity = LocalAnnotationEntityDataAccess
+        if let annotationEntity = localAnnotationEntityDataAccess
             .readInCurrentContext(annotationId: model.annotationId,
                                   withDeleted: true) {
             entity.annotationEntity = annotationEntity

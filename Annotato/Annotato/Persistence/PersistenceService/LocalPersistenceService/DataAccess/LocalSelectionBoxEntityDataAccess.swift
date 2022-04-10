@@ -2,9 +2,9 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalSelectionBoxEntityDataAccess {
-    static let context = LocalPersistenceService.sharedContext
+    let context = LocalPersistenceService.sharedContext
 
-    static func read(selectionBoxId: UUID) -> SelectionBoxEntity? {
+    func read(selectionBoxId: UUID) -> SelectionBoxEntity? {
         context.performAndWait {
             context.rollback()
 
@@ -22,7 +22,7 @@ struct LocalSelectionBoxEntityDataAccess {
         }
     }
 
-    static func readInCurrentContext(selectionBoxId: UUID) -> SelectionBoxEntity? {
+    func readInCurrentContext(selectionBoxId: UUID) -> SelectionBoxEntity? {
         let request = SelectionBoxEntity.fetchRequest()
 
         do {

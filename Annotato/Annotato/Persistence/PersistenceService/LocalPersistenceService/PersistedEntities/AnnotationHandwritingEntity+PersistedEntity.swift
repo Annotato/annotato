@@ -9,7 +9,7 @@ extension AnnotationHandwritingEntity: PersistedEntity {
         entity.height = model.height
         entity.handwriting = model.handwriting
 
-        if let annotationEntity = LocalAnnotationEntityDataAccess
+        if let annotationEntity = Self.localAnnotationEntityDataAccess
             .readInCurrentContext(annotationId: model.annotationId,
                                   withDeleted: true) {
             entity.annotationEntity = annotationEntity
