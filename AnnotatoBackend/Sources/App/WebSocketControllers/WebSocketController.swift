@@ -9,7 +9,6 @@ class WebSocketController {
     // Child Controllers
     lazy var documentWebSocketController = DocumentWebSocketController(parentController: self)
     lazy var annotationWebSocketController = AnnotationWebSocketController(parentController: self)
-    lazy var offlineToOnlineWebSocketController = OfflineToOnlineWebSocketController(parentController: self)
 
     // Each user has one websocket connection. User ID is represented as a string.
     private var openConnections: [String: WebSocket] = [:]
@@ -81,9 +80,6 @@ class WebSocketController {
                 await documentWebSocketController.handleCrudDocumentData(userId: userId, data: data, db: db)
             case .crudAnnotation:
                 await annotationWebSocketController.handleCrudAnnotationData(userId: userId, data: data, db: db)
-            case .offlineToOnline:
-                await offlineToOnlineWebSocketController.handleOfflineToOnlineResolution(
-                    userId: userId, data: data, db: db)
             }
         } catch {
             self.logger.error("Error when handling incoming data. \(error.localizedDescription)")

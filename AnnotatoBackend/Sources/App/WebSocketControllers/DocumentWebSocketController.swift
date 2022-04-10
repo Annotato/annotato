@@ -96,37 +96,6 @@ class DocumentWebSocketController {
         }
     }
 
-    func handleOverrideServerDocuments(
-        userId: String,
-        db: Database,
-        message: AnnotatoOfflineToOnlineMessage
-    ) async throws -> [Document] {
-        let newServerDocumentsWhileOffline = try await documentsDataAccess
-            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
-
-        for document in newServerDocumentsWhileOffline {
-            _ = await self.handleDeleteDocument(userId: userId, db: db, document: document)
-        }
-
-        var responseDocuments: [Document] = []
-
-        for document in message.documents {
-            let resolvedDocument: Document?
-
-            if document.isDeleted {
-                resolvedDocument = await self.handleDeleteDocument(userId: userId, db: db, document: document)
-            } else if await documentsDataAccess.canFindWithDeleted(db: db, documentId: document.id) {
-                resolvedDocument = await self.handleUpdateDocument(userId: userId, db: db, document: document)
-            } else {
-                resolvedDocument = await self.handleCreateDocument(userId: userId, db: db, document: document)
-            }
-
-            responseDocuments.appendIfNotNil(resolvedDocument)
-        }
-
-        return responseDocuments
-    }
-
     private func sendToAllAppropriateClients<T: Codable>(
         db: Database,
         userId: String,

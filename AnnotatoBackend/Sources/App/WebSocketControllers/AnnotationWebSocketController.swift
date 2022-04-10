@@ -110,37 +110,6 @@ class AnnotationWebSocketController {
         }
     }
 
-    func handleOverrideServerAnnotations(
-        userId: String,
-        db: Database,
-        message: AnnotatoOfflineToOnlineMessage
-    ) async throws -> [Annotation] {
-        let newServerAnnotationsWhileOffline = try await annotationDataAccess
-            .listEntitiesCreatedAfterDateWithDeleted(db: db, date: message.lastOnlineAt, userId: userId)
-
-        for annotation in newServerAnnotationsWhileOffline {
-            _ = await self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
-        }
-
-        var responseAnnotations: [Annotation] = []
-
-        for annotation in message.annotations {
-            let resolvedAnnotation: Annotation?
-
-            if annotation.isDeleted {
-                resolvedAnnotation = await self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
-            } else if await annotationDataAccess.canFindWithDeleted(db: db, annotationId: annotation.id) {
-                resolvedAnnotation = await self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
-            } else {
-                resolvedAnnotation = await self.handleCreateAnnotation(userId: userId, db: db, annotation: annotation)
-            }
-
-            responseAnnotations.appendIfNotNil(resolvedAnnotation)
-        }
-
-        return responseAnnotations
-    }
-
     private func sendToAllAppropriateClients<T: Codable>(
         db: Database,
         userId: String,
