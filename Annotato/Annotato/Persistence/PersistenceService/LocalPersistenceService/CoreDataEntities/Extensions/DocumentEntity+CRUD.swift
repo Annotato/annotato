@@ -5,7 +5,7 @@ extension DocumentEntity {
         self.copyPropertiesOf(updatedModel: document)
 
         for annotation in document.annotations {
-            if let annotationEntity = Self.localAnnotationEntityDataAccess
+            if let annotationEntity = LocalAnnotationEntityDataAccess()
                 .readInCurrentContext(annotationId: annotation.id,
                                       withDeleted: true) {
                 annotationEntity.customUpdate(usingUpdatedModel: annotation)

@@ -13,7 +13,7 @@ extension AnnotationTextEntity {
         height = annotationText.height
         order = Int64(annotationText.order)
 
-        if let annotationEntity = Self.localAnnotationEntityDataAccess
+        if let annotationEntity = LocalAnnotationEntityDataAccess()
             .readInCurrentContext(annotationId: annotationText.annotationId,
                                   withDeleted: true) {
             self.annotationEntity = annotationEntity
