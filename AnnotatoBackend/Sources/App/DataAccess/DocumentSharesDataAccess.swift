@@ -39,7 +39,7 @@ struct DocumentSharesDataAccess {
         guard let documentShareEntity = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentShare.documentId)
-            .filter(\.$recipientId == documentShare.recipientId)
+            .filter(\.$recipientEntity.$id == documentShare.recipientId)
             .withDeleted()
             .first().get()
         else {
