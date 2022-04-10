@@ -1,31 +1,37 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-class OfflinePDFStorageManager: PDFStorageManager {
+class PDFStorageManager {
     private var localStorageService: AnnotatoStorageService
+    private var remoteStorageService: AnnotatoStorageService
     private let persistenceManager: PersistenceManager
 
     init(persistenceManager: PersistenceManager) {
         localStorageService = LocalStorage()
+        remoteStorageService = FirebaseStorage()
         self.persistenceManager = persistenceManager
     }
 
     var delegate: AnnotatoStorageDelegate? {
         didSet {
             localStorageService.delegate = delegate
+            remoteStorageService.delegate = delegate
         }
     }
 
     func uploadPdf(fileSystemUrl: URL, withName name: String, completion: @escaping (Document) -> Void) {
         guard let userId = AnnotatoAuth().currentUser?.uid else {
-            AnnotatoLogger.error("When getting current user's ID",
-                                 context: "OfflinePDFStorageManager::uploadPdf")
+            AnnotatoLogger.error("When getting current user's ID", context: "PDFStorageManager::uploadPdf")
             return
         }
 
-        let document = Document(name: name, ownerId: userId, baseFileUrl: nil)
+        let documentId = UUID()
 
-        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: document.id)
+        localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId)
+
+        remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, withId: documentId)
+
+        let document = Document(name: name, ownerId: userId, id: documentId)
 
         Task {
             guard let document = await self.persistenceManager.createDocument(document: document) else {
@@ -39,6 +45,7 @@ class OfflinePDFStorageManager: PDFStorageManager {
 
     func deletePdf(document: Document, completion: @escaping (Document) -> Void) {
         localStorageService.deletePdf(document: document)
+        remoteStorageService.deletePdf(document: document)
 
         Task {
             guard let document = await self.persistenceManager.deleteDocument(document: document) else {
