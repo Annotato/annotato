@@ -1,6 +1,6 @@
 import Foundation
 
-public class AnnotatoOfflineToOnlineMessage: Codable {
+public final class AnnotatoOfflineToOnlineMessage: Codable {
     public private(set) var type = AnnotatoMessageType.offlineToOnline
     public let senderId: String
     public let mergeStrategy: AnnotatoOfflineToOnlineMergeStrategy
