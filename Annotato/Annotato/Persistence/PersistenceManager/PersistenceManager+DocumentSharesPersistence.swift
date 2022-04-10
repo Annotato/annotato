@@ -31,7 +31,7 @@ extension PersistenceManager: DocumentSharesPersistence {
             return false
         }
 
-        let wasPDFSavedLocally = LocalStorage().uploadPdf(pdfData: documentPDFData, withId: document.id)
+        let wasPDFSavedLocally = LocalStorage().uploadPdf(pdfData: documentPDFData, fileName: document.id.uuidString)
         guard wasPDFSavedLocally else {
             AnnotatoLogger.error("Could not save document PDF to local file system",
                                  context: "PersistenceManager::copyDocumentPDFToLocalStorage")

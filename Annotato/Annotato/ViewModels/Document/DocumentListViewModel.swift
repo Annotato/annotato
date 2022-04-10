@@ -2,19 +2,29 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class DocumentListViewModel {
-    let document: Document
-    let isShared: Bool
+    private let pdfStorageManager = PDFStorageManager()
 
-    var id: UUID {
-        document.id
-    }
+    func importDocument(selectedFileUrl: URL, completion: @escaping (Document?) -> Void) {
+        let doesFileExist = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil
+        guard doesFileExist else {
+            return
+        }
 
-    var name: String {
-        document.name
-    }
+        guard let ownerId = AnnotatoAuth().currentUser?.uid else {
+            return
+        }
 
-    init(document: Document, isShared: Bool) {
-        self.document = document
-        self.isShared = isShared
+        Task {
+            let document = Document(name: selectedFileUrl.lastPathComponent, ownerId: ownerId)
+            pdfStorageManager.uploadPdf(
+                fileSystemUrl: selectedFileUrl, fileName: document.id.uuidString
+            )
+
+            let createdDocument = await AnnotatoPersistenceWrapper
+                .currentPersistenceManager
+                .createDocument(document: document)
+
+            completion(createdDocument)
+        }
     }
 }

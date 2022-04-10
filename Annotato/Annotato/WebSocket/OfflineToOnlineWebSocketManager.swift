@@ -81,7 +81,7 @@ class OfflineToOnlineWebSocketManager {
         for document in documents where document.baseFileUrl == nil {
             AnnotatoLogger.info("Uploading document \(document) to online storage service",
                                 context: "OfflineToOnlineWebSocketManager::sendOnlineMessage")
-            onlineStorageService.uploadPdf(fileSystemUrl: document.localFileUrl, withId: document.id)
+            onlineStorageService.uploadPdf(fileSystemUrl: document.localFileUrl, fileName: document.id.uuidString)
         }
 
         let annotations = LocalPersistenceService.shared
