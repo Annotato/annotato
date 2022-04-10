@@ -1,4 +1,4 @@
-public class AnnotatoCudDocumentMessage: Codable {
+public final class AnnotatoCudDocumentMessage: Codable {
     public private(set) var type = AnnotatoMessageType.crudDocument
     public let senderId: String
     public let subtype: AnnotatoCudDocumentMessageType

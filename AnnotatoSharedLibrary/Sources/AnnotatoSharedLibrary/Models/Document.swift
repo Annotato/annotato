@@ -46,7 +46,7 @@ public final class Document: Codable, Timestampable {
 
 // MARK: Timestamps
 extension Document {
-    public func setCreatedAt(to createdAt: Date) {
+    public func setCreatedAt(to createdAt: Date = Date()) {
         self.createdAt = createdAt
         for annotation in annotations {
             annotation.setCreatedAt(to: createdAt)
@@ -55,14 +55,14 @@ extension Document {
         setUpdatedAt(to: createdAt)
     }
 
-    public func setUpdatedAt(to updatedAt: Date) {
+    public func setUpdatedAt(to updatedAt: Date = Date()) {
         self.updatedAt = updatedAt
         for annotation in annotations {
             annotation.setUpdatedAt(to: updatedAt)
         }
     }
 
-    public func setDeletedAt(to deletedAt: Date) {
+    public func setDeletedAt(to deletedAt: Date = Date()) {
         self.deletedAt = deletedAt
         for annotation in annotations {
             annotation.setDeletedAt(to: deletedAt)

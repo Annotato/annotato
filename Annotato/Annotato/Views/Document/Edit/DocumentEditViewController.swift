@@ -2,6 +2,8 @@ import UIKit
 import Combine
 
 class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    private let documentController = DocumentController()
+
     let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
     let toolbarHeight = 50.0
@@ -16,8 +18,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setUpWebSocketSubscribers()
     }
 
     func initializeSubviews() {
@@ -36,7 +36,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documentViewModel = await DocumentController.loadDocumentWithDeleted(documentId: documentId)
+            documentViewModel = await documentController.loadDocumentWithDeleted(documentId: documentId)
             stopSpinner()
 
             initializeDocumentView()
@@ -85,7 +85,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 return
             }
 
-            await DocumentController.updateDocumentWithDeleted(document: documentViewModel)
+            await documentController.updateDocumentWithDeleted(document: documentViewModel)
         }
     }
 }
@@ -101,37 +101,5 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
             return
         }
         goToShare(documentId: documentId)
-    }
-}
-
-// MARK: Websocket
-extension DocumentEditViewController {
-    func setUpWebSocketSubscribers() {
-        WebSocketManager.shared.annotationManager.$newAnnotation.sink { [weak self] newAnnotation in
-            guard let newAnnotation = newAnnotation,
-                  newAnnotation.documentId == self?.documentId else {
-                return
-            }
-
-            self?.documentViewModel?.receiveNewAnnotation(newAnnotation: newAnnotation)
-        }.store(in: &cancellables)
-
-        WebSocketManager.shared.annotationManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
-            guard let updatedAnnotation = updatedAnnotation,
-                  updatedAnnotation.documentId == self?.documentId else {
-                return
-            }
-
-            self?.documentViewModel?.receiveUpdateAnnotation(updatedAnnotation: updatedAnnotation)
-        }.store(in: &cancellables)
-
-        WebSocketManager.shared.annotationManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
-            guard let deletedAnnotation = deletedAnnotation,
-                  deletedAnnotation.documentId == self?.documentId else {
-                return
-            }
-
-            self?.documentViewModel?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
-        }.store(in: &cancellables)
     }
 }

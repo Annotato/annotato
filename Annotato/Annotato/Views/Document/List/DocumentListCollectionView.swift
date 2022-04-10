@@ -2,7 +2,7 @@ import UIKit
 
 class DocumentListCollectionView: UICollectionView {
     let cellId = "DocumentListCollectionCell"
-    private var documents: [DocumentListViewModel]
+    private var documents: [DocumentListCellViewModel]
     private weak var documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate?
 
     @available(*, unavailable)
@@ -11,7 +11,7 @@ class DocumentListCollectionView: UICollectionView {
     }
 
     required init(
-        documents: [DocumentListViewModel],
+        documents: [DocumentListCellViewModel],
         frame: CGRect,
         documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate
     ) {
