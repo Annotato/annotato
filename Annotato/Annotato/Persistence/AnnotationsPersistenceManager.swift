@@ -78,7 +78,6 @@ extension AnnotationsPersistenceManager {
             return
         }
 
-        resetPublishedAttributes()
         publishAnnotation(decodedMessage: decodedMessage, annotation: annotation)
     }
 
@@ -96,6 +95,8 @@ extension AnnotationsPersistenceManager {
     }
 
     private func publishAnnotation(decodedMessage: AnnotatoCudAnnotationMessage, annotation: Annotation) {
+        resetPublishedAttributes()
+
         switch decodedMessage.subtype {
         case .createAnnotation:
             newAnnotation = annotation

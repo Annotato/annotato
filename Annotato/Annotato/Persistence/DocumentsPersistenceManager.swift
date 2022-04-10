@@ -113,7 +113,6 @@ extension DocumentsPersistenceManager {
             return
         }
 
-        resetPublishedAttributes()
         publishDocument(decodedMessage: decodedMessage, document: document)
     }
 
@@ -131,6 +130,8 @@ extension DocumentsPersistenceManager {
     }
 
     private func publishDocument(decodedMessage: AnnotatoCudDocumentMessage, document: Document) {
+        resetPublishedAttributes()
+        
         switch decodedMessage.subtype {
         case .createDocument:
             newDocument = document
