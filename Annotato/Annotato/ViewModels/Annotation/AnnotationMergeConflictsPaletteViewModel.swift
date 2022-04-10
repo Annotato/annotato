@@ -28,4 +28,9 @@ extension AnnotationMergeConflictsPaletteViewModel {
     var frame: CGRect {
         CGRect(origin: origin, size: size)
     }
+
+    func resetDimensions() {
+        width = 0.0
+        height = 0.0
+    }
 }

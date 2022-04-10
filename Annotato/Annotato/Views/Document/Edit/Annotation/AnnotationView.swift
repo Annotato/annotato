@@ -82,6 +82,7 @@ class AnnotationView: UIView {
         parentView?.addSubview(linkLine)
     }
 
+    // swiftlint:disable function_body_length
     private func setUpSubscribers() {
         viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
             guard let origin = self?.viewModel.origin else {
@@ -132,8 +133,21 @@ class AnnotationView: UIView {
 
         viewModel.$isResolving.sink { [weak self] isResolving in
             if !isResolving {
-                self?.mergeConflictsPalette.removeFromSuperview()
-                // TODO: Shift the normal palette view up
+                guard let self = self else {
+                    return
+                }
+                let mergeConflictsHeight = self.mergeConflictsPalette.height
+                self.mergeConflictsPalette.resetDimensions()
+                self.mergeConflictsPalette.removeFromSuperview()
+
+                let paletteNewCenter = CGPoint(
+                    x: self.palette.center.x, y: self.palette.center.y - mergeConflictsHeight)
+                self.palette.center = paletteNewCenter
+
+                let scrollViewNewCenter = CGPoint(
+                    x: self.scroll.center.x, y: self.scroll.center.y - mergeConflictsHeight)
+                self.scroll.center = scrollViewNewCenter
+
             }
         }.store(in: &cancellables)
     }

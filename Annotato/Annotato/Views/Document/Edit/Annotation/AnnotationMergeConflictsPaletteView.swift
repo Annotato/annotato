@@ -49,3 +49,13 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
         print("Tapped the discard button")
     }
 }
+
+extension AnnotationMergeConflictsPaletteView {
+    var height: CGFloat {
+        viewModel.height
+    }
+
+    func resetDimensions() {
+        viewModel.resetDimensions()
+    }
+}
