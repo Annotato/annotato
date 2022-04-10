@@ -27,7 +27,9 @@ class RootPersistenceManager: ObservableObject {
             return
         }
 
-        publishMessage(decodedMessage: decodedMessage, message: message)
+        let messageType = decodedMessage.type
+
+        publishMessage(decodedMessageType: messageType, message: message)
     }
 
     private func decodeData(data: Data) -> AnnotatoMessage? {
@@ -43,10 +45,10 @@ class RootPersistenceManager: ObservableObject {
         }
     }
 
-    private func publishMessage(decodedMessage: AnnotatoMessage, message: Data) {
+    private func publishMessage(decodedMessageType: AnnotatoMessageType, message: Data) {
         resetPublishedAttributes()
 
-        switch decodedMessage.type {
+        switch decodedMessageType {
         case .crudDocument:
             self.crudDocumentMessage = message
         case .crudAnnotation:

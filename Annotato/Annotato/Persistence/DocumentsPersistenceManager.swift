@@ -103,6 +103,7 @@ extension DocumentsPersistenceManager {
 
         let document = decodedMessage.document
         let senderId = decodedMessage.senderId
+        let messageSubtype = decodedMessage.subtype
 
         Task {
             _ = await LocalPersistenceService.shared.documents
@@ -113,7 +114,7 @@ extension DocumentsPersistenceManager {
             return
         }
 
-        publishDocument(decodedMessage: decodedMessage, document: document)
+        publishDocument(messageSubtype: messageSubtype, document: document)
     }
 
     private func decodeData(data: Data) -> AnnotatoCudDocumentMessage? {
@@ -129,10 +130,10 @@ extension DocumentsPersistenceManager {
         }
     }
 
-    private func publishDocument(decodedMessage: AnnotatoCudDocumentMessage, document: Document) {
+    private func publishDocument(messageSubtype: AnnotatoCudDocumentMessageType, document: Document) {
         resetPublishedAttributes()
-        
-        switch decodedMessage.subtype {
+
+        switch messageSubtype {
         case .createDocument:
             newDocument = document
             AnnotatoLogger.info("Document was created. \(document)")

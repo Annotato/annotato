@@ -68,6 +68,7 @@ extension AnnotationsPersistenceManager {
 
         let annotation = decodedMessage.annotation
         let senderId = decodedMessage.senderId
+        let messageSubtype = decodedMessage.subtype
 
         Task {
             _ = await localPersistence.annotations
@@ -78,7 +79,7 @@ extension AnnotationsPersistenceManager {
             return
         }
 
-        publishAnnotation(decodedMessage: decodedMessage, annotation: annotation)
+        publishAnnotation(messageSubtype: messageSubtype, annotation: annotation)
     }
 
     private func decodeData(data: Data) -> AnnotatoCudAnnotationMessage? {
@@ -94,10 +95,10 @@ extension AnnotationsPersistenceManager {
         }
     }
 
-    private func publishAnnotation(decodedMessage: AnnotatoCudAnnotationMessage, annotation: Annotation) {
+    private func publishAnnotation(messageSubtype: AnnotatoCudAnnotationMessageType, annotation: Annotation) {
         resetPublishedAttributes()
 
-        switch decodedMessage.subtype {
+        switch messageSubtype {
         case .createAnnotation:
             newAnnotation = annotation
             AnnotatoLogger.info("Annotation was created. \(annotation)")
