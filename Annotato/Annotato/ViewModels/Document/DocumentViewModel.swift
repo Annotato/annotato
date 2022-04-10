@@ -4,12 +4,16 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
+    private let annotationsPersistenceManager = AnnotationsPersistenceManager()
+
     let model: Document
 
     private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
     private var selectionStartPoint: CGPoint?
     private var selectionEndPoint: CGPoint?
+
+    private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
@@ -20,6 +24,8 @@ class DocumentViewModel: ObservableObject {
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
             .map { AnnotationViewModel(model: $0, document: self) }
+
+        setUpSubscribers()
     }
 
     func setAllAnnotationsOutOfFocus() {
@@ -104,7 +110,7 @@ extension DocumentViewModel {
         addedAnnotation = annotationViewModel
 
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceManager.createAnnotation(annotation: newAnnotation)
+            await annotationsPersistenceManager.createAnnotation(annotation: newAnnotation)
         }
     }
 
@@ -143,7 +149,7 @@ extension DocumentViewModel {
         annotations.removeAll(where: { $0.id == annotation.model.id })
 
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceManager.deleteAnnotation(annotation: annotation.model)
+            await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model)
         }
     }
 
@@ -156,5 +162,37 @@ extension DocumentViewModel {
         let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
         annotationViewModel?.receiveDelete()
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
+    }
+}
+
+// MARK: Websocket
+extension DocumentViewModel {
+    private func setUpSubscribers() {
+        annotationsPersistenceManager.$newAnnotation.sink { [weak self] newAnnotation in
+            guard let newAnnotation = newAnnotation,
+                  newAnnotation.documentId == self?.model.id else {
+                return
+            }
+
+            self?.receiveNewAnnotation(newAnnotation: newAnnotation)
+        }.store(in: &cancellables)
+
+        annotationsPersistenceManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
+            guard let updatedAnnotation = updatedAnnotation,
+                  updatedAnnotation.documentId == self?.model.id else {
+                return
+            }
+
+            self?.receiveUpdateAnnotation(updatedAnnotation: updatedAnnotation)
+        }.store(in: &cancellables)
+
+        annotationsPersistenceManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
+            guard let deletedAnnotation = deletedAnnotation,
+                  deletedAnnotation.documentId == self?.model.id else {
+                return
+            }
+
+            self?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
+        }.store(in: &cancellables)
     }
 }

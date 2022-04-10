@@ -2,6 +2,8 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct DocumentShareController {
+    private let documentSharesPersistenceManager = DocumentSharesPersistenceManager()
+
     func createDocumentShare(documentId: UUID) async -> Document? {
         guard let currentUser = AnnotatoAuth().currentUser else {
             return nil
@@ -9,7 +11,6 @@ struct DocumentShareController {
 
         let documentShare = DocumentShare(documentId: documentId, recipientId: currentUser.uid)
 
-        return await AnnotatoPersistenceWrapper.currentPersistenceManager
-            .createDocumentShare(documentShare: documentShare)
+        return await documentSharesPersistenceManager.createDocumentShare(documentShare: documentShare)
     }
 }

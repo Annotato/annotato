@@ -1,7 +1,22 @@
 import AnnotatoSharedLibrary
 import Foundation
+import Combine
 
-extension PersistenceManager: DocumentsPersistence {
+class DocumentsPersistenceManager: DocumentsPersistence {
+    private let rootPersistenceManager = RootPersistenceManager()
+
+    private let remotePersistence = RemotePersistenceService()
+    private let localPersistence = LocalPersistenceService.shared
+    private var cancellables: Set<AnyCancellable> = []
+
+    @Published private(set) var newDocument: Document?
+    @Published private(set) var updatedDocument: Document?
+    @Published private(set) var deletedDocument: Document?
+
+    init() {
+        setUpSubscribers()
+    }
+
     func getOwnDocuments(userId: String) async -> [Document]? {
         let remoteOwnDocuments = await remotePersistence.documents.getOwnDocuments(userId: userId)
         guard remoteOwnDocuments != nil else {
@@ -66,5 +81,58 @@ extension PersistenceManager: DocumentsPersistence {
     func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
         fatalError("PersistenceManager::createOrUpdateDocuments: This function should not be called")
         return nil
+    }
+}
+
+// MARK: Websocket
+extension DocumentsPersistenceManager {
+    private func setUpSubscribers() {
+        rootPersistenceManager.$crudDocumentMessage.sink { [weak self] message in
+            guard let message = message else {
+                return
+            }
+
+            self?.handleIncomingMessage(message: message)
+        }.store(in: &cancellables)
+    }
+
+    private func handleIncomingMessage(message: Data) {
+        do {
+            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoCudDocumentMessage.self, from: message)
+            let document = decodedMessage.document
+            let senderId = decodedMessage.senderId
+
+            // Defensive resets
+            newDocument = nil
+            updatedDocument = nil
+            deletedDocument = nil
+
+            Task {
+                _ = await LocalPersistenceService.shared.documents
+                    .createOrUpdateDocument(document: document)
+            }
+
+            guard senderId != AnnotatoAuth().currentUser?.uid else {
+                return
+            }
+
+            switch decodedMessage.subtype {
+            case .createDocument:
+                newDocument = document
+                AnnotatoLogger.info("Document was created. \(document)")
+            case .updateDocument:
+                updatedDocument = document
+                AnnotatoLogger.info("Document was updated. \(document)")
+            case .deleteDocument:
+                deletedDocument = document
+                AnnotatoLogger.info("Document was deleted. \(document)")
+            }
+
+        } catch {
+            AnnotatoLogger.error(
+                "When handling incoming data. \(error.localizedDescription).",
+                context: "DocumentsPersistenceManager::handleIncomingMessage"
+            )
+        }
     }
 }
