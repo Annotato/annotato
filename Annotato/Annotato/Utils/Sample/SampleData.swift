@@ -4,7 +4,7 @@ import AnnotatoSharedLibrary
 
 class SampleData {
     static var exampleDocument: Document {
-        Document(name: "Clean Code", ownerId: "owner123", baseFileUrl: firebasePdfUrlString, id: UUID())
+        Document(name: "Clean Code", ownerId: "owner123", id: UUID())
     }
 
     static var exampleUrlLab01Qns: URL {

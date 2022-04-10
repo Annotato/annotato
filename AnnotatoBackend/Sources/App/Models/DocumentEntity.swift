@@ -14,9 +14,6 @@ final class DocumentEntity: Model {
     @Field(key: "owner_id")
     var ownerId: String
 
-    @Field(key: "base_file_url")
-    var baseFileUrl: String?
-
     @Children(for: \.$documentEntity)
     var annotationEntities: [AnnotationEntity]
 
@@ -38,7 +35,6 @@ final class DocumentEntity: Model {
     init(
         name: String,
         ownerId: String,
-        baseFileUrl: String?,
         id: UUID? = nil,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,
@@ -47,7 +43,6 @@ final class DocumentEntity: Model {
         self.id = id
         self.name = name
         self.ownerId = ownerId
-        self.baseFileUrl = baseFileUrl
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
@@ -59,7 +54,6 @@ extension DocumentEntity: PersistedEntity {
         Self(
             name: model.name,
             ownerId: model.ownerId,
-            baseFileUrl: model.baseFileUrl,
             id: model.id,
             createdAt: model.createdAt,
             updatedAt: model.updatedAt,

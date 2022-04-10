@@ -20,7 +20,6 @@ extension DocumentEntity {
 
         name = document.name
         ownerId = document.ownerId
-        baseFileUrl = document.baseFileUrl
 
         createdAt = document.createdAt
         updatedAt = document.updatedAt
