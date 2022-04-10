@@ -1,5 +1,6 @@
 struct RemotePersistenceService {
-    private static let shouldUseLocalEndpoint = false
+    // TODO: Revert before merge
+    private static let shouldUseLocalEndpoint = true
 
     // HTTP
     private static let localApiEndpoint = "http://127.0.0.1:8080"

@@ -2,9 +2,9 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalAnnotationEntityDataAccess {
-    static let context = LocalPersistenceService.sharedContext
+    let context = LocalPersistenceService.sharedContext
 
-    static func listCreatedAfterDate(date: Date) -> [AnnotationEntity]? {
+    func listCreatedAfterDate(date: Date) -> [AnnotationEntity]? {
         context.performAndWait {
             context.rollback()
 
@@ -22,7 +22,7 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
-    static func listUpdatedAfterDate(date: Date) -> [AnnotationEntity]? {
+    func listUpdatedAfterDate(date: Date) -> [AnnotationEntity]? {
         context.performAndWait {
             context.rollback()
 
@@ -40,7 +40,7 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
-    static func create(annotation: Annotation) -> AnnotationEntity? {
+    func create(annotation: Annotation) -> AnnotationEntity? {
         context.performAndWait {
             context.rollback()
 
@@ -58,7 +58,7 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
-    static func read(annotationId: UUID, withDeleted: Bool) -> AnnotationEntity? {
+    func read(annotationId: UUID, withDeleted: Bool) -> AnnotationEntity? {
         context.performAndWait {
             context.rollback()
 
@@ -79,7 +79,7 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
-    static func readInCurrentContext(annotationId: UUID, withDeleted: Bool) -> AnnotationEntity? {
+    func readInCurrentContext(annotationId: UUID, withDeleted: Bool) -> AnnotationEntity? {
         let request = AnnotationEntity.fetchRequest()
 
         do {
@@ -96,13 +96,12 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
-    static func update(annotationId: UUID, annotation: Annotation) -> AnnotationEntity? {
+    func update(annotationId: UUID, annotation: Annotation) -> AnnotationEntity? {
         context.performAndWait {
             context.rollback()
 
-            guard let annotationEntity = LocalAnnotationEntityDataAccess
-                .readInCurrentContext(annotationId: annotationId,
-                                      withDeleted: true) else {
+            guard let annotationEntity = readInCurrentContext(annotationId: annotationId,
+                                                              withDeleted: true) else {
                 AnnotatoLogger.error("When finding existing annotation entity.",
                                      context: "LocalAnnotationEntityDataAccess::update")
                 return nil
@@ -122,7 +121,7 @@ struct LocalAnnotationEntityDataAccess {
         }
     }
 
-    static func delete(annotationId: UUID, annotation: Annotation) -> AnnotationEntity? {
+    func delete(annotationId: UUID, annotation: Annotation) -> AnnotationEntity? {
         // Deleting is the same as updating deletedAt
         return update(annotationId: annotationId, annotation: annotation)
     }

@@ -2,9 +2,9 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalDocumentEntityDataAccess {
-    static let context = LocalPersistenceService.sharedContext
+    let context = LocalPersistenceService.sharedContext
 
-    static func listOwn(userId: String) -> [DocumentEntity]? {
+    func listOwn(userId: String) -> [DocumentEntity]? {
         context.performAndWait {
             context.rollback()
 
@@ -22,7 +22,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func listShared(userId: String) -> [DocumentEntity]? {
+    func listShared(userId: String) -> [DocumentEntity]? {
         context.performAndWait {
             context.rollback()
 
@@ -40,7 +40,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func listCreatedAfterDate(date: Date) -> [DocumentEntity]? {
+    func listCreatedAfterDate(date: Date) -> [DocumentEntity]? {
         context.performAndWait {
             context.rollback()
 
@@ -58,7 +58,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func listUpdatedAfterDate(date: Date) -> [DocumentEntity]? {
+    func listUpdatedAfterDate(date: Date) -> [DocumentEntity]? {
         context.performAndWait {
             context.rollback()
 
@@ -76,7 +76,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func create(document: Document) -> DocumentEntity? {
+    func create(document: Document) -> DocumentEntity? {
         context.performAndWait {
             context.rollback()
 
@@ -94,7 +94,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func read(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
+    func read(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
         context.performAndWait {
             context.rollback()
 
@@ -115,7 +115,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func readInCurrentContext(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
+    func readInCurrentContext(documentId: UUID, withDeleted: Bool) -> DocumentEntity? {
         let request = DocumentEntity.fetchRequest()
 
         do {
@@ -132,13 +132,12 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func update(documentId: UUID, document: Document) -> DocumentEntity? {
+    func update(documentId: UUID, document: Document) -> DocumentEntity? {
         context.performAndWait {
             context.rollback()
 
-            guard let documentEntity = LocalDocumentEntityDataAccess
-                .readInCurrentContext(documentId: documentId,
-                                      withDeleted: true) else {
+            guard let documentEntity = readInCurrentContext(documentId: documentId,
+                                                            withDeleted: true) else {
                 AnnotatoLogger.error("When finding existing document entity.",
                                      context: "LocalDocumentEntityDataAccess::update")
                 return nil
@@ -158,7 +157,7 @@ struct LocalDocumentEntityDataAccess {
         }
     }
 
-    static func delete(documentId: UUID, document: Document) -> DocumentEntity? {
+    func delete(documentId: UUID, document: Document) -> DocumentEntity? {
         // Deleting is the same as updating deletedAt
         return update(documentId: documentId, document: document)
     }

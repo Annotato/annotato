@@ -1,4 +1,4 @@
-public class AnnotatoCudAnnotationMessage: Codable {
+public final class AnnotatoCudAnnotationMessage: Codable {
     public private(set) var type = AnnotatoMessageType.crudAnnotation
     public let senderId: String
     public let subtype: AnnotatoCudAnnotationMessageType

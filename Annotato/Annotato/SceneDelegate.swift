@@ -1,10 +1,7 @@
 import UIKit
-import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-
-    private var cancellables: Set<AnyCancellable> = []
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
@@ -25,25 +22,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = AnnotatoAuth().currentUser != nil
             ? DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
             : AuthViewController.instantiateFullScreenFromStoryboard(.main)
-
-        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] isConnected in
-            guard isConnected else {
-                return
-            }
-
-            guard AnnotatoAuth().currentUser != nil else {
-                return
-            }
-
-            DispatchQueue.main.async {
-                guard let currentTopViewController = self?.getCurrentTopViewController(),
-                      !(currentTopViewController is OfflineToOnlineViewController) else {
-                    return
-                }
-
-                (currentTopViewController as? Navigable)?.goToOfflineToOnline()
-            }
-        }).store(in: &cancellables)
     }
 
     private func getCurrentTopViewController() -> UIViewController? {

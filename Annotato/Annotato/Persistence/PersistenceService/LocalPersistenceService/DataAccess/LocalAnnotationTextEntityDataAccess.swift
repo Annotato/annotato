@@ -2,9 +2,9 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalAnnotationTextEntityDataAccess {
-    static let context = LocalPersistenceService.sharedContext
+    let context = LocalPersistenceService.sharedContext
 
-    static func read(annotationTextEntityId: UUID) -> AnnotationTextEntity? {
+    func read(annotationTextEntityId: UUID) -> AnnotationTextEntity? {
         context.performAndWait {
             context.rollback()
 
@@ -22,7 +22,7 @@ struct LocalAnnotationTextEntityDataAccess {
         }
     }
 
-    static func readInCurrentContext(annotationTextEntityId: UUID) -> AnnotationTextEntity? {
+    func readInCurrentContext(annotationTextEntityId: UUID) -> AnnotationTextEntity? {
         let request = AnnotationTextEntity.fetchRequest()
 
         do {

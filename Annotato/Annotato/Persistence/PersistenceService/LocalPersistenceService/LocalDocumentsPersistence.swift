@@ -2,8 +2,10 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalDocumentsPersistence: DocumentsPersistence {
+    private let localDocumentEntityDataAccess = LocalDocumentEntityDataAccess()
+
     func getOwnDocuments(userId: String) -> [Document]? {
-        guard let documentEntities = LocalDocumentEntityDataAccess.listOwn(userId: userId) else {
+        guard let documentEntities = localDocumentEntityDataAccess.listOwn(userId: userId) else {
             AnnotatoLogger.error("When getting own document.",
                                  context: "LocalDocumentsPersistence::getOwnDocuments")
             return nil
@@ -13,7 +15,7 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func getSharedDocuments(userId: String) -> [Document]? {
-        guard let documentEntities = LocalDocumentEntityDataAccess.listShared(userId: userId) else {
+        guard let documentEntities = localDocumentEntityDataAccess.listShared(userId: userId) else {
             AnnotatoLogger.error("When getting shared document.",
                                  context: "LocalDocumentsPersistence::getSharedDocuments")
             return nil
@@ -23,7 +25,7 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func getDocument(documentId: UUID) -> Document? {
-        guard let readDocumentEntity = LocalDocumentEntityDataAccess.read(documentId: documentId,
+        guard let readDocumentEntity = localDocumentEntityDataAccess.read(documentId: documentId,
                                                                           withDeleted: false) else {
             AnnotatoLogger.error("When reading document.",
                                  context: "LocalDocumentsPersistence::getDocument")
@@ -34,7 +36,7 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func createDocument(document: Document) -> Document? {
-        guard let newDocumentEntity = LocalDocumentEntityDataAccess.create(document: document) else {
+        guard let newDocumentEntity = localDocumentEntityDataAccess.create(document: document) else {
             AnnotatoLogger.error("When creating document.",
                                  context: "LocalDocumentsPersistence::createDocument")
             return nil
@@ -44,7 +46,7 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func updateDocument(document: Document) -> Document? {
-        guard let updatedDocumentEntity = LocalDocumentEntityDataAccess
+        guard let updatedDocumentEntity = localDocumentEntityDataAccess
             .update(documentId: document.id, document: document) else {
             AnnotatoLogger.error("When updating document.",
                                  context: "LocalDocumentsPersistence::updateDocument")
@@ -55,7 +57,7 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func deleteDocument(document: Document) -> Document? {
-        guard let deletedDocument = LocalDocumentEntityDataAccess
+        guard let deletedDocument = localDocumentEntityDataAccess
             .delete(documentId: document.id, document: document) else {
             AnnotatoLogger.error("When deleting document.",
                                  context: "LocalDocumentsPersistence::deleteDocument")
@@ -66,7 +68,7 @@ struct LocalDocumentsPersistence: DocumentsPersistence {
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {
-        if LocalDocumentEntityDataAccess.read(documentId: document.id,
+        if localDocumentEntityDataAccess.read(documentId: document.id,
                                               withDeleted: true) != nil {
             return updateDocument(document: document)
         } else {

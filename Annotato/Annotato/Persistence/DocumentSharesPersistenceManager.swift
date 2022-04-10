@@ -1,7 +1,10 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-extension PersistenceManager: DocumentSharesPersistence {
+class DocumentSharesPersistenceManager: DocumentSharesPersistence {
+    private let remotePersistence = RemotePersistenceService()
+    private let localPersistence = LocalPersistenceService.shared
+
     func createDocumentShare(documentShare: DocumentShare) async -> Document? {
         guard let remoteDocument = await remotePersistence
             .documentShares
@@ -25,7 +28,7 @@ extension PersistenceManager: DocumentSharesPersistence {
             return false
         }
 
-        guard let documentPDFData = try? await httpService.get(url: downloadURL.absoluteString) else {
+        guard let documentPDFData = try? await URLSessionHTTPService().get(url: downloadURL.absoluteString) else {
             AnnotatoLogger.error("Could not retrieve document PDF data using HTTP",
                                  context: "PersistenceManager::copyDocumentPDFToLocalStorage")
             return false

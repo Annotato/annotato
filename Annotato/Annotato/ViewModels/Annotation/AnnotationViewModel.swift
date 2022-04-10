@@ -6,6 +6,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class AnnotationViewModel: ObservableObject {
+    private let annotationsPersistenceManager = AnnotationsPersistenceManager()
+
     private weak var document: DocumentViewModel?
 
     private(set) var model: Annotation
@@ -75,7 +77,7 @@ class AnnotationViewModel: ObservableObject {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceManager.updateAnnotation(annotation: model)
+            await annotationsPersistenceManager.updateAnnotation(annotation: model)
         }
     }
 
@@ -197,7 +199,7 @@ extension AnnotationViewModel {
         }
 
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceManager.updateAnnotation(annotation: model)
+            await annotationsPersistenceManager.updateAnnotation(annotation: model)
         }
     }
 

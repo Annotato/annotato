@@ -6,7 +6,7 @@ extension AnnotationEntity {
 
         let annotationTexts = annotation.parts.compactMap({ $0 as? AnnotationText })
         for annotationText in annotationTexts {
-            if let annotationTextEntity = LocalAnnotationTextEntityDataAccess
+            if let annotationTextEntity = LocalAnnotationTextEntityDataAccess()
                 .readInCurrentContext(annotationTextEntityId: annotationText.id) {
                 annotationTextEntity.customUpdate(usingUpdatedModel: annotationText)
             } else {
@@ -16,7 +16,7 @@ extension AnnotationEntity {
 
         let annotationHandwritings = annotation.parts.compactMap({ $0 as? AnnotationHandwriting })
         for annotationHandwriting in annotationHandwritings {
-            if let annotationHandwritingEntity = LocalAnnotationHandwritingEntityDataAccess
+            if let annotationHandwritingEntity = LocalAnnotationHandwritingEntityDataAccess()
                 .readInCurrentContext(annotationHandwritingEntityId: annotationHandwriting.id) {
                 annotationHandwritingEntity.customUpdate(usingUpdatedModel: annotationHandwriting)
             } else {
@@ -25,7 +25,7 @@ extension AnnotationEntity {
         }
 
         let selectionBox = annotation.selectionBox
-        if let selectionBoxEntity = LocalSelectionBoxEntityDataAccess
+        if let selectionBoxEntity = LocalSelectionBoxEntityDataAccess()
             .readInCurrentContext(selectionBoxId: selectionBox.id) {
             selectionBoxEntity.customUpdate(usingUpdatedModel: selectionBox)
         } else {
@@ -41,7 +41,7 @@ extension AnnotationEntity {
         width = annotation.width
         ownerId = annotation.ownerId
 
-        if let documentEntity = LocalDocumentEntityDataAccess
+        if let documentEntity = LocalDocumentEntityDataAccess()
             .readInCurrentContext(documentId: annotation.documentId, withDeleted: true) {
             self.documentEntity = documentEntity
         }

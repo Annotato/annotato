@@ -1,6 +1,8 @@
 import UIKit
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    private let documentController = DocumentController()
+
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
     private var importMenu = DocumentListImportMenu()
@@ -69,7 +71,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documents = await DocumentController.loadAllDocuments(userId: userId)
+            documents = await documentController.loadAllDocuments(userId: userId)
             stopSpinner()
 
             addDocumentsSubview()

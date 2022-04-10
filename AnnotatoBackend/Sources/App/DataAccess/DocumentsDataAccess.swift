@@ -4,7 +4,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct DocumentsDataAccess {
-    static func listOwn(db: Database, userId: String) async throws -> [Document] {
+    func listOwn(db: Database, userId: String) async throws -> [Document] {
         let documentEntities = try await DocumentEntity.query(on: db)
             .filter(\.$ownerId == userId)
             .withDeleted()
@@ -18,7 +18,7 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
-    static func listShared(db: Database, userId: String) async throws -> [Document] {
+    func listShared(db: Database, userId: String) async throws -> [Document] {
         let documentEntities = try await DocumentEntity.query(on: db)
             .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
             .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
@@ -33,7 +33,7 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
-    static func listWithDeleted(db: Database, documentIds: [UUID]) async throws -> [Document] {
+    func listWithDeleted(db: Database, documentIds: [UUID]) async throws -> [Document] {
         let documentEntities = try await DocumentEntity
             .query(on: db)
             .filter(\.$id ~~ documentIds)
@@ -47,7 +47,7 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
-    static func listEntitiesCreatedAfterDateWithDeleted(
+    func listEntitiesCreatedAfterDateWithDeleted(
         db: Database,
         date: Date,
         userId: String
@@ -76,7 +76,7 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
-    static func listEntitiesUpdatedAfterDateWithDeleted(
+    func listEntitiesUpdatedAfterDateWithDeleted(
         db: Database,
         date: Date,
         userId: String
@@ -105,7 +105,7 @@ struct DocumentsDataAccess {
         return documentEntities.map(Document.fromManagedEntity)
     }
 
-    static func create(db: Database, document: Document) async throws -> Document {
+    func create(db: Database, document: Document) async throws -> Document {
         let documentEntity = DocumentEntity.fromModel(document)
 
         try await db.transaction { tx in
@@ -117,7 +117,7 @@ struct DocumentsDataAccess {
         return Document.fromManagedEntity(documentEntity)
     }
 
-    static func read(db: Database, documentId: UUID) async throws -> Document {
+    func read(db: Database, documentId: UUID) async throws -> Document {
         guard let documentEntity = try await DocumentEntity.findWithDeleted(documentId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .read,
                                               modelType: String(describing: Document.self),
@@ -129,7 +129,7 @@ struct DocumentsDataAccess {
         return Document.fromManagedEntity(documentEntity)
     }
 
-    static func update(db: Database, documentId: UUID, document: Document) async throws -> Document {
+    func update(db: Database, documentId: UUID, document: Document) async throws -> Document {
         guard let documentEntity = try await DocumentEntity.findWithDeleted(documentId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .update,
                                               modelType: String(describing: Document.self),
@@ -146,7 +146,7 @@ struct DocumentsDataAccess {
         return Document.fromManagedEntity(documentEntity)
     }
 
-    static func delete(db: Database, documentId: UUID) async throws -> Document {
+    func delete(db: Database, documentId: UUID) async throws -> Document {
         guard let documentEntity = try await DocumentEntity.findWithDeleted(documentId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .delete,
                                               modelType: String(describing: Document.self),
@@ -163,7 +163,7 @@ struct DocumentsDataAccess {
         return Document.fromManagedEntity(documentEntity)
     }
 
-    static func canFindWithDeleted(db: Database, documentId: UUID) async -> Bool {
+    func canFindWithDeleted(db: Database, documentId: UUID) async -> Bool {
         (try? await DocumentEntity.findWithDeleted(documentId, on: db).get()) != nil
     }
 }

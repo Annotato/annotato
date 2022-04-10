@@ -2,6 +2,8 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class DocumentListViewModel {
+    let documentsPersistenceManager = DocumentsPersistenceManager()
+
     private let pdfStorageManager = PDFStorageManager()
 
     func importDocument(selectedFileUrl: URL, completion: @escaping (Document?) -> Void) {
@@ -20,9 +22,7 @@ class DocumentListViewModel {
                 fileSystemUrl: selectedFileUrl, fileName: document.id.uuidString
             )
 
-            let createdDocument = await AnnotatoPersistenceWrapper
-                .currentPersistenceManager
-                .createDocument(document: document)
+            let createdDocument = await documentsPersistenceManager.createDocument(document: document)
 
             completion(createdDocument)
         }

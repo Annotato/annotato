@@ -1,6 +1,6 @@
 /// Generic message types
 public enum AnnotatoMessageType: String, Codable {
-    case crudDocument, crudAnnotation, offlineToOnline
+    case crudDocument, crudAnnotation
 }
 
 /// Subtypes of `AnnotatoCudDocumentMessage`
@@ -15,10 +15,4 @@ public enum AnnotatoCudAnnotationMessageType: String, Codable {
     case createAnnotation
     case updateAnnotation
     case deleteAnnotation
-}
-
-/// Merge Strategies of `AnnotatoOfflineToOnlineMessage`
-public enum AnnotatoOfflineToOnlineMergeStrategy: String, Codable {
-    case overrideServerVersion
-    case keepServerVersion
 }
