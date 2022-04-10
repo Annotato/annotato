@@ -45,4 +45,18 @@ extension UIView {
         button.setImage(UIImage(systemName: imageName), for: .normal)
         return button
     }
+
+    class func makeSaveButton() -> UIButton {
+        let button = UIButton()
+        button.setTitle("Save", for: .normal)
+        button.setTitleColor(UIColor.blue, for: .normal)
+        return button
+    }
+
+    class func makeDiscardButton() -> UIButton {
+        let button = UIButton()
+        button.setTitle("Discard", for: .normal)
+        button.setTitleColor(UIColor.blue, for: .normal)
+        return button
+    }
 }

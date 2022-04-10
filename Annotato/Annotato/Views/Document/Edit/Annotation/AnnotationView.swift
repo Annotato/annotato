@@ -6,6 +6,7 @@ class AnnotationView: UIView {
 
     private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
+    private var mergeConflictsPalette: AnnotationMergeConflictsPaletteView
     private var scroll: UIScrollView
     private var parts: UIStackView
     private var selectionBox: SelectionBoxView
@@ -21,6 +22,7 @@ class AnnotationView: UIView {
         self.viewModel = viewModel
         self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
+        self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(viewModel: viewModel.mergeConflictPalette)
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
         self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
@@ -36,6 +38,8 @@ class AnnotationView: UIView {
 
     private func initializeSubviews() {
         addSubview(palette)
+        addSubview(mergeConflictsPalette)
+        print(mergeConflictsPalette.viewModel)
         setUpScrollAndParts()
         populateParts()
     }
@@ -123,6 +127,13 @@ class AnnotationView: UIView {
 
                     self?.resize()
                 }
+            }
+        }.store(in: &cancellables)
+
+        viewModel.$isResolving.sink { [weak self] isResolving in
+            if !isResolving {
+                self?.mergeConflictsPalette.removeFromSuperview()
+                // TODO: Shift the normal palette view up
             }
         }.store(in: &cancellables)
     }

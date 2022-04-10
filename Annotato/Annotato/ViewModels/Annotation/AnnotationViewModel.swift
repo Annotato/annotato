@@ -13,6 +13,7 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
+    private(set) var mergeConflictPalette: AnnotationMergeConflictsPaletteViewModel
     private(set) var selectionBox: SelectionBoxViewModel
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
@@ -33,15 +34,27 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
+    // TODO: Change to default false
+    @Published private(set) var isResolving = true
 
-    init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
+    init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil,
+         isResolving: Bool = true) {
         self.model = model
         self.document = document
+
+        self.isResolving = isResolving
+        let mergeConflictsPalette = isResolving
+        ? AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: model.width, height: 50.0)
+        : AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: 0.0, height: 0.0)
+        self.mergeConflictPalette = mergeConflictsPalette
+
         self.palette = palette ?? AnnotationPaletteViewModel(
-            origin: .zero, width: model.width, height: 50.0)
+            origin: CGPoint(x: 0, y: mergeConflictsPalette.height), width: model.width, height: 50.0)
+
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.palette.parentViewModel = self
+        self.mergeConflictPalette.parentViewModel = self
 
         populatePartViewModels(model: model)
 
@@ -74,8 +87,10 @@ class AnnotationViewModel: ObservableObject {
     func translateCenter(by translation: CGPoint) {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
-        Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
+        if !isResolving {
+            Task {
+                await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
+            }
         }
     }
 
@@ -130,11 +145,11 @@ extension AnnotationViewModel {
     }
 
     var height: Double {
-        min(palette.height + partsTotalHeight, maxHeight)
+        min(mergeConflictPalette.height + palette.height + partsTotalHeight, maxHeight)
     }
 
     var minimizedHeight: Double {
-        min(palette.height + 30.0, maxHeight)
+        min(mergeConflictPalette.height + palette.height + 30.0, maxHeight)
     }
 
     var size: CGSize {
@@ -159,7 +174,7 @@ extension AnnotationViewModel {
 
     // Note: scrollFrame is with respect to this frame
     var scrollFrame: CGRect {
-        CGRect(x: .zero, y: palette.height, width: model.width, height: partsTotalHeight)
+        CGRect(x: .zero, y: mergeConflictPalette.height + palette.height, width: model.width, height: partsTotalHeight)
     }
 
     // Note: partsFrame is with respect to scrollFrame
@@ -196,8 +211,10 @@ extension AnnotationViewModel {
             part.enterViewMode()
         }
 
-        Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
+        if !isResolving {
+            Task {
+                await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
+            }
         }
     }
 
@@ -279,6 +296,15 @@ extension AnnotationViewModel {
         isRemoved = true
         selectionBox.didDelete()
         document?.removeAnnotation(annotation: self)
+    }
+
+    func didSaveMergeConflicts() {
+        isResolving = false
+        /*
+        Task {
+            await AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotation(annotation: model)
+        }
+         */
     }
 
     func receiveDelete() {
