@@ -39,14 +39,12 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
 
     @objc
     private func didTapSaveMergeConflictsButton(_ button: UIButton) {
-        print("Tapped the save button")
         viewModel.didTapSaveMergeConflictsButton()
     }
 
     @objc
     private func didTapDiscardMergeConflictsButton(_ button: UIButton) {
-        // TODO: Implement this
-        print("Tapped the discard button")
+        viewModel.didTapDiscardMergeConflictsButton()
     }
 }
 

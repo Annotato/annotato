@@ -36,6 +36,7 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var modelWasUpdated = false
     // TODO: Change to default false
     @Published private(set) var isResolving = true
+    @Published private(set) var resolveBySave = false
 
     init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil,
          isResolving: Bool = true) {
@@ -299,12 +300,16 @@ extension AnnotationViewModel {
     }
 
     func didSaveMergeConflicts() {
+        resolveBySave = true
         isResolving = false
-        /*
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotation(annotation: model)
+            await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
         }
-         */
+    }
+
+    func didDiscardMergeConflicts() {
+        isResolving = false
+        didDelete()
     }
 
     func receiveDelete() {

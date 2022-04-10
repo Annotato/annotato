@@ -132,10 +132,13 @@ class AnnotationView: UIView {
         }.store(in: &cancellables)
 
         viewModel.$isResolving.sink { [weak self] isResolving in
-            if !isResolving {
-                guard let self = self else {
-                    return
-                }
+            guard !isResolving else {
+                return
+            }
+            guard let self = self else {
+                return
+            }
+            if self.viewModel.resolveBySave {
                 let mergeConflictsHeight = self.mergeConflictsPalette.height
                 self.mergeConflictsPalette.resetDimensions()
                 self.mergeConflictsPalette.removeFromSuperview()
@@ -147,7 +150,6 @@ class AnnotationView: UIView {
                 let scrollViewNewCenter = CGPoint(
                     x: self.scroll.center.x, y: self.scroll.center.y - mergeConflictsHeight)
                 self.scroll.center = scrollViewNewCenter
-
             }
         }.store(in: &cancellables)
     }

@@ -18,6 +18,10 @@ class AnnotationMergeConflictsPaletteViewModel: ObservableObject {
     func didTapSaveMergeConflictsButton() {
         parentViewModel?.didSaveMergeConflicts()
     }
+
+    func didTapDiscardMergeConflictsButton() {
+        parentViewModel?.didDiscardMergeConflicts()
+    }
 }
 
 extension AnnotationMergeConflictsPaletteViewModel {
