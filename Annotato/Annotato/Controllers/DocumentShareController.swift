@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct DocumentShareController {
-    static func createDocumentShare(documentId: UUID) async -> Document? {
+    func createDocumentShare(documentId: UUID) async -> Document? {
         guard let currentUser = AnnotatoAuth().currentUser else {
             return nil
         }

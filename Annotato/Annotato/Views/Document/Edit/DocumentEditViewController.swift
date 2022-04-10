@@ -2,6 +2,8 @@ import UIKit
 import Combine
 
 class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
+    private let documentController = DocumentController()
+
     let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
     let toolbarHeight = 50.0
@@ -36,7 +38,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documentViewModel = await DocumentController.loadDocumentWithDeleted(documentId: documentId)
+            documentViewModel = await documentController.loadDocumentWithDeleted(documentId: documentId)
             stopSpinner()
 
             initializeDocumentView()
@@ -85,7 +87,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 return
             }
 
-            await DocumentController.updateDocumentWithDeleted(document: documentViewModel)
+            await documentController.updateDocumentWithDeleted(document: documentViewModel)
         }
     }
 }
