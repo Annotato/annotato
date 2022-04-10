@@ -33,6 +33,7 @@ private func connectDatabase(app: Application) {
 }
 
 private func addAndRunMigrations(app: Application) throws {
+    app.migrations.add(CreateUsers())
     app.migrations.add(CreateDocuments())
     app.migrations.add(CreateAnnotations())
     app.migrations.add(CreateAnnotationText())
