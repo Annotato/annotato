@@ -4,7 +4,8 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
     private var importMenu = DocumentListImportMenu()
-    private var documents: [DocumentListViewModel]?
+    private var viewModel = DocumentListViewModel()
+    private var documents: [DocumentListCellViewModel]?
     let toolbarHeight = 50.0
 
     override func viewWillAppear(_ animated: Bool) {
@@ -124,20 +125,18 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             return
         }
 
-        guard FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil else {
-            return
-        }
+        viewModel.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
+            guard let document = document else {
+                return
+            }
 
-        AnnotatoPersistenceWrapper.currentPersistenceManager.uploadPdf(
-            fileSystemUrl: selectedFileUrl, withName: selectedFileUrl.lastPathComponent
-        ) { [weak self] document in
             DispatchQueue.main.async {
                 self?.goToDocumentEdit(documentId: document.id)
             }
         }
     }
 
-    func didSelectCellView(document: DocumentListViewModel) {
+    func didSelectCellView(document: DocumentListCellViewModel) {
         goToDocumentEdit(documentId: document.id)
     }
 }

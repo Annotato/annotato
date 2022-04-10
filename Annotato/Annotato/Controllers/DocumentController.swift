@@ -1,7 +1,7 @@
 import Foundation
 
 struct DocumentController {
-    static func loadOwnDocuments(userId: String) async -> [DocumentListViewModel] {
+    static func loadOwnDocuments(userId: String) async -> [DocumentListCellViewModel] {
         let documents = await AnnotatoPersistenceWrapper.currentPersistenceManager.getOwnDocuments(userId: userId)
         guard let documents = documents else {
             return []
@@ -9,10 +9,10 @@ struct DocumentController {
 
         return documents
             .filter { !$0.isDeleted }
-            .map { DocumentListViewModel(document: $0, isShared: false) }
+            .map { DocumentListCellViewModel(document: $0, isShared: false) }
     }
 
-    static func loadSharedDocuments(userId: String) async -> [DocumentListViewModel] {
+    static func loadSharedDocuments(userId: String) async -> [DocumentListCellViewModel] {
         let documents = await AnnotatoPersistenceWrapper.currentPersistenceManager.getSharedDocuments(userId: userId)
         guard let documents = documents else {
             return []
@@ -20,10 +20,10 @@ struct DocumentController {
 
         return documents
             .filter { !$0.isDeleted }
-            .map { DocumentListViewModel(document: $0, isShared: true) }
+            .map { DocumentListCellViewModel(document: $0, isShared: true) }
     }
 
-    static func loadAllDocuments(userId: String) async -> [DocumentListViewModel] {
+    static func loadAllDocuments(userId: String) async -> [DocumentListCellViewModel] {
         let ownDocuments = await loadOwnDocuments(userId: userId)
         let sharedDocuments = await loadSharedDocuments(userId: userId)
         let allDocuments = ownDocuments + sharedDocuments
