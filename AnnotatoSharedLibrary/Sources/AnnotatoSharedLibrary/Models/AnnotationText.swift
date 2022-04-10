@@ -78,3 +78,25 @@ extension AnnotationText {
         case markdown = 1
     }
 }
+
+extension AnnotationText: Equatable {
+    public static func == (lhs: AnnotationText, rhs: AnnotationText) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.order == rhs.order &&
+        lhs.height == rhs.height &&
+        lhs.annotationId == rhs.annotationId &&
+        lhs.type == rhs.type &&
+        lhs.content == rhs.content
+    }
+}
+
+extension AnnotationText: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(order)
+        hasher.combine(height)
+        hasher.combine(annotationId)
+        hasher.combine(type)
+        hasher.combine(content)
+    }
+}

@@ -68,3 +68,23 @@ extension AnnotationHandwriting: CustomDebugStringConvertible {
         "deleteAt: \(String(describing: deletedAt))"
     }
 }
+
+extension AnnotationHandwriting: Equatable {
+    public static func == (lhs: AnnotationHandwriting, rhs: AnnotationHandwriting) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.order == rhs.order &&
+        lhs.height == rhs.height &&
+        lhs.annotationId == rhs.annotationId &&
+        lhs.handwriting == rhs.handwriting
+    }
+}
+
+extension AnnotationHandwriting: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(order)
+        hasher.combine(height)
+        hasher.combine(annotationId)
+        hasher.combine(handwriting)
+    }
+}

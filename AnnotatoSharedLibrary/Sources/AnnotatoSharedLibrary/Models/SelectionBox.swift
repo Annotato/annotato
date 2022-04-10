@@ -76,3 +76,21 @@ extension SelectionBox: CustomStringConvertible {
         "deleteAt: \(String(describing: deletedAt))"
     }
 }
+
+extension SelectionBox: Equatable {
+    public static func == (lhs: SelectionBox, rhs: SelectionBox) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.startPoint == rhs.startPoint &&
+        lhs.endPoint == rhs.endPoint &&
+        lhs.annotationId == rhs.annotationId
+    }
+}
+
+extension SelectionBox: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(startPoint)
+        hasher.combine(endPoint)
+        hasher.combine(annotationId)
+    }
+}
