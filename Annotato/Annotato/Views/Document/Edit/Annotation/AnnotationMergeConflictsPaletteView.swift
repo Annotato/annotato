@@ -4,6 +4,7 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
     private(set) var viewModel: AnnotationMergeConflictsPaletteViewModel
     private(set) var saveMergeConflictsButton: UIButton
     private(set) var discardMergeConflictsButton: UIButton
+    private(set) var conflictIdxButton: UIButton
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -14,6 +15,8 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
         self.viewModel = viewModel
         self.saveMergeConflictsButton = AnnotationMergeConflictsPaletteView.makeSaveButton()
         self.discardMergeConflictsButton = AnnotationMergeConflictsPaletteView.makeDiscardButton()
+        self.conflictIdxButton = AnnotationMergeConflictsPaletteView.makeConflictIndexButton(
+            conflictIdx: viewModel.conflictIdx)
 
         super.init(frame: viewModel.frame)
         self.layer.borderWidth = 1.0
@@ -29,11 +32,14 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
 
         let saveMergeConflictsButton = UIBarButtonItem(customView: saveMergeConflictsButton)
         let discardMergeConflictsButton = UIBarButtonItem(customView: discardMergeConflictsButton)
+        let conflictIdxButton = UIBarButtonItem(customView: conflictIdxButton)
 
         self.items = [
             saveMergeConflictsButton,
             spaceBetween,
-            discardMergeConflictsButton
+            discardMergeConflictsButton,
+            flexibleSpace,
+            conflictIdxButton
         ]
     }
 

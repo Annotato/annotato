@@ -8,11 +8,13 @@ class AnnotationMergeConflictsPaletteViewModel: ObservableObject {
     private(set) var origin: CGPoint
     private(set) var width: Double
     private(set) var height: Double
+    private(set) var conflictIdx: Int
 
-    init(origin: CGPoint, width: Double, height: Double) {
+    init(origin: CGPoint, width: Double, height: Double, conflictIdx: Int) {
         self.origin = origin
         self.width = width
         self.height = height
+        self.conflictIdx = conflictIdx
     }
 
     func didTapSaveMergeConflictsButton() {

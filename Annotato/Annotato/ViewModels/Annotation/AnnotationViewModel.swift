@@ -34,19 +34,24 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
+
     // TODO: Change to default false
     @Published private(set) var isResolving = true
-    @Published private(set) var resolveBySave = false
+    private(set) var resolveBySave = false
+    private(set) var conflictIdx: Int = -1
 
-    init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil,
-         isResolving: Bool = true) {
+    init(model: Annotation, document: DocumentViewModel, isResolving: Bool = true, conflictIdx: Int = -1,
+         palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
         self.document = document
 
+        self.conflictIdx = conflictIdx
         self.isResolving = isResolving
         let mergeConflictsPalette = isResolving
-        ? AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: model.width, height: 50.0)
-        : AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: 0.0, height: 0.0)
+        ? AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: model.width, height: 50.0,
+                                                   conflictIdx: conflictIdx)
+        : AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: 0.0, height: 0.0,
+                                                   conflictIdx: conflictIdx)
         self.mergeConflictPalette = mergeConflictsPalette
 
         self.palette = palette ?? AnnotationPaletteViewModel(
