@@ -3,10 +3,10 @@ import Combine
 import AnnotatoSharedLibrary
 
 class RootPersistenceManager: ObservableObject {
+    private var cancellables: Set<AnyCancellable> = []
+
     @Published private(set) var crudDocumentMessage: Data?
     @Published private(set) var crudAnnotationMessage: Data?
-
-    private var cancellables: Set<AnyCancellable> = []
 
     init() {
         setUpSubscribers()
