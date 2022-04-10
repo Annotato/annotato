@@ -3,52 +3,56 @@ import Vapor
 import AnnotatoSharedLibrary
 
 struct DocumentsController {
+    private let utils = ControllersUtil()
+
+    private let documentsDataAccess = DocumentsDataAccess()
+
     private enum QueryParams: String {
         case userId
     }
 
-    static func listOwn(req: Request) async throws -> [Document] {
+    func listOwn(req: Request) async throws -> [Document] {
         let userId: String? = req.query[QueryParams.userId.rawValue]
 
         guard let userId = userId else {
             throw Abort(.badRequest)
         }
 
-        return try await DocumentsDataAccess.listOwn(db: req.db, userId: userId)
+        return try await documentsDataAccess.listOwn(db: req.db, userId: userId)
     }
 
-    static func listShared(req: Request) async throws -> [Document] {
+    func listShared(req: Request) async throws -> [Document] {
         let userId: String? = req.query[QueryParams.userId.rawValue]
 
         guard let userId = userId else {
             throw Abort(.badRequest)
         }
 
-        return try await DocumentsDataAccess.listShared(db: req.db, userId: userId)
+        return try await documentsDataAccess.listShared(db: req.db, userId: userId)
     }
 
-    static func create(req: Request) async throws -> Document {
+    func create(req: Request) async throws -> Document {
         let document = try req.content.decode(Document.self, using: JSONCustomDecoder())
 
-        return try await DocumentsDataAccess.create(db: req.db, document: document)
+        return try await documentsDataAccess.create(db: req.db, document: document)
     }
 
-    static func read(req: Request) async throws -> Document {
-        let documentId = try ControllersUtil.getIdFromParams(request: req)
+    func read(req: Request) async throws -> Document {
+        let documentId = try utils.getIdFromParams(request: req)
 
-        return try await DocumentsDataAccess.read(db: req.db, documentId: documentId)
+        return try await documentsDataAccess.read(db: req.db, documentId: documentId)
     }
 
-    static func update(req: Request) async throws -> Document {
-        let documentId = try ControllersUtil.getIdFromParams(request: req)
+    func update(req: Request) async throws -> Document {
+        let documentId = try utils.getIdFromParams(request: req)
         let document = try req.content.decode(Document.self, using: JSONCustomDecoder())
 
-        return try await DocumentsDataAccess.update(db: req.db, documentId: documentId, document: document)
+        return try await documentsDataAccess.update(db: req.db, documentId: documentId, document: document)
     }
 
-    static func delete(req: Request) async throws -> Document {
-        let documentId = try ControllersUtil.getIdFromParams(request: req)
+    func delete(req: Request) async throws -> Document {
+        let documentId = try utils.getIdFromParams(request: req)
 
-        return try await DocumentsDataAccess.delete(db: req.db, documentId: documentId)
+        return try await documentsDataAccess.delete(db: req.db, documentId: documentId)
     }
 }

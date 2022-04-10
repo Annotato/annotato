@@ -1,5 +1,7 @@
 import Vapor
 
 func documentSharesRouter(documentShares: RoutesBuilder) {
-    documentShares.post(use: DocumentSharesController.create)
+    let documentSharesController = DocumentSharesController()
+
+    documentShares.post(use: documentSharesController.create)
 }

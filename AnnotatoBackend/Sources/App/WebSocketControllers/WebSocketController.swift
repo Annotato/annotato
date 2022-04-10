@@ -4,12 +4,20 @@ import AnnotatoSharedLibrary
 import FluentKit
 
 class WebSocketController {
-    /// Each user has one websocket connection.
-    private static var openConnections: [String: WebSocket] = [:]
-    private static var logger = Logger(label: "WebSocketController")
+    private let utils = ControllersUtil()
 
-    static func handleIncomingConnection(req: Request, webSocket: WebSocket) {
-        guard let userId = try? ControllersUtil.getParamValue(request: req, paramKey: "userId") else {
+    // Child Controllers
+    lazy var documentWebSocketController = DocumentWebSocketController(parentController: self)
+    lazy var annotationWebSocketController = AnnotationWebSocketController(parentController: self)
+    lazy var offlineToOnlineWebSocketController = OfflineToOnlineWebSocketController(parentController: self)
+
+    // Each user has one websocket connection. User ID is represented as a string.
+    private var openConnections: [String: WebSocket] = [:]
+
+    private let logger = Logger(label: "WebSocketController")
+
+    func handleIncomingConnection(req: Request, webSocket: WebSocket) {
+        guard let userId = try? utils.getParamValue(request: req, paramKey: "userId") else {
             req.logger.info("Could not get user ID for request. Closing WebSocket connection...")
             _ = webSocket.close()
             return
@@ -22,74 +30,74 @@ class WebSocketController {
         webSocket.onText(handleTextData(userId: userId, db: req.db))
 
         webSocket.onClose.whenComplete { _ in
-            Self.logger.info("Closed websocket connection for user with id \(userId)")
+            self.logger.info("Closed websocket connection for user with id \(userId)")
         }
     }
 
-    static func sendAll<T: Codable>(recipientIds: Set<String>, message: T) {
+    func sendAll<T: Codable>(recipientIds: Set<String>, message: T) {
         for (userId, ws) in openConnections where recipientIds.contains(userId) {
-            Self.logger.info("Sending to user with id \(userId)")
+            self.logger.info("Sending to user with id \(userId)")
 
             ws.send(message: message)
         }
     }
 
-    private static func handleBinaryData(userId: String, db: Database) -> (WebSocket, ByteBuffer) -> Void {
+    func handleBinaryData(userId: String, db: Database) -> (WebSocket, ByteBuffer) -> Void {
         { _, buffer in
             guard let data = buffer.getData(at: buffer.readerIndex, length: buffer.readableBytes) else {
                 return
             }
 
-            Self.logger.info("Received binary data...")
+            self.logger.info("Received binary data...")
 
             Task {
-                await Self.handleIncomingData(userId: userId, data: data, db: db)
+                await self.handleIncomingData(userId: userId, data: data, db: db)
             }
         }
     }
 
-    private static func handleTextData(userId: String, db: Database) -> (WebSocket, String) -> Void {
+    func handleTextData(userId: String, db: Database) -> (WebSocket, String) -> Void {
         { _, text in
             guard let data = text.data(using: .utf8) else {
                 return
             }
 
-            Self.logger.info("Received text data...")
+            self.logger.info("Received text data...")
 
             Task {
-                await Self.handleIncomingData(userId: userId, data: data, db: db)
+                await self.handleIncomingData(userId: userId, data: data, db: db)
             }
         }
     }
 
-    private static func handleIncomingData(userId: String, data: Data, db: Database) async {
+    func handleIncomingData(userId: String, data: Data, db: Database) async {
         do {
-            Self.logger.info("Processing data...")
+            self.logger.info("Processing data...")
 
             let message = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: data)
 
             switch message.type {
             case .crudDocument:
-                await DocumentWebSocketController.handleCrudDocumentData(userId: userId, data: data, db: db)
+                await documentWebSocketController.handleCrudDocumentData(userId: userId, data: data, db: db)
             case .crudAnnotation:
-                await AnnotationWebSocketController.handleCrudAnnotationData(userId: userId, data: data, db: db)
+                await annotationWebSocketController.handleCrudAnnotationData(userId: userId, data: data, db: db)
             case .offlineToOnline:
-                await OfflineToOnlineWebSocketController.handleOfflineToOnlineResolution(
+                await offlineToOnlineWebSocketController.handleOfflineToOnlineResolution(
                     userId: userId, data: data, db: db)
             }
         } catch {
-            Self.logger.error("Error when handling incoming data. \(error.localizedDescription)")
+            self.logger.error("Error when handling incoming data. \(error.localizedDescription)")
         }
     }
 
-    private static func addToOpenConnections(userId: String, incomingWebSocket: WebSocket) {
+    func addToOpenConnections(userId: String, incomingWebSocket: WebSocket) {
         if let existingWebSocket = openConnections[userId] {
-            Self.logger.error("Closing previous WebSocket connection for user with id \(userId)...")
+            self.logger.error("Closing previous WebSocket connection for user with id \(userId)...")
             _ = existingWebSocket.close()
             openConnections.removeValue(forKey: userId)
         }
 
-        Self.logger.info("Adding new websocket connection for user with id \(userId)")
+        self.logger.info("Adding new websocket connection for user with id \(userId)")
 
         openConnections[userId] = incomingWebSocket
     }
