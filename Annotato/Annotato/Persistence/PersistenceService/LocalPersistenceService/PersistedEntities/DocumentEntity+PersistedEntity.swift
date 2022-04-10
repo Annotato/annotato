@@ -7,7 +7,6 @@ extension DocumentEntity: PersistedEntity {
         entity.id = model.id
         entity.name = model.name
         entity.ownerId = model.ownerId
-        entity.baseFileUrl = model.baseFileUrl
 
         model.annotations.forEach({ entity.addToAnnotationEntities(AnnotationEntity.fromModel($0)) })
 

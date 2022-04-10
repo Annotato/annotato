@@ -4,7 +4,6 @@ public final class Document: Codable, Timestampable {
     public var id: UUID
     public private(set) var name: String
     public let ownerId: String
-    public var baseFileUrl: String?
     public private(set) var annotations: [Annotation]
     public var createdAt: Date?
     public var updatedAt: Date?
@@ -13,7 +12,6 @@ public final class Document: Codable, Timestampable {
     public required init(
         name: String,
         ownerId: String,
-        baseFileUrl: String? = nil,
         annotations: [Annotation] = [],
         id: UUID? = nil,
         createdAt: Date? = nil,
@@ -23,7 +21,6 @@ public final class Document: Codable, Timestampable {
         self.id = id ?? UUID()
         self.name = name
         self.ownerId = ownerId
-        self.baseFileUrl = baseFileUrl
         self.annotations = annotations
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -82,7 +79,7 @@ extension Document {
 extension Document: CustomStringConvertible {
     public var description: String {
         "Document(id: \(id), name: \(name), ownerId: \(ownerId), " +
-        "baseFileUrl: \(String(describing: baseFileUrl)), annotations: \(annotations)), " +
+        "annotations: \(annotations)), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"

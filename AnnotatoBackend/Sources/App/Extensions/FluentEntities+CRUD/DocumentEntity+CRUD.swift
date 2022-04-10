@@ -81,7 +81,6 @@ extension DocumentEntity {
 
         name = otherEntity.name
         ownerId = otherEntity.ownerId
-        baseFileUrl = otherEntity.baseFileUrl
     }
 
     private func pruneOldAssociations(on tx: Database, usingUpdatedModel document: Document) async throws {
