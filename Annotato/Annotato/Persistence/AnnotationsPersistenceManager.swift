@@ -62,42 +62,56 @@ extension AnnotationsPersistenceManager {
     }
 
     private func handleIncomingMessage(message: Data) {
+        guard let decodedMessage = decodeData(data: message) else {
+            return
+        }
+
+        let annotation = decodedMessage.annotation
+        let senderId = decodedMessage.senderId
+
+        Task {
+            _ = await localPersistence.annotations
+                .createOrUpdateAnnotation(annotation: annotation)
+        }
+
+        guard senderId != AnnotatoAuth().currentUser?.uid else {
+            return
+        }
+
+        resetPublishedAttributes()
+        publishAnnotation(decodedMessage: decodedMessage, annotation: annotation)
+    }
+
+    private func decodeData(data: Data) -> AnnotatoCudAnnotationMessage? {
         do {
-            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoCudAnnotationMessage.self, from: message)
-            let annotation = decodedMessage.annotation
-            let senderId = decodedMessage.senderId
-
-            Task {
-                _ = await localPersistence.annotations
-                    .createOrUpdateAnnotation(annotation: annotation)
-            }
-
-            guard senderId != AnnotatoAuth().currentUser?.uid else {
-                return
-            }
-
-            // Defensive resets
-            newAnnotation = nil
-            updatedAnnotation = nil
-            deletedAnnotation = nil
-
-            switch decodedMessage.subtype {
-            case .createAnnotation:
-                newAnnotation = annotation
-                AnnotatoLogger.info("Annotation was created. \(annotation)")
-            case .updateAnnotation:
-                updatedAnnotation = annotation
-                AnnotatoLogger.info("Annotation was updated. \(annotation)")
-            case .deleteAnnotation:
-                deletedAnnotation = annotation
-                AnnotatoLogger.info("Annotation was deleted. \(annotation)")
-            }
-
+            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoCudAnnotationMessage.self, from: data)
+            return decodedMessage
         } catch {
             AnnotatoLogger.error(
-                "When handling incoming data. \(error.localizedDescription).",
-                context: "AnnotationsPersistenceManager::handleIncomingMessage"
+                "When decoding data. \(error.localizedDescription).",
+                context: "AnnotationsPersistenceManager::decodeData"
             )
+            return nil
         }
+    }
+
+    private func publishAnnotation(decodedMessage: AnnotatoCudAnnotationMessage, annotation: Annotation) {
+        switch decodedMessage.subtype {
+        case .createAnnotation:
+            newAnnotation = annotation
+            AnnotatoLogger.info("Annotation was created. \(annotation)")
+        case .updateAnnotation:
+            updatedAnnotation = annotation
+            AnnotatoLogger.info("Annotation was updated. \(annotation)")
+        case .deleteAnnotation:
+            deletedAnnotation = annotation
+            AnnotatoLogger.info("Annotation was deleted. \(annotation)")
+        }
+    }
+
+    private func resetPublishedAttributes() {
+        newAnnotation = nil
+        updatedAnnotation = nil
+        deletedAnnotation = nil
     }
 }

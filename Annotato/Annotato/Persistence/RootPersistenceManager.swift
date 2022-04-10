@@ -23,24 +23,38 @@ class RootPersistenceManager: ObservableObject {
     }
 
     private func handleIncomingMessage(message: Data) {
+        guard let decodedMessage = decodeData(data: message) else {
+            return
+        }
+
+        resetPublishedAttributes()
+        publishMessage(decodedMessage: decodedMessage, message: message)
+    }
+
+    private func decodeData(data: Data) -> AnnotatoMessage? {
         do {
-            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: message)
-
-            // Defensive resets
-            crudDocumentMessage = nil
-            crudAnnotationMessage = nil
-
-            switch decodedMessage.type {
-            case .crudDocument:
-                self.crudDocumentMessage = message
-            case .crudAnnotation:
-                self.crudAnnotationMessage = message
-            }
+            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoMessage.self, from: data)
+            return decodedMessage
         } catch {
             AnnotatoLogger.error(
-                "When handling incoming data. \(error.localizedDescription).",
-                context: "RootPersistenceManager::handleIncomingMessage"
+                "When decoding data. \(error.localizedDescription).",
+                context: "RootPersistenceManager::decodeData"
             )
+            return nil
         }
+    }
+
+    private func publishMessage(decodedMessage: AnnotatoMessage, message: Data) {
+        switch decodedMessage.type {
+        case .crudDocument:
+            self.crudDocumentMessage = message
+        case .crudAnnotation:
+            self.crudAnnotationMessage = message
+        }
+    }
+
+    private func resetPublishedAttributes() {
+        crudDocumentMessage = nil
+        crudAnnotationMessage = nil
     }
 }

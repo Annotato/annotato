@@ -97,42 +97,56 @@ extension DocumentsPersistenceManager {
     }
 
     private func handleIncomingMessage(message: Data) {
+        guard let decodedMessage = decodeData(data: message) else {
+            return
+        }
+
+        let document = decodedMessage.document
+        let senderId = decodedMessage.senderId
+
+        Task {
+            _ = await LocalPersistenceService.shared.documents
+                .createOrUpdateDocument(document: document)
+        }
+
+        guard senderId != AnnotatoAuth().currentUser?.uid else {
+            return
+        }
+
+        resetPublishedAttributes()
+        publishDocument(decodedMessage: decodedMessage, document: document)
+    }
+
+    private func decodeData(data: Data) -> AnnotatoCudDocumentMessage? {
         do {
-            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoCudDocumentMessage.self, from: message)
-            let document = decodedMessage.document
-            let senderId = decodedMessage.senderId
-
-            // Defensive resets
-            newDocument = nil
-            updatedDocument = nil
-            deletedDocument = nil
-
-            Task {
-                _ = await LocalPersistenceService.shared.documents
-                    .createOrUpdateDocument(document: document)
-            }
-
-            guard senderId != AnnotatoAuth().currentUser?.uid else {
-                return
-            }
-
-            switch decodedMessage.subtype {
-            case .createDocument:
-                newDocument = document
-                AnnotatoLogger.info("Document was created. \(document)")
-            case .updateDocument:
-                updatedDocument = document
-                AnnotatoLogger.info("Document was updated. \(document)")
-            case .deleteDocument:
-                deletedDocument = document
-                AnnotatoLogger.info("Document was deleted. \(document)")
-            }
-
+            let decodedMessage = try JSONCustomDecoder().decode(AnnotatoCudDocumentMessage.self, from: data)
+            return decodedMessage
         } catch {
             AnnotatoLogger.error(
-                "When handling incoming data. \(error.localizedDescription).",
-                context: "DocumentsPersistenceManager::handleIncomingMessage"
+                "When decoding data. \(error.localizedDescription).",
+                context: "DocumentsPersistenceManager::decodeData"
             )
+            return nil
         }
+    }
+
+    private func publishDocument(decodedMessage: AnnotatoCudDocumentMessage, document: Document) {
+        switch decodedMessage.subtype {
+        case .createDocument:
+            newDocument = document
+            AnnotatoLogger.info("Document was created. \(document)")
+        case .updateDocument:
+            updatedDocument = document
+            AnnotatoLogger.info("Document was updated. \(document)")
+        case .deleteDocument:
+            deletedDocument = document
+            AnnotatoLogger.info("Document was deleted. \(document)")
+        }
+    }
+
+    private func resetPublishedAttributes() {
+        newDocument = nil
+        updatedDocument = nil
+        deletedDocument = nil
     }
 }
