@@ -13,6 +13,9 @@ class DocumentViewModel: ObservableObject {
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
+    @Published private(set) var connectivityChanged = false
+
+    private var cancellables: Set<AnyCancellable> = []
 
     init(model: Document) {
         self.model = model
@@ -20,6 +23,19 @@ class DocumentViewModel: ObservableObject {
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
             .map { AnnotationViewModel(model: $0, document: self) }
+        setUpSubscribers()
+    }
+
+    func setUpSubscribers() {
+        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            // TODO: See below
+            // Call document to reset all the annotations that it contains, calling on local and remote as per needed
+            // by doing something like model.resetAnnotation(connectivityStatus: Bool)
+            // Only after that is done, then set the published boolean to get the document view to reload annotations
+        }).store(in: &cancellables)
     }
 
     func setAllAnnotationsOutOfFocus() {

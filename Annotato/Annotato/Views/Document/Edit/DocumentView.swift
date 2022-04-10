@@ -70,6 +70,17 @@ class DocumentView: UIView {
                 self?.replaceSelectionBox(newSelectionBoxFrame: newSelectionBoxFrame)
             }
         }).store(in: &cancellables)
+
+        viewModel.$connectivityChanged.sink(receiveValue: { [weak self] _ in
+            // This means that the document view model has changed the annotations in
+            // the document, so we re-render again
+            guard let self = self else {
+                return
+            }
+            self.removeAllAnnotationsFromView()
+            self.annotationViews = []
+            self.initializeInitialAnnotationViews()
+        }).store(in: &cancellables)
     }
 
     private func replaceSelectionBox(newSelectionBoxFrame: CGRect) {
@@ -150,12 +161,18 @@ class DocumentView: UIView {
     }
 }
 
-// MARK: Adding new annotations
+// MARK: Adding new annotations, removing annotations
 extension DocumentView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
         let annotationView = AnnotationView(parentView: pdfView.documentView, viewModel: viewModel)
         annotationViews.append(annotationView)
         pdfView.documentView?.addSubview(annotationView)
+    }
+
+    private func removeAllAnnotationsFromView() {
+        for annotationView in annotationViews {
+            annotationView.removeFromSuperview()
+        }
     }
 }
 

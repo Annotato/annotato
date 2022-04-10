@@ -63,7 +63,6 @@ class AnnotationViewModel: ObservableObject {
         self.mergeConflictPalette.parentViewModel = self
 
         populatePartViewModels(model: model)
-
         setUpSubscribers()
     }
 
