@@ -1,24 +1,36 @@
 import AnnotatoSharedLibrary
 import Foundation
+import Combine
 
 class AnnotatoAuth {
     private var authService: AnnotatoAuthService
+    private let usersPersistenceManager = UsersPersistenceManager()
+    private(set) var currentUser: AnnotatoUser?
+    private var cancellables: Set<AnyCancellable> = []
+
+    @Published private(set) var signUpIsSuccess = false
+    @Published private(set) var logInIsSuccess = false
+    @Published private(set) var signUpError: Error?
+    @Published private(set) var logInError: Error?
 
     init() {
         authService = FirebaseAuth()
-    }
-
-    var currentUser: AnnotatoUser? {
-        fetchLocalUserCredentials() ?? authService.currentUser
-    }
-
-    var delegate: AnnotatoAuthDelegate? {
-        get { authService.delegate }
-        set { authService.delegate = newValue }
+        currentUser = fetchLocalUserCredentials()
+        setUpSubscribers()
     }
 
     func signUp(email: String, password: String, displayName: String) {
         authService.signUp(email: email, password: password, displayName: displayName)
+    }
+
+    private func createUser(user: AnnotatoUser) {
+        Task {
+            guard await usersPersistenceManager.createUser(user: user) != nil else {
+                return
+            }
+
+            self.signUpIsSuccess = true
+        }
     }
 
     func logIn(email: String, password: String) {
@@ -31,6 +43,16 @@ class AnnotatoAuth {
         authService.logOut()
 
         purgeLocalCredentials()
+    }
+
+    private func setUpSubscribers() {
+        authService.newUserPublisher.sink(receiveValue: { [weak self] newUser in
+            guard let newUser = newUser else {
+                return
+            }
+
+            self?.createUser(user: newUser)
+        }).store(in: &cancellables)
     }
 }
 

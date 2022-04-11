@@ -45,4 +45,8 @@ extension LocalPersistenceService: PersistenceService {
     var annotations: AnnotationsPersistence {
         LocalAnnotationsPersistence()
     }
+
+    var users: UsersPersistence {
+        LocalUsersPersistence()
+    }
 }

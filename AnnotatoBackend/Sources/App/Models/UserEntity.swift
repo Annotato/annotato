@@ -7,7 +7,7 @@ final class UserEntity: Model {
 
     typealias IDValue = String
 
-    @ID(key: .id)
+    @ID(custom: "id")
     var id: String?
 
     @Field(key: "email")
