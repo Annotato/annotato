@@ -22,7 +22,7 @@ class NetworkMonitor: ObservableObject {
 
             // If user goes from offline to online, re-establish websocket connection
             if !self.isConnected && isCurrentlyConnected {
-                if let userId = AnnotatoAuth().currentUser?.uid {
+                if let userId = AuthViewModel().currentUser?.id {
                     AnnotatoLogger.error("Unable to retrieve user id.", context: "NetworkMonitor::start")
 
                     webSocketManager?.setUpSocket(

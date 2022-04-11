@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 struct RemoteAnnotationsPersistence: AnnotationsRemotePersistence {
     func createAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.uid else {
+        guard let senderId = AuthViewModel().currentUser?.id else {
             return nil
         }
 
@@ -17,7 +17,7 @@ struct RemoteAnnotationsPersistence: AnnotationsRemotePersistence {
     }
 
     func updateAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.uid else {
+        guard let senderId = AuthViewModel().currentUser?.id else {
             return nil
         }
 
@@ -32,7 +32,7 @@ struct RemoteAnnotationsPersistence: AnnotationsRemotePersistence {
     }
 
     func deleteAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.uid else {
+        guard let senderId = AuthViewModel().currentUser?.id else {
             return nil
         }
 

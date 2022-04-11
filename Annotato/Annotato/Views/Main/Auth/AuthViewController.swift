@@ -134,7 +134,7 @@ extension AuthViewController: AlertPresentable {
     }
 
     func logInDidSucceed() {
-        guard let userId = AnnotatoAuth().currentUser?.uid else {
+        guard let userId = AuthViewModel().currentUser?.id else {
             AnnotatoLogger.error("Unable to retrieve user id.", context: "AuthViewController::logInDidSucceed")
             return
         }
