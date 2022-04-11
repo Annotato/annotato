@@ -53,6 +53,11 @@ public final class AnnotationText: Codable, AnnotationPart {
         case deletedAt
     }
 
+    public func clone() -> AnnotationText {
+        AnnotationText(type: type, content: content, height: height, order: order, annotationId: annotationId,
+                       id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
+
     public func setContent(to newContent: String) {
         self.content = newContent
     }

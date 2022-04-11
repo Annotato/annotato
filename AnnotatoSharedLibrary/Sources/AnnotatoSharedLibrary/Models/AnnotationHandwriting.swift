@@ -50,6 +50,11 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
         case deletedAt
     }
 
+    public func clone() -> AnnotationHandwriting {
+        AnnotationHandwriting(order: order, height: height, annotationId: annotationId, handwriting: handwriting,
+                              id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
+
     public func setHandwriting(to newHandwriting: Data) {
         self.handwriting = newHandwriting
     }

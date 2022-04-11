@@ -110,6 +110,15 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
         try container.encode(handwritings, forKey: .handwritings)
     }
 
+    public func clone() -> Annotation {
+        let clonedSelectionBox = selectionBox.clone()
+        let clonedParts: [AnnotationPart] = texts.map({ $0.clone() }) + handwritings.map({ $0.clone() })
+
+        return Annotation(origin: origin, width: width, parts: clonedParts, selectionBox: clonedSelectionBox,
+                          ownerId: ownerId, documentId: documentId, id: UUID(),
+                          createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
+
     private func addInitialPart() {
         checkRepresentation()
 

@@ -65,6 +65,11 @@ public final class SelectionBox: Codable, Timestampable, ObservableObject {
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
+
+    public func clone() -> SelectionBox {
+        SelectionBox(startPoint: startPoint, endPoint: endPoint, annotationId: annotationId,
+                     id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
 }
 
 extension SelectionBox: CustomStringConvertible {
