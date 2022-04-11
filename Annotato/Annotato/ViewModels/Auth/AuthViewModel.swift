@@ -24,6 +24,15 @@ class AuthViewModel {
         authService.signUp(email: email, password: password, displayName: displayName)
     }
 
+    func logIn(email: String, password: String) {
+        authService.logIn(email: email, password: password)
+    }
+
+    func logOut() {
+        authService.logOut()
+        usersPersistenceManager.purgeSessionUser()
+    }
+
     private func createUser(user: AnnotatoUser) {
         Task {
             guard await usersPersistenceManager.createUser(user: user) != nil else {
@@ -34,23 +43,19 @@ class AuthViewModel {
         }
     }
 
-    func logIn(email: String, password: String) {
-        authService.logIn(email: email, password: password)
-    }
-
-    private func setUser(userId: String = "") {
+    private func handleLogin(userId: String) {
         Task {
-            self.currentUser = await usersPersistenceManager.getUser(userId: userId)
-
-            if let currentUser = currentUser {
-                usersPersistenceManager.saveSessionUser(user: currentUser)
-            }
+            await self.setUser(userId: userId)
+            self.logInIsSuccess = true
         }
     }
 
-    func logOut() {
-        authService.logOut()
-        usersPersistenceManager.purgeSessionUser()
+    private func setUser(userId: String) async {
+        self.currentUser = await usersPersistenceManager.getUser(userId: userId)
+
+        if let currentUser = currentUser {
+            usersPersistenceManager.saveSessionUser(user: currentUser)
+        }
     }
 
     private func setUpSubscribers() {
@@ -67,8 +72,7 @@ class AuthViewModel {
                 return
             }
 
-            self?.setUser(userId: userId)
-            self?.logInIsSuccess = true
+            self?.handleLogin(userId: userId)
         }).store(in: &cancellables)
 
         authService.signUpErrorPublisher.sink(receiveValue: { [weak self] error in
