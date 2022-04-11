@@ -139,7 +139,7 @@ extension AuthViewController: AlertPresentable {
             return
         }
 
-        webSocketManager?.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlForUser(userId: userId))
+        webSocketManager?.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId))
         goToDocumentList(asNewRootViewController: true)
     }
 

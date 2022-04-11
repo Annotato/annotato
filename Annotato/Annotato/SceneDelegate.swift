@@ -77,7 +77,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
 
-        webSocketManager.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlForUser(userId: userId))
+        webSocketManager.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId))
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

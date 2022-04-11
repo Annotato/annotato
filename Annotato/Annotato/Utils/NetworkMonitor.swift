@@ -26,7 +26,7 @@ class NetworkMonitor: ObservableObject {
                     AnnotatoLogger.error("Unable to retrieve user id.", context: "NetworkMonitor::start")
 
                     webSocketManager?.setUpSocket(
-                        urlString: RemotePersistenceService.generateWebSocketUrlForUser(userId: userId)
+                        urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId)
                     )
                 }
             }
