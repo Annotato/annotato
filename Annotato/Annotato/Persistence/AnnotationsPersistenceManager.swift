@@ -27,7 +27,7 @@ class AnnotationsPersistenceManager {
         )
 
         annotation.setCreatedAt()
-        return await localPersistence.annotations.createAnnotation(annotation: annotation)
+        return localPersistence.annotations.createAnnotation(annotation: annotation)
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
@@ -36,7 +36,7 @@ class AnnotationsPersistenceManager {
         )
 
         annotation.setUpdatedAt()
-        return await localPersistence.annotations.updateAnnotation(annotation: annotation)
+        return localPersistence.annotations.updateAnnotation(annotation: annotation)
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
@@ -45,7 +45,7 @@ class AnnotationsPersistenceManager {
         )
 
         annotation.setDeletedAt()
-        return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
+        return localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
@@ -81,7 +81,7 @@ extension AnnotationsPersistenceManager {
         let messageSubtype = decodedMessage.subtype
 
         Task {
-            _ = await localPersistence.annotations
+            _ = localPersistence.annotations
                 .createOrUpdateAnnotation(annotation: annotation)
         }
 

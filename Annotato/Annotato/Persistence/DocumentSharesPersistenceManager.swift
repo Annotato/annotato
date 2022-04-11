@@ -17,7 +17,7 @@ class DocumentSharesPersistenceManager {
             return nil
         }
 
-        let localSharedDocument = await localPersistence.documents.createDocument(document: remoteDocument)
+        let localSharedDocument = localPersistence.documents.createDocument(document: remoteDocument)
         return localSharedDocument
     }
 

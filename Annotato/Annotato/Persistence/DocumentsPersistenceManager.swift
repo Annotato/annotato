@@ -24,7 +24,7 @@ class DocumentsPersistenceManager {
     func getOwnDocuments(userId: String) async -> [Document]? {
         let remoteOwnDocuments = await remotePersistence.documents.getOwnDocuments(userId: userId)
         guard remoteOwnDocuments != nil else {
-            return await localPersistence.documents.getOwnDocuments(userId: userId)
+            return localPersistence.documents.getOwnDocuments(userId: userId)
         }
         return remoteOwnDocuments
     }
@@ -32,7 +32,7 @@ class DocumentsPersistenceManager {
     func getSharedDocuments(userId: String) async -> [Document]? {
         let remoteSharedDocuments = await remotePersistence.documents.getSharedDocuments(userId: userId)
         guard remoteSharedDocuments != nil else {
-            return await localPersistence.documents.getSharedDocuments(userId: userId)
+            return localPersistence.documents.getSharedDocuments(userId: userId)
         }
         return remoteSharedDocuments
     }
@@ -40,7 +40,7 @@ class DocumentsPersistenceManager {
     func getDocument(documentId: UUID) async -> Document? {
         let remoteDocument = await remotePersistence.documents.getDocument(documentId: documentId)
         guard remoteDocument != nil else {
-            return await localPersistence.documents.getDocument(documentId: documentId)
+            return localPersistence.documents.getDocument(documentId: documentId)
         }
         return remoteDocument
     }
@@ -54,7 +54,7 @@ class DocumentsPersistenceManager {
             document.setCreatedAt()
         }
 
-        return await localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
+        return localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
     }
 
     func updateDocument(document: Document) async -> Document? {
@@ -66,7 +66,7 @@ class DocumentsPersistenceManager {
             document.setUpdatedAt()
         }
 
-        return await localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
+        return localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
@@ -78,7 +78,7 @@ class DocumentsPersistenceManager {
             document.setDeletedAt()
         }
 
-        return await localPersistence.documents.deleteDocument(document: remoteDeletedDocument ?? document)
+        return localPersistence.documents.deleteDocument(document: remoteDeletedDocument ?? document)
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {
@@ -114,7 +114,7 @@ extension DocumentsPersistenceManager {
         let messageSubtype = decodedMessage.subtype
 
         Task {
-            _ = await LocalPersistenceService.shared.documents
+            _ = LocalPersistenceService.shared.documents
                 .createOrUpdateDocument(document: document)
         }
 
