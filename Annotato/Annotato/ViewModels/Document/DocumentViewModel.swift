@@ -72,7 +72,7 @@ extension DocumentViewModel {
         guard let selectionStartPoint = selectionStartPoint,
               let selectionEndPoint = selectionEndPoint,
               let selectionBoxFrame = selectionBoxFrame,
-              let currentUser = AnnotatoAuth().currentUser else {
+              let currentUser = AuthViewModel().currentUser else {
             return
         }
 
@@ -89,7 +89,7 @@ extension DocumentViewModel {
             width: annotationWidth,
             parts: [],
             selectionBox: selectionBox,
-            ownerId: currentUser.uid,
+            ownerId: currentUser.id,
             documentId: model.id,
             id: annotationId
         )

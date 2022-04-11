@@ -21,7 +21,7 @@ struct DocumentsDataAccess {
     func listShared(db: Database, userId: String) async throws -> [Document] {
         let documentEntities = try await DocumentEntity.query(on: db)
             .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
-            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientEntity.$id == userId)
             .withDeleted()
             .sort(\.$name)
             .all().get()
@@ -62,7 +62,7 @@ struct DocumentsDataAccess {
         let sharedDocumentEntities = try await DocumentEntity
             .query(on: db)
             .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
-            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientEntity.$id == userId)
             .filter(\.$createdAt > date)
             .withDeleted()
             .all().get()
@@ -91,7 +91,7 @@ struct DocumentsDataAccess {
         let sharedDocumentEntities = try await DocumentEntity
             .query(on: db)
             .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
-            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientId == userId)
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientEntity.$id == userId)
             .filter(\.$updatedAt > date)
             .withDeleted()
             .all().get()

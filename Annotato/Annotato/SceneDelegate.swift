@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
 
-        window?.rootViewController = AnnotatoAuth().currentUser != nil
+        window?.rootViewController = AuthViewModel().currentUser != nil
             ? DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
             : AuthViewController.instantiateFullScreenFromStoryboard(.main)
     }

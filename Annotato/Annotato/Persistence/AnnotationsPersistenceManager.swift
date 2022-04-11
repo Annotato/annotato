@@ -75,7 +75,7 @@ extension AnnotationsPersistenceManager {
                 .createOrUpdateAnnotation(annotation: annotation)
         }
 
-        guard senderId != AnnotatoAuth().currentUser?.uid else {
+        guard senderId != AuthViewModel().currentUser?.id else {
             return
         }
 

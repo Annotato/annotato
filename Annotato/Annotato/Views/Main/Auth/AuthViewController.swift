@@ -1,7 +1,9 @@
 import UIKit
+import Combine
 
 class AuthViewController: UIViewController, Navigable {
-    private let auth = AnnotatoAuth()
+    private let auth = AuthViewModel()
+    private var cancellables: Set<AnyCancellable> = []
 
     // Storyboard UI Elements
     @IBOutlet private var formSegmentedControl: UISegmentedControl!
@@ -24,7 +26,6 @@ class AuthViewController: UIViewController, Navigable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        auth.delegate = self
         mainContainer.layer.cornerRadius = 25
         displayNameContainer.isHidden = true
         heightConstraint.constant = 35
@@ -41,6 +42,8 @@ class AuthViewController: UIViewController, Navigable {
             string: "Display Name",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray]
         )
+
+        setUpSubscribers()
     }
 
     @IBAction private func onSubmitButtonTapped(_ sender: UIButton) {
@@ -83,9 +86,43 @@ class AuthViewController: UIViewController, Navigable {
             fatalError("Invalid Segment")
         }
     }
+
+    private func setUpSubscribers() {
+        auth.$signUpIsSuccess.sink(receiveValue: { [weak self] isSuccess in
+            if isSuccess {
+                DispatchQueue.main.async {
+                    self?.signUpDidSucceed()
+                }
+            }
+        }).store(in: &cancellables)
+
+        auth.$logInIsSuccess.sink(receiveValue: { [weak self] isSuccess in
+            if isSuccess {
+                DispatchQueue.main.async {
+                    self?.logInDidSucceed()
+                }
+            }
+        }).store(in: &cancellables)
+
+        auth.$signUpError.sink(receiveValue: { [weak self] error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self?.signUpDidFail(error)
+                }
+            }
+        }).store(in: &cancellables)
+
+        auth.$logInError.sink(receiveValue: { [weak self] error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self?.logInDidFail(error)
+                }
+            }
+        }).store(in: &cancellables)
+    }
 }
 
-extension AuthViewController: AnnotatoAuthDelegate, AlertPresentable {
+extension AuthViewController: AlertPresentable {
     func logInDidFail(_ error: Error) {
         presentErrorAlert(errorMessage: error.localizedDescription)
     }

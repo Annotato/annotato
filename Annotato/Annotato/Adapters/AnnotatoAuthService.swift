@@ -1,9 +1,13 @@
 import AnnotatoSharedLibrary
+import Combine
 
 protocol AnnotatoAuthService {
-    var delegate: AnnotatoAuthDelegate? { get set }
-    var currentUser: AnnotatoUser? { get }
     func signUp(email: String, password: String, displayName: String)
     func logIn(email: String, password: String)
     func logOut()
+
+    var newUserPublisher: Published<AnnotatoUser?>.Publisher { get }
+    var loggedInUserPublisher: Published<AnnotatoUser?>.Publisher { get }
+    var signUpErrorPublisher: Published<Error?>.Publisher { get }
+    var logInErrorPublisher: Published<Error?>.Publisher { get }
 }
