@@ -27,14 +27,22 @@ class DocumentViewModel: ObservableObject {
     }
 
     func setUpSubscribers() {
-        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] _ in
+        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] isConnected in
             guard let self = self else {
                 return
             }
-            // TODO: See below
             // Call document to reset all the annotations that it contains, calling on local and remote as per needed
             // by doing something like model.resetAnnotation(connectivityStatus: Bool)
+            if isConnected {
+                // MARK: Reset the annotations to take from remote, take from local, and compare, then
+                // reset the annotations array
+            } else {
+                // MARK: User went offline, so only display the annotations from local, without the merge conflicts
+                // additional annotations that we created. All annotations should not have the merge conflict palette
+            }
+
             // Only after that is done, then set the published boolean to get the document view to reload annotations
+            self.connectivityChanged = true
         }).store(in: &cancellables)
     }
 
