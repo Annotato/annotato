@@ -15,9 +15,8 @@ class AuthViewModel {
 
     init() {
         self.authService = FirebaseAuthService()
-        self.currentUser = fetchLocalUserCredentials()
+        self.currentUser = usersPersistenceManager.fetchSessionUser()
 
-        setUser()
         setUpSubscribers()
     }
 
@@ -43,14 +42,15 @@ class AuthViewModel {
         Task {
             self.currentUser = await usersPersistenceManager.getUser(userId: userId)
 
-            storeCredentialsLocally()
+            if let currentUser = currentUser {
+                usersPersistenceManager.saveSessionUser(user: currentUser)
+            }
         }
     }
 
     func logOut() {
         authService.logOut()
-
-        purgeLocalCredentials()
+        usersPersistenceManager.purgeSessionUser()
     }
 
     private func setUpSubscribers() {
@@ -78,34 +78,5 @@ class AuthViewModel {
         authService.logInErrorPublisher.sink(receiveValue: { [weak self] error in
             self?.logInError = error
         }).store(in: &cancellables)
-    }
-}
-
-// MARK: Local storage of user credentials
-extension AuthViewModel {
-    private var savedUserKey: String {
-        "savedUser"
-    }
-
-    private func storeCredentialsLocally() {
-        guard let currentUser = currentUser,
-              let encodedUser = try? JSONCustomEncoder().encode(currentUser) else {
-            return
-        }
-
-        UserDefaults.standard.set(encodedUser, forKey: savedUserKey)
-    }
-
-    private func fetchLocalUserCredentials() -> AnnotatoUser? {
-        guard let savedUser = UserDefaults.standard.object(forKey: savedUserKey) as? Data,
-              let decodedUser = try? JSONCustomDecoder().decode(AnnotatoUser.self, from: savedUser) else {
-            return nil
-        }
-
-        return decodedUser
-    }
-
-    private func purgeLocalCredentials() {
-        UserDefaults.standard.removeObject(forKey: savedUserKey)
     }
 }
