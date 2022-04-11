@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AuthViewController: UIViewController, Navigable {
-    private let auth = AnnotatoAuth()
+    private let auth = AuthViewModel()
     private var cancellables: Set<AnyCancellable> = []
 
     // Storyboard UI Elements

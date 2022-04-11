@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class AnnotatoAuth {
+class AuthViewModel {
     private var authService: AnnotatoAuthService
     private let usersPersistenceManager = UsersPersistenceManager()
     private(set) var currentUser: AnnotatoUser?
@@ -82,7 +82,7 @@ class AnnotatoAuth {
 }
 
 // MARK: Local storage of user credentials
-extension AnnotatoAuth {
+extension AuthViewModel {
     private var savedUserKey: String {
         "savedUser"
     }

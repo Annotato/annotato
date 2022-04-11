@@ -110,7 +110,7 @@ extension DocumentsPersistenceManager {
                 .createOrUpdateDocument(document: document)
         }
 
-        guard senderId != AnnotatoAuth().currentUser?.id else {
+        guard senderId != AuthViewModel().currentUser?.id else {
             return
         }
 
