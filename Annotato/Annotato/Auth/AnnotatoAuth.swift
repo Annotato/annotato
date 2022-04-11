@@ -14,8 +14,9 @@ class AnnotatoAuth {
     @Published private(set) var logInError: Error?
 
     init() {
-        authService = FirebaseAuth()
-        currentUser = fetchLocalUserCredentials()
+        self.authService = FirebaseAuth()
+
+        setUser()
         setUpSubscribers()
     }
 
@@ -35,8 +36,16 @@ class AnnotatoAuth {
 
     func logIn(email: String, password: String) {
         authService.logIn(email: email, password: password)
+    }
 
-        storeCredentialsLocally()
+    private func setUser(userId: String = "") {
+        Task {
+            self.currentUser = await usersPersistenceManager.getUser(userId: userId)
+
+            if let currentUser = currentUser {
+                storeCredentialsLocally(user: currentUser)
+            }
+        }
     }
 
     func logOut() {
@@ -53,6 +62,23 @@ class AnnotatoAuth {
 
             self?.createUser(user: newUser)
         }).store(in: &cancellables)
+
+        authService.loggedInUserPublisher.sink(receiveValue: { [weak self] existingUser in
+            guard let userId = existingUser?.id else {
+                return
+            }
+
+            self?.setUser(userId: userId)
+            self?.logInIsSuccess = true
+        }).store(in: &cancellables)
+
+        authService.signUpErrorPublisher.sink(receiveValue: { [weak self] error in
+            self?.signUpError = error
+        }).store(in: &cancellables)
+
+        authService.logInErrorPublisher.sink(receiveValue: { [weak self] error in
+            self?.logInError = error
+        }).store(in: &cancellables)
     }
 }
 
@@ -62,22 +88,12 @@ extension AnnotatoAuth {
         "savedUser"
     }
 
-    private func storeCredentialsLocally() {
-        guard let currentUser = currentUser,
-              let encodedUser = try? JSONCustomEncoder().encode(currentUser) else {
+    func storeCredentialsLocally(user: AnnotatoUser) {
+        guard let encodedUser = try? JSONCustomEncoder().encode(user) else {
             return
         }
 
         UserDefaults.standard.set(encodedUser, forKey: savedUserKey)
-    }
-
-    private func fetchLocalUserCredentials() -> AnnotatoUser? {
-        guard let savedUser = UserDefaults.standard.object(forKey: savedUserKey) as? Data,
-              let decodedUser = try? JSONCustomDecoder().decode(AnnotatoUser.self, from: savedUser) else {
-            return nil
-        }
-
-        return decodedUser
     }
 
     private func purgeLocalCredentials() {

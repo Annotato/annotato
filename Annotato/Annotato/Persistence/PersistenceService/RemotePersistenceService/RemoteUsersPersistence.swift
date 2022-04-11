@@ -27,6 +27,17 @@ struct RemoteUsersPersistence: UsersPersistence {
         }
     }
 
+    // MARK: READ
+    func getUser(userId: String) async -> AnnotatoUser? {
+        do {
+            let responseData = try await httpService.get(url: "\(RemoteUsersPersistence.usersUrl)/\(userId)")
+            return try JSONCustomDecoder().decode(AnnotatoUser.self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When fetching user: \(String(describing: error))")
+            return nil
+        }
+    }
+
     private func encodeUser(_ user: AnnotatoUser) -> Data? {
         do {
             let data = try JSONCustomEncoder().encode(user)

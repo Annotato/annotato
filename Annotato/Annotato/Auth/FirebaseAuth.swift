@@ -7,8 +7,8 @@ class FirebaseAuth: AnnotatoAuthService {
     @Published private(set) var newUser: AnnotatoUser?
     var newUserPublisher: Published<AnnotatoUser?>.Publisher { $newUser }
 
-    @Published private(set) var existingUser: AnnotatoUser?
-    var existingUserPublisher: Published<AnnotatoUser?>.Publisher { $existingUser }
+    @Published private(set) var loggedInUser: AnnotatoUser?
+    var loggedInUserPublisher: Published<AnnotatoUser?>.Publisher { $loggedInUser }
 
     @Published private(set) var signUpError: Error?
     var signUpErrorPublisher: Published<Error?>.Publisher { $signUpError }
@@ -61,7 +61,7 @@ class FirebaseAuth: AnnotatoAuthService {
             }
 
             AnnotatoLogger.info("\(email) logged in")
-            self.existingUser = self.currentFirebaseUser?.toAnnotatoUser()
+            self.loggedInUser = self.currentFirebaseUser?.toAnnotatoUser()
         }
     }
 

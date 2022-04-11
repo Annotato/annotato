@@ -25,7 +25,7 @@ extension Request {
     func getIdValue() throws -> String {
         try self.getParamValue(paramKey: "id")
     }
-    
+
     func getIdValueAsUUID() throws -> UUID {
         try self.getParamValueAsUUID(paramKey: "id")
     }
