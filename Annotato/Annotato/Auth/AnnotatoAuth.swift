@@ -14,7 +14,7 @@ class AnnotatoAuth {
     @Published private(set) var logInError: Error?
 
     init() {
-        self.authService = FirebaseAuth()
+        self.authService = FirebaseAuthService()
         self.currentUser = fetchLocalUserCredentials()
 
         setUser()

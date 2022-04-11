@@ -1,7 +1,7 @@
 import Firebase
 import AnnotatoSharedLibrary
 
-class FirebaseAuth: AnnotatoAuthService {
+class FirebaseAuthService: AnnotatoAuthService {
     private static var isAlreadyConfigured = false
 
     @Published private(set) var newUser: AnnotatoUser?
@@ -17,12 +17,12 @@ class FirebaseAuth: AnnotatoAuthService {
     var logInErrorPublisher: Published<Error?>.Publisher { $logInError }
 
     init () {
-        guard !FirebaseAuth.isAlreadyConfigured else {
+        guard !FirebaseAuthService.isAlreadyConfigured else {
             return
         }
 
         FirebaseApp.configure()
-        FirebaseAuth.isAlreadyConfigured = true
+        FirebaseAuthService.isAlreadyConfigured = true
     }
 
     private var currentFirebaseUser: User? {
