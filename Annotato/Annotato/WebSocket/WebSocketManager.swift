@@ -7,17 +7,12 @@ class WebSocketManager: ObservableObject {
     @Published private(set) var message: Data?
 
     func setUpSocket(urlString: String) {
-        guard let userId = AuthViewModel().currentUser?.uid else {
-            AnnotatoLogger.error("Unable to retrieve user id.", context: "WebSocketManager::setUpSocket")
-            return
-        }
-
-        guard let url = URL(string: "\(RemotePersistenceService.baseWsAPIUrl)/ws/\(userId)") else {
+        guard let url = URL(string: urlString) else {
             return
         }
 
         socket = URLSession(configuration: .default).webSocketTask(with: url)
-        AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
+        AnnotatoLogger.info("Websocket connection for user setup successfully!")
 
         listen()
         socket?.resume()
