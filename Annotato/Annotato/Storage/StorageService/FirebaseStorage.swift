@@ -8,8 +8,6 @@ class FirebaseStorage: AnnotatoStorageService {
         storage.reference()
     }
 
-    weak var delegate: AnnotatoStorageDelegate?
-
     func uploadPdf(fileSystemUrl: URL, fileName: String) {
         let pdfRef = storageRef.child(fileName)
 
@@ -19,12 +17,10 @@ class FirebaseStorage: AnnotatoStorageService {
                     "When uploading PDF with fileSystemUrl: \(fileSystemUrl) to FB. \(error.localizedDescription)",
                     context: "FirebaseStorage::uploadPdf"
                 )
-                self.delegate?.uploadDidFail(error)
                 return
             }
 
             AnnotatoLogger.info("Uploaded to Firebase - PDF with fileSystemUrl: \(fileSystemUrl)")
-            self.delegate?.uploadDidSucceed()
         }
     }
 
@@ -36,7 +32,6 @@ class FirebaseStorage: AnnotatoStorageService {
                     "When trying to delete PDF from firebase: \(fileName). \(error.localizedDescription)",
                     context: "FirebaseStorage::deletePdf"
                 )
-                self.delegate?.deleteDidFail(error)
                 return
             }
 
