@@ -60,21 +60,6 @@ class AnnotationView: UIView {
         parts.widthAnchor.constraint(equalTo: scroll.widthAnchor).isActive = true
     }
 
-    private func test() {
-        scroll.translatesAutoresizingMaskIntoConstraints = false
-        scroll.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        scroll.topAnchor.constraint(equalTo: palette.bottomAnchor).isActive = true
-        scroll.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        scroll.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-
-        parts.axis = .vertical
-        parts.leadingAnchor.constraint(equalTo: scroll.leadingAnchor).isActive = true
-        parts.trailingAnchor.constraint(equalTo: scroll.trailingAnchor).isActive = true
-        parts.bottomAnchor.constraint(equalTo: scroll.bottomAnchor).isActive = true
-        parts.topAnchor.constraint(equalTo: scroll.topAnchor).isActive = true
-        parts.widthAnchor.constraint(equalTo: scroll.widthAnchor).isActive = true
-    }
-
     private func populateParts() {
         for partViewModel in viewModel.parts {
             parts.addArrangedSubview(partViewModel.toView())
@@ -145,9 +130,6 @@ class AnnotationView: UIView {
             }
         }.store(in: &cancellables)
 
-        /*
-         swsdfiftlint:disable closure_body_length
-         */
         viewModel.$isResolving.sink { [weak self] isResolving in
             guard !isResolving else {
                 return
