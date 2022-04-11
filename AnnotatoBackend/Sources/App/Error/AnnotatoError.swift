@@ -24,6 +24,13 @@ struct AnnotatoError: Error {
         )
     }
 
+    static func modelNotFound(requestType: RequestType, modelType: String, modelId: String) -> AnnotatoError {
+        AnnotatoError(
+            errorType: .modelNotFound, requestType: requestType,
+            description: "Could not \(requestType) \(modelType) - \(modelType) with ID \(modelId) does not exist"
+        )
+    }
+
     static func modelAlreadyExists(
         modelType: String,
         modelId: UUID,

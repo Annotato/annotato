@@ -15,6 +15,12 @@ struct UsersController {
         return try await usersDataAccess.create(db: req.db, user: user)
     }
 
+    func read(req: Request) async throws -> AnnotatoUser {
+        let userId = try req.getIdValue()
+
+        return try await usersDataAccess.read(db: req.db, userId: userId)
+    }
+
     func listUsersSharingDocument(req: Request) async throws -> [AnnotatoUser] {
         let documentId: String? = req.query[QueryParams.documentId.rawValue]
 
