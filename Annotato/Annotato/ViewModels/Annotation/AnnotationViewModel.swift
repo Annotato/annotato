@@ -304,16 +304,30 @@ extension AnnotationViewModel {
     }
 
     func didSaveMergeConflicts() {
+        guard NetworkMonitor.shared.isConnected else {
+            AnnotatoLogger.error("Save merge conflict button pressed while offline")
+            return
+        }
+        Task {
+            await AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotation(annotation: model)
+        }
         resolveBySave = true
         isResolving = false
-        Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
-        }
     }
 
     func didDiscardMergeConflicts() {
+        guard NetworkMonitor.shared.isConnected else {
+            AnnotatoLogger.error("Save merge conflict button pressed while offline")
+            return
+        }
+        selectionBox.didDelete()
+        document?.removeAnnotationWithoutPersistence(annotation: self)
+        model.setDeletedAt(to: Date())
+        Task {
+            await AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotation(annotation: model)
+        }
+        isRemoved = true
         isResolving = false
-        didDelete()
     }
 
     func receiveDelete() {

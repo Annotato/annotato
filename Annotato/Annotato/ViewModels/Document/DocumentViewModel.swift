@@ -163,12 +163,15 @@ extension DocumentViewModel {
     }
 
     func removeAnnotation(annotation: AnnotationViewModel) {
-        model.removeAnnotation(annotation: annotation.model)
-        annotations.removeAll(where: { $0.id == annotation.model.id })
-
+        removeAnnotationWithoutPersistence(annotation: annotation)
         Task {
             await AnnotatoPersistenceWrapper.currentPersistenceService.deleteAnnotation(annotation: annotation.model)
         }
+    }
+
+    func removeAnnotationWithoutPersistence(annotation: AnnotationViewModel) {
+        model.removeAnnotation(annotation: annotation.model)
+        annotations.removeAll(where: { $0.id == annotation.model.id })
     }
 
     func receiveDeleteAnnotation(deletedAnnotation: Annotation) {
