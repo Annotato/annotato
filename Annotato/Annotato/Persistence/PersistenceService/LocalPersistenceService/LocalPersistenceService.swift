@@ -38,10 +38,6 @@ extension LocalPersistenceService {
         LocalDocumentsPersistence()
     }
 
-    var documentShares: DocumentSharesRemotePersistence {
-        LocalDocumentSharesPersistence()
-    }
-
     var annotations: AnnotationsLocalPersistence {
         LocalAnnotationsPersistence()
     }
