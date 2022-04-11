@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 extension AnnotationEntity: PersistedEntity {
     static func fromModel(_ model: Annotation) -> AnnotationEntity {
-        let entity = LocalPersistenceService.makeCoreDataEntity(class: Annotation.self)
+        let entity = CoreDataManager.makeCoreDataEntity(class: Annotation.self)
 
         entity.id = model.id
         entity.width = model.width

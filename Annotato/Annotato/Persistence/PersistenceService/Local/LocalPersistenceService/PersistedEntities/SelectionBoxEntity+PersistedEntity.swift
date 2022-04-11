@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 extension SelectionBoxEntity: PersistedEntity {
     static func fromModel(_ model: SelectionBox) -> SelectionBoxEntity {
-        let entity = LocalPersistenceService.makeCoreDataEntity(class: SelectionBox.self)
+        let entity = CoreDataManager.makeCoreDataEntity(class: SelectionBox.self)
 
         entity.id = model.id
         entity.startPointX = model.startPoint.x

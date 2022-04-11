@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalDocumentEntityDataAccess {
-    let context = LocalPersistenceService.sharedContext
+    let context = CoreDataManager.sharedContext
 
     func listOwn(userId: String) -> [DocumentEntity]? {
         context.performAndWait {

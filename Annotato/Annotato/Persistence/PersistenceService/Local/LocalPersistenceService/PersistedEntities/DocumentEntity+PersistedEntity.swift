@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 extension DocumentEntity: PersistedEntity {
     static func fromModel(_ model: Document) -> DocumentEntity {
-        let entity = LocalPersistenceService.makeCoreDataEntity(class: Document.self)
+        let entity = CoreDataManager.makeCoreDataEntity(class: Document.self)
 
         entity.id = model.id
         entity.name = model.name
