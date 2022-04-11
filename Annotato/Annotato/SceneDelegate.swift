@@ -50,7 +50,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                               completion: nil)
         }
 
-        if newRootViewController is DocumentListViewController {
+        if let newRootViewController = newRootViewController as? DocumentListViewController {
+            newRootViewController.webSocketManager = webSocketManager
             webSocketManager.setUpSocket()
         }
     }

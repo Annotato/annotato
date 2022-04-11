@@ -1,14 +1,18 @@
 import Foundation
+import Combine
 import AnnotatoSharedLibrary
 
 class WebSocketManager: ObservableObject {
     private(set) var socket: URLSessionWebSocketTask?
     private var urlStringProducer: () -> String
+    private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var message: Data?
 
     init(urlStringProducer: @escaping () -> String) {
         self.urlStringProducer = urlStringProducer
+
+        setUpSubscribers()
     }
 
     func setUpSocket() {
@@ -86,5 +90,13 @@ class WebSocketManager: ObservableObject {
         )
 
         message = data
+    }
+
+    private func setUpSubscribers() {
+        NetworkMonitor.shared.$isConnected.sink { [weak self] isConnected in
+            if isConnected {
+                self?.setUpSocket()
+            }
+        }.store(in: &cancellables)
     }
 }
