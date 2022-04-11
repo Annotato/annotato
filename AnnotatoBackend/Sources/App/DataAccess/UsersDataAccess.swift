@@ -3,7 +3,7 @@ import AnnotatoSharedLibrary
 import Foundation
 
 struct UsersDataAccess {
-    static func create(db: Database, user: AnnotatoUser) async throws -> AnnotatoUser {
+    func create(db: Database, user: AnnotatoUser) async throws -> AnnotatoUser {
         let userEntity = UserEntity.fromModel(user)
 
         try await db.transaction { tx in
@@ -14,7 +14,7 @@ struct UsersDataAccess {
     }
 
     // Note: This excludes the document owner
-    static func listUsersSharingDocument(db: Database, documentId: UUID) async throws -> [AnnotatoUser] {
+    func listUsersSharingDocument(db: Database, documentId: UUID) async throws -> [AnnotatoUser] {
         let userEntities = try await UserEntity
             .query(on: db)
             .join(DocumentShareEntity.self, on: \UserEntity.$id == \DocumentShareEntity.$recipientEntity.$id)

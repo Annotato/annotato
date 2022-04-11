@@ -1,7 +1,9 @@
 import Vapor
 
 func usersRouter(users: RoutesBuilder) {
-    users.get("sharing", use: UsersController.listUsersSharingDocument)
+    let usersController = UsersController()
 
-    users.post(use: UsersController.create)
+    users.get("sharing", use: usersController.listUsersSharingDocument)
+
+    users.post(use: usersController.create)
 }
