@@ -17,21 +17,3 @@ struct RemotePersistenceService {
         "\(Self.baseWsAPIUrl)/ws/\(userId)"
     }
 }
-
-extension RemotePersistenceService {
-    var documents: DocumentsRemotePersistence {
-        RemoteDocumentsPersistence()
-    }
-
-    var annotations: AnnotationsRemotePersistence {
-        RemoteAnnotationsPersistence()
-    }
-
-    var documentShares: DocumentSharesRemotePersistence {
-        RemoteDocumentSharesPersistence()
-    }
-
-    var users: UsersRemotePersistence {
-        RemoteUsersPersistence()
-    }
-}

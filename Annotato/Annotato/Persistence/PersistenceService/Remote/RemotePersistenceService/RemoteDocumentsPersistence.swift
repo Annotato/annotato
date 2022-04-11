@@ -5,10 +5,12 @@ struct RemoteDocumentsPersistence: DocumentsRemotePersistence {
     private static let documentsUrl = "\(RemotePersistenceService.baseAPIUrl)/documents"
     private static let sharedDocumentsUrl = "\(documentsUrl)/shared"
 
-    private var httpService: AnnotatoHTTPService
+    private let httpService: AnnotatoHTTPService
+    private let webSocketManager: WebSocketManager?
 
-    init() {
+    init(webSocketManager: WebSocketManager?) {
         httpService = URLSessionHTTPService()
+        self.webSocketManager = webSocketManager
     }
 
     // MARK: LIST OWN
@@ -66,7 +68,7 @@ struct RemoteDocumentsPersistence: DocumentsRemotePersistence {
     }
 
     // MARK: UPDATE
-    func updateDocument(document: Document, webSocketManager: WebSocketManager?) async -> Document? {
+    func updateDocument(document: Document) async -> Document? {
         guard let requestData = encodeDocument(document) else {
             AnnotatoLogger.error("Document was not updated",
                                  context: "RemoteDocumentsPersistence::updateDocument")
@@ -85,7 +87,7 @@ struct RemoteDocumentsPersistence: DocumentsRemotePersistence {
     }
 
     // MARK: DELETE
-    func deleteDocument(document: Document, webSocketManager: WebSocketManager?) async -> Document? {
+    func deleteDocument(document: Document) async -> Document? {
         do {
             let responseData =
                 try await httpService.delete(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)")

@@ -32,13 +32,3 @@ struct LocalPersistenceService {
                             context: "LocalPersistenceService::init")
     }
 }
-
-extension LocalPersistenceService {
-    var documents: DocumentsLocalPersistence {
-        LocalDocumentsPersistence()
-    }
-
-    var annotations: AnnotationsLocalPersistence {
-        LocalAnnotationsPersistence()
-    }
-}

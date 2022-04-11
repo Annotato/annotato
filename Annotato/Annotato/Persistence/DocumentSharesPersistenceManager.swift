@@ -2,12 +2,11 @@ import AnnotatoSharedLibrary
 import Foundation
 
 class DocumentSharesPersistenceManager {
-    private let remotePersistence = RemotePersistenceService()
-    private let localPersistence = LocalPersistenceService.shared
+    private let remoteDocumentSharesPersistence = RemoteDocumentSharesPersistence()
+    private let localDocumentsPersistence = LocalDocumentsPersistence()
 
     func createDocumentShare(documentShare: DocumentShare) async -> Document? {
-        guard let remoteDocument = await remotePersistence
-            .documentShares
+        guard let remoteDocument = await remoteDocumentSharesPersistence
             .createDocumentShare(documentShare: documentShare) else {
             return nil
         }
@@ -17,7 +16,7 @@ class DocumentSharesPersistenceManager {
             return nil
         }
 
-        let localSharedDocument = localPersistence.documents.createDocument(document: remoteDocument)
+        let localSharedDocument = localDocumentsPersistence.createDocument(document: remoteDocument)
         return localSharedDocument
     }
 

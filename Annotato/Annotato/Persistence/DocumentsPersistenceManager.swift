@@ -6,8 +6,8 @@ class DocumentsPersistenceManager {
     private let webSocketManager: WebSocketManager?
     private let rootPersistenceManager: RootPersistenceManager
 
-    private let remotePersistence = RemotePersistenceService()
-    private let localPersistence = LocalPersistenceService.shared
+    private let remoteDocumentsPersistence: RemoteDocumentsPersistence
+    private let localDocumentsPersistence = LocalDocumentsPersistence()
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var newDocument: Document?
@@ -17,68 +17,68 @@ class DocumentsPersistenceManager {
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
         self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
+        self.remoteDocumentsPersistence = RemoteDocumentsPersistence(
+            webSocketManager: webSocketManager
+        )
 
         setUpSubscribers()
     }
 
     func getOwnDocuments(userId: String) async -> [Document]? {
-        let remoteOwnDocuments = await remotePersistence.documents.getOwnDocuments(userId: userId)
+        let remoteOwnDocuments = await remoteDocumentsPersistence.getOwnDocuments(userId: userId)
         guard remoteOwnDocuments != nil else {
-            return localPersistence.documents.getOwnDocuments(userId: userId)
+            return localDocumentsPersistence.getOwnDocuments(userId: userId)
         }
         return remoteOwnDocuments
     }
 
     func getSharedDocuments(userId: String) async -> [Document]? {
-        let remoteSharedDocuments = await remotePersistence.documents.getSharedDocuments(userId: userId)
+        let remoteSharedDocuments = await remoteDocumentsPersistence.getSharedDocuments(userId: userId)
         guard remoteSharedDocuments != nil else {
-            return localPersistence.documents.getSharedDocuments(userId: userId)
+            return localDocumentsPersistence.getSharedDocuments(userId: userId)
         }
         return remoteSharedDocuments
     }
 
     func getDocument(documentId: UUID) async -> Document? {
-        let remoteDocument = await remotePersistence.documents.getDocument(documentId: documentId)
+        let remoteDocument = await remoteDocumentsPersistence.getDocument(documentId: documentId)
         guard remoteDocument != nil else {
-            return localPersistence.documents.getDocument(documentId: documentId)
+            return localDocumentsPersistence.getDocument(documentId: documentId)
         }
         return remoteDocument
     }
 
     func createDocument(document: Document) async -> Document? {
-        let remoteCreatedDocument = await remotePersistence
-            .documents
+        let remoteCreatedDocument = await remoteDocumentsPersistence
             .createDocument(document: document)
 
         if remoteCreatedDocument == nil {
             document.setCreatedAt()
         }
 
-        return localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
+        return localDocumentsPersistence.createDocument(document: remoteCreatedDocument ?? document)
     }
 
     func updateDocument(document: Document) async -> Document? {
-        let remoteUpdatedDocument = await remotePersistence.documents.updateDocument(
-            document: document, webSocketManager: webSocketManager
-        )
+        let remoteUpdatedDocument = await remoteDocumentsPersistence
+            .updateDocument(document: document)
 
         if remoteUpdatedDocument == nil {
             document.setUpdatedAt()
         }
 
-        return localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
+        return localDocumentsPersistence.updateDocument(document: remoteUpdatedDocument ?? document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
-        let remoteDeletedDocument = await remotePersistence.documents.deleteDocument(
-            document: document, webSocketManager: webSocketManager
-        )
+        let remoteDeletedDocument = await remoteDocumentsPersistence
+            .deleteDocument(document: document)
 
         if remoteDeletedDocument == nil {
             document.setDeletedAt()
         }
 
-        return localPersistence.documents.deleteDocument(document: remoteDeletedDocument ?? document)
+        return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {
@@ -114,7 +114,7 @@ extension DocumentsPersistenceManager {
         let messageSubtype = decodedMessage.subtype
 
         Task {
-            _ = LocalPersistenceService.shared.documents
+            _ = remoteDocumentsPersistence
                 .createOrUpdateDocument(document: document)
         }
 
