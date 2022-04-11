@@ -3,16 +3,22 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager: ObservableObject {
     private(set) var socket: URLSessionWebSocketTask?
+    private var urlStringProducer: () -> String
 
     @Published private(set) var message: Data?
 
-    func setUpSocket(urlString: String) {
-        guard let url = URL(string: urlString) else {
+    init(urlStringProducer: @escaping () -> String) {
+        self.urlStringProducer = urlStringProducer
+    }
+
+    func setUpSocket() {
+        guard let url = URL(string: urlStringProducer()) else {
+            AnnotatoLogger.error("Invalid URL!", context: "WebSocketManager::setUpSocket")
             return
         }
 
         socket = URLSession(configuration: .default).webSocketTask(with: url)
-        AnnotatoLogger.info("Websocket connection for user setup successfully!")
+        AnnotatoLogger.info("Websocket connection for \(url) setup successfully!")
 
         listen()
         socket?.resume()
