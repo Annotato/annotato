@@ -1,3 +1,3 @@
 protocol DocumentListCollectionCellViewDelegate: AnyObject {
-    func didSelectCellView(document: DocumentListViewModel)
+    func didSelectCellView(document: DocumentListCellViewModel)
 }

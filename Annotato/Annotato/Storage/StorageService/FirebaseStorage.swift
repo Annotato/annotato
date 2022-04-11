@@ -10,8 +10,8 @@ class FirebaseStorage: AnnotatoStorageService {
 
     weak var delegate: AnnotatoStorageDelegate?
 
-    func uploadPdf(fileSystemUrl: URL, withId documentId: UUID) {
-        let pdfRef = storageRef.child(documentId.uuidString)
+    func uploadPdf(fileSystemUrl: URL, fileName: String) {
+        let pdfRef = storageRef.child(fileName)
 
         _ = pdfRef.putFile(from: fileSystemUrl, metadata: nil) { _, error in
             if let error = error {
@@ -28,19 +28,19 @@ class FirebaseStorage: AnnotatoStorageService {
         }
     }
 
-    func deletePdf(document: Document) {
-        let pdfRef = storageRef.child(document.id.uuidString)
+    func deletePdf(fileName: String) {
+        let pdfRef = storageRef.child(fileName)
         pdfRef.delete { error in
             if let error = error {
                 AnnotatoLogger.error(
-                    "When trying to delete PDF from firebase: \(document). \(error.localizedDescription)",
+                    "When trying to delete PDF from firebase: \(fileName). \(error.localizedDescription)",
                     context: "FirebaseStorage::deletePdf"
                 )
                 self.delegate?.deleteDidFail(error)
                 return
             }
 
-            AnnotatoLogger.info("Deleted PDF: \(document) from FB.")
+            AnnotatoLogger.info("Deleted PDF: \(fileName) from FB.")
         }
     }
 

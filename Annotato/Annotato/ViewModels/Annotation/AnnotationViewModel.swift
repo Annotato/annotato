@@ -6,6 +6,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class AnnotationViewModel: ObservableObject {
+    private let annotationsPersistenceManager = AnnotationsPersistenceManager()
+
     private weak var document: DocumentViewModel?
 
     private(set) var model: Annotation
@@ -94,7 +96,7 @@ class AnnotationViewModel: ObservableObject {
 
         if !isResolving {
             Task {
-                await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
+                await annotationsPersistenceManager.updateAnnotation(annotation: model)
             }
         }
     }
@@ -218,7 +220,7 @@ extension AnnotationViewModel {
 
         if !isResolving {
             Task {
-                await AnnotatoPersistenceWrapper.currentPersistenceService.updateAnnotation(annotation: model)
+                await annotationsPersistenceManager.updateAnnotation(annotation: model)
             }
         }
     }

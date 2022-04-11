@@ -1,29 +1,31 @@
 import Foundation
 
 struct DocumentController {
-    static func loadOwnDocuments(userId: String) async -> [DocumentListViewModel] {
-        let documents = await AnnotatoPersistenceWrapper.currentPersistenceService.getOwnDocuments(userId: userId)
+    private let documentsPersistenceManager = DocumentsPersistenceManager()
+
+    func loadOwnDocuments(userId: String) async -> [DocumentListCellViewModel] {
+        let documents = await documentsPersistenceManager.getOwnDocuments(userId: userId)
         guard let documents = documents else {
             return []
         }
 
         return documents
             .filter { !$0.isDeleted }
-            .map { DocumentListViewModel(document: $0, isShared: false) }
+            .map { DocumentListCellViewModel(document: $0, isShared: false) }
     }
 
-    static func loadSharedDocuments(userId: String) async -> [DocumentListViewModel] {
-        let documents = await AnnotatoPersistenceWrapper.currentPersistenceService.getSharedDocuments(userId: userId)
+    func loadSharedDocuments(userId: String) async -> [DocumentListCellViewModel] {
+        let documents = await documentsPersistenceManager.getSharedDocuments(userId: userId)
         guard let documents = documents else {
             return []
         }
 
         return documents
             .filter { !$0.isDeleted }
-            .map { DocumentListViewModel(document: $0, isShared: true) }
+            .map { DocumentListCellViewModel(document: $0, isShared: true) }
     }
 
-    static func loadAllDocuments(userId: String) async -> [DocumentListViewModel] {
+    func loadAllDocuments(userId: String) async -> [DocumentListCellViewModel] {
         let ownDocuments = await loadOwnDocuments(userId: userId)
         let sharedDocuments = await loadSharedDocuments(userId: userId)
         let allDocuments = ownDocuments + sharedDocuments
@@ -31,8 +33,8 @@ struct DocumentController {
         return sortedDocuments
     }
 
-    static func loadDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
-        let document = await AnnotatoPersistenceWrapper.currentPersistenceService.getDocument(documentId: documentId)
+    func loadDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
+        let document = await documentsPersistenceManager.getDocument(documentId: documentId)
         guard let document = document else {
             return nil
         }
@@ -40,9 +42,8 @@ struct DocumentController {
         return DocumentViewModel(model: document)
     }
 
-    @discardableResult static func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
-        let updatedDocument = await AnnotatoPersistenceWrapper
-            .currentPersistenceService.updateDocument(document: document.model)
+    @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
+        let updatedDocument = await documentsPersistenceManager.updateDocument(document: document.model)
         guard let updatedDocument = updatedDocument else {
             return nil
         }

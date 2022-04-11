@@ -4,7 +4,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct AnnotationDataAccess {
-    static func listWithDeleted(db: Database, annotationIds: [UUID]) async throws -> [Annotation] {
+    func listWithDeleted(db: Database, annotationIds: [UUID]) async throws -> [Annotation] {
         let annotationEntities = try await AnnotationEntity
             .query(on: db)
             .filter(\.$id ~~ annotationIds)
@@ -18,7 +18,7 @@ struct AnnotationDataAccess {
         return annotationEntities.map(Annotation.fromManagedEntity)
     }
 
-    static func listEntitiesCreatedAfterDateWithDeleted(
+    func listEntitiesCreatedAfterDateWithDeleted(
         db: Database,
         date: Date,
         userId: String
@@ -49,7 +49,7 @@ struct AnnotationDataAccess {
         return annotationEntities.map(Annotation.fromManagedEntity)
     }
 
-    static func listEntitiesUpdatedAfterDateWithDeleted(
+    func listEntitiesUpdatedAfterDateWithDeleted(
         db: Database,
         date: Date,
         userId: String
@@ -80,7 +80,7 @@ struct AnnotationDataAccess {
         return annotationEntities.map(Annotation.fromManagedEntity)
     }
 
-    static func create(db: Database, annotation: Annotation) async throws -> Annotation {
+    func create(db: Database, annotation: Annotation) async throws -> Annotation {
         let annotationEntity = AnnotationEntity.fromModel(annotation)
 
         try await db.transaction { tx in
@@ -92,7 +92,7 @@ struct AnnotationDataAccess {
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
-    static func read(db: Database, annotationId: UUID) async throws -> Annotation {
+    func read(db: Database, annotationId: UUID) async throws -> Annotation {
         guard let annotationEntity = try await AnnotationEntity.findWithDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .read,
                                               modelType: String(describing: Annotation.self),
@@ -104,7 +104,7 @@ struct AnnotationDataAccess {
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
-    static func update(db: Database, annotationId: UUID, annotation: Annotation) async throws -> Annotation {
+    func update(db: Database, annotationId: UUID, annotation: Annotation) async throws -> Annotation {
         guard let annotationEntity = try await AnnotationEntity.findWithDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .update,
                                               modelType: String(describing: Annotation.self),
@@ -121,7 +121,7 @@ struct AnnotationDataAccess {
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
-    static func delete(db: Database, annotationId: UUID) async throws -> Annotation {
+    func delete(db: Database, annotationId: UUID) async throws -> Annotation {
         guard let annotationEntity = try await AnnotationEntity.findWithDeleted(annotationId, on: db).get() else {
             throw AnnotatoError.modelNotFound(requestType: .delete,
                                               modelType: String(describing: Annotation.self),
@@ -138,7 +138,7 @@ struct AnnotationDataAccess {
         return Annotation.fromManagedEntity(annotationEntity)
     }
 
-    static func canFindWithDeleted(db: Database, annotationId: UUID) async -> Bool {
+    func canFindWithDeleted(db: Database, annotationId: UUID) async -> Bool {
         (try? await AnnotationEntity.findWithDeleted(annotationId, on: db).get()) != nil
     }
 }

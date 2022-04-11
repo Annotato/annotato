@@ -1,17 +1,19 @@
 import Vapor
 
 func documentsRouter(documents: RoutesBuilder) {
-    documents.get(use: DocumentsController.listOwn)
+    let documentController = DocumentsController()
 
-    documents.get("shared", use: DocumentsController.listShared)
+    documents.get(use: documentController.listOwn)
 
-    documents.post(use: DocumentsController.create)
+    documents.get("shared", use: documentController.listShared)
+
+    documents.post(use: documentController.create)
 
     documents.group(":id") { document in
-        document.get(use: DocumentsController.read)
+        document.get(use: documentController.read)
 
-        document.put(use: DocumentsController.update)
+        document.put(use: documentController.update)
 
-        document.delete(use: DocumentsController.delete)
+        document.delete(use: documentController.delete)
     }
 }
