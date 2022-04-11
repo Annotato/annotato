@@ -3,13 +3,13 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
-    private let webSocketManager = WebSocketManager {
+    private let webSocketManager = WebSocketManager(urlStringProducer: {
         guard let userId = AuthViewModel().currentUser?.id else {
-            return ""
+            return nil
         }
 
         return RemotePersistenceService.generateWebSocketUrlString(userId: userId)
-    }
+    })
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,

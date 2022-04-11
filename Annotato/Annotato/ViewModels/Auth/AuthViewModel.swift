@@ -43,7 +43,7 @@ class AuthViewModel {
         }
     }
 
-    private func handleLogin(userId: String) {
+    private func handleLoginSuccess(userId: String) {
         Task {
             await self.setUser(userId: userId)
             self.logInIsSuccess = true
@@ -72,7 +72,7 @@ class AuthViewModel {
                 return
             }
 
-            self?.handleLogin(userId: userId)
+            self?.handleLoginSuccess(userId: userId)
         }).store(in: &cancellables)
 
         authService.signUpErrorPublisher.sink(receiveValue: { [weak self] error in

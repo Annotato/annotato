@@ -4,19 +4,19 @@ import AnnotatoSharedLibrary
 
 class WebSocketManager: ObservableObject {
     private(set) var socket: URLSessionWebSocketTask?
-    private var urlStringProducer: () -> String
+    private var urlStringProducer: () -> String?
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var message: Data?
 
-    init(urlStringProducer: @escaping () -> String) {
+    init(urlStringProducer: @escaping () -> String?) {
         self.urlStringProducer = urlStringProducer
 
         setUpSubscribers()
     }
 
     func setUpSocket() {
-        guard let url = URL(string: urlStringProducer()) else {
+        guard let url = URL(string: urlStringProducer() ?? "") else {
             AnnotatoLogger.error("Invalid URL!", context: "WebSocketManager::setUpSocket")
             return
         }
