@@ -26,8 +26,4 @@ class NetworkMonitor: ObservableObject {
             }
         }
     }
-
-    func stop() {
-        monitor.cancel()
-    }
 }

@@ -18,7 +18,6 @@ struct RemoteAnnotationsPersistence {
 
         webSocketManager?.send(message: webSocketMessage)
 
-        // We do not get any response for the sender from the websocket
         return nil
     }
 
@@ -33,7 +32,6 @@ struct RemoteAnnotationsPersistence {
 
         webSocketManager?.send(message: webSocketMessage)
 
-        // We do not get any response for the sender from the websocket
         return nil
     }
 
@@ -48,7 +46,6 @@ struct RemoteAnnotationsPersistence {
 
         webSocketManager?.send(message: webSocketMessage)
 
-        // We do not get any response for the sender from the websocket
         return nil
     }
 }
