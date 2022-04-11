@@ -37,12 +37,11 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
 
-    // TODO: Change to default false
-    @Published private(set) var isResolving = true
+    @Published private(set) var isResolving = false
     private(set) var resolveBySave = false
     private(set) var conflictIdx: Int = -1
 
-    init(model: Annotation, document: DocumentViewModel, isResolving: Bool = true, conflictIdx: Int = -1,
+    init(model: Annotation, document: DocumentViewModel, isResolving: Bool = false, conflictIdx: Int = -1,
          palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
         self.document = document
@@ -328,11 +327,9 @@ extension AnnotationViewModel {
         selectionBox.didDelete()
         document?.removeAnnotationWithoutPersistence(annotation: self)
         model.setDeletedAt(to: Date())
-        /*
         Task {
             await annotationsPersistenceManager.createOrUpdateAnnotation(annotation: model)
         }
-         */
         isRemoved = true
         isResolving = false
     }

@@ -40,14 +40,11 @@ class AnnotationsPersistenceManager: AnnotationsPersistence {
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
-        print("Calling create or update annotation in annotations persistence manager")
-        print("Annotation: \(annotation)\n----------\n")
         _ = await remotePersistence.annotations.createOrUpdateAnnotation(annotation: annotation)
 
         if annotation.createdAt == nil {
             annotation.setCreatedAt()
         }
-        print("Setting updated at")
         annotation.setUpdatedAt()
         return await localPersistence.annotations.createOrUpdateAnnotation(annotation: annotation)
     }
