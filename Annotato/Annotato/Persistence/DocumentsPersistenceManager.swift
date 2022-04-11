@@ -103,11 +103,6 @@ extension DocumentsPersistenceManager {
         let senderId = decodedMessage.senderId
         let messageSubtype = decodedMessage.subtype
 
-        Task {
-            _ = remoteDocumentsPersistence
-                .createOrUpdateDocument(document: document)
-        }
-
         guard senderId != AuthViewModel().currentUser?.id else {
             return
         }
