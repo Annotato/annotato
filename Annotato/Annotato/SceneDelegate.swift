@@ -22,15 +22,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         let documentListViewController = DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
-
-        let authViewController = AuthViewController.instantiateFullScreenFromStoryboard(.main)
-
         documentListViewController?.webSocketManager = webSocketManager
-        authViewController?.webSocketManager = webSocketManager
 
         window?.rootViewController = AuthViewModel().currentUser != nil
             ? documentListViewController
-            : authViewController
+            : AuthViewController.instantiateFullScreenFromStoryboard(.main)
     }
 
     func changeRootViewController(newRootViewController: UIViewController, animated: Bool = true) {
@@ -46,6 +42,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                               options: [.transitionCrossDissolve],
                               animations: nil,
                               completion: nil)
+        }
+
+        if newRootViewController is DocumentListViewController {
+            guard let userId = AuthViewModel().currentUser?.id else {
+                AnnotatoLogger.error("Unable to retrieve user id.", context: "SceneDelegate::changeRootViewController")
+                return
+            }
+
+            webSocketManager.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId))
         }
     }
 
