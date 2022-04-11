@@ -15,10 +15,6 @@ class UsersPersistenceManager: UsersPersistence {
     func getUser(userId: String) async -> AnnotatoUser? {
         let remoteUser = await remotePersistence.users.getUser(userId: userId)
 
-        if remoteUser == nil {
-            return await localPersistence.users.getUser(userId: userId)
-        }
-
         return remoteUser
     }
 }

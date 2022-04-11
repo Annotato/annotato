@@ -15,6 +15,7 @@ class AnnotatoAuth {
 
     init() {
         self.authService = FirebaseAuth()
+        self.currentUser = fetchLocalUserCredentials()
 
         setUser()
         setUpSubscribers()
@@ -42,9 +43,7 @@ class AnnotatoAuth {
         Task {
             self.currentUser = await usersPersistenceManager.getUser(userId: userId)
 
-            if let currentUser = currentUser {
-                storeCredentialsLocally(user: currentUser)
-            }
+            storeCredentialsLocally()
         }
     }
 
@@ -88,12 +87,22 @@ extension AnnotatoAuth {
         "savedUser"
     }
 
-    func storeCredentialsLocally(user: AnnotatoUser) {
-        guard let encodedUser = try? JSONCustomEncoder().encode(user) else {
+    private func storeCredentialsLocally() {
+        guard let currentUser = currentUser,
+              let encodedUser = try? JSONCustomEncoder().encode(currentUser) else {
             return
         }
 
         UserDefaults.standard.set(encodedUser, forKey: savedUserKey)
+    }
+
+    private func fetchLocalUserCredentials() -> AnnotatoUser? {
+        guard let savedUser = UserDefaults.standard.object(forKey: savedUserKey) as? Data,
+              let decodedUser = try? JSONCustomDecoder().decode(AnnotatoUser.self, from: savedUser) else {
+            return nil
+        }
+
+        return decodedUser
     }
 
     private func purgeLocalCredentials() {
