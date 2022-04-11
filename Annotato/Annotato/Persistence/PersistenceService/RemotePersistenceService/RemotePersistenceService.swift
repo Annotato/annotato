@@ -31,7 +31,7 @@ extension RemotePersistenceService {
         RemoteDocumentSharesPersistence()
     }
 
-    var users: UsersPersistence {
+    var users: UsersRemotePersistence {
         RemoteUsersPersistence()
     }
 }
