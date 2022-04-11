@@ -76,8 +76,7 @@ struct ConflictResolver<Model: ConflictResolvable> {
                 resolution.localUpdate.append(serverModel)
                 resolution.nonConflictingModels.append(serverModel)
             } else {
-                let modifiedLocalAnnotation = localModel.clone()
-                resolution.conflictingModels.append((modifiedLocalAnnotation, serverModel))
+                resolution.conflictingModels.append((localModel, serverModel))
             }
         }
     }
