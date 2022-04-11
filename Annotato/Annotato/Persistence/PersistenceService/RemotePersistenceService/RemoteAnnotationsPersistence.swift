@@ -47,14 +47,27 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
-        // TODO: Needs to be implemented, by sending a websocket message with new message type I made
-        fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotation: This function should not be called")
+        guard let senderId = AnnotatoAuth().currentUser?.uid else {
+            return nil
+        }
+
+        let webSocketMessage = AnnotatoCudAnnotationMessage(
+            senderId: senderId,
+            subtype: .createOrUpdateAnnotation,
+            annotation: annotation
+        )
+        WebSocketManager.shared.send(message: webSocketMessage)
+
+        // We do not get any response for the sender from the websocket
         return nil
     }
 
     func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
-        // TODO: Needs to be implemented, by sending a websocket message with new message type I made
-        fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotations: This function should not be called")
+        for annotation in annotations {
+            await _ = createOrUpdateAnnotation(annotation: annotation)
+        }
+
+        // We do not get any response for the sender from the websocket
         return nil
     }
 }

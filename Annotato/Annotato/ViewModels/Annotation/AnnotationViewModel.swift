@@ -313,11 +313,9 @@ extension AnnotationViewModel {
             AnnotatoLogger.error("Save merge conflict button pressed while offline")
             return
         }
-        /*
         Task {
             await annotationsPersistenceManager.createOrUpdateAnnotation(annotation: model)
         }
-         */
         resolveBySave = true
         isResolving = false
     }

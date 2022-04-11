@@ -42,7 +42,8 @@ struct DocumentController {
         return DocumentViewModel(model: document)
     }
 
-    /// This function, which is called when we tap the back button in document edit view, will save the document and all annotations in it,
+    /// This function, which is called when we tap the back button in document edit view, will save the
+    /// document and all annotations in it,
     /// including deleted annotations, however, it will not save annotations that are still in merge conflict state
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
         let updatedDocument = await documentsPersistenceManager.updateDocument(document: document.model)

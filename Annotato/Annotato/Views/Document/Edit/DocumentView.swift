@@ -70,17 +70,6 @@ class DocumentView: UIView {
                 self?.replaceSelectionBox(newSelectionBoxFrame: newSelectionBoxFrame)
             }
         }).store(in: &cancellables)
-
-        viewModel.$connectivityChanged.sink(receiveValue: { [weak self] _ in
-            // This means that the document view model has changed the annotations in
-            // the document, so we re-render again
-            guard let self = self else {
-                return
-            }
-            self.removeAllAnnotationsFromView()
-            self.annotationViews = []
-            self.initializeInitialAnnotationViews()
-        }).store(in: &cancellables)
     }
 
     private func replaceSelectionBox(newSelectionBoxFrame: CGRect) {

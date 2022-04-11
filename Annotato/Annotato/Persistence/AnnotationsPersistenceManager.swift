@@ -12,6 +12,7 @@ class AnnotationsPersistenceManager: AnnotationsPersistence {
     @Published private(set) var newAnnotation: Annotation?
     @Published private(set) var updatedAnnotation: Annotation?
     @Published private(set) var deletedAnnotation: Annotation?
+    @Published private(set) var createdOrUpdatedAnnotation: Annotation?
 
     init() {
         setUpSubscribers()
@@ -121,6 +122,9 @@ extension AnnotationsPersistenceManager {
         case .deleteAnnotation:
             deletedAnnotation = annotation
             AnnotatoLogger.info("Annotation was deleted. \(annotation)")
+        case .createOrUpdateAnnotation:
+            createdOrUpdatedAnnotation = annotation
+            AnnotatoLogger.info("Annotation was created or updated. \(annotation)")
         }
     }
 
@@ -128,5 +132,6 @@ extension AnnotationsPersistenceManager {
         newAnnotation = nil
         updatedAnnotation = nil
         deletedAnnotation = nil
+        createdOrUpdatedAnnotation = nil
     }
 }

@@ -18,6 +18,16 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpSubscribers()
+    }
+
+    private func setUpSubscribers() {
+        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            self.initializeSubviews()
+        }).store(in: &cancellables)
     }
 
     func initializeSubviews() {
