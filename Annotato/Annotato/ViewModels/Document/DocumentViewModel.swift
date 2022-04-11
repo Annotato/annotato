@@ -4,7 +4,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
-    private let annotationsPersistenceManager = AnnotationsPersistenceManager()
+    private let annotationsPersistenceManager: AnnotationsPersistenceManager
+    private let webSocketManager: WebSocketManager?
 
     let model: Document
 
@@ -18,12 +19,14 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
 
-    init(model: Document) {
+    init(model: Document, webSocketManager: WebSocketManager?) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
+        self.webSocketManager = webSocketManager
+        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
-            .map { AnnotationViewModel(model: $0, document: self) }
+            .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
 
         setUpSubscribers()
     }
@@ -96,7 +99,8 @@ extension DocumentViewModel {
 
         model.addAnnotation(annotation: newAnnotation)
 
-        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self,
+                                                      webSocketManager: webSocketManager)
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
             let boundsMidX = bounds.midX
             let annotationY = annotationViewModel.frame.midY
@@ -120,7 +124,8 @@ extension DocumentViewModel {
         }
 
         self.model.addAnnotation(annotation: newAnnotation)
-        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self)
+        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self,
+                                                      webSocketManager: webSocketManager)
         self.annotations.append(annotationViewModel)
         self.addedAnnotation = annotationViewModel
     }
@@ -139,7 +144,8 @@ extension DocumentViewModel {
 
     private func receiveRestoreDeletedAnnotation(annotation: Annotation) {
         model.receiveRestoreDeletedAnnotation(annotation: annotation)
-        let annotationViewModel = AnnotationViewModel(model: annotation, document: self)
+        let annotationViewModel = AnnotationViewModel(model: annotation, document: self,
+                                                      webSocketManager: webSocketManager)
         self.annotations.append(annotationViewModel)
         self.addedAnnotation = annotationViewModel
     }

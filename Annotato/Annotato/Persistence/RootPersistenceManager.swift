@@ -3,17 +3,20 @@ import Combine
 import AnnotatoSharedLibrary
 
 class RootPersistenceManager: ObservableObject {
+    private let webSocketManager: WebSocketManager?
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var crudDocumentMessage: Data?
     @Published private(set) var crudAnnotationMessage: Data?
 
-    init() {
+    init(webSocketManager: WebSocketManager?) {
+        self.webSocketManager = webSocketManager
+
         setUpSubscribers()
     }
 
     private func setUpSubscribers() {
-        WebSocketManager.shared.$message.sink { [weak self] message in
+        webSocketManager?.$message.sink { [weak self] message in
             guard let message = message else {
                 return
             }

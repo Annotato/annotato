@@ -1,13 +1,12 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-class UsersPersistenceManager: UsersPersistence {
-    private let remotePersistence = RemotePersistenceService()
-    private let localPersistence = LocalPersistenceService.shared
+class UsersPersistenceManager {
+    private let remoteUsersPersistence = RemoteUsersPersistence()
     private let savedUserKey = "savedUser"
 
     func createUser(user: AnnotatoUser) async -> AnnotatoUser? {
-        guard let remoteUser = await remotePersistence.users.createUser(user: user) else {
+        guard let remoteUser = await remoteUsersPersistence.createUser(user: user) else {
             return nil
         }
 
@@ -15,7 +14,7 @@ class UsersPersistenceManager: UsersPersistence {
     }
 
     func getUser(userId: String) async -> AnnotatoUser? {
-        let remoteUser = await remotePersistence.users.getUser(userId: userId)
+        let remoteUser = await remoteUsersPersistence.getUser(userId: userId)
 
         return remoteUser
     }

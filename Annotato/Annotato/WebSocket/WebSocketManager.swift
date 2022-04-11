@@ -2,26 +2,17 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class WebSocketManager: ObservableObject {
-    static let shared = WebSocketManager()
-
     private(set) var socket: URLSessionWebSocketTask?
 
     @Published private(set) var message: Data?
 
-    private init() { }
-
-    func setUpSocket() {
-        guard let userId = AuthViewModel().currentUser?.id else {
-            AnnotatoLogger.error("Unable to retrieve user id.", context: "WebSocketManager::setUpSocket")
-            return
-        }
-
-        guard let url = URL(string: "\(RemotePersistenceService.baseWsAPIUrl)/ws/\(userId)") else {
+    func setUpSocket(urlString: String) {
+        guard let url = URL(string: urlString) else {
             return
         }
 
         socket = URLSession(configuration: .default).webSocketTask(with: url)
-        AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
+        AnnotatoLogger.info("Websocket connection for user setup successfully!")
 
         listen()
         socket?.resume()

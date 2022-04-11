@@ -5,6 +5,8 @@ class AuthViewController: UIViewController, Navigable {
     private let auth = AuthViewModel()
     private var cancellables: Set<AnyCancellable> = []
 
+    var webSocketManager: WebSocketManager?
+
     // Storyboard UI Elements
     @IBOutlet private var formSegmentedControl: UISegmentedControl!
     @IBOutlet private var emailTextField: UITextField!
@@ -132,7 +134,12 @@ extension AuthViewController: AlertPresentable {
     }
 
     func logInDidSucceed() {
-        WebSocketManager.shared.setUpSocket()
+        guard let userId = AuthViewModel().currentUser?.id else {
+            AnnotatoLogger.error("Unable to retrieve user id.", context: "AuthViewController::logInDidSucceed")
+            return
+        }
+
+        webSocketManager?.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId))
         goToDocumentList(asNewRootViewController: true)
     }
 

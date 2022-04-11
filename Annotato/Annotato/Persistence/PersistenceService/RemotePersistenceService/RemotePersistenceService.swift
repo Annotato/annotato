@@ -12,22 +12,8 @@ struct RemotePersistenceService {
     private static let remoteApiWsEndpoint = "ws://178.128.111.22:80"
 
     static let baseWsAPIUrl = shouldUseLocalEndpoint ? localApiWsEndpoint : remoteApiWsEndpoint
-}
 
-extension RemotePersistenceService: PersistenceService {
-    var documents: DocumentsPersistence {
-        RemoteDocumentsPersistence()
-    }
-
-    var annotations: AnnotationsPersistence {
-        RemoteAnnotationsPersistence()
-    }
-
-    var documentShares: DocumentSharesPersistence {
-        RemoteDocumentSharesPersistence()
-    }
-
-    var users: UsersPersistence {
-        RemoteUsersPersistence()
+    static func generateWebSocketUrlString(userId: String) -> String {
+        "\(Self.baseWsAPIUrl)/ws/\(userId)"
     }
 }

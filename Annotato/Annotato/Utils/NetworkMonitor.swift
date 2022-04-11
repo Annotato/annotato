@@ -9,7 +9,7 @@ class NetworkMonitor: ObservableObject {
     private let queue = DispatchQueue.global()
     private let monitor = NWPathMonitor()
 
-    func start() {
+    func start(webSocketManager: WebSocketManager?) {
         monitor.start(queue: queue)
         monitor.pathUpdateHandler = { [weak self] path in
             AnnotatoLogger.info("Detected a change in internet connection status...")
@@ -22,7 +22,13 @@ class NetworkMonitor: ObservableObject {
 
             // If user goes from offline to online, re-establish websocket connection
             if !self.isConnected && isCurrentlyConnected {
-                WebSocketManager.shared.setUpSocket()
+                if let userId = AuthViewModel().currentUser?.id {
+                    AnnotatoLogger.error("Unable to retrieve user id.", context: "NetworkMonitor::start")
+
+                    webSocketManager?.setUpSocket(
+                        urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId)
+                    )
+                }
             }
 
             self.isConnected = isCurrentlyConnected

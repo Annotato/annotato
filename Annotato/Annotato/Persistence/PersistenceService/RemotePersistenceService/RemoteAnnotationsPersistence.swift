@@ -1,6 +1,12 @@
 import AnnotatoSharedLibrary
 
-struct RemoteAnnotationsPersistence: AnnotationsPersistence {
+struct RemoteAnnotationsPersistence {
+    private let webSocketManager: WebSocketManager?
+
+    init(webSocketManager: WebSocketManager?) {
+        self.webSocketManager = webSocketManager
+    }
+
     func createAnnotation(annotation: Annotation) async -> Annotation? {
         guard let senderId = AuthViewModel().currentUser?.id else {
             return nil
@@ -10,7 +16,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
             senderId: senderId, subtype: .createAnnotation, annotation: annotation
         )
 
-        WebSocketManager.shared.send(message: webSocketMessage)
+        webSocketManager?.send(message: webSocketMessage)
 
         // We do not get any response for the sender from the websocket
         return nil
@@ -25,7 +31,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
             senderId: senderId, subtype: .updateAnnotation, annotation: annotation
         )
 
-        WebSocketManager.shared.send(message: webSocketMessage)
+        webSocketManager?.send(message: webSocketMessage)
 
         // We do not get any response for the sender from the websocket
         return nil
@@ -40,7 +46,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
             senderId: senderId, subtype: .deleteAnnotation, annotation: annotation
         )
 
-        WebSocketManager.shared.send(message: webSocketMessage)
+        webSocketManager?.send(message: webSocketMessage)
 
         // We do not get any response for the sender from the websocket
         return nil

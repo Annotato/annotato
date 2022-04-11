@@ -6,7 +6,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class AnnotationViewModel: ObservableObject {
-    private let annotationsPersistenceManager = AnnotationsPersistenceManager()
+    private let annotationsPersistenceManager: AnnotationsPersistenceManager?
+    private let webSocketManager: WebSocketManager?
 
     private weak var document: DocumentViewModel?
 
@@ -36,13 +37,20 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
 
-    init(model: Annotation, document: DocumentViewModel, palette: AnnotationPaletteViewModel? = nil) {
+    init(
+        model: Annotation,
+        document: DocumentViewModel,
+        webSocketManager: WebSocketManager?,
+        palette: AnnotationPaletteViewModel? = nil
+    ) {
         self.model = model
         self.document = document
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: .zero, width: model.width, height: 50.0)
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
+        self.webSocketManager = webSocketManager
+        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.palette.parentViewModel = self
 
         populatePartViewModels(model: model)
@@ -77,7 +85,7 @@ class AnnotationViewModel: ObservableObject {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
         Task {
-            await annotationsPersistenceManager.updateAnnotation(annotation: model)
+            await annotationsPersistenceManager?.updateAnnotation(annotation: model)
         }
     }
 
@@ -199,7 +207,7 @@ extension AnnotationViewModel {
         }
 
         Task {
-            await annotationsPersistenceManager.updateAnnotation(annotation: model)
+            await annotationsPersistenceManager?.updateAnnotation(annotation: model)
         }
     }
 

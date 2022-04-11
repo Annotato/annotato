@@ -1,7 +1,15 @@
 import Foundation
 
 struct DocumentController {
-    private let documentsPersistenceManager = DocumentsPersistenceManager()
+    private let webSocketManager: WebSocketManager?
+    private let documentsPersistenceManager: DocumentsPersistenceManager
+
+    init(webSocketManager: WebSocketManager?) {
+        self.webSocketManager = webSocketManager
+        self.documentsPersistenceManager = DocumentsPersistenceManager(
+            webSocketManager: webSocketManager
+        )
+    }
 
     func loadOwnDocuments(userId: String) async -> [DocumentListCellViewModel] {
         let documents = await documentsPersistenceManager.getOwnDocuments(userId: userId)
@@ -39,15 +47,18 @@ struct DocumentController {
             return nil
         }
 
-        return DocumentViewModel(model: document)
+        return DocumentViewModel(model: document, webSocketManager: webSocketManager)
     }
 
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
-        let updatedDocument = await documentsPersistenceManager.updateDocument(document: document.model)
+        let updatedDocument = await documentsPersistenceManager.updateDocument(
+            document: document.model
+        )
+
         guard let updatedDocument = updatedDocument else {
             return nil
         }
 
-        return DocumentViewModel(model: updatedDocument)
+        return DocumentViewModel(model: updatedDocument, webSocketManager: webSocketManager)
     }
 }

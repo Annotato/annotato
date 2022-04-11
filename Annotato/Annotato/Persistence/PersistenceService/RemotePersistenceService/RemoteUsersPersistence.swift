@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-struct RemoteUsersPersistence: UsersPersistence {
+struct RemoteUsersPersistence {
     private static let usersUrl = "\(RemotePersistenceService.baseAPIUrl)/users"
 
     private var httpService: AnnotatoHTTPService

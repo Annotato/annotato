@@ -1,14 +1,16 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct RemoteDocumentsPersistence: DocumentsPersistence {
+struct RemoteDocumentsPersistence {
     private static let documentsUrl = "\(RemotePersistenceService.baseAPIUrl)/documents"
     private static let sharedDocumentsUrl = "\(documentsUrl)/shared"
 
-    private var httpService: AnnotatoHTTPService
+    private let httpService: AnnotatoHTTPService
+    private let webSocketManager: WebSocketManager?
 
-    init() {
+    init(webSocketManager: WebSocketManager?) {
         httpService = URLSessionHTTPService()
+        self.webSocketManager = webSocketManager
     }
 
     // MARK: LIST OWN
