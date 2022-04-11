@@ -6,5 +6,3 @@ protocol ConflictResolvable: Identifiable, Equatable, Timestampable {
 
     func clone() -> Self
 }
-
-extension Annotation: ConflictResolvable { }
