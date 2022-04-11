@@ -30,6 +30,8 @@ class AnnotationWebSocketController {
                 _ = await self.handleUpdateAnnotation(userId: userId, db: db, annotation: annotation)
             case .deleteAnnotation:
                 _ = await self.handleDeleteAnnotation(userId: userId, db: db, annotation: annotation)
+            case .createOrUpdateAnnotation:
+                _ = await self.handleCreateOrUpdateAnnotation(userId: userId, db: db, annotation: annotation)
             }
 
         } catch {
@@ -106,6 +108,37 @@ class AnnotationWebSocketController {
             return deletedAnnotation
         } catch {
             self.logger.error("Error when deleting annotation. \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    private func handleCreateOrUpdateAnnotation(
+        userId: String,
+        db: Database,
+        annotation: Annotation
+    ) async -> Annotation? {
+        do {
+            self.logger.info("Processing create or update annotation... \(String(describing: annotation))")
+            let createdOrUpdatedAnnotation: Annotation
+
+            if await annotationDataAccess.canFindWithDeleted(db: db, annotationId: annotation.id) {
+                createdOrUpdatedAnnotation = try await annotationDataAccess.update(
+                    db: db, annotationId: annotation.id, annotation: annotation)
+            } else {
+                createdOrUpdatedAnnotation = try await annotationDataAccess.create(db: db, annotation: annotation)
+            }
+
+            let response = AnnotatoCudAnnotationMessage(
+                senderId: userId,
+                subtype: .createOrUpdateAnnotation,
+                annotation: createdOrUpdatedAnnotation
+            )
+
+            await self.sendToAllAppropriateClients(
+                db: db, userId: userId, annotation: createdOrUpdatedAnnotation, message: response)
+            return createdOrUpdatedAnnotation
+        } catch {
+            self.logger.error("Error when creating or updating annotation. \(String(describing: error))")
             return nil
         }
     }
