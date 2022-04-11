@@ -57,7 +57,7 @@ class AnnotationViewModel: ObservableObject {
         self.mergeConflictPalette = mergeConflictsPalette
 
         self.palette = palette ?? AnnotationPaletteViewModel(
-            origin: CGPoint(x: 0, y: mergeConflictsPalette.height), width: model.width, height: 50.0)
+            origin: CGPoint(x: 0.0, y: mergeConflictsPalette.height), width: model.width, height: 50.0)
 
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
@@ -300,6 +300,9 @@ extension AnnotationViewModel {
 
 extension AnnotationViewModel {
     func didDelete() {
+        guard !isResolving else {
+            return
+        }
         isRemoved = true
         selectionBox.didDelete()
         document?.removeAnnotation(annotation: self)
@@ -310,9 +313,11 @@ extension AnnotationViewModel {
             AnnotatoLogger.error("Save merge conflict button pressed while offline")
             return
         }
+        /*
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotation(annotation: model)
+            await annotationsPersistenceManager.createOrUpdateAnnotation(annotation: model)
         }
+         */
         resolveBySave = true
         isResolving = false
     }
@@ -325,9 +330,11 @@ extension AnnotationViewModel {
         selectionBox.didDelete()
         document?.removeAnnotationWithoutPersistence(annotation: self)
         model.setDeletedAt(to: Date())
+        /*
         Task {
-            await AnnotatoPersistenceWrapper.currentPersistenceService.createOrUpdateAnnotation(annotation: model)
+            await annotationsPersistenceManager.createOrUpdateAnnotation(annotation: model)
         }
+         */
         isRemoved = true
         isResolving = false
     }

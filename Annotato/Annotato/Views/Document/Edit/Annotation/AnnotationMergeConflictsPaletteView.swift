@@ -61,5 +61,6 @@ extension AnnotationMergeConflictsPaletteView {
 
     func resetDimensions() {
         viewModel.resetDimensions()
+        self.frame = viewModel.frame
     }
 }

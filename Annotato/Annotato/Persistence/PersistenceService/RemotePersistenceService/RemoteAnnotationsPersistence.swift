@@ -46,12 +46,14 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
         return nil
     }
 
-    func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
+    func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
+        // TODO: Needs to be implemented, by sending a websocket message with new message type I made
         fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotation: This function should not be called")
         return nil
     }
 
-    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
+    func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
+        // TODO: Needs to be implemented, by sending a websocket message with new message type I made
         fatalError("RemoteAnnotationsPersistence::createOrUpdateAnnotations: This function should not be called")
         return nil
     }

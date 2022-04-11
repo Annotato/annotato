@@ -19,8 +19,6 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var selectionBoxFrame: CGRect?
     @Published private(set) var connectivityChanged = false
 
-    private var cancellables: Set<AnyCancellable> = []
-
     init(model: Document) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)

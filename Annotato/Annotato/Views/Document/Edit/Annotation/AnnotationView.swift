@@ -37,9 +37,8 @@ class AnnotationView: UIView {
     }
 
     private func initializeSubviews() {
-        addSubview(palette)
         addSubview(mergeConflictsPalette)
-        print(mergeConflictsPalette.viewModel)
+        addSubview(palette)
         setUpScrollAndParts()
         populateParts()
     }
@@ -54,6 +53,21 @@ class AnnotationView: UIView {
 
         parts.axis = .vertical
         scroll.addSubview(parts)
+        parts.leadingAnchor.constraint(equalTo: scroll.leadingAnchor).isActive = true
+        parts.trailingAnchor.constraint(equalTo: scroll.trailingAnchor).isActive = true
+        parts.bottomAnchor.constraint(equalTo: scroll.bottomAnchor).isActive = true
+        parts.topAnchor.constraint(equalTo: scroll.topAnchor).isActive = true
+        parts.widthAnchor.constraint(equalTo: scroll.widthAnchor).isActive = true
+    }
+
+    private func test() {
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        scroll.topAnchor.constraint(equalTo: palette.bottomAnchor).isActive = true
+        scroll.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        scroll.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+
+        parts.axis = .vertical
         parts.leadingAnchor.constraint(equalTo: scroll.leadingAnchor).isActive = true
         parts.trailingAnchor.constraint(equalTo: scroll.trailingAnchor).isActive = true
         parts.bottomAnchor.constraint(equalTo: scroll.bottomAnchor).isActive = true
@@ -131,6 +145,9 @@ class AnnotationView: UIView {
             }
         }.store(in: &cancellables)
 
+        /*
+         swsdfiftlint:disable closure_body_length
+         */
         viewModel.$isResolving.sink { [weak self] isResolving in
             guard !isResolving else {
                 return
@@ -143,13 +160,11 @@ class AnnotationView: UIView {
                 self.mergeConflictsPalette.resetDimensions()
                 self.mergeConflictsPalette.removeFromSuperview()
 
-                let paletteNewCenter = CGPoint(
-                    x: self.palette.center.x, y: self.palette.center.y - mergeConflictsHeight)
-                self.palette.center = paletteNewCenter
+                self.palette.translateUp(by: mergeConflictsHeight)
 
-                let scrollViewNewCenter = CGPoint(
-                    x: self.scroll.center.x, y: self.scroll.center.y - mergeConflictsHeight)
-                self.scroll.center = scrollViewNewCenter
+                let scrollNewOrigin = CGPoint(
+                    x: self.scroll.frame.origin.x, y: self.scroll.frame.origin.y - mergeConflictsHeight)
+                self.scroll.frame = CGRect(origin: scrollNewOrigin, size: self.scroll.frame.size)
             }
         }.store(in: &cancellables)
     }

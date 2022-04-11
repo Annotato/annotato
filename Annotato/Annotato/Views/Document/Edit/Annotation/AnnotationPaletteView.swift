@@ -146,4 +146,9 @@ extension AnnotationPaletteView {
     private func didTapMinimizeOrMaximizeButton(_ button: UIButton) {
         viewModel.didSelectMinimizeOrMaximizeButton()
     }
+
+    func translateUp(by yTranslation: CGFloat) {
+        viewModel.translateUp(by: yTranslation)
+        self.frame = viewModel.frame
+    }
 }

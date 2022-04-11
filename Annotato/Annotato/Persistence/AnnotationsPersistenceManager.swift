@@ -38,14 +38,27 @@ class AnnotationsPersistenceManager: AnnotationsPersistence {
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)
     }
 
-    func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
-        fatalError("PersistenceManager::createOrUpdateAnnotation: This function should not be called")
-        return nil
+    func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
+        print("Calling create or update annotation in annotations persistence manager")
+        print("Annotation: \(annotation)\n----------\n")
+        _ = await remotePersistence.annotations.createOrUpdateAnnotation(annotation: annotation)
+
+        if annotation.createdAt == nil {
+            annotation.setCreatedAt()
+        }
+        print("Setting updated at")
+        annotation.setUpdatedAt()
+        return await localPersistence.annotations.createOrUpdateAnnotation(annotation: annotation)
     }
 
-    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
-        fatalError("PersistenceManager::createOrUpdateAnnotations: This function should not be called")
-        return nil
+    func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
+        var resultingAnnotation: [Annotation] = []
+        for annotation in annotations {
+            if let newAnnotation = await createOrUpdateAnnotation(annotation: annotation) {
+                resultingAnnotation.append(newAnnotation)
+            }
+        }
+        return resultingAnnotation
     }
 }
 
