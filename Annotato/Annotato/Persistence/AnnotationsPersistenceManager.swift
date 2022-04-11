@@ -2,7 +2,8 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class AnnotationsPersistenceManager: AnnotationsRemotePersistence {
+class AnnotationsPersistenceManager {
+    private let webSocketManager: WebSocketManager?
     private let rootPersistenceManager: RootPersistenceManager
 
     private let remotePersistence = RemotePersistenceService()
@@ -14,12 +15,13 @@ class AnnotationsPersistenceManager: AnnotationsRemotePersistence {
     @Published private(set) var deletedAnnotation: Annotation?
 
     init(webSocketManager: WebSocketManager?) {
+        self.webSocketManager = webSocketManager
         self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
 
         setUpSubscribers()
     }
 
-    func createAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
+    func createAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.createAnnotation(
             annotation: annotation, webSocketManager: webSocketManager
         )
@@ -28,7 +30,7 @@ class AnnotationsPersistenceManager: AnnotationsRemotePersistence {
         return await localPersistence.annotations.createAnnotation(annotation: annotation)
     }
 
-    func updateAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
+    func updateAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.updateAnnotation(
             annotation: annotation, webSocketManager: webSocketManager
         )
@@ -37,7 +39,7 @@ class AnnotationsPersistenceManager: AnnotationsRemotePersistence {
         return await localPersistence.annotations.updateAnnotation(annotation: annotation)
     }
 
-    func deleteAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
+    func deleteAnnotation(annotation: Annotation) async -> Annotation? {
         _ = await remotePersistence.annotations.deleteAnnotation(
             annotation: annotation, webSocketManager: webSocketManager
         )

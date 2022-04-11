@@ -114,8 +114,7 @@ extension DocumentViewModel {
         addedAnnotation = annotationViewModel
 
         Task {
-            await annotationsPersistenceManager.createAnnotation(annotation: newAnnotation,
-                                                                 webSocketManager: webSocketManager)
+            await annotationsPersistenceManager.createAnnotation(annotation: newAnnotation)
         }
     }
 
@@ -156,8 +155,7 @@ extension DocumentViewModel {
         annotations.removeAll(where: { $0.id == annotation.model.id })
 
         Task {
-            await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model,
-                                                                 webSocketManager: webSocketManager)
+            await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model)
         }
     }
 

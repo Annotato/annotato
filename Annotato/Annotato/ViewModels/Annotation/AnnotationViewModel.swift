@@ -85,7 +85,7 @@ class AnnotationViewModel: ObservableObject {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
         Task {
-            await annotationsPersistenceManager?.updateAnnotation(annotation: model, webSocketManager: webSocketManager)
+            await annotationsPersistenceManager?.updateAnnotation(annotation: model)
         }
     }
 
@@ -207,7 +207,7 @@ extension AnnotationViewModel {
         }
 
         Task {
-            await annotationsPersistenceManager?.updateAnnotation(annotation: model, webSocketManager: webSocketManager)
+            await annotationsPersistenceManager?.updateAnnotation(annotation: model)
         }
     }
 

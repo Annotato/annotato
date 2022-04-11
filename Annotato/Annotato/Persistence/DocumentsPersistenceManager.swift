@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class DocumentsPersistenceManager: DocumentsRemotePersistence {
+class DocumentsPersistenceManager {
     private let rootPersistenceManager: RootPersistenceManager
 
     private let remotePersistence = RemotePersistenceService()

@@ -1,12 +1,14 @@
 import Foundation
 
 struct DocumentController {
-    private let documentsPersistenceManager: DocumentsPersistenceManager
     private let webSocketManager: WebSocketManager?
+    private let documentsPersistenceManager: DocumentsPersistenceManager
 
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
-        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
+        self.documentsPersistenceManager = DocumentsPersistenceManager(
+            webSocketManager: webSocketManager
+        )
     }
 
     func loadOwnDocuments(userId: String) async -> [DocumentListCellViewModel] {
@@ -52,6 +54,7 @@ struct DocumentController {
         let updatedDocument = await documentsPersistenceManager.updateDocument(
             document: document.model, webSocketManager: webSocketManager
         )
+
         guard let updatedDocument = updatedDocument else {
             return nil
         }

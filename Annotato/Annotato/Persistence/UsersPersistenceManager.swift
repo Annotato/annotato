@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-class UsersPersistenceManager: UsersRemotePersistence {
+class UsersPersistenceManager {
     private let remotePersistence = RemotePersistenceService()
     private let savedUserKey = "savedUser"
 
