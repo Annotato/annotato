@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalAnnotationHandwritingEntityDataAccess {
-    let context = CoreDataManager.sharedContext
+    let context = CoreDataManager.coreDataContext
 
     func read(annotationHandwritingEntityId: UUID) -> AnnotationHandwritingEntity? {
         context.performAndWait {
