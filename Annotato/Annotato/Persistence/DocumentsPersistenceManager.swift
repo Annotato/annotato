@@ -80,16 +80,6 @@ class DocumentsPersistenceManager {
 
         return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
     }
-
-    func createOrUpdateDocument(document: Document) -> Document? {
-        fatalError("PersistenceManager::createOrUpdateDocument: This function should not be called")
-        return nil
-    }
-
-    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        fatalError("PersistenceManager::createOrUpdateDocuments: This function should not be called")
-        return nil
-    }
 }
 
 // MARK: Websocket
