@@ -52,7 +52,7 @@ struct DocumentController {
 
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
         let updatedDocument = await documentsPersistenceManager.updateDocument(
-            document: document.model, webSocketManager: webSocketManager
+            document: document.model
         )
 
         guard let updatedDocument = updatedDocument else {

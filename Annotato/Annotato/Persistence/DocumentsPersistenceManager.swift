@@ -3,6 +3,7 @@ import Foundation
 import Combine
 
 class DocumentsPersistenceManager {
+    private let webSocketManager: WebSocketManager?
     private let rootPersistenceManager: RootPersistenceManager
 
     private let remotePersistence = RemotePersistenceService()
@@ -14,6 +15,7 @@ class DocumentsPersistenceManager {
     @Published private(set) var deletedDocument: Document?
 
     init(webSocketManager: WebSocketManager?) {
+        self.webSocketManager = webSocketManager
         self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
 
         setUpSubscribers()
@@ -55,7 +57,7 @@ class DocumentsPersistenceManager {
         return await localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
     }
 
-    func updateDocument(document: Document, webSocketManager: WebSocketManager?) async -> Document? {
+    func updateDocument(document: Document) async -> Document? {
         let remoteUpdatedDocument = await remotePersistence.documents.updateDocument(
             document: document, webSocketManager: webSocketManager
         )
@@ -67,7 +69,7 @@ class DocumentsPersistenceManager {
         return await localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
     }
 
-    func deleteDocument(document: Document, webSocketManager: WebSocketManager?) async -> Document? {
+    func deleteDocument(document: Document) async -> Document? {
         let remoteDeletedDocument = await remotePersistence.documents.deleteDocument(
             document: document, webSocketManager: webSocketManager
         )
