@@ -2,13 +2,9 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class WebSocketManager: ObservableObject {
-    static let shared = WebSocketManager()
-
     private(set) var socket: URLSessionWebSocketTask?
 
     @Published private(set) var message: Data?
-
-    private init() { }
 
     func setUpSocket() {
         guard let userId = AuthViewModel().currentUser?.id else {

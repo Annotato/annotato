@@ -2,8 +2,8 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class AnnotationsPersistenceManager: AnnotationsPersistence {
-    private let rootPersistenceManager = RootPersistenceManager()
+class AnnotationsPersistenceManager: AnnotationsRemotePersistence {
+    private let rootPersistenceManager: RootPersistenceManager
 
     private let remotePersistence = RemotePersistenceService()
     private let localPersistence = LocalPersistenceService.shared
@@ -13,26 +13,34 @@ class AnnotationsPersistenceManager: AnnotationsPersistence {
     @Published private(set) var updatedAnnotation: Annotation?
     @Published private(set) var deletedAnnotation: Annotation?
 
-    init() {
+    init(webSocketManager: WebSocketManager?) {
+        self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
+
         setUpSubscribers()
     }
 
-    func createAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remotePersistence.annotations.createAnnotation(annotation: annotation)
+    func createAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
+        _ = await remotePersistence.annotations.createAnnotation(
+            annotation: annotation, webSocketManager: webSocketManager
+        )
 
         annotation.setCreatedAt()
         return await localPersistence.annotations.createAnnotation(annotation: annotation)
     }
 
-    func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remotePersistence.annotations.updateAnnotation(annotation: annotation)
+    func updateAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
+        _ = await remotePersistence.annotations.updateAnnotation(
+            annotation: annotation, webSocketManager: webSocketManager
+        )
 
         annotation.setUpdatedAt()
         return await localPersistence.annotations.updateAnnotation(annotation: annotation)
     }
 
-    func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remotePersistence.annotations.deleteAnnotation(annotation: annotation)
+    func deleteAnnotation(annotation: Annotation, webSocketManager: WebSocketManager?) async -> Annotation? {
+        _ = await remotePersistence.annotations.deleteAnnotation(
+            annotation: annotation, webSocketManager: webSocketManager
+        )
 
         annotation.setDeletedAt()
         return await localPersistence.annotations.deleteAnnotation(annotation: annotation)

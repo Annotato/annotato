@@ -5,6 +5,8 @@ class AuthViewController: UIViewController, Navigable {
     private let auth = AuthViewModel()
     private var cancellables: Set<AnyCancellable> = []
 
+    var webSocketManager: WebSocketManager?
+
     // Storyboard UI Elements
     @IBOutlet private var formSegmentedControl: UISegmentedControl!
     @IBOutlet private var emailTextField: UITextField!
@@ -132,7 +134,7 @@ extension AuthViewController: AlertPresentable {
     }
 
     func logInDidSucceed() {
-        WebSocketManager.shared.setUpSocket()
+        webSocketManager?.setUpSocket()
         goToDocumentList(asNewRootViewController: true)
     }
 

@@ -33,16 +33,16 @@ struct LocalPersistenceService {
     }
 }
 
-extension LocalPersistenceService: PersistenceService {
-    var documents: DocumentsPersistence {
+extension LocalPersistenceService {
+    var documents: DocumentsLocalPersistence {
         LocalDocumentsPersistence()
     }
 
-    var documentShares: DocumentSharesPersistence {
+    var documentShares: DocumentSharesRemotePersistence {
         LocalDocumentSharesPersistence()
     }
 
-    var annotations: AnnotationsPersistence {
+    var annotations: AnnotationsLocalPersistence {
         LocalAnnotationsPersistence()
     }
 

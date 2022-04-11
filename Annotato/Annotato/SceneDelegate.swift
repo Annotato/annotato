@@ -3,6 +3,8 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
+    private let webSocketManager = WebSocketManager()
+
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions
@@ -19,21 +21,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
 
+        let documentListViewController = DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
+
+        let authViewController = AuthViewController.instantiateFullScreenFromStoryboard(.main)
+
+        documentListViewController?.webSocketManager = webSocketManager
+        authViewController?.webSocketManager = webSocketManager
+
         window?.rootViewController = AuthViewModel().currentUser != nil
-            ? DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
-            : AuthViewController.instantiateFullScreenFromStoryboard(.main)
-    }
-
-    private func getCurrentTopViewController() -> UIViewController? {
-        guard var currentTopVC = window?.rootViewController else {
-            return nil
-        }
-
-        while let presentedViewController = currentTopVC.presentedViewController {
-            currentTopVC = presentedViewController
-        }
-
-        return currentTopVC
+            ? documentListViewController
+            : authViewController
     }
 
     func changeRootViewController(newRootViewController: UIViewController, animated: Bool = true) {
@@ -75,7 +72,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to undo the changes made on entering the background.
 
         // Set up socket when application launches from background (Multi-tasking)
-        WebSocketManager.shared.setUpSocket()
+        webSocketManager.setUpSocket()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

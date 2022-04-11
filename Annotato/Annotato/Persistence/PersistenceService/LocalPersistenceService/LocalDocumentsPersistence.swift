@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct LocalDocumentsPersistence: DocumentsPersistence {
+struct LocalDocumentsPersistence: DocumentsLocalPersistence {
     private let localDocumentEntityDataAccess = LocalDocumentEntityDataAccess()
 
     func getOwnDocuments(userId: String) -> [Document]? {

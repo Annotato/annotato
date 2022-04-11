@@ -2,8 +2,8 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class DocumentsPersistenceManager: DocumentsPersistence {
-    private let rootPersistenceManager = RootPersistenceManager()
+class DocumentsPersistenceManager: DocumentsRemotePersistence {
+    private let rootPersistenceManager: RootPersistenceManager
 
     private let remotePersistence = RemotePersistenceService()
     private let localPersistence = LocalPersistenceService.shared
@@ -13,7 +13,9 @@ class DocumentsPersistenceManager: DocumentsPersistence {
     @Published private(set) var updatedDocument: Document?
     @Published private(set) var deletedDocument: Document?
 
-    init() {
+    init(webSocketManager: WebSocketManager?) {
+        self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
+
         setUpSubscribers()
     }
 
@@ -53,8 +55,10 @@ class DocumentsPersistenceManager: DocumentsPersistence {
         return await localPersistence.documents.createDocument(document: remoteCreatedDocument ?? document)
     }
 
-    func updateDocument(document: Document) async -> Document? {
-        let remoteUpdatedDocument = await remotePersistence.documents.updateDocument(document: document)
+    func updateDocument(document: Document, webSocketManager: WebSocketManager?) async -> Document? {
+        let remoteUpdatedDocument = await remotePersistence.documents.updateDocument(
+            document: document, webSocketManager: webSocketManager
+        )
 
         if remoteUpdatedDocument == nil {
             document.setUpdatedAt()
@@ -63,8 +67,10 @@ class DocumentsPersistenceManager: DocumentsPersistence {
         return await localPersistence.documents.updateDocument(document: remoteUpdatedDocument ?? document)
     }
 
-    func deleteDocument(document: Document) async -> Document? {
-        let remoteDeletedDocument = await remotePersistence.documents.deleteDocument(document: document)
+    func deleteDocument(document: Document, webSocketManager: WebSocketManager?) async -> Document? {
+        let remoteDeletedDocument = await remotePersistence.documents.deleteDocument(
+            document: document, webSocketManager: webSocketManager
+        )
 
         if remoteDeletedDocument == nil {
             document.setDeletedAt()

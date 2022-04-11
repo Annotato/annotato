@@ -1,5 +1,5 @@
 import AnnotatoSharedLibrary
 
-protocol DocumentSharesPersistence {
+protocol DocumentSharesRemotePersistence {
     func createDocumentShare(documentShare: DocumentShare) async -> Document?
 }

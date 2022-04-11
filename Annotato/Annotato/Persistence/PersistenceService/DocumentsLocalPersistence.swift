@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-protocol DocumentsPersistence {
+protocol DocumentsLocalPersistence {
     func getOwnDocuments(userId: String) async -> [Document]?
     func getSharedDocuments(userId: String) async -> [Document]?
     func getDocument(documentId: UUID) async -> Document?

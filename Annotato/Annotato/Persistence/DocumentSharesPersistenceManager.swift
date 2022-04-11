@@ -1,7 +1,7 @@
 import AnnotatoSharedLibrary
 import Foundation
 
-class DocumentSharesPersistenceManager: DocumentSharesPersistence {
+class DocumentSharesPersistenceManager: DocumentSharesRemotePersistence {
     private let remotePersistence = RemotePersistenceService()
     private let localPersistence = LocalPersistenceService.shared
 

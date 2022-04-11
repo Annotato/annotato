@@ -1,5 +1,5 @@
 struct RemotePersistenceService {
-    private static let shouldUseLocalEndpoint = false
+    private static let shouldUseLocalEndpoint = true
 
     // HTTP
     private static let localApiEndpoint = "http://127.0.0.1:8080"
@@ -14,16 +14,16 @@ struct RemotePersistenceService {
     static let baseWsAPIUrl = shouldUseLocalEndpoint ? localApiWsEndpoint : remoteApiWsEndpoint
 }
 
-extension RemotePersistenceService: PersistenceService {
-    var documents: DocumentsPersistence {
+extension RemotePersistenceService {
+    var documents: DocumentsRemotePersistence {
         RemoteDocumentsPersistence()
     }
 
-    var annotations: AnnotationsPersistence {
+    var annotations: AnnotationsRemotePersistence {
         RemoteAnnotationsPersistence()
     }
 
-    var documentShares: DocumentSharesPersistence {
+    var documentShares: DocumentSharesRemotePersistence {
         RemoteDocumentSharesPersistence()
     }
 
