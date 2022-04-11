@@ -6,8 +6,8 @@ class WebSocketManager: ObservableObject {
 
     @Published private(set) var message: Data?
 
-    func setUpSocket() {
-        guard let userId = AuthViewModel().currentUser?.id else {
+    func setUpSocket(urlString: String) {
+        guard let userId = AuthViewModel().currentUser?.uid else {
             AnnotatoLogger.error("Unable to retrieve user id.", context: "WebSocketManager::setUpSocket")
             return
         }

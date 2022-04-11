@@ -12,6 +12,10 @@ struct RemotePersistenceService {
     private static let remoteApiWsEndpoint = "ws://178.128.111.22:80"
 
     static let baseWsAPIUrl = shouldUseLocalEndpoint ? localApiWsEndpoint : remoteApiWsEndpoint
+
+    static func generateWebSocketUrlForUser(userId: String) -> String {
+        "\(Self.baseWsAPIUrl)/ws/\(userId)"
+    }
 }
 
 extension RemotePersistenceService {

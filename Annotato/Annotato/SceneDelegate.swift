@@ -72,7 +72,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to undo the changes made on entering the background.
 
         // Set up socket when application launches from background (Multi-tasking)
-        webSocketManager.setUpSocket()
+        guard let userId = AnnotatoAuth().currentUser?.uid else {
+            AnnotatoLogger.error("Unable to retrieve user id.", context: "SceneDelegate::sceneWillEnterForeground")
+            return
+        }
+
+        webSocketManager.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlForUser(userId: userId))
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

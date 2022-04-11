@@ -134,7 +134,12 @@ extension AuthViewController: AlertPresentable {
     }
 
     func logInDidSucceed() {
-        webSocketManager?.setUpSocket()
+        guard let userId = AnnotatoAuth().currentUser?.uid else {
+            AnnotatoLogger.error("Unable to retrieve user id.", context: "AuthViewController::logInDidSucceed")
+            return
+        }
+
+        webSocketManager?.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlForUser(userId: userId))
         goToDocumentList(asNewRootViewController: true)
     }
 
