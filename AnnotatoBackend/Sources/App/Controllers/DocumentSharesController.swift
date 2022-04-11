@@ -5,7 +5,7 @@ import AnnotatoSharedLibrary
 struct DocumentSharesController {
     private let documentsDataAccess = DocumentsDataAccess()
     private let documentSharesDataAccess = DocumentSharesDataAccess()
-    
+
     private enum QueryParams: String {
         case documentId
         case recipientId

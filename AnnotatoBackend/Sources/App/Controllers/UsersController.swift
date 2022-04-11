@@ -7,13 +7,13 @@ struct UsersController {
         case documentId
     }
 
-    static func create(req: Request) async throws -> User {
-        let user = try req.content.decode(User.self, using: JSONCustomDecoder())
+    static func create(req: Request) async throws -> AnnotatoUser {
+        let user = try req.content.decode(AnnotatoUser.self, using: JSONCustomDecoder())
 
         return try await UsersDataAccess.create(db: req.db, user: user)
     }
 
-    static func listUsersSharingDocument(req: Request) async throws -> [User] {
+    static func listUsersSharingDocument(req: Request) async throws -> [AnnotatoUser] {
         let documentId: String? = req.query[QueryParams.documentId.rawValue]
 
         guard let documentId = UUID(uuidString: documentId ?? "") else {

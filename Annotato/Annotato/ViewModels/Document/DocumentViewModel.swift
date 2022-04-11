@@ -89,7 +89,7 @@ extension DocumentViewModel {
             width: annotationWidth,
             parts: [],
             selectionBox: selectionBox,
-            ownerId: currentUser.uid,
+            ownerId: currentUser.id,
             documentId: model.id,
             id: annotationId
         )

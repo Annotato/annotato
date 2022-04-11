@@ -9,7 +9,7 @@ struct DocumentShareController {
             return nil
         }
 
-        let documentShare = DocumentShare(documentId: documentId, recipientId: currentUser.uid)
+        let documentShare = DocumentShare(documentId: documentId, recipientId: currentUser.id)
 
         return await documentSharesPersistenceManager.createDocumentShare(documentShare: documentShare)
     }

@@ -12,7 +12,7 @@ class DocumentListViewModel {
             return
         }
 
-        guard let ownerId = AnnotatoAuth().currentUser?.uid else {
+        guard let ownerId = AnnotatoAuth().currentUser?.id else {
             return
         }
 

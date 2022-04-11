@@ -87,6 +87,6 @@ extension User {
             fatalError("Unable to get user account info!")
         }
 
-        return AnnotatoUser(uid: uid, email: email, displayName: displayName)
+        return AnnotatoUser(email: email, displayName: displayName, id: uid)
     }
 }

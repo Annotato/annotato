@@ -10,6 +10,9 @@ final class UserEntity: Model {
     @ID(key: .id)
     var id: String?
 
+    @Field(key: "email")
+    var email: String
+
     @Field(key: "display_name")
     var displayName: String
 
@@ -26,12 +29,14 @@ final class UserEntity: Model {
 
     init(
         id: String,
+        email: String,
         displayName: String,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,
         deletedAt: Date? = nil
     ) {
         self.id = id
+        self.email = email
         self.displayName = displayName
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -40,9 +45,10 @@ final class UserEntity: Model {
 }
 
 extension UserEntity: PersistedEntity {
-    static func fromModel(_ model: User) -> Self {
+    static func fromModel(_ model: AnnotatoUser) -> Self {
         Self(
             id: model.id,
+            email: model.email,
             displayName: model.displayName,
             createdAt: model.createdAt,
             updatedAt: model.updatedAt,
