@@ -107,6 +107,10 @@ extension DocumentsPersistenceManager {
             return
         }
 
+        Task {
+            _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
+        }
+
         publishDocument(messageSubtype: messageSubtype, document: document)
     }
 
