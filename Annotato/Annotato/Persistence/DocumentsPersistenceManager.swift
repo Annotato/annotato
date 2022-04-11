@@ -80,16 +80,6 @@ class DocumentsPersistenceManager {
 
         return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
     }
-
-    func createOrUpdateDocument(document: Document) -> Document? {
-        fatalError("PersistenceManager::createOrUpdateDocument: This function should not be called")
-        return nil
-    }
-
-    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        fatalError("PersistenceManager::createOrUpdateDocuments: This function should not be called")
-        return nil
-    }
 }
 
 // MARK: Websocket
@@ -113,13 +103,12 @@ extension DocumentsPersistenceManager {
         let senderId = decodedMessage.senderId
         let messageSubtype = decodedMessage.subtype
 
-        Task {
-            _ = remoteDocumentsPersistence
-                .createOrUpdateDocument(document: document)
-        }
-
         guard senderId != AuthViewModel().currentUser?.id else {
             return
+        }
+
+        Task {
+            _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
         }
 
         publishDocument(messageSubtype: messageSubtype, document: document)

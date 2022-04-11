@@ -30,13 +30,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
         Task {
             guard let documentId = documentId else {
-                AnnotatoLogger.info("Document ID not passed to DocumentEditViewController. " +
-                                    "Sample document will be used.",
-                                    context: "DocumentEditViewController::initializeSubviews")
-                documentViewModel = DocumentViewModel(
-                    model: SampleData.exampleDocument, webSocketManager: webSocketManager
-                )
-                initializeDocumentView()
                 return
             }
 

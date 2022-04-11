@@ -3,12 +3,12 @@ import CoreData
 import AnnotatoSharedLibrary
 
 struct CoreDataManager {
-    static var sharedContext: NSManagedObjectContext {
+    static var coreDataContext: NSManagedObjectContext {
         CoreDataManager.shared.container.viewContext
     }
 
     static func makeCoreDataEntity<T: Persistable>(class: T.Type) -> T.ManagedEntity {
-        T.ManagedEntity(context: sharedContext)
+        T.ManagedEntity(context: coreDataContext)
     }
 
     static let shared = CoreDataManager()

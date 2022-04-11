@@ -44,16 +44,6 @@ class AnnotationsPersistenceManager {
         annotation.setDeletedAt()
         return localAnnotationsPersistence.deleteAnnotation(annotation: annotation)
     }
-
-    func createOrUpdateAnnotation(annotation: Annotation) -> Annotation? {
-        fatalError("PersistenceManager::createOrUpdateAnnotation: This function should not be called")
-        return nil
-    }
-
-    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
-        fatalError("PersistenceManager::createOrUpdateAnnotations: This function should not be called")
-        return nil
-    }
 }
 
 // MARK: Websocket

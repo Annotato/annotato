@@ -3,7 +3,13 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
-    private let webSocketManager = WebSocketManager()
+    private let webSocketManager = WebSocketManager(urlStringProducer: {
+        guard let userId = AuthViewModel().currentUser?.id else {
+            return nil
+        }
+
+        return RemotePersistenceService.generateWebSocketUrlString(userId: userId)
+    })
 
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
@@ -22,15 +28,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         let documentListViewController = DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
-
-        let authViewController = AuthViewController.instantiateFullScreenFromStoryboard(.main)
-
         documentListViewController?.webSocketManager = webSocketManager
-        authViewController?.webSocketManager = webSocketManager
 
         window?.rootViewController = AuthViewModel().currentUser != nil
             ? documentListViewController
-            : authViewController
+            : AuthViewController.instantiateFullScreenFromStoryboard(.main)
     }
 
     func changeRootViewController(newRootViewController: UIViewController, animated: Bool = true) {
@@ -46,6 +48,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                               options: [.transitionCrossDissolve],
                               animations: nil,
                               completion: nil)
+        }
+
+        if let newRootViewController = newRootViewController as? DocumentListViewController {
+            newRootViewController.webSocketManager = webSocketManager
+            webSocketManager.setUpSocket()
         }
     }
 
@@ -72,12 +79,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to undo the changes made on entering the background.
 
         // Set up socket when application launches from background (Multi-tasking)
-        guard let userId = AuthViewModel().currentUser?.id else {
-            AnnotatoLogger.error("Unable to retrieve user id.", context: "SceneDelegate::sceneWillEnterForeground")
-            return
-        }
-
-        webSocketManager.setUpSocket(urlString: RemotePersistenceService.generateWebSocketUrlString(userId: userId))
+        webSocketManager.setUpSocket()
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
