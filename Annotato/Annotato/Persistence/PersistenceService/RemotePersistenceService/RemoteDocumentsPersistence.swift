@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct RemoteDocumentsPersistence: DocumentsRemotePersistence {
+struct RemoteDocumentsPersistence {
     private static let documentsUrl = "\(RemotePersistenceService.baseAPIUrl)/documents"
     private static let sharedDocumentsUrl = "\(documentsUrl)/shared"
 

@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct LocalAnnotationsPersistence: AnnotationsLocalPersistence {
+struct LocalAnnotationsPersistence {
     private let localAnnotationEntityDataAccess = LocalAnnotationEntityDataAccess()
 
     func createAnnotation(annotation: Annotation) -> Annotation? {

@@ -1,6 +1,6 @@
 import AnnotatoSharedLibrary
 
-struct RemoteAnnotationsPersistence: AnnotationsRemotePersistence {
+struct RemoteAnnotationsPersistence {
     private let webSocketManager: WebSocketManager?
 
     init(webSocketManager: WebSocketManager?) {
