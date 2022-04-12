@@ -3,7 +3,7 @@ import Foundation
 public final class Document: Codable, Timestampable {
     public var id: UUID
     public private(set) var name: String
-    public let ownerId: String
+    public var ownerId: String
     public private(set) var annotations: [Annotation]
     public var createdAt: Date?
     public var updatedAt: Date?

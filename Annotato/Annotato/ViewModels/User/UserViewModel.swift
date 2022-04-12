@@ -3,6 +3,10 @@ import AnnotatoSharedLibrary
 class UserViewModel {
     let model: AnnotatoUser
 
+    var id: String {
+        model.id
+    }
+
     var displayName: String {
         model.displayName
     }

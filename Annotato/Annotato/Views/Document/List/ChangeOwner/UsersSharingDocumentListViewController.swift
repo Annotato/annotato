@@ -1,10 +1,13 @@
 import UIKit
+import Combine
 
-class UsersSharingDocumentListViewController: UIViewController, AlertPresentable {
+class UsersSharingDocumentListViewController: UIViewController, AlertPresentable, Navigable {
     var users: [UserViewModel]?
     var document: DocumentViewModel?
     private var titleLabel = UILabel()
     private var confirmButton = UIButton()
+    private var listView = UsersSharingDocumentListView(frame: .zero, users: [])
+    private var cancellables: Set<AnyCancellable> = []
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -12,6 +15,7 @@ class UsersSharingDocumentListViewController: UIViewController, AlertPresentable
         initializeTitle()
         initializeConfirmButton()
         initializeUsersListView()
+        setUpSubscribers()
     }
 
     private func initializeTitle() {
@@ -32,6 +36,7 @@ class UsersSharingDocumentListViewController: UIViewController, AlertPresentable
         confirmButton = UIButton()
         confirmButton.setTitle("Confirm Selection", for: .normal)
         confirmButton.configuration = .filled()
+        confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
 
         view.addSubview(confirmButton)
 
@@ -50,7 +55,7 @@ class UsersSharingDocumentListViewController: UIViewController, AlertPresentable
             return
         }
 
-        let listView = UsersSharingDocumentListView(frame: .zero, users: users)
+        listView = UsersSharingDocumentListView(frame: .zero, users: users)
 
         view.addSubview(listView)
 
@@ -60,5 +65,35 @@ class UsersSharingDocumentListViewController: UIViewController, AlertPresentable
         listView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
         listView.bottomAnchor.constraint(equalTo: confirmButton.topAnchor, constant: -10.0).isActive = true
         listView.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
+    }
+
+    @objc
+    private func didTapConfirmButton() {
+        guard let selectedNewOwner = listView.selectedUser else {
+            presentErrorAlert(errorMessage: "Please select a new owner")
+            return
+        }
+
+        document?.updateOwner(newOwnerId: selectedNewOwner.id)
+    }
+
+    private func receiveUpdateDocumentOwner(isSuccess: Bool) {
+        if isSuccess {
+            self.goBack()
+        } else {
+            presentErrorAlert(errorMessage: "There was an error updating the owner, please try again later")
+        }
+    }
+
+    private func setUpSubscribers() {
+        document?.$updateOwnerIsSuccess.sink(receiveValue: { [weak self] updateOwnerIsSuccess in
+            guard let updateOwnerIsSuccess = updateOwnerIsSuccess else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                self?.receiveUpdateDocumentOwner(isSuccess: updateOwnerIsSuccess)
+            }
+        }).store(in: &cancellables)
     }
 }

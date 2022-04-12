@@ -77,6 +77,10 @@ class DocumentsPersistenceManager {
         // Note: Documents are permanently deleted locally
         return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
     }
+
+    func deleteDocumentLocally(document: Document) async -> Document? {
+        localDocumentsPersistence.deleteDocument(document: document)
+    }
 }
 
 // MARK: Websocket

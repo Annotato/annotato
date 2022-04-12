@@ -4,6 +4,7 @@ class UsersSharingDocumentListView: UITableView {
     let cellId = "UsersSharingDocumentListCell"
 
     private var users: [UserViewModel]
+    private(set) var selectedUser: UserViewModel?
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -46,10 +47,13 @@ extension UsersSharingDocumentListView: UITableViewDelegate {
         }
 
         tappedCell.didTap()
+        selectedUser = nil
 
         guard tappedCell.isSelected else {
             return
         }
+
+        selectedUser = tappedCell.user
 
         guard let visibleCells = visibleCells as? [UsersSharingDocumentListCellView] else {
             return

@@ -4,6 +4,7 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
+    private let documentsPersistenceManager: DocumentsPersistenceManager
     private let annotationsPersistenceManager: AnnotationsPersistenceManager
     private let webSocketManager: WebSocketManager?
 
@@ -18,11 +19,13 @@ class DocumentViewModel: ObservableObject {
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
+    @Published private(set) var updateOwnerIsSuccess: Bool?
 
     init(model: Document, webSocketManager: WebSocketManager?) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
         self.webSocketManager = webSocketManager
+        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
@@ -168,6 +171,22 @@ extension DocumentViewModel {
         let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
         annotationViewModel?.receiveDelete()
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
+    }
+}
+
+extension DocumentViewModel {
+    func updateOwner(newOwnerId: String) {
+        model.ownerId = newOwnerId
+
+        Task {
+            let deletedDocument = await documentsPersistenceManager.updateDocument(document: model)
+            if let deletedDocument = deletedDocument {
+                _ = await documentsPersistenceManager.deleteDocumentLocally(document: deletedDocument)
+                updateOwnerIsSuccess = true
+            }
+
+            updateOwnerIsSuccess = false
+        }
     }
 }
 
