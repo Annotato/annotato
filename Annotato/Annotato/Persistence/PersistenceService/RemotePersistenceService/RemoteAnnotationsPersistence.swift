@@ -64,7 +64,7 @@ struct RemoteAnnotationsPersistence: AnnotationsPersistence {
 
     func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
         for annotation in annotations {
-            await _ = createOrUpdateAnnotation(annotation: annotation)
+            _ = await createOrUpdateAnnotation(annotation: annotation)
         }
 
         // We do not get any response for the sender from the websocket
