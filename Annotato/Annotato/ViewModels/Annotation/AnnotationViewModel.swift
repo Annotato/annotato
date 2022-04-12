@@ -327,7 +327,7 @@ extension AnnotationViewModel {
             return
         }
         Task {
-            await annotationsPersistenceManager.createOrUpdateAnnotation(annotation: model)
+            await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         resolveBySave = true
         isResolving = false
@@ -342,7 +342,7 @@ extension AnnotationViewModel {
         document?.removeAnnotationWithoutPersistence(annotation: self)
         model.setDeletedAt(to: Date())
         Task {
-            await annotationsPersistenceManager.createOrUpdateAnnotation(annotation: model)
+            await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         isRemoved = true
         isResolving = false

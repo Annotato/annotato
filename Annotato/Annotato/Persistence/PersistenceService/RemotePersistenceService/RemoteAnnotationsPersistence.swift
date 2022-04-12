@@ -50,7 +50,7 @@ struct RemoteAnnotationsPersistence {
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = AnnotatoAuth().currentUser?.uid else {
+        guard let senderId = AuthViewModel().currentUser?.id else {
             return nil
         }
 
@@ -59,7 +59,7 @@ struct RemoteAnnotationsPersistence {
             subtype: .createOrUpdateAnnotation,
             annotation: annotation
         )
-        WebSocketManager.shared.send(message: webSocketMessage)
+        webSocketManager?.send(message: webSocketMessage)
 
         return nil
     }
