@@ -6,6 +6,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     let deleteIconHeight = 50.0
     let shareIconWidth = 25.0
     private var deleteButton = UIButton()
+    private var deleteMenu = DocumentListDeleteMenu()
     weak var actionDelegate: DocumentListCollectionCellViewDelegate?
 
     @available(*, unavailable)
@@ -21,6 +22,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         addGestureRecognizers()
         initializeIconImageView()
         initializeDeleteIconButton()
+        initializeDeleteMenu()
 
         if inDeleteMode {
             enterDeleteMode()
@@ -63,6 +65,22 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         deleteButton.widthAnchor.constraint(equalTo: deleteButton.heightAnchor).isActive = true
         deleteButton.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         deleteButton.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+    }
+
+    private func initializeDeleteMenu() {
+        let width = 120.0
+        let height = 80.0
+        deleteMenu = DocumentListDeleteMenu(frame: .zero)
+
+        addSubview(deleteMenu)
+
+        deleteMenu.translatesAutoresizingMaskIntoConstraints = false
+        deleteMenu.topAnchor.constraint(equalTo: deleteButton.bottomAnchor).isActive = true
+        deleteMenu.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        deleteMenu.widthAnchor.constraint(equalToConstant: width).isActive = true
+        deleteMenu.heightAnchor.constraint(equalToConstant: height).isActive = true
+
+        deleteMenu.actionDelegate = self
     }
 
     private func initializeShareIconImageView() {
@@ -124,7 +142,14 @@ class DocumentListCollectionCellView: UICollectionViewCell {
             return
         }
 
-        actionDelegate?.didTapDeleteButton(document: document)
+        Task {
+            let shouldShowDeleteOptions = await document.shouldShowDeleteOptions()
+            if shouldShowDeleteOptions {
+                deleteMenu.isHidden.toggle()
+            } else {
+                actionDelegate?.didTapDeleteButton(document: document)
+            }
+        }
     }
 
     func enterDeleteMode() {
@@ -133,5 +158,16 @@ class DocumentListCollectionCellView: UICollectionViewCell {
 
     func exitDeleteMode() {
         deleteButton.isHidden = true
+        deleteMenu.isHidden = true
+    }
+}
+
+extension DocumentListCollectionCellView: DocumentListDeleteMenuDelegate {
+    func didTapDeleteForEveryoneButton() {
+        print("TAPPED delete for everyone!")
+    }
+
+    func didTapDeleteForSelfOnlyButton() {
+        print("TAPPED delete for self only!")
     }
 }

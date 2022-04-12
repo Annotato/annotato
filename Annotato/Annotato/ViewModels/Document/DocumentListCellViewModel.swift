@@ -25,6 +25,12 @@ class DocumentListCellViewModel {
         self.isShared = isShared
     }
 
+    func shouldShowDeleteOptions() async -> Bool {
+        let canFindUsersSharingDocument = await canFindUsersSharingDocument()
+        let isOwner = AuthViewModel().currentUser?.id == document.ownerId
+        return isOwner && canFindUsersSharingDocument
+    }
+
     func canFindUsersSharingDocument() async -> Bool {
         usersSharingDocument = await usersPersistenceManager.getUsersSharingDocument(documentId: document.id) ?? []
         return !usersSharingDocument.isEmpty
