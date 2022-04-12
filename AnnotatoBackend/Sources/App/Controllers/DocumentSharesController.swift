@@ -22,7 +22,7 @@ struct DocumentSharesController {
         let documentId = try req.getParamValueAsUUID(paramKey: "documentId")
         let recipientId = try req.getParamValue(paramKey: "recipientId")
 
-        _ = try await DocumentSharesDataAccess.delete(
+        _ = try await documentSharesDataAccess.delete(
             db: req.db, documentId: documentId, recipientId: recipientId)
         return try await documentsDataAccess.read(db: req.db, documentId: documentId)
     }
