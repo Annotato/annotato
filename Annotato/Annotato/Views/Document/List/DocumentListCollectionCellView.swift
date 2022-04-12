@@ -181,6 +181,9 @@ extension DocumentListCollectionCellView: DocumentListDeleteMenuDelegate {
     }
 
     func didTapDeleteForSelfOnlyButton() {
-        print("TAPPED delete for self only!")
+        guard let document = document else {
+            return
+        }
+        actionDelegate?.didTapChangeOwnerButton(document: document)
     }
 }

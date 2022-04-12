@@ -140,6 +140,21 @@
             </objects>
             <point key="canvasLocation" x="1994.3548387096773" y="33.627537511032656"/>
         </scene>
+        <!--Users Sharing Document List View Controller-->
+        <scene sceneID="AkL-Rn-jEk">
+            <objects>
+                <viewController storyboardIdentifier="UsersSharingDocumentListViewController" id="5Qe-h0-SFe" customClass="UsersSharingDocumentListViewController" customModule="Annotato" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="R1y-cd-nmF">
+                        <rect key="frame" x="0.0" y="0.0" width="744" height="1133"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="8KK-sA-B9U"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Y1-4h-fqN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2631" y="34"/>
+        </scene>
     </scenes>
     <resources>
         <image name="doc.on.clipboard" catalog="system" width="116" height="128"/>

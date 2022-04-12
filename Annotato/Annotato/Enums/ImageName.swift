@@ -6,6 +6,8 @@ enum ImageName: String {
 }
 
 enum SystemImageName: String {
+    case circle = "circle"
+    case circleFilled = "circle.inset.filled"
     case eye
     case mSquare = "m.square"
     case people = "person.2.fill"

@@ -3,7 +3,7 @@ import AnnotatoSharedLibrary
 
 class DocumentListCellViewModel {
     let usersPersistenceManager = UsersPersistenceManager()
-    private var usersSharingDocument: [AnnotatoUser] = []
+    private(set) var usersSharingDocument: [UserViewModel] = []
 
     let document: Document
     let isShared: Bool
@@ -26,7 +26,11 @@ class DocumentListCellViewModel {
     }
 
     func canFindUsersSharingDocument() async -> Bool {
-        usersSharingDocument = await usersPersistenceManager.getUsersSharingDocument(documentId: document.id) ?? []
+        let usersSharingDocumentModels = await usersPersistenceManager
+            .getUsersSharingDocument(documentId: document.id) ?? []
+
+        usersSharingDocument = usersSharingDocumentModels.map { UserViewModel(model: $0) }
+
         return !usersSharingDocument.isEmpty
     }
 }

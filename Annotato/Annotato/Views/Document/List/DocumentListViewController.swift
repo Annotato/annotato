@@ -201,6 +201,12 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         )
     }
 
+    func didTapChangeOwnerButton(document: DocumentListCellViewModel) {
+        let documentViewModel = DocumentViewModel(
+            model: document.document, webSocketManager: webSocketManager)
+        goToUsersSharingDocumentList(document: documentViewModel, users: document.usersSharingDocument)
+    }
+
     private func setUpSubscribers() {
         viewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
             if hasDeletedDocument {
