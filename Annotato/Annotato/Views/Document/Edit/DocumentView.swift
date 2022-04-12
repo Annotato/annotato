@@ -157,12 +157,6 @@ extension DocumentView {
         annotationViews.append(annotationView)
         pdfView.documentView?.addSubview(annotationView)
     }
-
-    private func removeAllAnnotationsFromView() {
-        for annotationView in annotationViews {
-            annotationView.removeFromSuperview()
-        }
-    }
 }
 
 // MARK: Display annotations when visible pages of pdf change

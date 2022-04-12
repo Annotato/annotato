@@ -167,7 +167,7 @@ extension DocumentViewModel {
     }
 
     func receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: Annotation) {
-        if annotations.contains(where: { $0.id == createdOrUpdatedAnnotation.id }) {
+        if model.containsWithDeleted(annotation: createdOrUpdatedAnnotation) {
             AnnotatoLogger.info("Updated annotation from the createOrUpdate path: \(createdOrUpdatedAnnotation)")
             receiveUpdateAnnotation(updatedAnnotation: createdOrUpdatedAnnotation)
         } else {
