@@ -46,7 +46,17 @@ struct DocumentsController {
         let documentId = try req.getIdValueAsUUID()
         let document = try req.content.decode(Document.self, using: JSONCustomDecoder())
 
-        return try await documentsDataAccess.update(db: req.db, documentId: documentId, document: document)
+        let previousDocument = try await documentsDataAccess.read(db: req.db, documentId: documentId)
+        let updatedDocument = try await documentsDataAccess.update(
+            db: req.db, documentId: documentId, document: document)
+
+        let hasChangedOwner = updatedDocument.ownerId != previousDocument.ownerId
+        if hasChangedOwner {
+            _ = try await documentSharesDataAccess.delete(
+                db: req.db, documentId: documentId, recipientId: updatedDocument.ownerId)
+        }
+
+        return updatedDocument
     }
 
     func delete(req: Request) async throws -> Document {
