@@ -65,6 +65,11 @@ public final class SelectionBox: Codable, Timestampable, ObservableObject {
         try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
+
+    public func clone() -> SelectionBox {
+        SelectionBox(startPoint: startPoint, endPoint: endPoint, annotationId: annotationId,
+                     id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
 }
 
 extension SelectionBox: CustomStringConvertible {
@@ -74,5 +79,23 @@ extension SelectionBox: CustomStringConvertible {
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"
+    }
+}
+
+extension SelectionBox: Equatable {
+    public static func == (lhs: SelectionBox, rhs: SelectionBox) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.startPoint == rhs.startPoint &&
+        lhs.endPoint == rhs.endPoint &&
+        lhs.annotationId == rhs.annotationId
+    }
+}
+
+extension SelectionBox: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(startPoint)
+        hasher.combine(endPoint)
+        hasher.combine(annotationId)
     }
 }

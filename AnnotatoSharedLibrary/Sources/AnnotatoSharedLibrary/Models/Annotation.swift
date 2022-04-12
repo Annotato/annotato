@@ -12,6 +12,14 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
     public var updatedAt: Date?
     public var deletedAt: Date?
 
+    private var texts: [AnnotationText] {
+        parts.compactMap { $0 as? AnnotationText }
+    }
+
+    private var handwritings: [AnnotationHandwriting] {
+        parts.compactMap { $0 as? AnnotationHandwriting }
+    }
+
     var nonDeletedParts: [AnnotationPart] {
         parts.filter({ !$0.isDeleted })
     }
@@ -98,11 +106,17 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
 
         // Note: AnnotationPart protocol has to be split into concrete types to encode
-        let texts = parts.compactMap({ $0 as? AnnotationText })
         try container.encode(texts, forKey: .texts)
-
-        let handwritings = parts.compactMap({ $0 as? AnnotationHandwriting })
         try container.encode(handwritings, forKey: .handwritings)
+    }
+
+    public func clone() -> Annotation {
+        let clonedSelectionBox = selectionBox.clone()
+        let clonedParts: [AnnotationPart] = texts.map({ $0.clone() }) + handwritings.map({ $0.clone() })
+
+        return Annotation(origin: origin, width: width, parts: clonedParts, selectionBox: clonedSelectionBox,
+                          ownerId: ownerId, documentId: documentId, id: UUID(),
+                          createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
     }
 
     private func addInitialPart() {
@@ -315,12 +329,26 @@ extension Annotation {
 
 extension Annotation: Equatable {
     public static func == (lhs: Annotation, rhs: Annotation) -> Bool {
-        lhs.id == rhs.id
+        let partsAreEqual = Set(lhs.texts) == Set(rhs.texts) &&
+            Set(lhs.handwritings) == Set(rhs.handwritings)
+
+        return lhs.id == rhs.id &&
+            lhs.width == rhs.width &&
+            partsAreEqual &&
+            lhs.selectionBox == rhs.selectionBox &&
+            lhs.ownerId == rhs.ownerId &&
+            lhs.documentId == rhs.documentId
     }
 }
 
 extension Annotation: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(width)
+        hasher.combine(Set(texts))
+        hasher.combine(Set(handwritings))
+        hasher.combine(selectionBox)
+        hasher.combine(ownerId)
+        hasher.combine(documentId)
     }
 }

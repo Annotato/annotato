@@ -88,12 +88,16 @@ extension Document: CustomStringConvertible {
 
 extension Document: Equatable {
     public static func == (lhs: Document, rhs: Document) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id &&
+        lhs.name == rhs.name &&
+        lhs.ownerId == rhs.ownerId
     }
 }
 
 extension Document: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(name)
+        hasher.combine(ownerId)
     }
 }
