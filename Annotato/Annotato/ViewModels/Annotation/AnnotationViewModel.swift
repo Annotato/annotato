@@ -53,11 +53,10 @@ class AnnotationViewModel: ObservableObject {
         self.model = model
         self.document = document
 
-        self.conflictIdx = conflictIdx
-        self.isResolving = isResolving
-
         let mergeConflictsPalette: AnnotationMergeConflictsPaletteViewModel
         if let conflictIdx = conflictIdx, isResolving {
+            self.conflictIdx = conflictIdx
+            self.isResolving = isResolving
             mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
                 origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)
             self.mergeConflictPalette = mergeConflictsPalette
