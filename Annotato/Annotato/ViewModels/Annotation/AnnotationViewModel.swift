@@ -39,21 +39,26 @@ class AnnotationViewModel: ObservableObject {
 
     @Published private(set) var isResolving = false
     private(set) var resolveBySave = false
-    private(set) var conflictIdx: Int = -1
+    private(set) var conflictIdx: Int?
 
-    init(model: Annotation, document: DocumentViewModel, isResolving: Bool = false, conflictIdx: Int = -1,
+    init(model: Annotation, document: DocumentViewModel, isResolving: Bool = false, conflictIdx: Int? = nil,
          palette: AnnotationPaletteViewModel? = nil) {
         self.model = model
         self.document = document
 
         self.conflictIdx = conflictIdx
         self.isResolving = isResolving
-        let mergeConflictsPalette = isResolving
-        ? AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: model.width, height: 50.0,
-                                                   conflictIdx: conflictIdx)
-        : AnnotationMergeConflictsPaletteViewModel(origin: .zero, width: 0.0, height: 0.0,
-                                                   conflictIdx: conflictIdx)
-        self.mergeConflictPalette = mergeConflictsPalette
+
+        let mergeConflictsPalette: AnnotationMergeConflictsPaletteViewModel
+        if let conflictIdx = conflictIdx, isResolving {
+            mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
+                origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)
+            self.mergeConflictPalette = mergeConflictsPalette
+        } else {
+            mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
+                origin: .zero, width: 0.0, height: 0.0, conflictIdx: -1)
+            self.mergeConflictPalette = mergeConflictsPalette
+        }
 
         self.palette = palette ?? AnnotationPaletteViewModel(
             origin: CGPoint(x: 0.0, y: mergeConflictsPalette.height), width: model.width, height: 50.0)
@@ -321,7 +326,7 @@ extension AnnotationViewModel {
 
     func didDiscardMergeConflicts() {
         guard NetworkMonitor.shared.isConnected else {
-            AnnotatoLogger.error("Save merge conflict button pressed while offline")
+            AnnotatoLogger.error("Discard merge conflict button pressed while offline")
             return
         }
         selectionBox.didDelete()
