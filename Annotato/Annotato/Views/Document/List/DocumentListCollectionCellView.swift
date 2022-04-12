@@ -3,7 +3,9 @@ import UIKit
 class DocumentListCollectionCellView: UICollectionViewCell {
     var document: DocumentListCellViewModel?
     let nameLabelHeight = 30.0
+    let deleteIconHeight = 50.0
     let shareIconWidth = 25.0
+    private var deleteButton = UIButton()
     weak var actionDelegate: DocumentListCollectionCellViewDelegate?
 
     @available(*, unavailable)
@@ -16,8 +18,11 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     }
 
     func initializeSubviews() {
-        addTapGestureRecognizer()
+        addGestureRecognizers()
         initializeIconImageView()
+        initializeDeleteIconButton()
+        exitDeleteMode()
+
         if document?.isShared ?? false {
             initializeShareIconImageView()
         }
@@ -35,6 +40,23 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         imageView.heightAnchor.constraint(equalToConstant: self.frame.height - nameLabelHeight).isActive = true
         imageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+    }
+
+    private func initializeDeleteIconButton() {
+        let image = UIImage(named: ImageName.xIcon.rawValue) ?? UIImage()
+        deleteButton = UIButton()
+        deleteButton.setImage(image, for: .normal)
+        deleteButton.tintColor = UIColor.red
+        deleteButton.contentVerticalAlignment = .fill
+        deleteButton.contentHorizontalAlignment = .fill
+
+        addSubview(deleteButton)
+
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.heightAnchor.constraint(equalToConstant: deleteIconHeight).isActive = true
+        deleteButton.widthAnchor.constraint(equalTo: deleteButton.heightAnchor).isActive = true
+        deleteButton.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        deleteButton.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
     }
 
     private func initializeShareIconImageView() {
@@ -69,9 +91,13 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         label.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
     }
 
-    private func addTapGestureRecognizer() {
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnCellView))
-        addGestureRecognizer(gestureRecognizer)
+    private func addGestureRecognizers() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnCellView))
+        addGestureRecognizer(tapGestureRecognizer)
+
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(
+            target: self, action: #selector(didLongPressCellView))
+        addGestureRecognizer(longPressGestureRecognizer)
     }
 
     @objc
@@ -80,5 +106,18 @@ class DocumentListCollectionCellView: UICollectionViewCell {
             return
         }
         actionDelegate?.didSelectCellView(document: document)
+    }
+
+    @objc
+    private func didLongPressCellView() {
+        actionDelegate?.didLongPressCellView()
+    }
+
+    func enterDeleteMode() {
+        deleteButton.isHidden = false
+    }
+
+    func exitDeleteMode() {
+        deleteButton.isHidden = true
     }
 }

@@ -7,6 +7,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
     private var importMenu = DocumentListImportMenu()
+    private var collectionView: DocumentListCollectionView?
     private var viewModel: DocumentListViewModel?
     private var documents: [DocumentListCellViewModel]?
     let toolbarHeight = 50.0
@@ -15,15 +16,15 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         super.viewWillAppear(animated)
 
         initializeDocumentsCollectionView()
+        initializeToolbar()
+        initializeImportMenu()
+        view.bringSubviewToFront(importMenu)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         initializeSpinner()
-        initializeToolbar()
-        initializeImportMenu()
-        view.bringSubviewToFront(importMenu)
 
         NetworkMonitor.shared.start(webSocketManager: webSocketManager)
 
@@ -88,13 +89,19 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             return
         }
 
-        let collectionView = DocumentListCollectionView(
+        collectionView?.removeFromSuperview()
+
+        collectionView = DocumentListCollectionView(
             documents: documents,
             frame: .zero,
             documentListCollectionCellViewDelegate: self
         )
 
-        view.replaceSubview(newSubview: collectionView)
+        guard let collectionView = collectionView else {
+            return
+        }
+
+        view.addSubview(collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.widthAnchor.constraint(equalToConstant: frame.width * 0.9).isActive = true
@@ -126,6 +133,15 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         }
     }
 
+    func didTapExitDeleteModeButton() {
+        guard let collectionView = collectionView else {
+            return
+        }
+
+        collectionView.exitDeleteMode()
+        toolbar.exitDeleteMode()
+    }
+
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt baseFileUrls: [URL]) {
         guard let selectedFileUrl = baseFileUrls.first else {
             return
@@ -144,6 +160,15 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
 
     func didSelectCellView(document: DocumentListCellViewModel) {
         goToDocumentEdit(documentId: document.id, webSocketManager: webSocketManager)
+    }
+
+    func didLongPressCellView() {
+        guard let collectionView = collectionView else {
+            return
+        }
+
+        collectionView.enterDeleteMode()
+        toolbar.enterDeleteMode()
     }
 }
 

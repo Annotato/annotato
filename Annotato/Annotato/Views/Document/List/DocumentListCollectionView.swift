@@ -24,6 +24,26 @@ class DocumentListCollectionView: UICollectionView {
         dataSource = self
         register(DocumentListCollectionCellView.self, forCellWithReuseIdentifier: cellId)
     }
+
+    func enterDeleteMode() {
+        guard let visibleCells = visibleCells as? [DocumentListCollectionCellView] else {
+            return
+        }
+
+        for cell in visibleCells {
+            cell.enterDeleteMode()
+        }
+    }
+
+    func exitDeleteMode() {
+        guard let visibleCells = visibleCells as? [DocumentListCollectionCellView] else {
+            return
+        }
+
+        for cell in visibleCells {
+            cell.exitDeleteMode()
+        }
+    }
 }
 
 extension DocumentListCollectionView: UICollectionViewDataSource {

@@ -2,6 +2,7 @@ enum ImageName: String {
     case documentIcon = "document-icon"
     case minimizeIcon = "minimize-icon"
     case maximizeIcon = "maximize-icon"
+    case xIcon = "x-icon"
 }
 
 enum SystemImageName: String {
