@@ -11,5 +11,7 @@ func routes(_ app: Application) throws {
 
     app.group("documentShares", configure: documentSharesRouter)
 
+    app.group("users", configure: usersRouter)
+
     app.group("ws", configure: webSocketRouter)
 }

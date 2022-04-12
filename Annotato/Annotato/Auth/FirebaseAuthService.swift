@@ -1,39 +1,53 @@
 import Firebase
 import AnnotatoSharedLibrary
 
-class FirebaseAuth: AnnotatoAuthService {
+class FirebaseAuthService: AnnotatoAuthService {
     private static var isAlreadyConfigured = false
 
+    @Published private(set) var newUser: AnnotatoUser?
+    var newUserPublisher: Published<AnnotatoUser?>.Publisher { $newUser }
+
+    @Published private(set) var loggedInUser: AnnotatoUser?
+    var loggedInUserPublisher: Published<AnnotatoUser?>.Publisher { $loggedInUser }
+
+    @Published private(set) var signUpError: Error?
+    var signUpErrorPublisher: Published<Error?>.Publisher { $signUpError }
+
+    @Published private(set) var logInError: Error?
+    var logInErrorPublisher: Published<Error?>.Publisher { $logInError }
+
     init () {
-        guard !FirebaseAuth.isAlreadyConfigured else {
+        guard !FirebaseAuthService.isAlreadyConfigured else {
             return
         }
 
         FirebaseApp.configure()
-        FirebaseAuth.isAlreadyConfigured = true
+        FirebaseAuthService.isAlreadyConfigured = true
     }
-
-    weak var delegate: AnnotatoAuthDelegate?
 
     private var currentFirebaseUser: User? {
         Auth.auth().currentUser
     }
 
-    var currentUser: AnnotatoUser? {
-        currentFirebaseUser?.toAnnotatoUser()
-    }
-
     func signUp(email: String, password: String, displayName: String) {
-        Auth.auth().createUser(withEmail: email, password: password) { _, error in
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 AnnotatoLogger.error("When trying to sign up new user. \(error.localizedDescription)",
                                      context: "FirebaseAuth::signUp")
-                self.delegate?.signUpDidFail(error)
+                self.signUpError = error
                 return
             }
 
             self.setDisplayName(to: displayName, email: email)
-            self.delegate?.signUpDidSucceed()
+
+            guard let id = authResult?.user.uid else {
+                AnnotatoLogger.error("When trying to sign up new user. User info is missing",
+                                     context: "FirebaseAuth::signUp")
+                self.signUpError = error
+                return
+            }
+
+            self.newUser = AnnotatoUser(email: email, displayName: displayName, id: id)
         }
     }
 
@@ -42,25 +56,25 @@ class FirebaseAuth: AnnotatoAuthService {
             if let error = error {
                 AnnotatoLogger.error("When trying to log in \(email). \(error.localizedDescription)",
                                      context: "FirebaseAuth::logIn")
-                self.delegate?.logInDidFail(error)
+                self.logInError = error
                 return
             }
 
             AnnotatoLogger.info("\(email) logged in")
-            self.delegate?.logInDidSucceed()
+            self.loggedInUser = self.currentFirebaseUser?.toAnnotatoUser()
         }
     }
 
     func logOut() {
-        guard let currentUser = currentUser else {
+        guard let currentUserEmail = currentFirebaseUser?.email else {
             return
         }
 
         do {
             try Auth.auth().signOut()
-            AnnotatoLogger.info("\(currentUser.email) logged out")
+            AnnotatoLogger.info("\(currentUserEmail) logged out")
         } catch {
-            AnnotatoLogger.error("When trying to log out \(currentUser.email). \(error.localizedDescription)",
+            AnnotatoLogger.error("When trying to log out \(currentUserEmail). \(error.localizedDescription)",
                                  context: "FirebaseAuth::logOut")
         }
     }
@@ -87,6 +101,6 @@ extension User {
             fatalError("Unable to get user account info!")
         }
 
-        return AnnotatoUser(uid: uid, email: email, displayName: displayName)
+        return AnnotatoUser(email: email, displayName: displayName, id: uid)
     }
 }

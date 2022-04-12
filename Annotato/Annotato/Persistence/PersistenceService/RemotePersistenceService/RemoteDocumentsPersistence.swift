@@ -1,14 +1,16 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct RemoteDocumentsPersistence: DocumentsPersistence {
+struct RemoteDocumentsPersistence {
     private static let documentsUrl = "\(RemotePersistenceService.baseAPIUrl)/documents"
     private static let sharedDocumentsUrl = "\(documentsUrl)/shared"
 
-    private var httpService: AnnotatoHTTPService
+    private let httpService: AnnotatoHTTPService
+    private let webSocketManager: WebSocketManager?
 
-    init() {
+    init(webSocketManager: WebSocketManager?) {
         httpService = URLSessionHTTPService()
+        self.webSocketManager = webSocketManager
     }
 
     // MARK: LIST OWN
@@ -94,16 +96,6 @@ struct RemoteDocumentsPersistence: DocumentsPersistence {
             AnnotatoLogger.error("When deleting document: \(String(describing: error))")
             return nil
         }
-    }
-
-    func createOrUpdateDocument(document: Document) -> Document? {
-        fatalError("RemoteDocumentsPersistence::createOrUpdateDocument: This function should not be called")
-        return nil
-    }
-
-    func createOrUpdateDocuments(documents: [Document]) -> [Document]? {
-        fatalError("RemoteDocumentsPersistence::createOrUpdateDocuments: This function should not be called")
-        return nil
     }
 
     private func encodeDocument(_ document: Document) -> Data? {

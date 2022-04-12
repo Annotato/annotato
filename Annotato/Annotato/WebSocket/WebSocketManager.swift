@@ -1,27 +1,28 @@
 import Foundation
+import Combine
 import AnnotatoSharedLibrary
 
 class WebSocketManager: ObservableObject {
-    static let shared = WebSocketManager()
-
     private(set) var socket: URLSessionWebSocketTask?
+    private var urlStringProducer: () -> String?
+    private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var message: Data?
 
-    private init() { }
+    init(urlStringProducer: @escaping () -> String?) {
+        self.urlStringProducer = urlStringProducer
+
+        setUpSubscribers()
+    }
 
     func setUpSocket() {
-        guard let userId = AnnotatoAuth().currentUser?.uid else {
-            AnnotatoLogger.error("Unable to retrieve user id.", context: "WebSocketManager::setUpSocket")
-            return
-        }
-
-        guard let url = URL(string: "\(RemotePersistenceService.baseWsAPIUrl)/ws/\(userId)") else {
+        guard let url = URL(string: urlStringProducer() ?? "") else {
+            AnnotatoLogger.error("Invalid URL!", context: "WebSocketManager::setUpSocket")
             return
         }
 
         socket = URLSession(configuration: .default).webSocketTask(with: url)
-        AnnotatoLogger.info("Websocket connection for user with id \(userId) setup successfully!")
+        AnnotatoLogger.info("Websocket connection for \(url) setup successfully!")
 
         listen()
         socket?.resume()
@@ -89,5 +90,13 @@ class WebSocketManager: ObservableObject {
         )
 
         message = data
+    }
+
+    private func setUpSubscribers() {
+        NetworkMonitor.shared.$isConnected.sink { [weak self] isConnected in
+            if isConnected {
+                self?.setUpSocket()
+            }
+        }.store(in: &cancellables)
     }
 }

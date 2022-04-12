@@ -6,7 +6,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class AnnotationViewModel: ObservableObject {
-    private let annotationsPersistenceManager = AnnotationsPersistenceManager()
+    private let annotationsPersistenceManager: AnnotationsPersistenceManager?
+    private let webSocketManager: WebSocketManager?
 
     private weak var document: DocumentViewModel?
 
@@ -41,8 +42,14 @@ class AnnotationViewModel: ObservableObject {
     private(set) var resolveBySave = false
     private(set) var conflictIdx: Int?
 
-    init(model: Annotation, document: DocumentViewModel, isResolving: Bool = false, conflictIdx: Int? = nil,
-         palette: AnnotationPaletteViewModel? = nil) {
+    init(
+        model: Annotation,
+        document: DocumentViewModel,
+        webSocketManager: WebSocketManager?,
+        palette: AnnotationPaletteViewModel? = nil,
+        isResolving: Bool = false,
+        conflictIdx: Int? = nil
+    ) {
         self.model = model
         self.document = document
 
@@ -65,6 +72,8 @@ class AnnotationViewModel: ObservableObject {
 
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
+        self.webSocketManager = webSocketManager
+        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.palette.parentViewModel = self
         self.mergeConflictPalette.parentViewModel = self
 
@@ -100,7 +109,7 @@ class AnnotationViewModel: ObservableObject {
 
         if !isResolving {
             Task {
-                await annotationsPersistenceManager.updateAnnotation(annotation: model)
+                await annotationsPersistenceManager?.updateAnnotation(annotation: model)
             }
         }
     }
@@ -224,7 +233,7 @@ extension AnnotationViewModel {
 
         if !isResolving {
             Task {
-                await annotationsPersistenceManager.updateAnnotation(annotation: model)
+                await annotationsPersistenceManager?.updateAnnotation(annotation: model)
             }
         }
     }

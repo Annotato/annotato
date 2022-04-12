@@ -36,20 +36,20 @@ struct DocumentsController {
     }
 
     func read(req: Request) async throws -> Document {
-        let documentId = try ControllersUtil.getIdFromParams(request: req)
+        let documentId = try req.getIdValueAsUUID()
 
         return try await documentsDataAccess.read(db: req.db, documentId: documentId)
     }
 
     func update(req: Request) async throws -> Document {
-        let documentId = try ControllersUtil.getIdFromParams(request: req)
+        let documentId = try req.getIdValueAsUUID()
         let document = try req.content.decode(Document.self, using: JSONCustomDecoder())
 
         return try await documentsDataAccess.update(db: req.db, documentId: documentId, document: document)
     }
 
     func delete(req: Request) async throws -> Document {
-        let documentId = try ControllersUtil.getIdFromParams(request: req)
+        let documentId = try req.getIdValueAsUUID()
 
         return try await documentsDataAccess.delete(db: req.db, documentId: documentId)
     }

@@ -2,8 +2,6 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class LocalStorage: AnnotatoStorageService {
-    weak var delegate: AnnotatoStorageDelegate?
-
     var appDocumentsDirectory: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
@@ -17,11 +15,9 @@ class LocalStorage: AnnotatoStorageService {
             try FileManager.default.copyItem(at: fileSystemUrl, to: urlInDocumentsDirectory)
 
             AnnotatoLogger.info("Uploaded to local storage - PDF with fileSystemUrl: \(fileSystemUrl)")
-            delegate?.uploadDidSucceed()
         } catch {
             AnnotatoLogger.error("When trying to upload PDF. \(error.localizedDescription)",
                                  context: "LocalStorage::uploadPdf")
-            delegate?.uploadDidFail(error)
         }
     }
 
@@ -39,11 +35,9 @@ class LocalStorage: AnnotatoStorageService {
             try FileManager.default.removeItem(at: urlInDocumentsDirectory)
 
             AnnotatoLogger.info("Deleted PDF: \(fileName) from local documents directory.")
-            delegate?.deleteDidSucceed()
         } catch {
             AnnotatoLogger.error("When trying to delete PDF. \(error.localizedDescription)",
                                  context: "LocalStorage::deletePdf")
-            delegate?.deleteDidFail(error)
         }
     }
 

@@ -2,7 +2,8 @@ import UIKit
 import Combine
 
 class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
-    private let documentController = DocumentController()
+    private var documentController: DocumentController?
+    var webSocketManager: WebSocketManager?
 
     let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
@@ -19,6 +20,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpSubscribers()
+        self.documentController = DocumentController(webSocketManager: webSocketManager)
     }
 
     private func setUpSubscribers() {
@@ -37,16 +39,11 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
         Task {
             guard let documentId = documentId else {
-                AnnotatoLogger.info("Document ID not passed to DocumentEditViewController. " +
-                                    "Sample document will be used.",
-                                    context: "DocumentEditViewController::initializeSubviews")
-                documentViewModel = DocumentViewModel(model: SampleData.exampleDocument)
-                initializeDocumentView()
                 return
             }
 
             startSpinner()
-            documentViewModel = await documentController.loadDocumentWithDeleted(documentId: documentId)
+            documentViewModel = await documentController?.loadDocumentWithDeleted(documentId: documentId)
             stopSpinner()
 
             initializeDocumentView()
@@ -95,7 +92,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 return
             }
 
-            await documentController.updateDocumentWithDeleted(document: documentViewModel)
+            await documentController?.updateDocumentWithDeleted(document: documentViewModel)
         }
     }
 }

@@ -1,12 +1,13 @@
 import UIKit
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
-    private let documentController = DocumentController()
+    private var documentController: DocumentController?
+    var webSocketManager: WebSocketManager?
 
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
     private var importMenu = DocumentListImportMenu()
-    private var viewModel = DocumentListViewModel()
+    private var viewModel: DocumentListViewModel?
     private var documents: [DocumentListCellViewModel]?
     let toolbarHeight = 50.0
 
@@ -24,7 +25,10 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeImportMenu()
         view.bringSubviewToFront(importMenu)
 
-        NetworkMonitor.shared.start()
+        NetworkMonitor.shared.start(webSocketManager: webSocketManager)
+
+        self.documentController = DocumentController(webSocketManager: webSocketManager)
+        self.viewModel = DocumentListViewModel(webSocketManager: webSocketManager)
     }
 
     private func initializeToolbar() {
@@ -61,7 +65,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
     private func initializeDocumentsCollectionView() {
         Task {
-            guard let userId = AnnotatoAuth().currentUser?.uid else {
+            guard let userId = AuthViewModel().currentUser?.id else {
                 AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
 
@@ -71,7 +75,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documents = await documentController.loadAllDocuments(userId: userId)
+            documents = await documentController?.loadAllDocuments(userId: userId)
             stopSpinner()
 
             addDocumentsSubview()
@@ -108,8 +112,8 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     func didTapLogOutButton() {
         presentWarningAlert(alertTitle: "Log Out",
                             warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
-            WebSocketManager.shared.resetSocket()
-            AnnotatoAuth().logOut()
+            self?.webSocketManager?.resetSocket()
+            AuthViewModel().logOut()
             self?.goToAuth(asNewRootViewController: true)
         })
     }
@@ -127,19 +131,19 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             return
         }
 
-        viewModel.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
+        viewModel?.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
             guard let document = document else {
                 return
             }
 
             DispatchQueue.main.async {
-                self?.goToDocumentEdit(documentId: document.id)
+                self?.goToDocumentEdit(documentId: document.id, webSocketManager: self?.webSocketManager)
             }
         }
     }
 
     func didSelectCellView(document: DocumentListCellViewModel) {
-        goToDocumentEdit(documentId: document.id)
+        goToDocumentEdit(documentId: document.id, webSocketManager: webSocketManager)
     }
 }
 

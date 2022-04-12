@@ -5,7 +5,7 @@ import UniformTypeIdentifiers
 protocol Navigable where Self: UIViewController {
     func goToAuth(asNewRootViewController: Bool)
     func goToDocumentList(asNewRootViewController: Bool)
-    func goToDocumentEdit(documentId: UUID)
+    func goToDocumentEdit(documentId: UUID, webSocketManager: WebSocketManager?)
     func goToImportingFiles()
 }
 
@@ -41,13 +41,14 @@ extension Navigable {
             .changeRootViewController(newRootViewController: newRootViewController, animated: true)
     }
 
-    func goToDocumentEdit(documentId: UUID) {
+    func goToDocumentEdit(documentId: UUID, webSocketManager: WebSocketManager?) {
         guard let viewController = DocumentEditViewController.instantiateFullScreenFromStoryboard(
             .document
         ) else {
             return
         }
         viewController.documentId = documentId
+        viewController.webSocketManager = webSocketManager
         present(viewController, animated: true, completion: nil)
     }
 

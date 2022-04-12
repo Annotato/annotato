@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 
 extension AnnotationHandwritingEntity: PersistedEntity {
     static func fromModel(_ model: AnnotationHandwriting) -> AnnotationHandwritingEntity {
-        let entity = LocalPersistenceService.makeCoreDataEntity(class: AnnotationHandwriting.self)
+        let entity = CoreDataManager.makeCoreDataEntity(class: AnnotationHandwriting.self)
 
         entity.id = model.id
         entity.order = Int64(model.order)

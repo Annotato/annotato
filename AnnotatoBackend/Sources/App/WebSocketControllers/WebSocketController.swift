@@ -14,7 +14,7 @@ class WebSocketController {
     private let logger = Logger(label: "WebSocketController")
 
     func handleIncomingConnection(req: Request, webSocket: WebSocket) {
-        guard let userId = try? ControllersUtil.getParamValue(request: req, paramKey: "userId") else {
+        guard let userId = try? req.getParamValue(paramKey: "userId") else {
             req.logger.info("Could not get user ID for request. Closing WebSocket connection...")
             _ = webSocket.close()
             return

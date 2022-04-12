@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 struct LocalDocumentEntityDataAccess {
-    let context = LocalPersistenceService.sharedContext
+    let context = CoreDataManager.coreDataContext
 
     func listOwn(userId: String) -> [DocumentEntity]? {
         context.performAndWait {
@@ -158,7 +158,26 @@ struct LocalDocumentEntityDataAccess {
     }
 
     func delete(documentId: UUID, document: Document) -> DocumentEntity? {
-        // Deleting is the same as updating deletedAt
-        return update(documentId: documentId, document: document)
+        context.performAndWait {
+            context.rollback()
+
+            guard let documentEntity = readInCurrentContext(documentId: documentId, withDeleted: true) else {
+                AnnotatoLogger.error("When finding existing document entity.",
+                                     context: "LocalDocumentEntityDataAccess::delete")
+                return nil
+            }
+
+            context.delete(documentEntity)
+
+            do {
+                try context.save()
+            } catch {
+                AnnotatoLogger.error("When deleting document entity. \(String(describing: error))",
+                                     context: "LocalDocumentEntityDataAccess::delete")
+                return nil
+            }
+
+            return documentEntity
+        }
     }
 }

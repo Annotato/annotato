@@ -11,8 +11,8 @@ final class DocumentShareEntity: Model {
     @Parent(key: "document_id")
     var documentEntity: DocumentEntity
 
-    @Field(key: "recipient_id")
-    var recipientId: String
+    @Parent(key: "recipient_id")
+    var recipientEntity: UserEntity
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
@@ -31,7 +31,7 @@ final class DocumentShareEntity: Model {
 
     init(
         documentId: DocumentEntity.IDValue,
-        recipientId: String,
+        recipientId: UserEntity.IDValue,
         id: UUID? = nil,
         createdAt: Date? = nil,
         updatedAt: Date? = nil,
@@ -39,7 +39,7 @@ final class DocumentShareEntity: Model {
     ) {
         self.id = id
         self.$documentEntity.id = documentId
-        self.recipientId = recipientId
+        self.$recipientEntity.id = recipientId
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt

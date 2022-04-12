@@ -50,6 +50,11 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
         case deletedAt
     }
 
+    public func clone() -> AnnotationHandwriting {
+        AnnotationHandwriting(order: order, height: height, annotationId: annotationId, handwriting: handwriting,
+                              id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
+
     public func setHandwriting(to newHandwriting: Data) {
         self.handwriting = newHandwriting
     }
@@ -66,5 +71,25 @@ extension AnnotationHandwriting: CustomDebugStringConvertible {
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"
+    }
+}
+
+extension AnnotationHandwriting: Equatable {
+    public static func == (lhs: AnnotationHandwriting, rhs: AnnotationHandwriting) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.order == rhs.order &&
+        lhs.height == rhs.height &&
+        lhs.annotationId == rhs.annotationId &&
+        lhs.handwriting == rhs.handwriting
+    }
+}
+
+extension AnnotationHandwriting: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(order)
+        hasher.combine(height)
+        hasher.combine(annotationId)
+        hasher.combine(handwriting)
     }
 }

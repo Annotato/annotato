@@ -10,13 +10,6 @@ class PDFStorageManager {
         remoteStorageService = FirebaseStorage()
     }
 
-    var delegate: AnnotatoStorageDelegate? {
-        didSet {
-            localStorageService.delegate = delegate
-            remoteStorageService.delegate = delegate
-        }
-    }
-
     func uploadPdf(fileSystemUrl: URL, fileName: String) {
         localStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, fileName: fileName)
 

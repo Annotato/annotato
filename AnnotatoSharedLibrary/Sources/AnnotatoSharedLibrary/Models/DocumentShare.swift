@@ -30,6 +30,6 @@ extension DocumentShare: CustomDebugStringConvertible {
         "DocumentShare(id: \(String(describing: id)), documentId: \(documentId), recipientId: \(recipientId), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
-        "deleteAt: \(String(describing: deletedAt))"
+        "deletedAt: \(String(describing: deletedAt))"
     }
 }

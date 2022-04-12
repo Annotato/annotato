@@ -2,9 +2,13 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class DocumentListViewModel {
-    let documentsPersistenceManager = DocumentsPersistenceManager()
+    private let documentsPersistenceManager: DocumentsPersistenceManager
 
     private let pdfStorageManager = PDFStorageManager()
+
+    init(webSocketManager: WebSocketManager?) {
+        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
+    }
 
     func importDocument(selectedFileUrl: URL, completion: @escaping (Document?) -> Void) {
         let doesFileExist = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first != nil
@@ -12,7 +16,7 @@ class DocumentListViewModel {
             return
         }
 
-        guard let ownerId = AnnotatoAuth().currentUser?.uid else {
+        guard let ownerId = AuthViewModel().currentUser?.id else {
             return
         }
 

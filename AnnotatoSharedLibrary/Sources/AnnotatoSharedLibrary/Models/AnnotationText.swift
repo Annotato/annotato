@@ -53,6 +53,11 @@ public final class AnnotationText: Codable, AnnotationPart {
         case deletedAt
     }
 
+    public func clone() -> AnnotationText {
+        AnnotationText(type: type, content: content, height: height, order: order, annotationId: annotationId,
+                       id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
+
     public func setContent(to newContent: String) {
         self.content = newContent
     }
@@ -76,5 +81,27 @@ extension AnnotationText {
     @objc public enum TextType: Int64, Codable {
         case plainText = 0
         case markdown = 1
+    }
+}
+
+extension AnnotationText: Equatable {
+    public static func == (lhs: AnnotationText, rhs: AnnotationText) -> Bool {
+        lhs.id == rhs.id &&
+        lhs.order == rhs.order &&
+        lhs.height == rhs.height &&
+        lhs.annotationId == rhs.annotationId &&
+        lhs.type == rhs.type &&
+        lhs.content == rhs.content
+    }
+}
+
+extension AnnotationText: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(order)
+        hasher.combine(height)
+        hasher.combine(annotationId)
+        hasher.combine(type)
+        hasher.combine(content)
     }
 }
