@@ -4,6 +4,7 @@ import AnnotatoSharedLibrary
 
 struct DocumentsController {
     private let documentsDataAccess = DocumentsDataAccess()
+    private let documentSharesDataAccess = DocumentSharesDataAccess()
 
     private enum QueryParams: String {
         case userId
@@ -51,6 +52,9 @@ struct DocumentsController {
     func delete(req: Request) async throws -> Document {
         let documentId = try req.getIdValueAsUUID()
 
-        return try await documentsDataAccess.delete(db: req.db, documentId: documentId)
+        let deletedDocument = try await documentsDataAccess.delete(db: req.db, documentId: documentId)
+        _ = try await documentSharesDataAccess.delete(db: req.db, documentId: deletedDocument.id)
+
+        return deletedDocument
     }
 }

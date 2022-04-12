@@ -99,4 +99,17 @@ struct DocumentSharesDataAccess {
 
         return DocumentShare.fromManagedEntity(documentShareEntity)
     }
+
+    func delete(db: Database, documentId: UUID) async throws -> [DocumentShare] {
+        let documentShareEntities = try await DocumentShareEntity
+            .query(on: db)
+            .filter(\.$documentEntity.$id == documentId)
+            .all().get()
+
+        try await db.transaction { tx in
+            try await documentShareEntities.delete(on: tx)
+        }
+
+        return documentShareEntities.map(DocumentShare.fromManagedEntity)
+    }
 }
