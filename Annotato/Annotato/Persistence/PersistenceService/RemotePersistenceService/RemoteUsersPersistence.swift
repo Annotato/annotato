@@ -3,6 +3,7 @@ import Foundation
 
 struct RemoteUsersPersistence {
     private static let usersUrl = "\(RemotePersistenceService.baseAPIUrl)/users"
+    private static let usersSharingDocumentUrl = "\(usersUrl)/sharing"
 
     private var httpService: AnnotatoHTTPService
 
@@ -34,6 +35,20 @@ struct RemoteUsersPersistence {
             return try JSONCustomDecoder().decode(AnnotatoUser.self, from: responseData)
         } catch {
             AnnotatoLogger.error("When fetching user: \(String(describing: error))")
+            return nil
+        }
+    }
+
+    // MARK: LIST SHARING
+    func getUsersSharingDocument(documentId: UUID) async -> [AnnotatoUser]? {
+        do {
+            let responseData = try await httpService.get(
+                url: "\(RemoteUsersPersistence.usersSharingDocumentUrl)",
+                params: ["documentId": documentId.uuidString]
+            )
+            return try JSONCustomDecoder().decode([AnnotatoUser].self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When fetching users sharing document \(documentId): \(String(describing: error))")
             return nil
         }
     }

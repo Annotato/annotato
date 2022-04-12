@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     private var documentController: DocumentController?
@@ -11,6 +12,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     private var viewModel: DocumentListViewModel?
     private var documents: [DocumentListCellViewModel]?
     let toolbarHeight = 50.0
+    private var cancellables: Set<AnyCancellable> = []
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -18,6 +20,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeDocumentsCollectionView()
         initializeToolbar()
         initializeImportMenu()
+        setUpSubscribers()
         view.bringSubviewToFront(importMenu)
     }
 
@@ -64,14 +67,14 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         importMenu.actionDelegate = self
     }
 
-    private func initializeDocumentsCollectionView() {
+    private func initializeDocumentsCollectionView(inDeleteMode: Bool = false) {
         Task {
             guard let userId = AuthViewModel().currentUser?.id else {
                 AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
 
                 documents = []
-                addDocumentsSubview()
+                addDocumentsSubview(inDeleteMode: false)
                 return
             }
 
@@ -79,11 +82,11 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             documents = await documentController?.loadAllDocuments(userId: userId)
             stopSpinner()
 
-            addDocumentsSubview()
+            addDocumentsSubview(inDeleteMode: inDeleteMode)
         }
     }
 
-    private func addDocumentsSubview() {
+    private func addDocumentsSubview(inDeleteMode: Bool) {
         guard let documents = documents else {
             presentErrorAlert(errorMessage: "Failed to load documents.")
             return
@@ -94,7 +97,8 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         collectionView = DocumentListCollectionView(
             documents: documents,
             frame: .zero,
-            documentListCollectionCellViewDelegate: self
+            documentListCollectionCellViewDelegate: self,
+            initializeInDeleteMode: inDeleteMode
         )
 
         guard let collectionView = collectionView else {
@@ -169,6 +173,31 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
 
         collectionView.enterDeleteMode()
         toolbar.enterDeleteMode()
+    }
+
+    func didTapDeleteButton(document: DocumentListCellViewModel) {
+        let isOwner = document.ownerId == AuthViewModel().currentUser?.id
+        let warningMessageSuffix = isOwner ? "everyone" : "you"
+        let warningMessage = "Are you sure you want to delete \(document.name)? " +
+        "This deletes the document permanently for \(warningMessageSuffix)"
+
+        presentWarningAlert(
+            alertTitle: "Confirm",
+            warningMessage: warningMessage,
+            confirmHandler: { [weak self] in
+                self?.viewModel?.didDeleteDocument(viewModel: document)
+            }
+        )
+    }
+
+    private func setUpSubscribers() {
+        viewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
+            if hasDeletedDocument {
+                DispatchQueue.main.async {
+                    self?.initializeDocumentsCollectionView(inDeleteMode: true)
+                }
+            }
+        }).store(in: &cancellables)
     }
 }
 

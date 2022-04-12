@@ -74,10 +74,7 @@ class DocumentsPersistenceManager {
         let remoteDeletedDocument = await remoteDocumentsPersistence
             .deleteDocument(document: document)
 
-        if remoteDeletedDocument == nil {
-            document.setDeletedAt()
-        }
-
+        // Note: Documents are permanently deleted locally
         return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
     }
 }

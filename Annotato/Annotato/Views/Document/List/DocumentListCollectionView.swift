@@ -4,6 +4,7 @@ class DocumentListCollectionView: UICollectionView {
     let cellId = "DocumentListCollectionCell"
     private var documents: [DocumentListCellViewModel]
     private weak var documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate?
+    let initializeInDeleteMode: Bool
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -13,10 +14,12 @@ class DocumentListCollectionView: UICollectionView {
     required init(
         documents: [DocumentListCellViewModel],
         frame: CGRect,
-        documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate
+        documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate,
+        initializeInDeleteMode: Bool
     ) {
         self.documents = documents
         self.documentListCollectionCellViewDelegate = documentListCollectionCellViewDelegate
+        self.initializeInDeleteMode = initializeInDeleteMode
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 180, height: 220)
 
@@ -64,7 +67,7 @@ extension DocumentListCollectionView: UICollectionViewDataSource {
 
         cell.document = documents[indexPath.row]
         cell.actionDelegate = documentListCollectionCellViewDelegate
-        cell.initializeSubviews()
+        cell.initializeSubviews(inDeleteMode: initializeInDeleteMode)
 
         return cell
     }

@@ -17,11 +17,16 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         super.init(frame: frame)
     }
 
-    func initializeSubviews() {
+    func initializeSubviews(inDeleteMode: Bool) {
         addGestureRecognizers()
         initializeIconImageView()
         initializeDeleteIconButton()
-        exitDeleteMode()
+
+        if inDeleteMode {
+            enterDeleteMode()
+        } else {
+            exitDeleteMode()
+        }
 
         if document?.isShared ?? false {
             initializeShareIconImageView()
@@ -49,6 +54,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         deleteButton.tintColor = UIColor.red
         deleteButton.contentVerticalAlignment = .fill
         deleteButton.contentHorizontalAlignment = .fill
+        deleteButton.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
 
         addSubview(deleteButton)
 
@@ -111,6 +117,14 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     @objc
     private func didLongPressCellView() {
         actionDelegate?.didLongPressCellView()
+    }
+
+    @objc func didTapDeleteButton() {
+        guard let document = document else {
+            return
+        }
+
+        actionDelegate?.didTapDeleteButton(document: document)
     }
 
     func enterDeleteMode() {

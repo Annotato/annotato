@@ -22,7 +22,7 @@ struct DocumentsDataAccess {
         let documentEntities = try await DocumentEntity.query(on: db)
             .join(DocumentShareEntity.self, on: \DocumentEntity.$id == \DocumentShareEntity.$documentEntity.$id)
             .filter(DocumentShareEntity.self, \DocumentShareEntity.$recipientEntity.$id == userId)
-            .withDeleted()
+            .filter(DocumentShareEntity.self, \DocumentShareEntity.$deletedAt == nil)
             .sort(\.$name)
             .all().get()
 

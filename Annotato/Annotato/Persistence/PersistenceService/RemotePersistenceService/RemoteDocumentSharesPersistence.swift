@@ -28,6 +28,18 @@ struct RemoteDocumentSharesPersistence {
         }
     }
 
+    // MARK: DELETE
+    func deleteDocumentShare(documentId: UUID, recipientId: String) async -> Document? {
+        do {
+            let responseData = try await httpService.delete(
+                url: "\(RemoteDocumentSharesPersistence.documentSharesUrl)/\(documentId.uuidString)/\(recipientId)")
+            return try JSONCustomDecoder().decode(Document.self, from: responseData)
+        } catch {
+            AnnotatoLogger.error("When deleting document share: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
     private func encodeDocumentShare(_ documentShare: DocumentShare) -> Data? {
         do {
             let data = try JSONCustomEncoder().encode(documentShare)
