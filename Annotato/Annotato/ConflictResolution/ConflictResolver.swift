@@ -54,30 +54,95 @@ struct ConflictResolver<Model: ConflictResolvable> {
                 continue
             }
 
-            if let localDeletedAt = localModel.deletedAt, !serverModel.isDeleted {
-                if serverModel.wasUpdated(after: localDeletedAt) {
-                    resolution.localUpdate.append(serverModel)
-                    resolution.nonConflictingModels.append(serverModel)
-                } else {
-                    resolution.serverDelete.append(localModel)
-                    resolution.nonConflictingModels.append(localModel)
-                }
-            } else if let serverDeletedAt = serverModel.deletedAt, !localModel.isDeleted {
-                if localModel.wasUpdated(after: serverDeletedAt) {
-                    resolution.serverUpdate.append(localModel)
-                    resolution.nonConflictingModels.append(localModel)
-                } else {
-                    resolution.localDelete.append(serverModel)
-                    resolution.nonConflictingModels.append(serverModel)
-                }
+            if localModel.isDeleted && !serverModel.isDeleted {
+                handleDeletedOnlyOnLocal(localModel: localModel, serverModel: serverModel,
+                                         resolution: &resolution)
+            } else if !localModel.isDeleted && serverModel.isDeleted {
+                handleDeletedOnlyOnServer(localModel: localModel, serverModel: serverModel,
+                                          resolution: &resolution)
             } else if localModel.isDeleted && serverModel.isDeleted {
-                resolution.nonConflictingModels.append(serverModel)
+                handleDeletedOnBothLocalAndServer(localModel: localModel, serverModel: serverModel,
+                                                  resolution: &resolution)
             } else if localModel == serverModel {
-                resolution.localUpdate.append(serverModel)
-                resolution.nonConflictingModels.append(serverModel)
+                handleEqualLocalAndServer(localModel: localModel, serverModel: serverModel,
+                                          resolution: &resolution)
             } else {
-                resolution.conflictingModels.append((localModel, serverModel))
+                handleConflictingLocalAndServer(localModel: localModel, serverModel: serverModel,
+                                                resolution: &resolution)
             }
         }
+    }
+
+    private func handleDeletedOnlyOnLocal(localModel: Model, serverModel: Model,
+                                          resolution: inout ConflictResolution<Model>) {
+        guard let localDeletedAt = localModel.deletedAt, !serverModel.isDeleted else {
+            return
+        }
+
+        guard serverModel.wasUpdated(after: localDeletedAt) else {
+            // Server version was not updated after local deletion, can safely delete on server
+            resolution.serverDelete.append(localModel)
+
+            resolution.nonConflictingModels.append(localModel)
+            return
+        }
+
+        // Server version was updated after local deletion, restore and update local version
+        resolution.localUpdate.append(serverModel)
+
+        resolution.nonConflictingModels.append(serverModel)
+    }
+
+    private func handleDeletedOnlyOnServer(localModel: Model, serverModel: Model,
+                                           resolution: inout ConflictResolution<Model>) {
+        guard let serverDeletedAt = serverModel.deletedAt, !localModel.isDeleted else {
+            return
+        }
+
+        guard localModel.wasUpdated(after: serverDeletedAt) else {
+            // Local version was not updated after server deletion, can safely delete locally
+            resolution.localDelete.append(serverModel)
+
+            resolution.nonConflictingModels.append(serverModel)
+            return
+        }
+
+        // Local version was updated after server deletion, restore and update server version
+        resolution.serverUpdate.append(localModel)
+
+        resolution.nonConflictingModels.append(localModel)
+    }
+
+    private func handleDeletedOnBothLocalAndServer(localModel: Model, serverModel: Model,
+                                                   resolution: inout ConflictResolution<Model>) {
+        guard localModel.isDeleted && serverModel.isDeleted else {
+            return
+        }
+
+        // Persist server timestamps
+        resolution.localUpdate.append(serverModel)
+
+        resolution.nonConflictingModels.append(serverModel)
+    }
+
+    private func handleEqualLocalAndServer(localModel: Model, serverModel: Model,
+                                           resolution: inout ConflictResolution<Model>) {
+        guard localModel == serverModel else {
+            return
+        }
+
+        // Persist server timestamps
+        resolution.localUpdate.append(serverModel)
+
+        resolution.nonConflictingModels.append(serverModel)
+    }
+
+    private func handleConflictingLocalAndServer(localModel: Model, serverModel: Model,
+                                                 resolution: inout ConflictResolution<Model>) {
+        guard localModel != serverModel else {
+            return
+        }
+
+        resolution.conflictingModels.append((localModel, serverModel))
     }
 }
