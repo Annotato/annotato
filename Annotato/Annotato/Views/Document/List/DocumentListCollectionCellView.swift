@@ -137,23 +137,33 @@ class DocumentListCollectionCellView: UICollectionViewCell {
         actionDelegate?.didLongPressCellView()
     }
 
-    @objc func didTapDeleteButton() {
+    @objc
+    private func didTapDeleteButton() {
         guard let document = document else {
             return
         }
 
         Task {
-            let shouldShowDeleteOptions = await document.shouldShowDeleteOptions()
-            if shouldShowDeleteOptions {
+            let canFindUsersSharingDocument = await document.canFindUsersSharingDocument()
+            let isOwner = AuthViewModel().currentUser?.id == document.ownerId
+
+            if isOwner && canFindUsersSharingDocument {
                 deleteMenu.isHidden.toggle()
-            } else {
-                actionDelegate?.didTapDeleteButton(document: document)
+                return
             }
+
+            if isOwner {
+                actionDelegate?.didTapDeleteForEveryoneButton(document: document)
+                return
+            }
+
+            actionDelegate?.didTapDeleteAsNonOwner(document: document)
         }
     }
 
     func enterDeleteMode() {
         deleteButton.isHidden = false
+        deleteMenu.isHidden = true
     }
 
     func exitDeleteMode() {
@@ -164,7 +174,10 @@ class DocumentListCollectionCellView: UICollectionViewCell {
 
 extension DocumentListCollectionCellView: DocumentListDeleteMenuDelegate {
     func didTapDeleteForEveryoneButton() {
-        print("TAPPED delete for everyone!")
+        guard let document = document else {
+            return
+        }
+        actionDelegate?.didTapDeleteForEveryoneButton(document: document)
     }
 
     func didTapDeleteForSelfOnlyButton() {

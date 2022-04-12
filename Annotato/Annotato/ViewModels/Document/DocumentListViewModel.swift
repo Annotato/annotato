@@ -36,40 +36,21 @@ class DocumentListViewModel {
         }
     }
 
-    func didDeleteDocument(viewModel: DocumentListCellViewModel) {
-        let document = viewModel.document
-
-        let isOwner = document.ownerId == AuthViewModel().currentUser?.id
-        if !isOwner {
-            self.deleteDocumentShare(document: document)
-        }
-
+    func deleteDocumentForEveryone(viewModel: DocumentListCellViewModel) {
         Task {
-            let canFindUsersSharingDocument = await viewModel.canFindUsersSharingDocument()
-            if canFindUsersSharingDocument {
-                print("HAS USERS SHARING")
-            } else {
-                self.deleteDocument(document: document)
-            }
-        }
-
-    }
-
-    private func deleteDocument(document: Document) {
-        Task {
-            _ = await documentsPersistenceManager.deleteDocument(document: document)
+            _ = await documentsPersistenceManager.deleteDocument(document: viewModel.document)
             hasDeletedDocument = true
         }
     }
 
-    private func deleteDocumentShare(document: Document) {
+    func deleteDocumentAsNonOwner(viewModel: DocumentListCellViewModel) {
         guard let recipientId = AuthViewModel().currentUser?.id else {
             return
         }
 
         Task {
             _ = await documentSharesPersistenceManager.deleteDocumentShare(
-                document: document, recipientId: recipientId)
+                document: viewModel.document, recipientId: recipientId)
             hasDeletedDocument = true
         }
     }

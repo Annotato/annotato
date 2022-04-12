@@ -1,5 +1,6 @@
 protocol DocumentListCollectionCellViewDelegate: AnyObject {
     func didSelectCellView(document: DocumentListCellViewModel)
     func didLongPressCellView()
-    func didTapDeleteButton(document: DocumentListCellViewModel)
+    func didTapDeleteForEveryoneButton(document: DocumentListCellViewModel)
+    func didTapDeleteAsNonOwner(document: DocumentListCellViewModel)
 }

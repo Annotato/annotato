@@ -175,17 +175,28 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         toolbar.enterDeleteMode()
     }
 
-    func didTapDeleteButton(document: DocumentListCellViewModel) {
-        let isOwner = document.ownerId == AuthViewModel().currentUser?.id
-        let warningMessageSuffix = isOwner ? "everyone" : "you"
+    func didTapDeleteForEveryoneButton(document: DocumentListCellViewModel) {
         let warningMessage = "Are you sure you want to delete \(document.name)? " +
-        "This deletes the document permanently for \(warningMessageSuffix)"
+        "This deletes the document permanently for everyone"
 
         presentWarningAlert(
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.didDeleteDocument(viewModel: document)
+                self?.viewModel?.deleteDocumentForEveryone(viewModel: document)
+            }
+        )
+    }
+
+    func didTapDeleteAsNonOwner(document: DocumentListCellViewModel) {
+        let warningMessage = "Are you sure you want to delete \(document.name)? " +
+        "This deletes the document permanently for you"
+
+        presentWarningAlert(
+            alertTitle: "Confirm",
+            warningMessage: warningMessage,
+            confirmHandler: { [weak self] in
+                self?.viewModel?.deleteDocumentAsNonOwner(viewModel: document)
             }
         )
     }
