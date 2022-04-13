@@ -1,14 +1,27 @@
 import AnnotatoSharedLibrary
 
-struct ConflictResolver<Model: ConflictResolvable> {
+class ConflictResolver<Model: ConflictResolvable> {
     let localModels: [Model]
     let serverModels: [Model]
 
+    init(localModels: [Model], serverModels: [Model]) {
+        self.localModels = localModels
+        self.serverModels = serverModels
+    }
+
     func resolve() -> ConflictResolution<Model> {
         var resolution = ConflictResolution<Model>()
-        handleExclusiveToLocal(resolution: &resolution)
-        handleExclusiveToServer(resolution: &resolution)
-        handleCommonToLocalAndServer(resolution: &resolution)
+        for localId in localIds where !serverIds.contains(localId) {
+            handleExclusiveToLocal(localModelId: localId, resolution: &resolution)
+        }
+
+        for serverId in serverIds where !localIds.contains(serverId) {
+            handleExclusiveToServer(serverModelId: serverId, resolution: &resolution)
+        }
+
+        for commonId in localIds.intersection(serverIds) {
+            handleCommonToLocalAndServer(commonModelId: commonId, resolution: &resolution)
+        }
 
         return resolution
     }
@@ -21,54 +34,47 @@ struct ConflictResolver<Model: ConflictResolvable> {
         Set(serverModels.map({ $0.id }))
     }
 
-    private var localModelsMap: [Model.ID: Model] {
+    var localModelsMap: [Model.ID: Model] {
         Dictionary(uniqueKeysWithValues: localModels.map({ ($0.id, $0) }))
     }
 
-    private var serverModelsMap: [Model.ID: Model] {
+    var serverModelsMap: [Model.ID: Model] {
         Dictionary(uniqueKeysWithValues: serverModels.map({ ($0.id, $0) }))
     }
 
-    private func handleExclusiveToLocal(resolution: inout ConflictResolution<Model>) {
-        for localId in localIds where !serverIds.contains(localId) {
-            let localModel = localModelsMap[localId]
-            resolution.serverCreate.appendIfNotNil(localModel)
-            resolution.nonConflictingModels.appendIfNotNil(localModel)
-        }
+    private func handleExclusiveToLocal(localModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
+        let localModel = localModelsMap[localModelId]
+        resolution.serverCreate.appendIfNotNil(localModel)
+        resolution.nonConflictingModels.appendIfNotNil(localModel)
     }
 
-    private func handleExclusiveToServer(resolution: inout ConflictResolution<Model>) {
-        for serverId in serverIds where !localIds.contains(serverId) {
-            let serverModel = serverModelsMap[serverId]
-            resolution.localCreate.appendIfNotNil(serverModel)
-            resolution.nonConflictingModels.appendIfNotNil(serverModel)
-        }
+    func handleExclusiveToServer(serverModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
+        let serverModel = serverModelsMap[serverModelId]
+        resolution.localCreate.appendIfNotNil(serverModel)
+        resolution.nonConflictingModels.appendIfNotNil(serverModel)
     }
 
-    private func handleCommonToLocalAndServer(resolution: inout ConflictResolution<Model>) {
-        let commonIds = localIds.intersection(serverIds)
-        for commonId in commonIds {
-            guard let localModel = localModelsMap[commonId],
-                  let serverModel = serverModelsMap[commonId] else {
-                continue
-            }
+    func handleCommonToLocalAndServer(commonModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
+        guard let localModel = localModelsMap[commonModelId],
+              let serverModel = serverModelsMap[commonModelId] else {
+            return
+        }
 
-            if localModel.isDeleted && !serverModel.isDeleted {
-                handleDeletedOnlyOnLocal(localModel: localModel, serverModel: serverModel,
-                                         resolution: &resolution)
-            } else if !localModel.isDeleted && serverModel.isDeleted {
-                handleDeletedOnlyOnServer(localModel: localModel, serverModel: serverModel,
-                                          resolution: &resolution)
-            } else if localModel.isDeleted && serverModel.isDeleted {
-                handleDeletedOnBothLocalAndServer(localModel: localModel, serverModel: serverModel,
-                                                  resolution: &resolution)
-            } else if localModel == serverModel {
-                handleEqualLocalAndServer(localModel: localModel, serverModel: serverModel,
-                                          resolution: &resolution)
-            } else {
-                handleConflictingLocalAndServer(localModel: localModel, serverModel: serverModel,
-                                                resolution: &resolution)
-            }
+        if localModel.isDeleted && !serverModel.isDeleted {
+            handleDeletedOnlyOnLocal(localModel: localModel, serverModel: serverModel,
+                                     resolution: &resolution)
+        } else if !localModel.isDeleted && serverModel.isDeleted {
+            handleDeletedOnlyOnServer(localModel: localModel, serverModel: serverModel,
+                                      resolution: &resolution)
+        } else if localModel.isDeleted && serverModel.isDeleted {
+            handleDeletedOnBothLocalAndServer(localModel: localModel, serverModel: serverModel,
+                                              resolution: &resolution)
+        } else if localModel == serverModel {
+            handleEqualLocalAndServer(localModel: localModel, serverModel: serverModel,
+                                      resolution: &resolution)
+        } else {
+            handleConflictingLocalAndServer(localModel: localModel, serverModel: serverModel,
+                                            resolution: &resolution)
         }
     }
 
