@@ -8,7 +8,7 @@ class DocumentViewModel: ObservableObject {
     private let annotationsPersistenceManager: AnnotationsPersistenceManager
     private let webSocketManager: WebSocketManager?
 
-    let model: Document
+    private(set) var model: Document
 
     private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
@@ -20,6 +20,7 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
     @Published private(set) var updateOwnerIsSuccess: Bool?
+    @Published private(set) var hasUpdatedDocument = false
     @Published private(set) var hasDeletedDocument = false
 
     init(model: Document, webSocketManager: WebSocketManager?) {
@@ -174,6 +175,14 @@ extension DocumentViewModel {
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
     }
 
+    func receiveUpdateDocument(updatedDocument: Document) {
+        guard updatedDocument.id == self.model.id else {
+            return
+        }
+
+        model = updatedDocument
+    }
+
     func receiveDeleteDocument(deletedDocument: Document) {
         guard deletedDocument.id == self.model.id else {
             return
@@ -228,6 +237,14 @@ extension DocumentViewModel {
 
             self?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
         }.store(in: &cancellables)
+
+        documentsPersistenceManager.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in
+            guard let updatedDocument = updatedDocument else {
+                return
+            }
+
+            self?.receiveUpdateDocument(updatedDocument: updatedDocument)
+        }).store(in: &cancellables)
 
         documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
             guard let deletedDocument = deletedDocument else {

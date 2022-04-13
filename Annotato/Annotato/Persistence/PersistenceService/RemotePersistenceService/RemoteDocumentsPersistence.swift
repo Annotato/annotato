@@ -69,21 +69,16 @@ struct RemoteDocumentsPersistence {
 
     // MARK: UPDATE
     func updateDocument(document: Document) async -> Document? {
-        guard let requestData = encodeDocument(document) else {
-            AnnotatoLogger.error("Document was not updated",
-                                 context: "RemoteDocumentsPersistence::updateDocument")
+        guard let senderId = AuthViewModel().currentUser?.id else {
             return nil
         }
 
-        do {
-            let responseData =
-                try await httpService.put(url: "\(RemoteDocumentsPersistence.documentsUrl)/\(document.id)",
-                                          data: requestData)
-            return try JSONCustomDecoder().decode(Document.self, from: responseData)
-        } catch {
-            AnnotatoLogger.error("When updating document: \(String(describing: error))")
-            return nil
-        }
+        let webSocketMessage = AnnotatoCudDocumentMessage(
+            senderId: senderId, subtype: .updateDocument, document: document)
+
+        webSocketManager?.send(message: webSocketMessage)
+
+        return nil
     }
 
     // MARK: DELETE

@@ -60,14 +60,10 @@ class DocumentsPersistenceManager {
     }
 
     func updateDocument(document: Document) async -> Document? {
-        let remoteUpdatedDocument = await remoteDocumentsPersistence
-            .updateDocument(document: document)
+        _ = await remoteDocumentsPersistence.updateDocument(document: document)
 
-        if remoteUpdatedDocument == nil {
-            document.setUpdatedAt()
-        }
-
-        return localDocumentsPersistence.updateDocument(document: remoteUpdatedDocument ?? document)
+        document.setUpdatedAt()
+        return localDocumentsPersistence.updateDocument(document: document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
