@@ -28,7 +28,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             guard let self = self else {
                 return
             }
-            self.initializeSubviews()
+            self.viewWillAppear(true)
         }).store(in: &cancellables)
     }
 

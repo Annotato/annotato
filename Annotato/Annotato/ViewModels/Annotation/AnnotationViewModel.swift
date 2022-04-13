@@ -317,7 +317,7 @@ extension AnnotationViewModel {
         }
         isRemoved = true
         selectionBox.didDelete()
-        document?.removeAnnotation(annotation: self)
+        document?.deleteAnnotation(annotation: self)
     }
 
     func didSaveMergeConflicts() {
@@ -338,7 +338,7 @@ extension AnnotationViewModel {
             return
         }
         selectionBox.didDelete()
-        document?.removeAnnotationWithoutPersistence(annotation: self)
+        document?.removeAnnotation(annotation: self)
         model.setDeletedAt(to: Date())
         Task {
             await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)

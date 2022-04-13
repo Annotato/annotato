@@ -40,7 +40,7 @@ public final class Document: Codable, Timestampable {
         annotations.append(annotation)
     }
 
-    public func containsWithDeleted(annotation: Annotation) -> Bool {
+    public func contains(annotation: Annotation) -> Bool {
         annotations.contains(where: { $0.id == annotation.id })
     }
 }

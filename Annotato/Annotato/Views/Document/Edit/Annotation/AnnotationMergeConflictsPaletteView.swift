@@ -64,3 +64,20 @@ extension AnnotationMergeConflictsPaletteView {
         self.frame = viewModel.frame
     }
 }
+
+extension AnnotationMergeConflictsPaletteView {
+    class func makeSaveButton() -> UIButton {
+        makeTextButton(label: "Save")
+    }
+
+    class func makeDiscardButton() -> UIButton {
+        makeTextButton(label: "Discard")
+    }
+
+    class func makeConflictIndexButton(conflictIdx: Int) -> UIButton {
+        let button = UIButton()
+        button.setTitle(String(conflictIdx), for: .normal)
+        button.setTitleColor(UIColor.red, for: .normal)
+        return button
+    }
+}

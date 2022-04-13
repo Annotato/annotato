@@ -46,25 +46,10 @@ extension UIView {
         return button
     }
 
-    class func makeSaveButton() -> UIButton {
-        makeButtonWithString(label: "Save")
-    }
-
-    class func makeDiscardButton() -> UIButton {
-        makeButtonWithString(label: "Discard")
-    }
-
-    class func makeButtonWithString(label: String) -> UIButton {
+    class func makeTextButton(label: String) -> UIButton {
         let button = UIButton()
         button.setTitle(label, for: .normal)
         button.setTitleColor(UIColor.blue, for: .normal)
-        return button
-    }
-
-    class func makeConflictIndexButton(conflictIdx: Int) -> UIButton {
-        let button = UIButton()
-        button.setTitle(String(conflictIdx), for: .normal)
-        button.setTitleColor(UIColor.red, for: .normal)
         return button
     }
 }

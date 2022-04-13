@@ -150,14 +150,14 @@ extension DocumentViewModel {
         self.addedAnnotation = annotationViewModel
     }
 
-    func removeAnnotation(annotation: AnnotationViewModel) {
-        removeAnnotationWithoutPersistence(annotation: annotation)
+    func deleteAnnotation(annotation: AnnotationViewModel) {
+        removeAnnotation(annotation: annotation)
         Task {
             await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model)
         }
     }
 
-    func removeAnnotationWithoutPersistence(annotation: AnnotationViewModel) {
+    func removeAnnotation(annotation: AnnotationViewModel) {
         model.removeAnnotation(annotation: annotation.model)
         annotations.removeAll(where: { $0.id == annotation.model.id })
     }
@@ -174,7 +174,7 @@ extension DocumentViewModel {
     }
 
     func receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: Annotation) {
-        if model.containsWithDeleted(annotation: createdOrUpdatedAnnotation) {
+        if model.contains(annotation: createdOrUpdatedAnnotation) {
             AnnotatoLogger.info("Updated annotation from the createOrUpdate path: \(createdOrUpdatedAnnotation)")
             receiveUpdateAnnotation(updatedAnnotation: createdOrUpdatedAnnotation)
         } else {
