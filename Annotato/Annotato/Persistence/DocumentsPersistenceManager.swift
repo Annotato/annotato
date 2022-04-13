@@ -71,11 +71,9 @@ class DocumentsPersistenceManager {
     }
 
     func deleteDocument(document: Document) async -> Document? {
-        let remoteDeletedDocument = await remoteDocumentsPersistence
-            .deleteDocument(document: document)
+        _ = await remoteDocumentsPersistence.deleteDocument(document: document)
 
-        // Note: Documents are permanently deleted locally
-        return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
+        return nil
     }
 
     func deleteDocumentLocally(document: Document) async -> Document? {
@@ -109,7 +107,12 @@ extension DocumentsPersistenceManager {
         }
 
         Task {
-            _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
+            // NOTE: Documents are hard deleted from local storage
+            if messageSubtype == .deleteDocument {
+                _ = localDocumentsPersistence.deleteDocument(document: document)
+            } else {
+                _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
+            }
         }
 
         publishDocument(messageSubtype: messageSubtype, document: document)

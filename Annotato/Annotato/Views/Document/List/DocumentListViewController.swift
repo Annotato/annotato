@@ -211,7 +211,11 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         viewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
             if hasDeletedDocument {
                 DispatchQueue.main.async {
-                    self?.initializeDocumentsCollectionView(inDeleteMode: true)
+                    guard let collectionView = self?.collectionView else {
+                        return
+                    }
+
+                    self?.initializeDocumentsCollectionView(inDeleteMode: collectionView.initializeInDeleteMode)
                 }
             }
         }).store(in: &cancellables)

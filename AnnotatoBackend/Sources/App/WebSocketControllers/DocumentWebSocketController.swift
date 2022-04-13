@@ -89,6 +89,8 @@ class DocumentWebSocketController {
                 db: db, userId: userId, document: deletedDocument, message: response
             )
 
+            _ = try await documentSharesDataAccess.delete(db: req.db, documentId: deletedDocument.id)
+
             return deletedDocument
         } catch {
             self.logger.error("Error when deleting document. \(error.localizedDescription)")

@@ -1,17 +1,21 @@
 import Foundation
 import AnnotatoSharedLibrary
+import Combine
 
 class DocumentListViewModel {
     private let documentsPersistenceManager: DocumentsPersistenceManager
     private let documentSharesPersistenceManager: DocumentSharesPersistenceManager
 
     private let pdfStorageManager = PDFStorageManager()
+    private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var hasDeletedDocument = false
 
     init(webSocketManager: WebSocketManager?) {
         self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
         self.documentSharesPersistenceManager = DocumentSharesPersistenceManager()
+
+        setUpSubscribers()
     }
 
     func importDocument(selectedFileUrl: URL, completion: @escaping (Document?) -> Void) {
@@ -53,5 +57,13 @@ class DocumentListViewModel {
                 document: viewModel.document, recipientId: recipientId)
             hasDeletedDocument = true
         }
+    }
+}
+
+extension DocumentListViewModel {
+    private func setUpSubscribers() {
+        documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] _ in
+            self?.hasDeletedDocument = true
+        }).store(in: &cancellables)
     }
 }
