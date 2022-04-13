@@ -143,26 +143,32 @@ extension AnnotationsPersistenceManager {
 extension AnnotationsPersistenceManager {
     func updatePersistenceBasedOnConflictResolution(conflictResolution: ConflictResolution<Annotation>) async {
         for localCreateAnnotation in conflictResolution.localCreate {
+            print("localCreateAnnotation: \(localCreateAnnotation)\n\n")
             _ = localAnnotationsPersistence.createAnnotation(annotation: localCreateAnnotation)
         }
 
         for localUpdateAnnotation in conflictResolution.localUpdate {
+            print("localUpdateAnnotation: \(localUpdateAnnotation)\n\n")
             _ = localAnnotationsPersistence.updateAnnotation(annotation: localUpdateAnnotation)
         }
 
         for localDeleteAnnotation in conflictResolution.localDelete {
+            print("localDeleteAnnotation: \(localDeleteAnnotation)\n\n")
             _ = localAnnotationsPersistence.deleteAnnotation(annotation: localDeleteAnnotation)
         }
 
         for serverCreateAnnotation in conflictResolution.serverCreate {
+            print("serverCreateAnnotation: \(serverCreateAnnotation)\n\n")
             _ = await remoteAnnotationsPersistence.createAnnotation(annotation: serverCreateAnnotation)
         }
 
         for serverUpdateAnnotation in conflictResolution.serverUpdate {
+            print("serverUpdateAnnotation: \(serverUpdateAnnotation)\n\n")
             _ = await remoteAnnotationsPersistence.updateAnnotation(annotation: serverUpdateAnnotation)
         }
 
         for serverDeleteAnnotation in conflictResolution.serverDelete {
+            print("serverDeleteAnnotation: \(serverDeleteAnnotation)\n\n")
             _ = await remoteAnnotationsPersistence.deleteAnnotation(annotation: serverDeleteAnnotation)
         }
     }

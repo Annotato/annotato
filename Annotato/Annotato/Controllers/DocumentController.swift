@@ -78,9 +78,11 @@ struct DocumentController {
 
         await annotationsPersistenceManager.updatePersistenceBasedOnConflictResolution(
             conflictResolution: conflictResolution)
-
+        print("Saved the non conflicted models to persistence already\n\n")
         // Use server document as a base
         for nonConflictingAnnotation in conflictResolution.nonConflictingModels {
+            print("non conflicted model:")
+            print("\(nonConflictingAnnotation)\n\n")
             if !serverDocument.contains(annotation: nonConflictingAnnotation) {
                 serverDocument.addAnnotation(annotation: nonConflictingAnnotation)
             }
@@ -88,6 +90,9 @@ struct DocumentController {
 
         var currentConflictIdx = 1
         for (localAnnotation, serverAnnotation) in conflictResolution.conflictingModels {
+            print("Conflicted model with id=\(currentConflictIdx):")
+            print("local: \(localAnnotation)")
+            print("server: \(serverAnnotation)\n\n")
             localAnnotation.setNewId()
             localAnnotation.conflictIdx = currentConflictIdx
             serverAnnotation.conflictIdx = currentConflictIdx
@@ -105,7 +110,7 @@ struct DocumentController {
             webSocketManager: webSocketManager,
             annotationsPersistenceManager: annotationsPersistenceManager
         )
-        // TODO: IMPT Do I need to do some kind of rollback here to ensure core data doesn't have any issues?
+        // TODO: IMPT Do I need to do some kind of rollback here to ensure core data doesn't have any issues?Sample
     }
 
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
