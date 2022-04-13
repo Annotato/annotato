@@ -16,7 +16,7 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
-    private(set) var mergeConflictPalette: AnnotationMergeConflictsPaletteViewModel
+    private(set) var mergeConflictPalette: AnnotationMergeConflictsPaletteViewModel?
     private(set) var selectionBox: SelectionBoxViewModel
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
@@ -38,43 +38,42 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
 
-    @Published private(set) var isResolving = false
+    @Published private(set) var conflictIdx: Int?
     private(set) var resolveBySave = false
-    private(set) var conflictIdx: Int?
+    var isResolving: Bool {
+        conflictIdx != nil
+    }
 
     init(
         model: Annotation,
         document: DocumentViewModel,
         webSocketManager: WebSocketManager?,
         palette: AnnotationPaletteViewModel? = nil,
-        isResolving: Bool = false,
         conflictIdx: Int? = nil
     ) {
         self.model = model
         self.document = document
 
-        let mergeConflictsPalette: AnnotationMergeConflictsPaletteViewModel
-        if let conflictIdx = conflictIdx, isResolving {
+        let mergeConflictsPalette: AnnotationMergeConflictsPaletteViewModel?
+        if let conflictIdx = conflictIdx {
             self.conflictIdx = conflictIdx
-            self.isResolving = isResolving
             mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
                 origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)
             self.mergeConflictPalette = mergeConflictsPalette
         } else {
-            mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
-                origin: .zero, width: 0.0, height: 0.0, conflictIdx: -1)
+            mergeConflictsPalette = nil
             self.mergeConflictPalette = mergeConflictsPalette
         }
 
         self.palette = palette ?? AnnotationPaletteViewModel(
-            origin: CGPoint(x: 0.0, y: mergeConflictsPalette.height), width: model.width, height: 50.0)
+            origin: CGPoint(x: 0.0, y: mergeConflictsPalette?.height ?? 0.0), width: model.width, height: 50.0)
 
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.webSocketManager = webSocketManager
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.palette.parentViewModel = self
-        self.mergeConflictPalette.parentViewModel = self
+        self.mergeConflictPalette?.parentViewModel = self
 
         populatePartViewModels(model: model)
         setUpSubscribers()
@@ -164,11 +163,11 @@ extension AnnotationViewModel {
     }
 
     var height: Double {
-        min(mergeConflictPalette.height + palette.height + partsTotalHeight, maxHeight)
+        min(mergeConflictPalette?.height ?? 0.0 + palette.height + partsTotalHeight, maxHeight)
     }
 
     var minimizedHeight: Double {
-        min(mergeConflictPalette.height + palette.height + 30.0, maxHeight)
+        min(mergeConflictPalette?.height ?? 0.0 + palette.height + 30.0, maxHeight)
     }
 
     var size: CGSize {
@@ -193,7 +192,12 @@ extension AnnotationViewModel {
 
     // Note: scrollFrame is with respect to this frame
     var scrollFrame: CGRect {
-        CGRect(x: .zero, y: mergeConflictPalette.height + palette.height, width: model.width, height: partsTotalHeight)
+        CGRect(
+            x: .zero,
+            y: mergeConflictPalette?.height ?? 0.0 + palette.height,
+            width: model.width,
+            height: partsTotalHeight
+        )
     }
 
     // Note: partsFrame is with respect to scrollFrame
@@ -329,7 +333,7 @@ extension AnnotationViewModel {
             await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         resolveBySave = true
-        isResolving = false
+        self.mergeConflictPalette = nil
     }
 
     func didDiscardMergeConflicts() {
@@ -344,7 +348,7 @@ extension AnnotationViewModel {
             await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         isRemoved = true
-        isResolving = false
+        self.mergeConflictPalette = nil
     }
 
     func receiveDelete() {

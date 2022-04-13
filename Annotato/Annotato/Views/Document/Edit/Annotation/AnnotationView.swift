@@ -6,7 +6,7 @@ class AnnotationView: UIView {
 
     private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
-    private var mergeConflictsPalette: AnnotationMergeConflictsPaletteView
+    private var mergeConflictsPalette: AnnotationMergeConflictsPaletteView?
     private var scroll: UIScrollView
     private var parts: UIStackView
     private var selectionBox: SelectionBoxView
@@ -22,7 +22,11 @@ class AnnotationView: UIView {
         self.viewModel = viewModel
         self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
-        self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(viewModel: viewModel.mergeConflictPalette)
+
+        if let mergeConflictPaletteViewModel = viewModel.mergeConflictPalette {
+            self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(viewModel: mergeConflictPaletteViewModel)
+        }
+
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
         self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
@@ -37,7 +41,9 @@ class AnnotationView: UIView {
     }
 
     private func initializeSubviews() {
-        addSubview(mergeConflictsPalette)
+        if let mergeConflictsPalette = mergeConflictsPalette {
+            addSubview(mergeConflictsPalette)
+        }
         addSubview(palette)
         setUpScrollAndParts()
         populateParts()
@@ -130,17 +136,21 @@ class AnnotationView: UIView {
             }
         }.store(in: &cancellables)
 
-        viewModel.$isResolving.sink { [weak self] isResolving in
-            guard !isResolving else {
-                return
-            }
+        viewModel.$conflictIdx.sink { [weak self] _ in
             guard let self = self else {
                 return
             }
+            guard !self.viewModel.isResolving else {
+                return
+            }
             if self.viewModel.resolveBySave {
-                let mergeConflictsHeight = self.mergeConflictsPalette.height
-                self.mergeConflictsPalette.resetDimensions()
-                self.mergeConflictsPalette.removeFromSuperview()
+                guard let mergeConflictsPalette = self.mergeConflictsPalette else {
+                    return
+                }
+                let mergeConflictsHeight = mergeConflictsPalette.height
+                mergeConflictsPalette.resetDimensions()
+                mergeConflictsPalette.removeFromSuperview()
+                self.mergeConflictsPalette = nil
 
                 self.palette.translateUp(by: mergeConflictsHeight)
 
