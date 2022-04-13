@@ -24,7 +24,7 @@ class ConflictResolver<Model: ConflictResolvable> {
     var serverModelsMap: [Model.ID: Model] {
         Dictionary(uniqueKeysWithValues: serverModels.map({ ($0.id, $0) }))
     }
-    
+
     func resolve() -> ConflictResolution<Model> {
         var resolution = ConflictResolution<Model>()
         for localId in localIds where !serverIds.contains(localId) {
@@ -43,15 +43,19 @@ class ConflictResolver<Model: ConflictResolvable> {
     }
 
     func handleExclusiveToLocal(localModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
-        let localModel = localModelsMap[localModelId]
-        resolution.serverCreate.appendIfNotNil(localModel)
-        resolution.nonConflictingModels.appendIfNotNil(localModel)
+        guard let localModel = localModelsMap[localModelId] else {
+            return
+        }
+        resolution.serverCreate.append(localModel)
+        resolution.nonConflictingModels.append(localModel)
     }
 
     func handleExclusiveToServer(serverModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
-        let serverModel = serverModelsMap[serverModelId]
-        resolution.localCreate.appendIfNotNil(serverModel)
-        resolution.nonConflictingModels.appendIfNotNil(serverModel)
+        guard let serverModel = serverModelsMap[serverModelId] else {
+            return
+        }
+        resolution.localCreate.append(serverModel)
+        resolution.nonConflictingModels.append(serverModel)
     }
 
     func handleCommonToLocalAndServer(commonModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
