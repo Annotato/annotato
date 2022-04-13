@@ -138,3 +138,32 @@ extension AnnotationsPersistenceManager {
         createdOrUpdatedAnnotation = nil
     }
 }
+
+// MARK: Conflict Resolution Persistence
+extension AnnotationsPersistenceManager {
+    func updatePersistenceBasedOnConflictResolution(conflictResolution: ConflictResolution<Annotation>) async {
+        for localCreateAnnotation in conflictResolution.localCreate {
+            _ = localAnnotationsPersistence.createAnnotation(annotation: localCreateAnnotation)
+        }
+
+        for localUpdateAnnotation in conflictResolution.localUpdate {
+            _ = localAnnotationsPersistence.updateAnnotation(annotation: localUpdateAnnotation)
+        }
+
+        for localDeleteAnnotation in conflictResolution.localDelete {
+            _ = localAnnotationsPersistence.deleteAnnotation(annotation: localDeleteAnnotation)
+        }
+
+        for serverCreateAnnotation in conflictResolution.serverCreate {
+            _ = await remoteAnnotationsPersistence.createAnnotation(annotation: serverCreateAnnotation)
+        }
+
+        for serverUpdateAnnotation in conflictResolution.serverUpdate {
+            _ = await remoteAnnotationsPersistence.updateAnnotation(annotation: serverUpdateAnnotation)
+        }
+
+        for serverDeleteAnnotation in conflictResolution.serverDelete {
+            _ = await remoteAnnotationsPersistence.deleteAnnotation(annotation: serverDeleteAnnotation)
+        }
+    }
+}

@@ -2,7 +2,7 @@ import Foundation
 import CoreGraphics
 
 public final class Annotation: Codable, Timestampable, ObservableObject {
-    public let id: UUID
+    public private(set) var id: UUID
     public private(set) var width: Double
     public private(set) var parts: [AnnotationPart]
     public private(set) var selectionBox: SelectionBox
@@ -117,6 +117,10 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
         return Annotation(origin: origin, width: width, parts: clonedParts, selectionBox: clonedSelectionBox,
                           ownerId: ownerId, documentId: documentId, id: UUID(),
                           createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
+    }
+
+    public func setNewId(id: UUID = UUID()) {
+        self.id = id
     }
 
     private func addInitialPart() {

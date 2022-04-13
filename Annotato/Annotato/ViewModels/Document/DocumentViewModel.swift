@@ -19,11 +19,18 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
 
-    init(model: Document, webSocketManager: WebSocketManager?) {
+    init(
+        model: Document,
+        webSocketManager: WebSocketManager?,
+        annotationsPersistenceManager: AnnotationsPersistenceManager
+    ) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
         self.webSocketManager = webSocketManager
-        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
+        self.annotationsPersistenceManager = annotationsPersistenceManager
+
+        // TODO: This is where I will have to change the parameters passed into the annotation view model
+        // instantiation
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
             .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }

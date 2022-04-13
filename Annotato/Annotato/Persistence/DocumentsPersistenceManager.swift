@@ -80,6 +80,12 @@ class DocumentsPersistenceManager {
 
         return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
     }
+
+    func getLocalAndRemoteDocument(documentId: UUID) async -> (local: Document?, remote: Document?) {
+        let localDocument = localDocumentsPersistence.getDocument(documentId: documentId)
+        let remoteDocument = await remoteDocumentsPersistence.getDocument(documentId: documentId)
+        return (localDocument, remoteDocument)
+    }
 }
 
 // MARK: Websocket
