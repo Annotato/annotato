@@ -20,6 +20,7 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
     @Published private(set) var updateOwnerIsSuccess: Bool?
+    @Published private(set) var hasDeletedDocument = false
 
     init(model: Document, webSocketManager: WebSocketManager?) {
         self.model = model
@@ -172,6 +173,14 @@ extension DocumentViewModel {
         annotationViewModel?.receiveDelete()
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
     }
+
+    func receiveDeleteDocument(deletedDocument: Document) {
+        guard deletedDocument.id == self.model.id else {
+            return
+        }
+
+        hasDeletedDocument = true
+    }
 }
 
 extension DocumentViewModel {
@@ -219,5 +228,13 @@ extension DocumentViewModel {
 
             self?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
         }.store(in: &cancellables)
+
+        documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
+            guard let deletedDocument = deletedDocument else {
+                return
+            }
+
+            self?.receiveDeleteDocument(deletedDocument: deletedDocument)
+        }).store(in: &cancellables)
     }
 }
