@@ -48,14 +48,13 @@ class AnnotationViewModel: ObservableObject {
         model: Annotation,
         document: DocumentViewModel,
         webSocketManager: WebSocketManager?,
-        palette: AnnotationPaletteViewModel? = nil,
-        conflictIdx: Int? = nil
+        palette: AnnotationPaletteViewModel? = nil
     ) {
         self.model = model
         self.document = document
 
         let mergeConflictsPalette: AnnotationMergeConflictsPaletteViewModel?
-        if let conflictIdx = conflictIdx {
+        if let conflictIdx = model.conflictIdx {
             self.conflictIdx = conflictIdx
             mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
                 origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)

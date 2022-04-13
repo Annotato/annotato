@@ -47,8 +47,10 @@ struct DocumentController {
     }
 
     func loadDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
-        // TODO: Calling this function will use the conflict resolution method
-        // if that fails then we simply get document like as per usual
+        if let resultDocumentWithConflictResolution = await loadLocalAndRemoteDocumentWithDeleted(
+            documentId: documentId) {
+            return resultDocumentWithConflictResolution
+        }
         let document = await documentsPersistenceManager.getDocument(documentId: documentId)
         guard let document = document else {
             return nil
@@ -84,12 +86,16 @@ struct DocumentController {
             }
         }
 
+        var currentConflictIdx = 1
         for (localAnnotation, serverAnnotation) in conflictResolution.conflictingModels {
             localAnnotation.setNewId()
+            localAnnotation.conflictIdx = currentConflictIdx
+            serverAnnotation.conflictIdx = currentConflictIdx
+            currentConflictIdx += 1
             serverDocument.addAnnotation(annotation: localAnnotation)
 
             if !serverDocument.contains(annotation: serverAnnotation) {
-                // Probably will never come here but just to be safe
+                // Probably will never come here but just to be safe, shall I take out?
                 serverDocument.addAnnotation(annotation: serverAnnotation)
             }
         }

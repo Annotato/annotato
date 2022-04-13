@@ -11,6 +11,7 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
     public var createdAt: Date?
     public var updatedAt: Date?
     public var deletedAt: Date?
+    public var conflictIdx: Int?
 
     private var texts: [AnnotationText] {
         parts.compactMap { $0 as? AnnotationText }
