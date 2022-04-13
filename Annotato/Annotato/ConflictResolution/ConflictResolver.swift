@@ -17,53 +17,54 @@ class ConflictResolver<Model: ConflictResolvable> {
         Set(serverModels.map({ $0.id }))
     }
 
-    var localModelsMap: [Model.ID: Model] {
+    private var localModelsMap: [Model.ID: Model] {
         Dictionary(uniqueKeysWithValues: localModels.map({ ($0.id, $0) }))
     }
 
-    var serverModelsMap: [Model.ID: Model] {
+    private var serverModelsMap: [Model.ID: Model] {
         Dictionary(uniqueKeysWithValues: serverModels.map({ ($0.id, $0) }))
     }
 
     func resolve() -> ConflictResolution<Model> {
         var resolution = ConflictResolution<Model>()
         for localId in localIds where !serverIds.contains(localId) {
-            handleExclusiveToLocal(localModelId: localId, resolution: &resolution)
+            guard let localModel = localModelsMap[localId] else {
+                continue
+            }
+            handleExclusiveToLocal(localModel: localModel, resolution: &resolution)
         }
 
         for serverId in serverIds where !localIds.contains(serverId) {
-            handleExclusiveToServer(serverModelId: serverId, resolution: &resolution)
+            guard let serverModel = serverModelsMap[serverId] else {
+                continue
+            }
+            handleExclusiveToServer(serverModel: serverModel, resolution: &resolution)
         }
 
         for commonId in localIds.intersection(serverIds) {
-            handleCommonToLocalAndServer(commonModelId: commonId, resolution: &resolution)
+            guard let localModel = localModelsMap[commonId],
+                  let serverModel = serverModelsMap[commonId] else {
+                continue
+            }
+            handleCommonToLocalAndServer(localModel: localModel, serverModel: serverModel, resolution: &resolution)
         }
 
         return resolution
     }
 
-    func handleExclusiveToLocal(localModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
-        guard let localModel = localModelsMap[localModelId] else {
-            return
-        }
+    func handleExclusiveToLocal(localModel: Model, resolution: inout ConflictResolution<Model>) {
         resolution.serverCreate.append(localModel)
         resolution.nonConflictingModels.append(localModel)
     }
 
-    func handleExclusiveToServer(serverModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
-        guard let serverModel = serverModelsMap[serverModelId] else {
-            return
-        }
+    func handleExclusiveToServer(serverModel: Model, resolution: inout ConflictResolution<Model>) {
+
         resolution.localCreate.append(serverModel)
         resolution.nonConflictingModels.append(serverModel)
     }
 
-    func handleCommonToLocalAndServer(commonModelId: Model.ID, resolution: inout ConflictResolution<Model>) {
-        guard let localModel = localModelsMap[commonModelId],
-              let serverModel = serverModelsMap[commonModelId] else {
-            return
-        }
-
+    func handleCommonToLocalAndServer(localModel: Model, serverModel: Model,
+                                      resolution: inout ConflictResolution<Model>) {
         if localModel.isDeleted && !serverModel.isDeleted {
             handleDeletedOnlyOnLocal(localModel: localModel, serverModel: serverModel,
                                      resolution: &resolution)
