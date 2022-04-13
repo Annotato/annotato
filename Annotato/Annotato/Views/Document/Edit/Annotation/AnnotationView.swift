@@ -30,6 +30,7 @@ class AnnotationView: UIView {
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
         self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
+
         super.init(frame: viewModel.frame)
         initializeSiblingViews()
         initializeSubviews()
@@ -136,11 +137,11 @@ class AnnotationView: UIView {
             }
         }.store(in: &cancellables)
 
-        viewModel.$conflictIdx.sink { [weak self] _ in
-            guard let self = self else {
+        viewModel.$conflictIdx.sink { [weak self] conflictIdx in
+            guard conflictIdx == nil else {
                 return
             }
-            guard !self.viewModel.isResolving else {
+            guard let self = self else {
                 return
             }
             if self.viewModel.resolveBySave {

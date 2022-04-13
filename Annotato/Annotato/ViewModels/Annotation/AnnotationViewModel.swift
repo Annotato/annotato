@@ -163,11 +163,11 @@ extension AnnotationViewModel {
     }
 
     var height: Double {
-        min(mergeConflictPalette?.height ?? 0.0 + palette.height + partsTotalHeight, maxHeight)
+        min((mergeConflictPalette?.height ?? 0.0) + palette.height + partsTotalHeight, maxHeight)
     }
 
     var minimizedHeight: Double {
-        min(mergeConflictPalette?.height ?? 0.0 + palette.height + 30.0, maxHeight)
+        min((mergeConflictPalette?.height ?? 0.0) + palette.height + 30.0, maxHeight)
     }
 
     var size: CGSize {
@@ -333,6 +333,7 @@ extension AnnotationViewModel {
             await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         resolveBySave = true
+        self.conflictIdx = nil
         self.mergeConflictPalette = nil
     }
 
@@ -348,6 +349,7 @@ extension AnnotationViewModel {
             await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         isRemoved = true
+        self.conflictIdx = nil
         self.mergeConflictPalette = nil
     }
 
