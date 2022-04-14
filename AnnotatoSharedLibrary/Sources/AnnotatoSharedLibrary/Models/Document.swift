@@ -82,7 +82,7 @@ extension Document: CustomStringConvertible {
         "annotations: \(annotations)), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
-        "deleteAt: \(String(describing: deletedAt))"
+        "deletedAt: \(String(describing: deletedAt))"
     }
 }
 

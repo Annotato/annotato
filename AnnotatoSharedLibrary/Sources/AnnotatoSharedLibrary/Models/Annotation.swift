@@ -292,7 +292,7 @@ extension Annotation: CustomDebugStringConvertible {
         "parts: \(parts), ownerId: \(ownerId), documentId: \(documentId)), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
-        "deleteAt: \(String(describing: deletedAt))"
+        "deletedAt: \(String(describing: deletedAt))"
     }
 }
 

@@ -73,7 +73,7 @@ extension AnnotationText: CustomDebugStringConvertible {
         "height: \(height), order: \(order), annotationId: \(annotationId)), " +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
-        "deleteAt: \(String(describing: deletedAt))"
+        "deletedAt: \(String(describing: deletedAt))"
     }
 }
 
