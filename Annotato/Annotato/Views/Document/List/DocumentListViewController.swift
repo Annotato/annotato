@@ -29,7 +29,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
         initializeSpinner()
 
-        NetworkMonitor.shared.start(webSocketManager: webSocketManager)
+        NetworkMonitor.shared.start()
 
         self.documentController = DocumentController(webSocketManager: webSocketManager)
         self.viewModel = DocumentListViewModel(webSocketManager: webSocketManager)

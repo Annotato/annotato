@@ -9,7 +9,7 @@ class NetworkMonitor: ObservableObject {
     private let queue = DispatchQueue.global()
     private let monitor = NWPathMonitor()
 
-    func start(webSocketManager: WebSocketManager?) {
+    func start() {
         monitor.start(queue: queue)
         monitor.pathUpdateHandler = { [weak self] path in
             AnnotatoLogger.info("Detected a change in internet connection status...")
