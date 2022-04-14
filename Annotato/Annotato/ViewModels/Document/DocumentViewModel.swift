@@ -4,10 +4,11 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentViewModel: ObservableObject {
+    private let documentsPersistenceManager: DocumentsPersistenceManager
     private let annotationsPersistenceManager: AnnotationsPersistenceManager
     private let webSocketManager: WebSocketManager?
 
-    let model: Document
+    private(set) var model: Document
 
     private(set) var annotations: [AnnotationViewModel] = []
     private(set) var pdfDocument: PdfViewModel
@@ -18,6 +19,9 @@ class DocumentViewModel: ObservableObject {
 
     @Published private(set) var addedAnnotation: AnnotationViewModel?
     @Published private(set) var selectionBoxFrame: CGRect?
+    @Published private(set) var updateOwnerIsSuccess: Bool?
+    @Published private(set) var hasUpdatedDocument = false
+    @Published private(set) var hasDeletedDocument = false
 
     init(
         model: Document,
@@ -28,6 +32,7 @@ class DocumentViewModel: ObservableObject {
         self.pdfDocument = PdfViewModel(document: model)
         self.webSocketManager = webSocketManager
         self.annotationsPersistenceManager = annotationsPersistenceManager
+        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
 
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
@@ -187,6 +192,34 @@ extension DocumentViewModel {
             receiveNewAnnotation(newAnnotation: createdOrUpdatedAnnotation)
         }
     }
+
+    func receiveUpdateDocument(updatedDocument: Document) {
+        model = updatedDocument
+    }
+
+    func receiveDeleteDocument(deletedDocument: Document) {
+        guard deletedDocument.isDeleted else {
+            return
+        }
+
+        hasDeletedDocument = true
+    }
+}
+
+extension DocumentViewModel {
+    func updateOwner(newOwnerId: String) {
+        model.ownerId = newOwnerId
+
+        Task {
+            let deletedDocument = await documentsPersistenceManager.updateDocument(document: model)
+            if let deletedDocument = deletedDocument {
+                _ = documentsPersistenceManager.deleteDocumentLocally(document: deletedDocument)
+                updateOwnerIsSuccess = true
+            }
+
+            updateOwnerIsSuccess = false
+        }
+    }
 }
 
 // MARK: Websocket
@@ -226,5 +259,23 @@ extension DocumentViewModel {
             }
             self?.receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: savedAnnotation)
         }.store(in: &cancellables)
+
+        documentsPersistenceManager.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in
+            guard let updatedDocument = updatedDocument,
+                  updatedDocument.id == self?.model.id else {
+                return
+            }
+
+            self?.receiveUpdateDocument(updatedDocument: updatedDocument)
+        }).store(in: &cancellables)
+
+        documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
+            guard let deletedDocument = deletedDocument,
+                  deletedDocument.id == self?.model.id else {
+                return
+            }
+
+            self?.receiveDeleteDocument(deletedDocument: deletedDocument)
+        }).store(in: &cancellables)
     }
 }

@@ -88,9 +88,7 @@ extension AnnotationsPersistenceManager {
         let senderId = decodedMessage.senderId
         let messageSubtype = decodedMessage.subtype
 
-        Task {
-            _ = localAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
-        }
+        _ = localAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
 
         guard senderId != AuthViewModel().currentUser?.id else {
             return

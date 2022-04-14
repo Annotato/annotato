@@ -18,17 +18,12 @@ struct DocumentSharesController {
         return try await documentsDataAccess.read(db: req.db, documentId: documentShare.documentId)
     }
 
-    func delete(req: Request) async throws -> DocumentShare {
-        let documentId: String? = req.query[QueryParams.documentId.rawValue]
-        let recipientId: String? = req.query[QueryParams.recipientId.rawValue]
+    func delete(req: Request) async throws -> Document {
+        let documentId = try req.getParamValueAsUUID(paramKey: QueryParams.documentId.rawValue)
+        let recipientId = try req.getParamValue(paramKey: QueryParams.recipientId.rawValue)
 
-        guard let documentId = UUID(uuidString: documentId ?? ""),
-              let recipientId = recipientId
-        else {
-            throw Abort(.badRequest)
-        }
-
-        return try await DocumentSharesDataAccess.delete(
+        _ = try await documentSharesDataAccess.delete(
             db: req.db, documentId: documentId, recipientId: recipientId)
+        return try await documentsDataAccess.read(db: req.db, documentId: documentId)
     }
 }

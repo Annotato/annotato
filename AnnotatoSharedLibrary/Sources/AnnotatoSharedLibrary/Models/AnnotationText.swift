@@ -88,7 +88,6 @@ extension AnnotationText: Equatable {
     public static func == (lhs: AnnotationText, rhs: AnnotationText) -> Bool {
         lhs.id == rhs.id &&
         lhs.order == rhs.order &&
-        lhs.height == rhs.height &&
         lhs.annotationId == rhs.annotationId &&
         lhs.type == rhs.type &&
         lhs.content == rhs.content

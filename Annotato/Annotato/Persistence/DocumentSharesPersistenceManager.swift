@@ -20,6 +20,14 @@ class DocumentSharesPersistenceManager {
         return localSharedDocument
     }
 
+    func deleteDocumentShare(document: Document, recipientId: String) async -> Document? {
+        let remoteDeletedDocument = await remoteDocumentSharesPersistence.deleteDocumentShare(
+            documentId: document.id, recipientId: recipientId)
+
+        // Note: Documents are permanently deleted locally
+        return localDocumentsPersistence.deleteDocument(document: remoteDeletedDocument ?? document)
+    }
+
     private func copyDocumentPDFToLocalStorage(document: Document) async -> Bool {
         guard let downloadURL = await FirebaseStorage().getDownloadURL(documentId: document.id) else {
             AnnotatoLogger.error("Could not get download URL for document",

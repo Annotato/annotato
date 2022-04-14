@@ -57,14 +57,9 @@ struct LocalDocumentsPersistence {
     }
 
     func deleteDocument(document: Document) -> Document? {
-        guard let deletedDocument = localDocumentEntityDataAccess
-            .delete(documentId: document.id, document: document) else {
-            AnnotatoLogger.error("When deleting document.",
-                                 context: "LocalDocumentsPersistence::deleteDocument")
-            return nil
-        }
+        localDocumentEntityDataAccess.delete(documentId: document.id, document: document)
 
-        return Document.fromManagedEntity(deletedDocument)
+        return document
     }
 
     func createOrUpdateDocument(document: Document) -> Document? {

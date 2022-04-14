@@ -59,8 +59,16 @@ class DocumentWebSocketController {
         do {
             self.logger.info("Processing update document data...")
 
+            let previousDocument = try await documentsDataAccess.read(db: db, documentId: document.id)
             let updatedDocument = try await documentsDataAccess
                 .update(db: db, documentId: document.id, document: document)
+
+            let hasChangedOwner = updatedDocument.ownerId != previousDocument.ownerId
+            if hasChangedOwner {
+                _ = try await documentSharesDataAccess.delete(
+                    db: db, documentId: document.id, recipientId: updatedDocument.ownerId)
+            }
+
             let response = AnnotatoCudDocumentMessage(
                 senderId: userId, subtype: .updateDocument, document: updatedDocument
             )
@@ -88,6 +96,8 @@ class DocumentWebSocketController {
             await self.sendToAllAppropriateClients(
                 db: db, userId: userId, document: deletedDocument, message: response
             )
+
+            _ = try await documentSharesDataAccess.delete(db: db, documentId: deletedDocument.id)
 
             return deletedDocument
         } catch {

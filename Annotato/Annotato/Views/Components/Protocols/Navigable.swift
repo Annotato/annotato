@@ -80,6 +80,17 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
+    func goToUsersSharingDocumentList(document: DocumentViewModel, users: [UserViewModel]) {
+        guard let viewController = ChangeOwnerViewController
+            .instantiatePartialScreenFromStoryboard(.document) else {
+            return
+        }
+
+        viewController.document = document
+        viewController.users = users
+        present(viewController, animated: true, completion: nil)
+    }
+
     func goBack() {
         self.dismiss(animated: true, completion: nil)
     }
