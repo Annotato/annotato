@@ -50,8 +50,8 @@ public final class AnnotationHandwriting: Codable, AnnotationPart {
         case deletedAt
     }
 
-    public func clone() -> AnnotationHandwriting {
-        AnnotationHandwriting(order: order, height: height, annotationId: annotationId, handwriting: handwriting,
+    public func clone(clonedAnnotationId: UUID) -> AnnotationHandwriting {
+        AnnotationHandwriting(order: order, height: height, annotationId: clonedAnnotationId, handwriting: handwriting,
                               id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
     }
 

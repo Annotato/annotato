@@ -28,7 +28,10 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             guard let self = self else {
                 return
             }
-            self.viewWillAppear(true)
+
+            DispatchQueue.main.async {
+                self.viewWillAppear(true)
+            }
         }).store(in: &cancellables)
     }
 

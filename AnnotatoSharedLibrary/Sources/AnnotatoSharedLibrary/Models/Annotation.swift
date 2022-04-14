@@ -112,11 +112,13 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
     }
 
     public func clone() -> Annotation {
-        let clonedSelectionBox = selectionBox.clone()
-        let clonedParts: [AnnotationPart] = texts.map({ $0.clone() }) + handwritings.map({ $0.clone() })
+        let newId = UUID()
+        let clonedSelectionBox = selectionBox.clone(clonedAnnotationId: newId)
+        let clonedParts: [AnnotationPart] = texts.map({ $0.clone(clonedAnnotationId: newId) }) +
+            handwritings.map({ $0.clone(clonedAnnotationId: newId) })
 
         return Annotation(origin: origin, width: width, parts: clonedParts, selectionBox: clonedSelectionBox,
-                          ownerId: ownerId, documentId: documentId, id: UUID(),
+                          ownerId: ownerId, documentId: documentId, id: newId,
                           createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
     }
 
@@ -338,6 +340,12 @@ extension Annotation: Equatable {
         let partsAreEqual = Set(lhs.texts) == Set(rhs.texts) &&
             Set(lhs.handwritings) == Set(rhs.handwritings)
 
+        print("ID is equal: \(lhs.id == rhs.id)")
+        print("Width is equal: \(lhs.width == rhs.width)")
+        print("Parts is equal: \(partsAreEqual)")
+        print("Selection Box is equal: \(lhs.selectionBox == rhs.selectionBox)")
+        print("Owner Id is equal: \(lhs.ownerId == rhs.ownerId)")
+        print("Document ID is equal: \(lhs.documentId == rhs.documentId)")
         return lhs.id == rhs.id &&
             lhs.width == rhs.width &&
             partsAreEqual &&

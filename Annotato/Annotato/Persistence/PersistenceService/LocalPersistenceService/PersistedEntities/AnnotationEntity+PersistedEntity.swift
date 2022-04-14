@@ -16,7 +16,8 @@ extension AnnotationEntity: PersistedEntity {
             entity.documentEntity = documentEntity
         }
 
-        print("annotation's selection box model (this is where the SelectionBoxEntity.fromModel is returning nil): \(model.selectionBox)")
+        print("annotation's selection box model (this is where the SelectionBoxEntity.fromModel" +
+              "is returning nil): \(model.selectionBox)")
         entity.selectionBoxEntity = SelectionBoxEntity.fromModel(model.selectionBox)
 
         let annotationTexts = model.parts.compactMap({ $0 as? AnnotationText })
