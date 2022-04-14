@@ -295,6 +295,7 @@ extension Annotation: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Annotation(id: \(id), origin: \(origin), width: \(width), " +
         "parts: \(parts), ownerId: \(ownerId), documentId: \(documentId)), " +
+        "selectionBox: \(String(describing: selectionBox))" +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deleteAt: \(String(describing: deletedAt))"

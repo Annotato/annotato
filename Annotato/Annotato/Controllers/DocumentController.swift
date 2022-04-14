@@ -79,14 +79,7 @@ struct DocumentController {
         await annotationsPersistenceManager.updatePersistenceBasedOnConflictResolution(
             conflictResolution: conflictResolution)
         print("Saved the non conflicted models to persistence already\n\n")
-        // Use server document as a base
-        for nonConflictingAnnotation in conflictResolution.nonConflictingModels {
-            print("non conflicted model:")
-            print("\(nonConflictingAnnotation)\n\n")
-            if !serverDocument.contains(annotation: nonConflictingAnnotation) {
-                serverDocument.addAnnotation(annotation: nonConflictingAnnotation)
-            }
-        }
+        serverDocument.assignAnnotations(annotations: conflictResolution.nonConflictingModels)
 
         var currentConflictIdx = 1
         for (localAnnotation, serverAnnotation) in conflictResolution.conflictingModels {
