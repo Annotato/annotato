@@ -77,21 +77,15 @@ struct DocumentController {
 
         await annotationsPersistenceManager.updatePersistenceBasedOnConflictResolution(
             conflictResolution: conflictResolution)
-        print("Saved the non conflicted models to persistence already\n\n")
         serverDocument.assignAnnotations(annotations: conflictResolution.nonConflictingModels)
 
         var currentConflictIdx = 1
         for (localAnnotation, serverAnnotation) in conflictResolution.conflictingModels {
-            print("Conflicted model with id=\(currentConflictIdx):")
             let newLocalAnnotation = localAnnotation.clone()
             newLocalAnnotation.conflictIdx = currentConflictIdx
             serverAnnotation.conflictIdx = currentConflictIdx
             currentConflictIdx += 1
             serverDocument.addAnnotation(annotation: newLocalAnnotation)
-
-            print("local: \(localAnnotation)\n")
-            print("cloned local: \(newLocalAnnotation)\n")
-            print("server: \(serverAnnotation)\n\n")
 
             if !serverDocument.contains(annotation: serverAnnotation) {
                 // Probably will never come here but just to be safe, shall I take out?

@@ -340,12 +340,6 @@ extension Annotation: Equatable {
         let partsAreEqual = Set(lhs.texts) == Set(rhs.texts) &&
             Set(lhs.handwritings) == Set(rhs.handwritings)
 
-        print("ID is equal: \(lhs.id == rhs.id)")
-        print("Width is equal: \(lhs.width == rhs.width)")
-        print("Parts is equal: \(partsAreEqual)")
-        print("Selection Box is equal: \(lhs.selectionBox == rhs.selectionBox)")
-        print("Owner Id is equal: \(lhs.ownerId == rhs.ownerId)")
-        print("Document ID is equal: \(lhs.documentId == rhs.documentId)")
         return lhs.id == rhs.id &&
             lhs.origin == rhs.origin &&
             lhs.width == rhs.width &&
