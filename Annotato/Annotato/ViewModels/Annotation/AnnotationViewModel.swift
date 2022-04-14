@@ -38,7 +38,11 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
 
-    @Published private(set) var conflictIdx: Int?
+    @Published private(set) var conflictIdx: Int? {
+        willSet {
+            model.conflictIdx = newValue
+        }
+    }
     private(set) var resolveBySave = false
     var isResolving: Bool {
         conflictIdx != nil
