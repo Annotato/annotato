@@ -3,9 +3,6 @@ import Foundation
 struct DocumentController {
     private let webSocketManager: WebSocketManager?
     private let documentsPersistenceManager: DocumentsPersistenceManager
-
-    // MARK: Is this a good idea? Otherwise the only other place that already contains annotationsPersistenceManager
-    // is in document view model
     private let annotationsPersistenceManager: AnnotationsPersistenceManager
 
     init(webSocketManager: WebSocketManager?) {
@@ -86,18 +83,12 @@ struct DocumentController {
             serverAnnotation.conflictIdx = currentConflictIdx
             currentConflictIdx += 1
             serverDocument.addAnnotation(annotation: newLocalAnnotation)
-
-            if !serverDocument.contains(annotation: serverAnnotation) {
-                // Probably will never come here but just to be safe, shall I take out?
-                serverDocument.addAnnotation(annotation: serverAnnotation)
-            }
         }
 
         return DocumentViewModel(
             model: serverDocument,
             webSocketManager: webSocketManager
         )
-        // TODO: IMPT Do I need to do some kind of rollback here to ensure core data doesn't have any issues?
     }
 
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
