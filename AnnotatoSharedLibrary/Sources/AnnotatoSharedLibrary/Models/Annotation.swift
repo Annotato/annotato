@@ -347,6 +347,7 @@ extension Annotation: Equatable {
         print("Owner Id is equal: \(lhs.ownerId == rhs.ownerId)")
         print("Document ID is equal: \(lhs.documentId == rhs.documentId)")
         return lhs.id == rhs.id &&
+            lhs.origin == rhs.origin &&
             lhs.width == rhs.width &&
             partsAreEqual &&
             lhs.selectionBox == rhs.selectionBox &&
