@@ -17,8 +17,8 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        initializeDocumentsCollectionView()
         initializeToolbar()
+        initializeDocumentsCollectionView()
         initializeImportMenu()
         setUpSubscribers()
         view.bringSubviewToFront(importMenu)
@@ -216,6 +216,18 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     private func setUpSubscribers() {
         viewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
             if hasDeletedDocument {
+                DispatchQueue.main.async {
+                    guard let collectionView = self?.collectionView else {
+                        return
+                    }
+
+                    self?.initializeDocumentsCollectionView(inDeleteMode: collectionView.isInDeleteMode)
+                }
+            }
+        }).store(in: &cancellables)
+
+        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] isConnected in
+            if isConnected {
                 DispatchQueue.main.async {
                     guard let collectionView = self?.collectionView else {
                         return

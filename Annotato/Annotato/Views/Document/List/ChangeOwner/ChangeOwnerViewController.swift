@@ -79,7 +79,7 @@ class ChangeOwnerViewController: UIViewController, AlertPresentable, Navigable {
 
     private func receiveUpdateDocumentOwner(isSuccess: Bool) {
         if isSuccess {
-            self.goBack()
+            self.goBackWithRefresh()
         } else {
             presentErrorAlert(errorMessage: "There was an error updating the owner, please try again later")
         }
