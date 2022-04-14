@@ -7,9 +7,7 @@ struct DocumentController {
 
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
-        self.documentsPersistenceManager = DocumentsPersistenceManager(
-            webSocketManager: webSocketManager
-        )
+        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
     }
 
@@ -44,65 +42,51 @@ struct DocumentController {
     }
 
     func loadDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
-        if let resultDocumentWithConflictResolution = await loadLocalAndRemoteDocumentWithDeleted(
-            documentId: documentId) {
+        if let resultDocumentWithConflictResolution = await loadResolvedDocument(documentId: documentId) {
             return resultDocumentWithConflictResolution
         }
+
         let document = await documentsPersistenceManager.getDocument(documentId: documentId)
         guard let document = document else {
             return nil
         }
 
-        return DocumentViewModel(
-            model: document,
-            webSocketManager: webSocketManager
-        )
+        return DocumentViewModel(model: document, webSocketManager: webSocketManager)
     }
 
-    private func loadLocalAndRemoteDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
-        let localAndRemoteDocumentPair = await documentsPersistenceManager.getLocalAndRemoteDocument(
-            documentId: documentId)
+    private func loadResolvedDocument(documentId: UUID) async -> DocumentViewModel? {
+        let localAndRemoteDocumentPair = await documentsPersistenceManager
+            .getLocalAndRemoteDocument(documentId: documentId)
         guard let localDocument = localAndRemoteDocumentPair.local,
               let serverDocument = localAndRemoteDocumentPair.remote else {
             AnnotatoLogger.error("Could not load from local and remote for conflict resolution")
             return nil
         }
-        let localAnnotations = localDocument.annotations
-        let serverAnnotations = serverDocument.annotations
-        let conflictResolution = ConflictResolver(
-            localModels: localAnnotations, serverModels: serverAnnotations).resolve()
 
-        await annotationsPersistenceManager.updatePersistenceBasedOnConflictResolution(
-            conflictResolution: conflictResolution)
-        serverDocument.assignAnnotations(annotations: conflictResolution.nonConflictingModels)
+        let resolvedAnnotations = ConflictResolver(localModels: localDocument.annotations,
+                                                   serverModels: serverDocument.annotations).resolve()
 
-        var currentConflictIdx = 1
-        for (localAnnotation, serverAnnotation) in conflictResolution.conflictingModels {
+        await annotationsPersistenceManager.persistConflictResolution(conflictResolution: resolvedAnnotations)
+
+        serverDocument.setAnnotations(annotations: resolvedAnnotations.nonConflictingModels)
+
+        for (conflictIdx, (localAnnotation, serverAnnotation)) in resolvedAnnotations.conflictingModels.enumerated() {
             let newLocalAnnotation = localAnnotation.clone()
-            newLocalAnnotation.conflictIdx = currentConflictIdx
-            serverAnnotation.conflictIdx = currentConflictIdx
-            currentConflictIdx += 1
+            newLocalAnnotation.conflictIdx = conflictIdx
+            serverAnnotation.conflictIdx = conflictIdx
             serverDocument.addAnnotation(annotation: newLocalAnnotation)
         }
 
-        return DocumentViewModel(
-            model: serverDocument,
-            webSocketManager: webSocketManager
-        )
+        return DocumentViewModel(model: serverDocument, webSocketManager: webSocketManager)
     }
 
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {
-        let updatedDocument = await documentsPersistenceManager.updateDocument(
-            document: document.model
-        )
+        let updatedDocument = await documentsPersistenceManager.updateDocument(document: document.model)
 
         guard let updatedDocument = updatedDocument else {
             return nil
         }
 
-        return DocumentViewModel(
-            model: updatedDocument,
-            webSocketManager: webSocketManager
-        )
+        return DocumentViewModel(model: updatedDocument, webSocketManager: webSocketManager)
     }
 }

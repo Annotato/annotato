@@ -23,10 +23,7 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var hasUpdatedDocument = false
     @Published private(set) var hasDeletedDocument = false
 
-    init(
-        model: Document,
-        webSocketManager: WebSocketManager?
-    ) {
+    init(model: Document, webSocketManager: WebSocketManager?) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
         self.webSocketManager = webSocketManager

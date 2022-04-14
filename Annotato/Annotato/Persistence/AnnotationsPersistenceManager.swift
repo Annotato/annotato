@@ -131,7 +131,7 @@ extension AnnotationsPersistenceManager {
 
 // MARK: Conflict Resolution Persistence
 extension AnnotationsPersistenceManager {
-    func updatePersistenceBasedOnConflictResolution(conflictResolution: ConflictResolution<Annotation>) async {
+    func persistConflictResolution(conflictResolution: ConflictResolution<Annotation>) async {
         for localCreateAnnotation in conflictResolution.localCreate {
             _ = localAnnotationsPersistence.createAnnotation(annotation: localCreateAnnotation)
         }

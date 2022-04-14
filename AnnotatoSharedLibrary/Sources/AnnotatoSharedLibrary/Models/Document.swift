@@ -48,7 +48,7 @@ public final class Document: Codable, Timestampable {
         annotations.contains(where: { $0.id == annotation.id })
     }
 
-    public func assignAnnotations(annotations: [Annotation]) {
+    public func setAnnotations(annotations: [Annotation]) {
         self.annotations = annotations
     }
 }

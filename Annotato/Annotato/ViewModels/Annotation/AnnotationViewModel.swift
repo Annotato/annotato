@@ -57,19 +57,14 @@ class AnnotationViewModel: ObservableObject {
         self.model = model
         self.document = document
 
-        let mergeConflictsPalette: AnnotationMergeConflictsPaletteViewModel?
         if let conflictIdx = model.conflictIdx {
             self.conflictIdx = conflictIdx
-            mergeConflictsPalette = AnnotationMergeConflictsPaletteViewModel(
+            self.mergeConflictPalette = AnnotationMergeConflictsPaletteViewModel(
                 origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)
-            self.mergeConflictPalette = mergeConflictsPalette
-        } else {
-            mergeConflictsPalette = nil
-            self.mergeConflictPalette = mergeConflictsPalette
         }
 
         self.palette = palette ?? AnnotationPaletteViewModel(
-            origin: CGPoint(x: 0.0, y: mergeConflictsPalette?.height ?? 0.0), width: model.width, height: 50.0)
+            origin: CGPoint(x: 0.0, y: mergeConflictPalette?.height ?? 0.0), width: model.width, height: 50.0)
 
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
