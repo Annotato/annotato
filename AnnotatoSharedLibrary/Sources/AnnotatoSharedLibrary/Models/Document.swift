@@ -31,6 +31,14 @@ public final class Document: Codable, Timestampable {
         annotations.append(annotation)
     }
 
+    public func updateAnnotation(updatedAnnotation: Annotation) {
+        guard let idx = annotations.firstIndex(where: { $0.id == updatedAnnotation.id }) else {
+            return
+        }
+
+        annotations[idx] = updatedAnnotation
+    }
+
     public func removeAnnotation(annotation: Annotation) {
         annotations.removeAll(where: { $0.id == annotation.id })
     }

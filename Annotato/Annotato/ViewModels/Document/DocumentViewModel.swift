@@ -140,6 +140,7 @@ extension DocumentViewModel {
             if updatedAnnotation.isDeleted {
                 receiveDeleteAnnotation(deletedAnnotation: updatedAnnotation)
             } else {
+                model.updateAnnotation(updatedAnnotation: updatedAnnotation)
                 annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
             }
         } else {
