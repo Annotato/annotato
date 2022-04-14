@@ -94,11 +94,17 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
         collectionView?.removeFromSuperview()
 
+        var initializeInDeleteMode = inDeleteMode
+        if documents.isEmpty {
+            initializeInDeleteMode = false
+            toolbar.exitDeleteMode()
+        }
+
         collectionView = DocumentListCollectionView(
             documents: documents,
             frame: .zero,
             documentListCollectionCellViewDelegate: self,
-            initializeInDeleteMode: inDeleteMode
+            initializeInDeleteMode: initializeInDeleteMode
         )
 
         guard let collectionView = collectionView else {
@@ -215,7 +221,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
                         return
                     }
 
-                    self?.initializeDocumentsCollectionView(inDeleteMode: collectionView.initializeInDeleteMode)
+                    self?.initializeDocumentsCollectionView(inDeleteMode: collectionView.isInDeleteMode)
                 }
             }
         }).store(in: &cancellables)
