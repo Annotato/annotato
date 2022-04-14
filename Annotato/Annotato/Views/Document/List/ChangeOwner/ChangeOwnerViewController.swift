@@ -1,12 +1,12 @@
 import UIKit
 import Combine
 
-class UsersSharingDocumentListViewController: UIViewController, AlertPresentable, Navigable {
+class ChangeOwnerViewController: UIViewController, AlertPresentable, Navigable {
     var users: [UserViewModel]?
     var document: DocumentViewModel?
     private var titleLabel = UILabel()
     private var confirmButton = UIButton()
-    private var listView = UsersSharingDocumentListView(frame: .zero, users: [])
+    private var listView = ChangeOwnerListView(frame: .zero, users: [])
     private var cancellables: Set<AnyCancellable> = []
 
     override func viewWillAppear(_ animated: Bool) {
@@ -55,7 +55,7 @@ class UsersSharingDocumentListViewController: UIViewController, AlertPresentable
             return
         }
 
-        listView = UsersSharingDocumentListView(frame: .zero, users: users)
+        listView = ChangeOwnerListView(frame: .zero, users: users)
 
         view.addSubview(listView)
 

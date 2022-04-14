@@ -1,7 +1,7 @@
 import UIKit
 import AnnotatoSharedLibrary
 
-class UsersSharingDocumentListCellView: UITableViewCell {
+class ChangeOwnerListCellView: UITableViewCell {
     var user: UserViewModel?
     private var radioButton = RadioButton()
 

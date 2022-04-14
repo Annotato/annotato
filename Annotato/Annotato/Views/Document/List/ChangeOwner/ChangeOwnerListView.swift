@@ -1,7 +1,7 @@
 import UIKit
 
-class UsersSharingDocumentListView: UITableView {
-    let cellId = "UsersSharingDocumentListCell"
+class ChangeOwnerListView: UITableView {
+    let cellId = "ChangeOwnerListCell"
 
     private var users: [UserViewModel]
     private(set) var selectedUser: UserViewModel?
@@ -17,11 +17,11 @@ class UsersSharingDocumentListView: UITableView {
         super.init(frame: frame, style: .insetGrouped)
         dataSource = self
         delegate = self
-        register(UsersSharingDocumentListCellView.self, forCellReuseIdentifier: cellId)
+        register(ChangeOwnerListCellView.self, forCellReuseIdentifier: cellId)
     }
 }
 
-extension UsersSharingDocumentListView: UITableViewDataSource {
+extension ChangeOwnerListView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         users.count
     }
@@ -29,7 +29,7 @@ extension UsersSharingDocumentListView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = dequeueReusableCell(
             withIdentifier: cellId, for: indexPath
-        ) as? UsersSharingDocumentListCellView else {
+        ) as? ChangeOwnerListCellView else {
             fatalError("unable to dequeue UsersSharingDocumentList cell")
         }
 
@@ -40,9 +40,9 @@ extension UsersSharingDocumentListView: UITableViewDataSource {
     }
 }
 
-extension UsersSharingDocumentListView: UITableViewDelegate {
+extension ChangeOwnerListView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let tappedCell = cellForRow(at: indexPath) as? UsersSharingDocumentListCellView else {
+        guard let tappedCell = cellForRow(at: indexPath) as? ChangeOwnerListCellView else {
             return
         }
 
@@ -55,7 +55,7 @@ extension UsersSharingDocumentListView: UITableViewDelegate {
 
         selectedUser = tappedCell.user
 
-        guard let visibleCells = visibleCells as? [UsersSharingDocumentListCellView] else {
+        guard let visibleCells = visibleCells as? [ChangeOwnerListCellView] else {
             return
         }
 
