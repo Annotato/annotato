@@ -91,14 +91,14 @@ class ConflictResolver<Model: ConflictResolvable> {
 
         guard let lastOnline = NetworkMonitor.shared.getLastOnlineDatetime(),
                 serverModel.wasUpdated(after: lastOnline) else {
-            // Server version was not updated after local deletion, can safely delete on server
+            // Server version was not updated after going offline, can safely delete on server
             resolution.serverDelete.append(localModel)
 
             resolution.nonConflictingModels.append(localModel)
             return
         }
 
-        // Server version was updated after local deletion, restore and update local version
+        // Server version was updated after going offline, restore and update local version
         resolution.localUpdate.append(serverModel)
 
         resolution.nonConflictingModels.append(serverModel)
@@ -112,14 +112,14 @@ class ConflictResolver<Model: ConflictResolvable> {
 
         guard let lastOnline = NetworkMonitor.shared.getLastOnlineDatetime(),
               localModel.wasUpdated(after: lastOnline) else {
-            // Local version was not updated after server deletion, can safely delete locally
+            // Local version was not updated after going offline, can safely delete locally
             resolution.localDelete.append(serverModel)
 
             resolution.nonConflictingModels.append(serverModel)
             return
         }
 
-        // Local version was updated after server deletion, restore and update server version
+        // Local version was updated after going offline, restore and update server version
         resolution.serverUpdate.append(localModel)
 
         resolution.nonConflictingModels.append(localModel)
