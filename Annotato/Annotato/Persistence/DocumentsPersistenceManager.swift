@@ -8,6 +8,7 @@ class DocumentsPersistenceManager {
 
     private let remoteDocumentsPersistence: RemoteDocumentsPersistence
     private let localDocumentsPersistence = LocalDocumentsPersistence()
+    private let remoteDocumentSharesPersistence: RemoteDocumentSharesPersistence
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var newDocument: Document?
@@ -20,24 +21,57 @@ class DocumentsPersistenceManager {
         self.remoteDocumentsPersistence = RemoteDocumentsPersistence(
             webSocketManager: webSocketManager
         )
+        self.remoteDocumentSharesPersistence = RemoteDocumentSharesPersistence()
 
         setUpSubscribers()
     }
 
     func getOwnDocuments(userId: String) async -> [Document]? {
         let remoteOwnDocuments = await remoteDocumentsPersistence.getOwnDocuments(userId: userId)
-        guard remoteOwnDocuments != nil else {
-            return localDocumentsPersistence.getOwnDocuments(userId: userId)
+        let localOwnDocuments = localDocumentsPersistence.getOwnDocuments(userId: userId)
+
+        if let remoteOwnDocuments = remoteOwnDocuments,
+           let localOwnDocuments = localOwnDocuments {
+            await pruneRemoteDocuments(localDocuments: localOwnDocuments, serverDocuments: remoteOwnDocuments)
         }
-        return remoteOwnDocuments
+
+        return localOwnDocuments
+    }
+
+    private func pruneRemoteDocuments(localDocuments: [Document], serverDocuments: [Document]) async {
+        let conflictResolver = DocumentConflictResolver(
+            localModels: localDocuments, serverModels: serverDocuments)
+        let documentsConflictResolution = conflictResolver.resolve()
+        let serverDelete = documentsConflictResolution.serverDelete
+        _ = await remoteDocumentsPersistence.deleteDocuments(documents: serverDelete)
     }
 
     func getSharedDocuments(userId: String) async -> [Document]? {
         let remoteSharedDocuments = await remoteDocumentsPersistence.getSharedDocuments(userId: userId)
-        guard remoteSharedDocuments != nil else {
-            return localDocumentsPersistence.getSharedDocuments(userId: userId)
+        let localSharedDocuments = localDocumentsPersistence.getSharedDocuments(userId: userId)
+
+        if let remoteSharedDocuments = remoteSharedDocuments,
+           let localSharedDocuments = localSharedDocuments {
+            await pruneRemoteDocumentShares(
+                localDocuments: localSharedDocuments, serverDocuments: remoteSharedDocuments)
         }
-        return remoteSharedDocuments
+
+        return localSharedDocuments
+    }
+
+    private func pruneRemoteDocumentShares(localDocuments: [Document], serverDocuments: [Document]) async {
+        guard let recipientId = AuthViewModel().currentUser?.id else {
+            return
+        }
+
+        let conflictResolver = DocumentConflictResolver(
+            localModels: localDocuments, serverModels: serverDocuments)
+        let documentsConflictResolution = conflictResolver.resolve()
+        let serverDelete = documentsConflictResolution.serverDelete
+        let documentIds = serverDelete.map { $0.id }
+
+        _ = await remoteDocumentSharesPersistence.deleteDocumentShares(
+            documentIds: documentIds, recipientId: recipientId)
     }
 
     func getDocument(documentId: UUID) async -> Document? {
@@ -69,7 +103,8 @@ class DocumentsPersistenceManager {
     func deleteDocument(document: Document) async -> Document? {
         _ = await remoteDocumentsPersistence.deleteDocument(document: document)
 
-        return nil
+        // NOTE: Documents are hard deleted from local storage
+        return localDocumentsPersistence.deleteDocument(document: document)
     }
 
     func deleteDocumentLocally(document: Document) async -> Document? {
@@ -98,10 +133,6 @@ extension DocumentsPersistenceManager {
         let senderId = decodedMessage.senderId
         let messageSubtype = decodedMessage.subtype
 
-        guard senderId != AuthViewModel().currentUser?.id else {
-            return
-        }
-
         Task {
             // NOTE: Documents are hard deleted from local storage
             if messageSubtype == .deleteDocument {
@@ -109,6 +140,10 @@ extension DocumentsPersistenceManager {
             } else {
                 _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
             }
+        }
+
+        guard senderId != AuthViewModel().currentUser?.id else {
+            return
         }
 
         publishDocument(messageSubtype: messageSubtype, document: document)

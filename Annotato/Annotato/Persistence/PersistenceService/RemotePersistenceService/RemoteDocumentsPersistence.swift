@@ -96,6 +96,15 @@ struct RemoteDocumentsPersistence {
         return nil
     }
 
+    // MARK: DELETE MANY
+    func deleteDocuments(documents: [Document]) async -> [Document]? {
+        for document in documents {
+            _ = await deleteDocument(document: document)
+        }
+
+        return nil
+    }
+
     private func encodeDocument(_ document: Document) -> Data? {
         do {
             let data = try JSONCustomEncoder().encode(document)

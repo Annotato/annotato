@@ -40,6 +40,20 @@ struct RemoteDocumentSharesPersistence {
         }
     }
 
+    // MARK: DELETE MANY
+    func deleteDocumentShares(documentIds: [UUID], recipientId: String) async -> [Document]? {
+        var documents: [Document] = []
+
+        for documentId in documentIds {
+            let document = await deleteDocumentShare(documentId: documentId, recipientId: recipientId)
+            if let document = document {
+                documents.append(document)
+            }
+        }
+
+        return documents
+    }
+
     private func encodeDocumentShare(_ documentShare: DocumentShare) -> Data? {
         do {
             let data = try JSONCustomEncoder().encode(documentShare)
