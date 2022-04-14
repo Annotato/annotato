@@ -127,6 +127,8 @@ extension AnnotationsPersistenceManager {
             createdOrUpdatedAnnotation = annotation
             AnnotatoLogger.info("Annotation was created or updated. \(annotation)")
         }
+
+        resetPublishedAttributes()
     }
 
     private func resetPublishedAttributes() {

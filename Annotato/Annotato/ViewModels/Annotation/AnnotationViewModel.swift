@@ -233,6 +233,10 @@ extension AnnotationViewModel {
     }
 
     func enterViewMode() {
+        guard isEditing else {
+            return
+        }
+
         isEditing = false
         palette.isEditing = false
         deselectSelectedPart()

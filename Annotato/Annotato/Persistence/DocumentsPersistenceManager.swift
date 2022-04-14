@@ -182,6 +182,8 @@ extension DocumentsPersistenceManager {
             deletedDocument = document
             AnnotatoLogger.info("Document was deleted. \(document)")
         }
+
+        resetPublishedAttributes()
     }
 
     private func resetPublishedAttributes() {

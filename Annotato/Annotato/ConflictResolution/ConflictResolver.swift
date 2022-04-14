@@ -155,6 +155,23 @@ class ConflictResolver<Model: ConflictResolvable> {
             return
         }
 
+        guard let lastOnline = NetworkMonitor.shared.getLastOnlineDatetime(),
+              localModel.wasUpdated(after: lastOnline) else {
+            // Local version was not updated after going offline, safely accept server version
+            resolution.localUpdate.append(serverModel)
+
+            resolution.nonConflictingModels.append(serverModel)
+            return
+        }
+
+        guard let lastOnline = NetworkMonitor.shared.getLastOnlineDatetime(),
+              serverModel.wasUpdated(after: lastOnline) else {
+            resolution.serverUpdate.append(localModel)
+
+            resolution.nonConflictingModels.append(localModel)
+            return
+        }
+
         resolution.conflictingModels.append((localModel, serverModel))
     }
 }
