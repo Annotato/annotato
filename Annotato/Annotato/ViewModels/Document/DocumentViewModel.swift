@@ -25,14 +25,13 @@ class DocumentViewModel: ObservableObject {
 
     init(
         model: Document,
-        webSocketManager: WebSocketManager?,
-        annotationsPersistenceManager: AnnotationsPersistenceManager
+        webSocketManager: WebSocketManager?
     ) {
         self.model = model
         self.pdfDocument = PdfViewModel(document: model)
         self.webSocketManager = webSocketManager
-        self.annotationsPersistenceManager = annotationsPersistenceManager
         self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
+        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
 
         self.annotations = model.annotations
             .filter { !$0.isDeleted }

@@ -58,8 +58,7 @@ struct DocumentController {
 
         return DocumentViewModel(
             model: document,
-            webSocketManager: webSocketManager,
-            annotationsPersistenceManager: annotationsPersistenceManager
+            webSocketManager: webSocketManager
         )
     }
 
@@ -102,8 +101,7 @@ struct DocumentController {
 
         return DocumentViewModel(
             model: serverDocument,
-            webSocketManager: webSocketManager,
-            annotationsPersistenceManager: annotationsPersistenceManager
+            webSocketManager: webSocketManager
         )
         // TODO: IMPT Do I need to do some kind of rollback here to ensure core data doesn't have any issues?
     }
@@ -119,8 +117,7 @@ struct DocumentController {
 
         return DocumentViewModel(
             model: updatedDocument,
-            webSocketManager: webSocketManager,
-            annotationsPersistenceManager: annotationsPersistenceManager
+            webSocketManager: webSocketManager
         )
     }
 }
