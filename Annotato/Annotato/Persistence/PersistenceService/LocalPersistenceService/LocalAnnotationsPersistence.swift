@@ -42,10 +42,4 @@ struct LocalAnnotationsPersistence {
             return createAnnotation(annotation: annotation)
         }
     }
-
-    func createOrUpdateAnnotations(annotations: [Annotation]) -> [Annotation]? {
-        annotations.compactMap({ annotation in
-            createOrUpdateAnnotation(annotation: annotation)
-        })
-    }
 }

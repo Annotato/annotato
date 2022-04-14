@@ -137,4 +137,8 @@ extension AnnotationPaletteViewModel {
     var frame: CGRect {
         CGRect(origin: origin, size: size)
     }
+
+    func translateUp(by yTranslation: CGFloat) {
+        origin = CGPoint(x: origin.x, y: origin.y - yTranslation)
+    }
 }

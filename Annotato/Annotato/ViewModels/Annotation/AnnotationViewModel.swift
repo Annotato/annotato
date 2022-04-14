@@ -16,6 +16,7 @@ class AnnotationViewModel: ObservableObject {
 
     private(set) var parts: [AnnotationPartViewModel]
     private(set) var palette: AnnotationPaletteViewModel
+    private(set) var mergeConflictPalette: AnnotationMergeConflictsPaletteViewModel?
     private(set) var selectionBox: SelectionBoxViewModel
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartViewModel?
@@ -37,6 +38,16 @@ class AnnotationViewModel: ObservableObject {
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
 
+    @Published private(set) var conflictIdx: Int? {
+        willSet {
+            model.conflictIdx = newValue
+        }
+    }
+    private(set) var resolveBySave = false
+    var isResolving: Bool {
+        conflictIdx != nil
+    }
+
     init(
         model: Annotation,
         document: DocumentViewModel,
@@ -45,16 +56,24 @@ class AnnotationViewModel: ObservableObject {
     ) {
         self.model = model
         self.document = document
+
+        if let conflictIdx = model.conflictIdx {
+            self.conflictIdx = conflictIdx
+            self.mergeConflictPalette = AnnotationMergeConflictsPaletteViewModel(
+                origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)
+        }
+
         self.palette = palette ?? AnnotationPaletteViewModel(
-            origin: .zero, width: model.width, height: 50.0)
+            origin: CGPoint(x: 0.0, y: mergeConflictPalette?.height ?? 0.0), width: model.width, height: 50.0)
+
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.webSocketManager = webSocketManager
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.palette.parentViewModel = self
+        self.mergeConflictPalette?.parentViewModel = self
 
         populatePartViewModels(model: model)
-
         setUpSubscribers()
     }
 
@@ -83,6 +102,10 @@ class AnnotationViewModel: ObservableObject {
 
     func translateCenter(by translation: CGPoint) {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
+
+        guard !isResolving else {
+            return
+        }
 
         Task {
             await annotationsPersistenceManager?.updateAnnotation(annotation: model)
@@ -140,11 +163,11 @@ extension AnnotationViewModel {
     }
 
     var height: Double {
-        min(palette.height + partsTotalHeight, maxHeight)
+        min((mergeConflictPalette?.height ?? 0.0) + palette.height + partsTotalHeight, maxHeight)
     }
 
     var minimizedHeight: Double {
-        min(palette.height + 30.0, maxHeight)
+        min((mergeConflictPalette?.height ?? 0.0) + palette.height + 30.0, maxHeight)
     }
 
     var size: CGSize {
@@ -169,7 +192,12 @@ extension AnnotationViewModel {
 
     // Note: scrollFrame is with respect to this frame
     var scrollFrame: CGRect {
-        CGRect(x: .zero, y: palette.height, width: model.width, height: partsTotalHeight)
+        CGRect(
+            x: .zero,
+            y: mergeConflictPalette?.height ?? 0.0 + palette.height,
+            width: model.width,
+            height: partsTotalHeight
+        )
     }
 
     // Note: partsFrame is with respect to scrollFrame
@@ -199,11 +227,19 @@ extension AnnotationViewModel {
     }
 
     func enterViewMode() {
+        guard isEditing else {
+            return
+        }
+
         isEditing = false
         palette.isEditing = false
         deselectSelectedPart()
         for part in parts {
             part.enterViewMode()
+        }
+
+        guard !isResolving else {
+            return
         }
 
         Task {
@@ -286,9 +322,41 @@ extension AnnotationViewModel {
 
 extension AnnotationViewModel {
     func didDelete() {
+        guard !isResolving else {
+            return
+        }
         isRemoved = true
         selectionBox.didDelete()
+        document?.deleteAnnotation(annotation: self)
+    }
+
+    func didSaveMergeConflicts() {
+        guard NetworkMonitor.shared.isConnected else {
+            AnnotatoLogger.error("Save merge conflict button pressed while offline")
+            return
+        }
+        Task {
+            _ = await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
+        }
+        resolveBySave = true
+        self.conflictIdx = nil
+        self.mergeConflictPalette = nil
+    }
+
+    func didDiscardMergeConflicts() {
+        guard NetworkMonitor.shared.isConnected else {
+            AnnotatoLogger.error("Discard merge conflict button pressed while offline")
+            return
+        }
+        selectionBox.didDelete()
         document?.removeAnnotation(annotation: self)
+        model.setDeletedAt(to: Date())
+        Task {
+            _ = await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
+        }
+        isRemoved = true
+        self.conflictIdx = nil
+        self.mergeConflictPalette = nil
     }
 
     func receiveDelete() {

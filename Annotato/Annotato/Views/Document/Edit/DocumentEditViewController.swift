@@ -20,7 +20,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setUpNetworkSubscriber()
         self.documentController = DocumentController(webSocketManager: webSocketManager)
     }
 
@@ -122,6 +122,18 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
 }
 
 extension DocumentEditViewController {
+    private func setUpNetworkSubscriber() {
+        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                self.viewWillAppear(true)
+            }
+        }).store(in: &cancellables)
+    }
+
     private func setUpSubscribers() {
         documentViewModel?.$hasUpdatedDocument.sink(receiveValue: { [weak self] hasUpdatedDocument in
             if hasUpdatedDocument {

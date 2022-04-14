@@ -15,4 +15,5 @@ public enum AnnotatoCudAnnotationMessageType: String, Codable {
     case createAnnotation
     case updateAnnotation
     case deleteAnnotation
+    case createOrUpdateAnnotation
 }

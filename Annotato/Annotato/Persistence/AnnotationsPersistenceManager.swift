@@ -13,6 +13,7 @@ class AnnotationsPersistenceManager {
     @Published private(set) var newAnnotation: Annotation?
     @Published private(set) var updatedAnnotation: Annotation?
     @Published private(set) var deletedAnnotation: Annotation?
+    @Published private(set) var createdOrUpdatedAnnotation: Annotation?
 
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
@@ -43,6 +44,16 @@ class AnnotationsPersistenceManager {
 
         annotation.setDeletedAt()
         return localAnnotationsPersistence.deleteAnnotation(annotation: annotation)
+    }
+
+    func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
+        _ = await remoteAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
+
+        if annotation.createdAt == nil {
+            annotation.setCreatedAt()
+        }
+        annotation.setUpdatedAt()
+        return localAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
     }
 }
 
@@ -102,12 +113,47 @@ extension AnnotationsPersistenceManager {
         case .deleteAnnotation:
             deletedAnnotation = annotation
             AnnotatoLogger.info("Annotation was deleted. \(annotation)")
+        case .createOrUpdateAnnotation:
+            createdOrUpdatedAnnotation = annotation
+            AnnotatoLogger.info("Annotation was created or updated. \(annotation)")
         }
+
+        resetPublishedAttributes()
     }
 
     private func resetPublishedAttributes() {
         newAnnotation = nil
         updatedAnnotation = nil
         deletedAnnotation = nil
+        createdOrUpdatedAnnotation = nil
+    }
+}
+
+// MARK: Conflict Resolution Persistence
+extension AnnotationsPersistenceManager {
+    func persistConflictResolution(conflictResolution: ConflictResolution<Annotation>) async {
+        for localCreateAnnotation in conflictResolution.localCreate {
+            _ = localAnnotationsPersistence.createAnnotation(annotation: localCreateAnnotation)
+        }
+
+        for localUpdateAnnotation in conflictResolution.localUpdate {
+            _ = localAnnotationsPersistence.updateAnnotation(annotation: localUpdateAnnotation)
+        }
+
+        for localDeleteAnnotation in conflictResolution.localDelete {
+            _ = localAnnotationsPersistence.deleteAnnotation(annotation: localDeleteAnnotation)
+        }
+
+        for serverCreateAnnotation in conflictResolution.serverCreate {
+            _ = await remoteAnnotationsPersistence.createAnnotation(annotation: serverCreateAnnotation)
+        }
+
+        for serverUpdateAnnotation in conflictResolution.serverUpdate {
+            _ = await remoteAnnotationsPersistence.updateAnnotation(annotation: serverUpdateAnnotation)
+        }
+
+        for serverDeleteAnnotation in conflictResolution.serverDelete {
+            _ = await remoteAnnotationsPersistence.deleteAnnotation(annotation: serverDeleteAnnotation)
+        }
     }
 }

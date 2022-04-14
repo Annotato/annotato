@@ -112,6 +112,12 @@ class DocumentsPersistenceManager {
     func deleteDocumentLocally(document: Document) -> Document? {
         localDocumentsPersistence.deleteDocument(document: document)
     }
+
+    func getLocalAndRemoteDocument(documentId: UUID) async -> (local: Document?, remote: Document?) {
+        let localDocument = localDocumentsPersistence.getDocument(documentId: documentId)
+        let remoteDocument = await remoteDocumentsPersistence.getDocument(documentId: documentId)
+        return (localDocument, remoteDocument)
+    }
 }
 
 // MARK: Websocket
@@ -176,6 +182,8 @@ extension DocumentsPersistenceManager {
             deletedDocument = document
             AnnotatoLogger.info("Document was deleted. \(document)")
         }
+
+        resetPublishedAttributes()
     }
 
     private func resetPublishedAttributes() {

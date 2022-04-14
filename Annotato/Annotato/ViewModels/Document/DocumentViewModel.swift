@@ -29,6 +29,7 @@ class DocumentViewModel: ObservableObject {
         self.webSocketManager = webSocketManager
         self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
+
         self.annotations = model.annotations
             .filter { !$0.isDeleted }
             .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
@@ -140,6 +141,7 @@ extension DocumentViewModel {
             if updatedAnnotation.isDeleted {
                 receiveDeleteAnnotation(deletedAnnotation: updatedAnnotation)
             } else {
+                model.updateAnnotation(updatedAnnotation: updatedAnnotation)
                 annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
             }
         } else {
@@ -155,13 +157,15 @@ extension DocumentViewModel {
         self.addedAnnotation = annotationViewModel
     }
 
-    func removeAnnotation(annotation: AnnotationViewModel) {
-        model.removeAnnotation(annotation: annotation.model)
-        annotations.removeAll(where: { $0.id == annotation.model.id })
-
+    func deleteAnnotation(annotation: AnnotationViewModel) {
+        removeAnnotation(annotation: annotation)
         Task {
             await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model)
         }
+    }
+
+    func removeAnnotation(annotation: AnnotationViewModel) {
+        annotations.removeAll(where: { $0.id == annotation.model.id })
     }
 
     func receiveDeleteAnnotation(deletedAnnotation: Annotation) {
@@ -169,10 +173,20 @@ extension DocumentViewModel {
             return
         }
 
-        model.removeAnnotation(annotation: deletedAnnotation)
+        model.updateAnnotation(updatedAnnotation: deletedAnnotation)
         let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
         annotationViewModel?.receiveDelete()
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
+    }
+
+    func receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: Annotation) {
+        if model.contains(annotation: createdOrUpdatedAnnotation) {
+            AnnotatoLogger.info("Updated annotation from the createOrUpdate path: \(createdOrUpdatedAnnotation)")
+            receiveUpdateAnnotation(updatedAnnotation: createdOrUpdatedAnnotation)
+        } else {
+            AnnotatoLogger.info("New annotation from the createOrUpdate path: \(createdOrUpdatedAnnotation)")
+            receiveNewAnnotation(newAnnotation: createdOrUpdatedAnnotation)
+        }
     }
 
     func receiveUpdateDocument(updatedDocument: Document) {
@@ -232,6 +246,14 @@ extension DocumentViewModel {
             }
 
             self?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
+        }.store(in: &cancellables)
+
+        annotationsPersistenceManager.$createdOrUpdatedAnnotation.sink { [weak self] savedAnnotation in
+            guard let savedAnnotation = savedAnnotation,
+                  savedAnnotation.documentId == self?.model.id else {
+                return
+            }
+            self?.receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: savedAnnotation)
         }.store(in: &cancellables)
 
         documentsPersistenceManager.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in

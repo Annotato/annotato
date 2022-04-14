@@ -25,6 +25,10 @@ extension AnnotationEntity {
         let selectionBox = annotation.selectionBox
         let selectionBoxEntity = SelectionBoxEntity.fromModel(selectionBox)
         try await selectionBoxEntity.customCreate(on: tx)
+
+        if annotation.isDeleted && !self.isDeleted {
+            try await self.customDelete(on: tx)
+        }
     }
 
     /// Updates the AnnotationEntity instance. Use this function to cascade updates.

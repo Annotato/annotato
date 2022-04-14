@@ -31,13 +31,25 @@ public final class Document: Codable, Timestampable {
         annotations.append(annotation)
     }
 
-    public func removeAnnotation(annotation: Annotation) {
-        annotations.removeAll(where: { $0.id == annotation.id })
+    public func updateAnnotation(updatedAnnotation: Annotation) {
+        guard let idx = annotations.firstIndex(where: { $0.id == updatedAnnotation.id }) else {
+            return
+        }
+
+        annotations[idx] = updatedAnnotation
     }
 
     public func receiveRestoreDeletedAnnotation(annotation: Annotation) {
         annotations.removeAll(where: { $0.id == annotation.id })
         annotations.append(annotation)
+    }
+
+    public func contains(annotation: Annotation) -> Bool {
+        annotations.contains(where: { $0.id == annotation.id })
+    }
+
+    public func setAnnotations(annotations: [Annotation]) {
+        self.annotations = annotations
     }
 }
 

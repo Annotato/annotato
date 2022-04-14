@@ -48,4 +48,19 @@ struct RemoteAnnotationsPersistence {
 
         return nil
     }
+
+    func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
+        guard let senderId = AuthViewModel().currentUser?.id else {
+            return nil
+        }
+
+        let webSocketMessage = AnnotatoCudAnnotationMessage(
+            senderId: senderId,
+            subtype: .createOrUpdateAnnotation,
+            annotation: annotation
+        )
+        webSocketManager?.send(message: webSocketMessage)
+
+        return nil
+    }
 }

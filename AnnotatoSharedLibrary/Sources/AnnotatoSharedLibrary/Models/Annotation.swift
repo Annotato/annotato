@@ -11,6 +11,7 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
     public var createdAt: Date?
     public var updatedAt: Date?
     public var deletedAt: Date?
+    public var conflictIdx: Int?
 
     private var texts: [AnnotationText] {
         parts.compactMap { $0 as? AnnotationText }
@@ -111,11 +112,13 @@ public final class Annotation: Codable, Timestampable, ObservableObject {
     }
 
     public func clone() -> Annotation {
-        let clonedSelectionBox = selectionBox.clone()
-        let clonedParts: [AnnotationPart] = texts.map({ $0.clone() }) + handwritings.map({ $0.clone() })
+        let newId = UUID()
+        let clonedSelectionBox = selectionBox.clone(clonedAnnotationId: newId)
+        let clonedParts: [AnnotationPart] = texts.map({ $0.clone(clonedAnnotationId: newId) }) +
+            handwritings.map({ $0.clone(clonedAnnotationId: newId) })
 
         return Annotation(origin: origin, width: width, parts: clonedParts, selectionBox: clonedSelectionBox,
-                          ownerId: ownerId, documentId: documentId, id: UUID(),
+                          ownerId: ownerId, documentId: documentId, id: newId,
                           createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
     }
 
@@ -290,6 +293,7 @@ extension Annotation: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Annotation(id: \(id), origin: \(origin), width: \(width), " +
         "parts: \(parts), ownerId: \(ownerId), documentId: \(documentId)), " +
+        "selectionBox: \(String(describing: selectionBox))" +
         "createdAt: \(String(describing: createdAt)), " +
         "updatedAt: \(String(describing: updatedAt)), " +
         "deletedAt: \(String(describing: deletedAt))"
@@ -333,6 +337,7 @@ extension Annotation: Equatable {
             Set(lhs.handwritings) == Set(rhs.handwritings)
 
         return lhs.id == rhs.id &&
+            lhs.origin == rhs.origin &&
             lhs.width == rhs.width &&
             partsAreEqual &&
             lhs.selectionBox == rhs.selectionBox &&

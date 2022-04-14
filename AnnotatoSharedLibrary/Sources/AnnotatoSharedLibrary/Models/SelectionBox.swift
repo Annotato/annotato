@@ -66,8 +66,8 @@ public final class SelectionBox: Codable, Timestampable, ObservableObject {
         try container.encodeIfPresent(deletedAt, forKey: .deletedAt)
     }
 
-    public func clone() -> SelectionBox {
-        SelectionBox(startPoint: startPoint, endPoint: endPoint, annotationId: annotationId,
+    public func clone(clonedAnnotationId: UUID) -> SelectionBox {
+        SelectionBox(startPoint: startPoint, endPoint: endPoint, annotationId: clonedAnnotationId,
                      id: UUID(), createdAt: createdAt, updatedAt: updatedAt, deletedAt: deletedAt)
     }
 }

@@ -84,12 +84,20 @@ class WebSocketManager: ObservableObject {
     }
 
     private func publishResponseData(data: Data) {
+        resetPublishedAttributes()
+
         AnnotatoLogger.info(
-            "Publishing response data...",
+            "Publishing response data: \(String(data: data, encoding: .utf8))",
             context: "WebSocketManager::publishResponseData"
         )
 
         message = data
+
+        resetPublishedAttributes()
+    }
+
+    private func resetPublishedAttributes() {
+        message = nil
     }
 
     private func setUpSubscribers() {

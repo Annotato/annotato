@@ -6,6 +6,7 @@ class AnnotationView: UIView {
 
     private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
+    private var mergeConflictsPalette: AnnotationMergeConflictsPaletteView?
     private var scroll: UIScrollView
     private var parts: UIStackView
     private var selectionBox: SelectionBoxView
@@ -21,9 +22,15 @@ class AnnotationView: UIView {
         self.viewModel = viewModel
         self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
+
+        if let mergeConflictPaletteViewModel = viewModel.mergeConflictPalette {
+            self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(viewModel: mergeConflictPaletteViewModel)
+        }
+
         self.scroll = UIScrollView(frame: viewModel.scrollFrame)
         self.parts = UIStackView(frame: viewModel.partsFrame)
         self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
+
         super.init(frame: viewModel.frame)
         initializeSiblingViews()
         initializeSubviews()
@@ -35,6 +42,9 @@ class AnnotationView: UIView {
     }
 
     private func initializeSubviews() {
+        if let mergeConflictsPalette = mergeConflictsPalette {
+            addSubview(mergeConflictsPalette)
+        }
         addSubview(palette)
         setUpScrollAndParts()
         populateParts()
@@ -78,6 +88,7 @@ class AnnotationView: UIView {
         parentView?.addSubview(linkLine)
     }
 
+    // swiftlint:disable function_body_length
     private func setUpSubscribers() {
         viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
             guard let origin = self?.viewModel.origin else {
@@ -123,6 +134,31 @@ class AnnotationView: UIView {
 
                     self?.resize()
                 }
+            }
+        }.store(in: &cancellables)
+
+        viewModel.$conflictIdx.sink { [weak self] conflictIdx in
+            guard conflictIdx == nil else {
+                return
+            }
+            guard let self = self else {
+                return
+            }
+            guard self.viewModel.resolveBySave,
+                let mergeConflictsPalette = self.mergeConflictsPalette else {
+                return
+            }
+            let mergeConflictsHeight = mergeConflictsPalette.height
+            DispatchQueue.main.async {
+                mergeConflictsPalette.resetDimensions()
+                mergeConflictsPalette.removeFromSuperview()
+                self.mergeConflictsPalette = nil
+
+                self.palette.translateUp(by: mergeConflictsHeight)
+
+                let scrollNewOrigin = CGPoint(x: self.scroll.frame.origin.x,
+                                              y: self.scroll.frame.origin.y - mergeConflictsHeight)
+                self.scroll.frame = CGRect(origin: scrollNewOrigin, size: self.scroll.frame.size)
             }
         }.store(in: &cancellables)
     }

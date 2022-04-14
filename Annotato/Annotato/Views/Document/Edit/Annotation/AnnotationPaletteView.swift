@@ -32,6 +32,7 @@ class AnnotationPaletteView: UIToolbar {
         self.minimizeOrMaximizeButton = ImageToggleableButton(
             selectedImage: UIImage(named: ImageName.maximizeIcon.rawValue),
             unselectedImage: UIImage(named: ImageName.minimizeIcon.rawValue))
+
         super.init(frame: viewModel.frame)
 
         setUpButtons()
@@ -144,5 +145,10 @@ extension AnnotationPaletteView {
     @objc
     private func didTapMinimizeOrMaximizeButton(_ button: UIButton) {
         viewModel.didSelectMinimizeOrMaximizeButton()
+    }
+
+    func translateUp(by yTranslation: CGFloat) {
+        viewModel.translateUp(by: yTranslation)
+        self.frame = viewModel.frame
     }
 }

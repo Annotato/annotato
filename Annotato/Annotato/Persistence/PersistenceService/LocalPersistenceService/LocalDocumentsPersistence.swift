@@ -26,7 +26,7 @@ struct LocalDocumentsPersistence {
 
     func getDocument(documentId: UUID) -> Document? {
         guard let readDocumentEntity = localDocumentEntityDataAccess.read(documentId: documentId,
-                                                                          withDeleted: false) else {
+                                                                          withDeleted: true) else {
             AnnotatoLogger.error("When reading document.",
                                  context: "LocalDocumentsPersistence::getDocument")
             return nil
