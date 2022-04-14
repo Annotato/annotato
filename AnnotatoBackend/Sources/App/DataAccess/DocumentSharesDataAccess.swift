@@ -72,7 +72,6 @@ struct DocumentSharesDataAccess {
         let documentShareEntities = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentId)
-            .withDeleted()
             .all().get()
 
         return documentShareEntities.map(DocumentShare.fromManagedEntity)
