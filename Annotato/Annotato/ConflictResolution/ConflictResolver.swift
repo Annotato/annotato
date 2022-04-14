@@ -106,11 +106,12 @@ class ConflictResolver<Model: ConflictResolvable> {
 
     private func handleDeletedOnlyOnServer(localModel: Model, serverModel: Model,
                                            resolution: inout ConflictResolution<Model>) {
-        guard let serverDeletedAt = serverModel.deletedAt, !localModel.isDeleted else {
+        guard serverModel.isDeleted && !localModel.isDeleted else {
             return
         }
 
-        guard localModel.wasUpdated(after: serverDeletedAt) else {
+        guard let lastOnline = NetworkMonitor.shared.getLastOnlineDatetime(),
+              localModel.wasUpdated(after: lastOnline) else {
             // Local version was not updated after server deletion, can safely delete locally
             resolution.localDelete.append(serverModel)
 

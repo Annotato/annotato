@@ -57,6 +57,8 @@ class RootPersistenceManager: ObservableObject {
         case .crudAnnotation:
             self.crudAnnotationMessage = message
         }
+
+        resetPublishedAttributes()
     }
 
     private func resetPublishedAttributes() {
