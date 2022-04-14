@@ -9,6 +9,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     var documentId: UUID?
     let toolbarHeight = 50.0
     var documentViewModel: DocumentViewModel?
+    private var documentView: DocumentView?
     private var cancellables: Set<AnyCancellable> = []
 
     override func viewWillAppear(_ animated: Bool) {
@@ -35,6 +36,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
             startSpinner()
             documentViewModel = await documentController?.loadDocumentWithDeleted(documentId: documentId)
+            setUpSubscribers()
             stopSpinner()
 
             initializeDocumentView()
@@ -62,10 +64,16 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             return
         }
 
-        let documentView = DocumentView(
+        documentView?.removeFromSuperview()
+
+        documentView = DocumentView(
             frame: self.view.safeAreaLayoutGuide.layoutFrame,
             documentViewModel: documentViewModel
         )
+
+        guard let documentView = documentView else {
+            return
+        }
 
         view.addSubview(documentView)
 
@@ -86,6 +94,17 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             await documentController?.updateDocumentWithDeleted(document: documentViewModel)
         }
     }
+
+    private func alertUsersToLeaveDocument() {
+        presentInfoAlert(
+            alertTitle: "Notice",
+            message: "The document has been permanently deleted, " +
+            "please contact the owner if there seems to be a mistake",
+            confirmHandler: { [weak self] in
+                self?.goBack()
+            }
+        )
+    }
 }
 
 extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
@@ -99,5 +118,25 @@ extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
             return
         }
         goToShare(documentId: documentId)
+    }
+}
+
+extension DocumentEditViewController {
+    private func setUpSubscribers() {
+        documentViewModel?.$hasUpdatedDocument.sink(receiveValue: { [weak self] hasUpdatedDocument in
+            if hasUpdatedDocument {
+                DispatchQueue.main.async {
+                    self?.initializeDocumentView()
+                }
+            }
+        }).store(in: &cancellables)
+
+        documentViewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
+            if hasDeletedDocument {
+                DispatchQueue.main.async {
+                    self?.alertUsersToLeaveDocument()
+                }
+            }
+        }).store(in: &cancellables)
     }
 }

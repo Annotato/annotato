@@ -5,6 +5,7 @@ protocol AlertPresentable where Self: UIViewController {
     func presentErrorAlert(errorMessage: String)
     func presentSuccessAlert(successMessage: String, completion: (() -> Void)?)
     func presentWarningAlert(alertTitle: String, warningMessage: String?, confirmHandler: @escaping () -> Void)
+    func presentInfoAlert(alertTitle: String, message: String, confirmHandler: @escaping () -> Void)
 }
 
 extension AlertPresentable {
@@ -59,6 +60,20 @@ extension AlertPresentable {
 
         alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
+
+        present(alertController, animated: true)
+    }
+
+    func presentInfoAlert(alertTitle: String, message: String, confirmHandler: @escaping () -> Void) {
+        let alertController = UIAlertController(
+            title: alertTitle, message: message, preferredStyle: .alert)
+
+        let confirmAction = UIAlertAction(
+            title: "Ok",
+            style: .default,
+            handler: { _ in confirmHandler() })
+
+        alertController.addAction(confirmAction)
 
         present(alertController, animated: true)
     }

@@ -10,10 +10,14 @@ struct DocumentSharesDataAccess {
         let existingDocumentShare = try await findByDocumentIdAndRecipientId(db: db, documentShare: documentShare)
 
         if let existingDocumentShare = existingDocumentShare {
-            throw AnnotatoError.modelAlreadyExists(
-                modelType: String(describing: DocumentShareEntity.self),
-                modelId: existingDocumentShare.documentId
-            )
+            if existingDocumentShare.isDeleted {
+                return try await restore(db: db, documentShare: existingDocumentShare)
+            } else {
+                throw AnnotatoError.modelAlreadyExists(
+                    modelType: String(describing: DocumentShareEntity.self),
+                    modelId: existingDocumentShare.documentId
+                )
+            }
         }
 
         let document = try await documentsDataAccess.read(db: db, documentId: documentShare.documentId)
@@ -26,6 +30,21 @@ struct DocumentSharesDataAccess {
 
         try await db.transaction { tx in
             try await documentShareEntity.customCreate(on: tx)
+        }
+
+        return DocumentShare.fromManagedEntity(documentShareEntity)
+    }
+
+    func restore(db: Database, documentShare: DocumentShare) async throws -> DocumentShare {
+        guard let documentShareEntity = try await DocumentShareEntity
+            .findWithDeleted(documentShare.id, on: db).get() else {
+            throw AnnotatoError.modelNotFound(requestType: .update,
+                                              modelType: String(describing: DocumentShare.self),
+                                              modelId: documentShare.id)
+        }
+
+        try await db.transaction { tx in
+            try await documentShareEntity.restore(on: tx)
         }
 
         return DocumentShare.fromManagedEntity(documentShareEntity)
@@ -59,7 +78,7 @@ struct DocumentSharesDataAccess {
         return documentShareEntities.map(DocumentShare.fromManagedEntity)
     }
 
-    static func delete(db: Database, documentId: UUID, recipientId: String) async throws -> DocumentShare {
+    func delete(db: Database, documentId: UUID, recipientId: String) async throws -> DocumentShare {
         guard let documentShareEntity = try await DocumentShareEntity
             .query(on: db)
             .filter(\.$documentEntity.$id == documentId)
@@ -79,5 +98,18 @@ struct DocumentSharesDataAccess {
         }
 
         return DocumentShare.fromManagedEntity(documentShareEntity)
+    }
+
+    func delete(db: Database, documentId: UUID) async throws -> [DocumentShare] {
+        let documentShareEntities = try await DocumentShareEntity
+            .query(on: db)
+            .filter(\.$documentEntity.$id == documentId)
+            .all().get()
+
+        try await db.transaction { tx in
+            try await documentShareEntities.delete(on: tx)
+        }
+
+        return documentShareEntities.map(DocumentShare.fromManagedEntity)
     }
 }

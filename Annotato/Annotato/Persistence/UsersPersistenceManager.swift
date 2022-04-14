@@ -19,6 +19,12 @@ class UsersPersistenceManager {
         return remoteUser
     }
 
+    func getUsersSharingDocument(documentId: UUID) async -> [AnnotatoUser]? {
+        let users = await remoteUsersPersistence.getUsersSharingDocument(documentId: documentId)
+
+        return users
+    }
+
     func saveSessionUser(user: AnnotatoUser) {
         guard let encodedUser = try? JSONCustomEncoder().encode(user) else {
             return

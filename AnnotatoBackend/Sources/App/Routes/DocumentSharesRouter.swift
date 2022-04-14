@@ -5,5 +5,7 @@ func documentSharesRouter(documentShares: RoutesBuilder) {
 
     documentShares.post(use: documentSharesController.create)
 
-    documentShares.delete(use: documentSharesController.delete)
+    documentShares.group(":documentId") { documentShare in
+        documentShare.delete(":recipientId", use: documentSharesController.delete)
+    }
 }
