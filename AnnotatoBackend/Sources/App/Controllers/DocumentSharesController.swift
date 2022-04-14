@@ -19,8 +19,8 @@ struct DocumentSharesController {
     }
 
     func delete(req: Request) async throws -> Document {
-        let documentId = try req.getParamValueAsUUID(paramKey: "documentId")
-        let recipientId = try req.getParamValue(paramKey: "recipientId")
+        let documentId = try req.getParamValueAsUUID(paramKey: QueryParams.documentId.rawValue)
+        let recipientId = try req.getParamValue(paramKey: QueryParams.recipientId.rawValue)
 
         _ = try await documentSharesDataAccess.delete(
             db: req.db, documentId: documentId, recipientId: recipientId)

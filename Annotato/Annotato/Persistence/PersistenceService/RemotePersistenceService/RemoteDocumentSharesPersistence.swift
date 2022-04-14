@@ -45,8 +45,7 @@ struct RemoteDocumentSharesPersistence {
         var documents: [Document] = []
 
         for documentId in documentIds {
-            let document = await deleteDocumentShare(documentId: documentId, recipientId: recipientId)
-            if let document = document {
+            if let document = await deleteDocumentShare(documentId: documentId, recipientId: recipientId) {
                 documents.append(document)
             }
         }

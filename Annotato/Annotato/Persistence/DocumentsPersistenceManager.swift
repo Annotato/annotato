@@ -32,6 +32,7 @@ class DocumentsPersistenceManager {
 
         if let remoteOwnDocuments = remoteOwnDocuments,
            let localOwnDocuments = localOwnDocuments {
+            // NOTE: Deletes server documents if corrresponding local documents were deleted while offline
             await pruneRemoteDocuments(localDocuments: localOwnDocuments, serverDocuments: remoteOwnDocuments)
         }
 
@@ -52,6 +53,7 @@ class DocumentsPersistenceManager {
 
         if let remoteSharedDocuments = remoteSharedDocuments,
            let localSharedDocuments = localSharedDocuments {
+            // NOTE: Deletes server document shares if corrresponding local documents were deleted while offline
             await pruneRemoteDocumentShares(
                 localDocuments: localSharedDocuments, serverDocuments: remoteSharedDocuments)
         }
@@ -104,10 +106,10 @@ class DocumentsPersistenceManager {
         _ = await remoteDocumentsPersistence.deleteDocument(document: document)
 
         // NOTE: Documents are hard deleted from local storage
-        return localDocumentsPersistence.deleteDocument(document: document)
+        return deleteDocumentLocally(document: document)
     }
 
-    func deleteDocumentLocally(document: Document) async -> Document? {
+    func deleteDocumentLocally(document: Document) -> Document? {
         localDocumentsPersistence.deleteDocument(document: document)
     }
 }
@@ -133,13 +135,11 @@ extension DocumentsPersistenceManager {
         let senderId = decodedMessage.senderId
         let messageSubtype = decodedMessage.subtype
 
-        Task {
-            // NOTE: Documents are hard deleted from local storage
-            if messageSubtype == .deleteDocument {
-                _ = localDocumentsPersistence.deleteDocument(document: document)
-            } else {
-                _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
-            }
+        // NOTE: Documents are hard deleted from local storage
+        if messageSubtype == .deleteDocument {
+            _ = deleteDocumentLocally(document: document)
+        } else {
+            _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
         }
 
         guard senderId != AuthViewModel().currentUser?.id else {

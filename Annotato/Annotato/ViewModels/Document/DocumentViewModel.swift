@@ -176,15 +176,11 @@ extension DocumentViewModel {
     }
 
     func receiveUpdateDocument(updatedDocument: Document) {
-        guard updatedDocument.id == self.model.id else {
-            return
-        }
-
         model = updatedDocument
     }
 
     func receiveDeleteDocument(deletedDocument: Document) {
-        guard deletedDocument.id == self.model.id else {
+        guard deletedDocument.isDeleted else {
             return
         }
 
@@ -199,7 +195,7 @@ extension DocumentViewModel {
         Task {
             let deletedDocument = await documentsPersistenceManager.updateDocument(document: model)
             if let deletedDocument = deletedDocument {
-                _ = await documentsPersistenceManager.deleteDocumentLocally(document: deletedDocument)
+                _ = documentsPersistenceManager.deleteDocumentLocally(document: deletedDocument)
                 updateOwnerIsSuccess = true
             }
 
@@ -239,7 +235,8 @@ extension DocumentViewModel {
         }.store(in: &cancellables)
 
         documentsPersistenceManager.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in
-            guard let updatedDocument = updatedDocument else {
+            guard let updatedDocument = updatedDocument,
+                  updatedDocument.id == self?.model.id else {
                 return
             }
 
@@ -247,7 +244,8 @@ extension DocumentViewModel {
         }).store(in: &cancellables)
 
         documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
-            guard let deletedDocument = deletedDocument else {
+            guard let deletedDocument = deletedDocument,
+                  deletedDocument.id == self?.model.id else {
                 return
             }
 
