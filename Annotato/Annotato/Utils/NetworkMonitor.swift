@@ -24,6 +24,7 @@ class NetworkMonitor: ObservableObject {
                 self.isConnected = isCurrentlyConnected
                 AnnotatoLogger.info("Setting isConnected to \(self.isConnected)")
             }
+            AnnotatoLogger.info("Current connection status: \(self.isConnected)")
         }
     }
 }

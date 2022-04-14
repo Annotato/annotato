@@ -91,13 +91,15 @@ struct DocumentController {
         var currentConflictIdx = 1
         for (localAnnotation, serverAnnotation) in conflictResolution.conflictingModels {
             print("Conflicted model with id=\(currentConflictIdx):")
-            print("local: \(localAnnotation)")
-            print("server: \(serverAnnotation)\n\n")
-            localAnnotation.setNewId()
-            localAnnotation.conflictIdx = currentConflictIdx
+            let newLocalAnnotation = localAnnotation.clone()
+            newLocalAnnotation.conflictIdx = currentConflictIdx
             serverAnnotation.conflictIdx = currentConflictIdx
             currentConflictIdx += 1
-            serverDocument.addAnnotation(annotation: localAnnotation)
+            serverDocument.addAnnotation(annotation: newLocalAnnotation)
+
+            print("local: \(localAnnotation)\n")
+            print("cloned local: \(newLocalAnnotation)\n")
+            print("server: \(serverAnnotation)\n\n")
 
             if !serverDocument.contains(annotation: serverAnnotation) {
                 // Probably will never come here but just to be safe, shall I take out?
@@ -110,7 +112,7 @@ struct DocumentController {
             webSocketManager: webSocketManager,
             annotationsPersistenceManager: annotationsPersistenceManager
         )
-        // TODO: IMPT Do I need to do some kind of rollback here to ensure core data doesn't have any issues?Sample
+        // TODO: IMPT Do I need to do some kind of rollback here to ensure core data doesn't have any issues?
     }
 
     @discardableResult func updateDocumentWithDeleted(document: DocumentViewModel) async -> DocumentViewModel? {

@@ -109,9 +109,12 @@ class AnnotationViewModel: ObservableObject {
         center = CGPoint(x: center.x + translation.x, y: center.y + translation.y)
 
         if !isResolving {
+            print("Not resolving, saving")
             Task {
                 await annotationsPersistenceManager?.updateAnnotation(annotation: model)
             }
+        } else {
+            print("Still resolving, not saving")
         }
     }
 
@@ -238,9 +241,12 @@ extension AnnotationViewModel {
         }
 
         if !isResolving {
+            print("Not resolving, saving")
             Task {
                 await annotationsPersistenceManager?.updateAnnotation(annotation: model)
             }
+        } else {
+            print("Still resolving, not saving")
         }
     }
 
@@ -333,7 +339,8 @@ extension AnnotationViewModel {
             return
         }
         Task {
-            await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
+            print("Save merge conflicts, saving")
+            _ = await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         resolveBySave = true
         self.conflictIdx = nil
@@ -349,7 +356,8 @@ extension AnnotationViewModel {
         document?.removeAnnotation(annotation: self)
         model.setDeletedAt(to: Date())
         Task {
-            await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
+            print("Discard merge conflicts, saving")
+            _ = await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
         }
         isRemoved = true
         self.conflictIdx = nil

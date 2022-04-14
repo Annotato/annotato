@@ -149,15 +149,17 @@ class AnnotationView: UIView {
                     return
                 }
                 let mergeConflictsHeight = mergeConflictsPalette.height
-                mergeConflictsPalette.resetDimensions()
-                mergeConflictsPalette.removeFromSuperview()
-                self.mergeConflictsPalette = nil
+                DispatchQueue.main.async {
+                    mergeConflictsPalette.resetDimensions()
+                    mergeConflictsPalette.removeFromSuperview()
+                    self.mergeConflictsPalette = nil
 
-                self.palette.translateUp(by: mergeConflictsHeight)
+                    self.palette.translateUp(by: mergeConflictsHeight)
 
-                let scrollNewOrigin = CGPoint(
-                    x: self.scroll.frame.origin.x, y: self.scroll.frame.origin.y - mergeConflictsHeight)
-                self.scroll.frame = CGRect(origin: scrollNewOrigin, size: self.scroll.frame.size)
+                    let scrollNewOrigin = CGPoint(
+                        x: self.scroll.frame.origin.x, y: self.scroll.frame.origin.y - mergeConflictsHeight)
+                    self.scroll.frame = CGRect(origin: scrollNewOrigin, size: self.scroll.frame.size)
+                }
             }
         }.store(in: &cancellables)
     }
