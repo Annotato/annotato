@@ -55,16 +55,6 @@ class AnnotationsPersistenceManager {
         annotation.setUpdatedAt()
         return localAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
     }
-
-    func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
-        var resultingAnnotation: [Annotation] = []
-        for annotation in annotations {
-            if let newAnnotation = await createOrUpdateAnnotation(annotation: annotation) {
-                resultingAnnotation.append(newAnnotation)
-            }
-        }
-        return resultingAnnotation
-    }
 }
 
 // MARK: Websocket

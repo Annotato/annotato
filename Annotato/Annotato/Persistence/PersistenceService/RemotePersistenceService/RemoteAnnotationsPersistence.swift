@@ -63,12 +63,4 @@ struct RemoteAnnotationsPersistence {
 
         return nil
     }
-
-    func createOrUpdateAnnotations(annotations: [Annotation]) async -> [Annotation]? {
-        for annotation in annotations {
-            _ = await createOrUpdateAnnotation(annotation: annotation)
-        }
-
-        return nil
-    }
 }
