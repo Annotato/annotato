@@ -297,6 +297,7 @@ extension AnnotationViewModel {
     }
 
     func receiveUpdate(updatedAnnotation: Annotation) {
+        let previousModel = self.model
         self.model = updatedAnnotation
 
         self.cancellables = []
@@ -304,9 +305,11 @@ extension AnnotationViewModel {
 
         self.positionDidChange = true
 
-        self.parts = []
-        self.populatePartViewModels(model: updatedAnnotation)
-        self.modelWasUpdated = true
+        if !updatedAnnotation.onlyPositionIsDifferent(from: previousModel) {
+            self.parts = []
+            self.populatePartViewModels(model: updatedAnnotation)
+            self.modelWasUpdated = true
+        }
     }
 
     func inFocus() {

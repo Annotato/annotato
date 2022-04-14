@@ -339,6 +339,22 @@ extension Annotation: Equatable {
             lhs.ownerId == rhs.ownerId &&
             lhs.documentId == rhs.documentId
     }
+
+    public func onlyPositionIsDifferent(from other: Annotation) -> Bool {
+        let partsAreEqual = Set(self.texts) == Set(other.texts) &&
+            Set(self.handwritings) == Set(other.handwritings)
+
+       let otherAttributesAreEqual = self.id == other.id &&
+            self.width == other.width &&
+            partsAreEqual &&
+            self.selectionBox == other.selectionBox &&
+            self.ownerId == other.ownerId &&
+            self.documentId == other.documentId
+
+        let positionIsDifferent = self.origin != other.origin
+
+        return otherAttributesAreEqual && positionIsDifferent
+    }
 }
 
 extension Annotation: Hashable {
