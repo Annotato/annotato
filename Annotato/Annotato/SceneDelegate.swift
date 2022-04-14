@@ -40,6 +40,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
 
+        if let newRootViewController = newRootViewController as? DocumentListViewController {
+            newRootViewController.webSocketManager = webSocketManager
+            webSocketManager.setUpSocket()
+        }
+
         window.rootViewController = newRootViewController
 
         if animated {
@@ -48,11 +53,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                               options: [.transitionCrossDissolve],
                               animations: nil,
                               completion: nil)
-        }
-
-        if let newRootViewController = newRootViewController as? DocumentListViewController {
-            newRootViewController.webSocketManager = webSocketManager
-            webSocketManager.setUpSocket()
         }
     }
 
