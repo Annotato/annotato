@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class SelectionBoxView: UIView {
-    private(set) var viewModel: SelectionBoxPresenter
+    private(set) var presenter: SelectionBoxPresenter
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -10,9 +10,9 @@ class SelectionBoxView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: SelectionBoxPresenter) {
-        self.viewModel = viewModel
-        super.init(frame: viewModel.frame)
+    init(presenter: SelectionBoxPresenter) {
+        self.presenter = presenter
+        super.init(frame: presenter.frame)
         setUpSubscribers()
         self.layer.borderWidth = 2.0
         self.layer.zPosition = 1.0
@@ -20,7 +20,7 @@ class SelectionBoxView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+        presenter.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 DispatchQueue.main.async {
                     self?.removeFromSuperview()

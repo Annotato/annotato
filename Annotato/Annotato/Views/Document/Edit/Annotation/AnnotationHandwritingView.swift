@@ -3,7 +3,7 @@ import PencilKit
 import Combine
 
 class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
-    private var viewModel: AnnotationHandwritingPresenter
+    private var presenter: AnnotationHandwritingPresenter
     private var cancellables: Set<AnyCancellable> = []
     // swiftlint:disable:next weak_delegate
     private var customDelegate: AnnotationHandwritingViewDelegate
@@ -15,8 +15,8 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
     }
 
     init(presenter: AnnotationHandwritingPresenter) {
-        self.viewModel = presenter
-        self.customDelegate = AnnotationHandwritingViewDelegate(viewModel: presenter)
+        self.presenter = presenter
+        self.customDelegate = AnnotationHandwritingViewDelegate(presenter: presenter)
         super.init(frame: presenter.frame)
         self.delegate = customDelegate
         self.drawing = presenter.handwritingDrawing
@@ -36,13 +36,13 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+        presenter.$isEditing.sink(receiveValue: { [weak self] isEditing in
             DispatchQueue.main.async {
                 self?.drawingGestureRecognizer.isEnabled = isEditing
             }
         }).store(in: &cancellables)
 
-        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+        presenter.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 DispatchQueue.main.async {
                     self?.removeFromSuperview()
@@ -50,7 +50,7 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
             }
         }).store(in: &cancellables)
 
-        viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
+        presenter.$isSelected.sink(receiveValue: { [weak self] isSelected in
             DispatchQueue.main.async {
                 self?.drawingGestureRecognizer.isEnabled = isSelected
             }
@@ -73,18 +73,18 @@ extension AnnotationHandwritingView {
 
     @objc
     private func didTap() {
-        viewModel.didSelect()
+        presenter.didSelect()
     }
 }
 
 class AnnotationHandwritingViewDelegate: NSObject, PKCanvasViewDelegate {
-    private var viewModel: AnnotationHandwritingPresenter
+    private var presenter: AnnotationHandwritingPresenter
 
-    init(viewModel: AnnotationHandwritingPresenter) {
-        self.viewModel = viewModel
+    init(presenter: AnnotationHandwritingPresenter) {
+        self.presenter = presenter
     }
 
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        viewModel.setHandwritingDrawing(to: canvasView.drawing)
+        presenter.setHandwritingDrawing(to: canvasView.drawing)
     }
 }

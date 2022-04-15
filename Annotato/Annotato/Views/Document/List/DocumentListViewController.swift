@@ -3,7 +3,7 @@ import Combine
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     var webSocketManager: WebSocketManager?
-    var viewModel: DocumentListPresenter?
+    var presenter: DocumentListPresenter?
 
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
@@ -72,7 +72,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            await viewModel?.loadAllDocuments(userId: userId)
+            await presenter?.loadAllDocuments(userId: userId)
             stopSpinner()
 
             addDocumentsSubview(inDeleteMode: inDeleteMode)
@@ -80,20 +80,20 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     }
 
     private func addDocumentsSubview(inDeleteMode: Bool) {
-        guard let viewModel = viewModel else {
+        guard let presenter = presenter else {
             return
         }
 
         collectionView?.removeFromSuperview()
 
         var initializeInDeleteMode = inDeleteMode
-        if viewModel.documents.isEmpty {
+        if presenter.documents.isEmpty {
             initializeInDeleteMode = false
             toolbar.exitDeleteMode()
         }
 
         collectionView = DocumentListCollectionView(
-            documents: viewModel.documents,
+            documents: presenter.documents,
             frame: .zero,
             documentListCollectionCellViewDelegate: self,
             initializeInDeleteMode: initializeInDeleteMode
@@ -149,7 +149,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             return
         }
 
-        viewModel?.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
+        presenter?.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
             guard let document = document else {
                 return
             }
@@ -181,7 +181,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.deleteDocumentForEveryone(presenter: document)
+                self?.presenter?.deleteDocumentForEveryone(presenter: document)
             }
         )
     }
@@ -194,7 +194,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.deleteDocumentAsNonOwner(presenter: document)
+                self?.presenter?.deleteDocumentAsNonOwner(presenter: document)
             }
         )
     }
@@ -205,7 +205,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     }
 
     private func setUpSubscribers() {
-        viewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
+        presenter?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
             if hasDeletedDocument {
                 DispatchQueue.main.async {
                     guard let collectionView = self?.collectionView else {

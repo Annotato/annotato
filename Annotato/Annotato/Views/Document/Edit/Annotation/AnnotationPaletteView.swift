@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AnnotationPaletteView: UIToolbar {
-    private(set) var viewModel: AnnotationPalettePresenter
+    private(set) var presenter: AnnotationPalettePresenter
     private(set) var textButton: ToggleableButton
     private(set) var markdownButton: ToggleableButton
     private(set) var handwritingButton: ToggleableButton
@@ -17,8 +17,8 @@ class AnnotationPaletteView: UIToolbar {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationPalettePresenter) {
-        self.viewModel = viewModel
+    init(presenter: AnnotationPalettePresenter) {
+        self.presenter = presenter
         self.textButton = AnnotationPaletteView.makeToggleableSystemButton(
             systemName: SystemImageName.textformat.rawValue, color: .darkGray)
         self.markdownButton = AnnotationPaletteView.makeToggleableSystemButton(
@@ -33,7 +33,7 @@ class AnnotationPaletteView: UIToolbar {
             selectedImage: UIImage(named: ImageName.maximizeIcon.rawValue),
             unselectedImage: UIImage(named: ImageName.minimizeIcon.rawValue))
 
-        super.init(frame: viewModel.frame)
+        super.init(frame: presenter.frame)
 
         setUpButtons()
         setUpSubscribers()
@@ -56,7 +56,7 @@ class AnnotationPaletteView: UIToolbar {
         let deleteBarButton = UIBarButtonItem(customView: deleteButton)
         let minimizeOrMaximizeBarButton = UIBarButtonItem(customView: minimizeOrMaximizeButton)
         minimizeOrMaximizeButton.widthAnchor.constraint(equalToConstant: 20.0).isActive = true
-        minimizeOrMaximizeButton.isSelected = viewModel.isMinimized
+        minimizeOrMaximizeButton.isSelected = presenter.isMinimized
         self.items = [
             textBarButton,
             spaceBetween,
@@ -73,19 +73,19 @@ class AnnotationPaletteView: UIToolbar {
     }
 
     private func setUpSubscribers() {
-        viewModel.$textIsSelected.sink(receiveValue: { [weak self] textIsSelected in
+        presenter.$textIsSelected.sink(receiveValue: { [weak self] textIsSelected in
             self?.textButton.isSelected = textIsSelected
         }).store(in: &cancellables)
 
-        viewModel.$markdownIsSelected.sink(receiveValue: { [weak self] markdownIsSelected in
+        presenter.$markdownIsSelected.sink(receiveValue: { [weak self] markdownIsSelected in
             self?.markdownButton.isSelected = markdownIsSelected
         }).store(in: &cancellables)
 
-        viewModel.$handwritingIsSelected.sink(receiveValue: { [weak self] handwritingIsSelected in
+        presenter.$handwritingIsSelected.sink(receiveValue: { [weak self] handwritingIsSelected in
             self?.handwritingButton.isSelected = handwritingIsSelected
         }).store(in: &cancellables)
 
-        viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+        presenter.$isEditing.sink(receiveValue: { [weak self] isEditing in
             DispatchQueue.main.async {
                 self?.annotationTypeButtons.forEach { $0.isHidden = !isEditing }
             }
@@ -95,7 +95,7 @@ class AnnotationPaletteView: UIToolbar {
             }
         }).store(in: &cancellables)
 
-        viewModel.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
+        presenter.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
             self?.minimizeOrMaximizeButton.isSelected = isMinimized
         }).store(in: &cancellables)
     }
@@ -114,11 +114,11 @@ extension AnnotationPaletteView {
 
         switch toggleableButton {
         case textButton:
-            viewModel.didSelectTextButton()
+            presenter.didSelectTextButton()
         case markdownButton:
-            viewModel.didSelectMarkdownButton()
+            presenter.didSelectMarkdownButton()
         case handwritingButton:
-            viewModel.didSelectHandwritingButton()
+            presenter.didSelectHandwritingButton()
         default:
             return
         }
@@ -130,25 +130,25 @@ extension AnnotationPaletteView {
 
         let isNowEditing = editOrViewButton.isSelected
         if isNowEditing {
-            viewModel.enterEditMode()
-            viewModel.enterMaximizedMode()
+            presenter.enterEditMode()
+            presenter.enterMaximizedMode()
         } else {
-            viewModel.enterViewMode()
+            presenter.enterViewMode()
         }
     }
 
     @objc
     private func didTapDeleteButton(_ button: UIButton) {
-        viewModel.didSelectDeleteButton()
+        presenter.didSelectDeleteButton()
     }
 
     @objc
     private func didTapMinimizeOrMaximizeButton(_ button: UIButton) {
-        viewModel.didSelectMinimizeOrMaximizeButton()
+        presenter.didSelectMinimizeOrMaximizeButton()
     }
 
     func translateUp(by yTranslation: CGFloat) {
-        viewModel.translateUp(by: yTranslation)
-        self.frame = viewModel.frame
+        presenter.translateUp(by: yTranslation)
+        self.frame = presenter.frame
     }
 }

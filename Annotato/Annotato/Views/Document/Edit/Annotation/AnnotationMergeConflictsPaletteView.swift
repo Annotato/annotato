@@ -1,7 +1,7 @@
 import UIKit
 
 class AnnotationMergeConflictsPaletteView: UIToolbar {
-    private(set) var viewModel: AnnotationMergeConflictsPalettePresenter
+    private(set) var presenter: AnnotationMergeConflictsPalettePresenter
     private(set) var saveMergeConflictsButton: UIButton
     private(set) var discardMergeConflictsButton: UIButton
     private(set) var conflictIdxButton: UIButton
@@ -11,14 +11,14 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationMergeConflictsPalettePresenter) {
-        self.viewModel = viewModel
+    init(presenter: AnnotationMergeConflictsPalettePresenter) {
+        self.presenter = presenter
         self.saveMergeConflictsButton = AnnotationMergeConflictsPaletteView.makeSaveButton()
         self.discardMergeConflictsButton = AnnotationMergeConflictsPaletteView.makeDiscardButton()
         self.conflictIdxButton = AnnotationMergeConflictsPaletteView.makeConflictIndexButton(
-            conflictIdx: viewModel.conflictIdx)
+            conflictIdx: presenter.conflictIdx)
 
-        super.init(frame: viewModel.frame)
+        super.init(frame: presenter.frame)
         self.layer.borderWidth = 1.0
         self.layer.borderColor = UIColor.black.cgColor
         setUpButtons()
@@ -45,23 +45,23 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
 
     @objc
     private func didTapSaveMergeConflictsButton(_ button: UIButton) {
-        viewModel.didTapSaveMergeConflictsButton()
+        presenter.didTapSaveMergeConflictsButton()
     }
 
     @objc
     private func didTapDiscardMergeConflictsButton(_ button: UIButton) {
-        viewModel.didTapDiscardMergeConflictsButton()
+        presenter.didTapDiscardMergeConflictsButton()
     }
 }
 
 extension AnnotationMergeConflictsPaletteView {
     var height: CGFloat {
-        viewModel.height
+        presenter.height
     }
 
     func resetDimensions() {
-        viewModel.resetDimensions()
-        self.frame = viewModel.frame
+        presenter.resetDimensions()
+        self.frame = presenter.frame
     }
 }
 

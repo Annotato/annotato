@@ -49,7 +49,7 @@ extension Navigable {
         }
         viewController.documentId = documentId
         viewController.webSocketManager = webSocketManager
-        viewController.documentViewModel = DocumentPresenter(webSocketManager: webSocketManager)
+        viewController.presenter = DocumentPresenter(webSocketManager: webSocketManager)
         present(viewController, animated: true, completion: nil)
     }
 

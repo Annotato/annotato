@@ -4,7 +4,7 @@ import Combine
 import AnnotatoSharedLibrary
 
 class DocumentView: UIView {
-    private var viewModel: DocumentPresenter
+    private var presenter: DocumentPresenter
     private var cancellables: Set<AnyCancellable> = []
 
     private var pdfView: DocumentPdfView?
@@ -16,14 +16,14 @@ class DocumentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(frame: CGRect, documentViewModel: DocumentPresenter) {
-        self.viewModel = documentViewModel
+    init(frame: CGRect, documentPresenter: DocumentPresenter) {
+        self.presenter = documentPresenter
         self.annotationViews = []
 
-        if let pdfDocument = documentViewModel.pdfDocument {
+        if let pdfDocument = documentPresenter.pdfDocument {
             self.pdfView = DocumentPdfView(
                 frame: .zero,
-                documentPdfViewModel: pdfDocument
+                pdfPresenter: pdfDocument
             )
         }
 
@@ -37,8 +37,8 @@ class DocumentView: UIView {
     }
 
     private func initializeInitialAnnotationViews() {
-        for annotation in viewModel.annotations {
-            renderNewAnnotation(viewModel: annotation)
+        for annotation in presenter.annotations {
+            renderNewAnnotation(presenter: annotation)
         }
     }
 
@@ -56,17 +56,17 @@ class DocumentView: UIView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$addedAnnotation.sink(receiveValue: { [weak self] addedAnnotation in
+        presenter.$addedAnnotation.sink(receiveValue: { [weak self] addedAnnotation in
             guard let addedAnnotation = addedAnnotation else {
                 return
             }
 
             DispatchQueue.main.async {
-                self?.renderNewAnnotation(viewModel: addedAnnotation)
+                self?.renderNewAnnotation(presenter: addedAnnotation)
             }
         }).store(in: &cancellables)
 
-        viewModel.$selectionBoxFrame.sink(receiveValue: { [weak self] newSelectionBoxFrame in
+        presenter.$selectionBoxFrame.sink(receiveValue: { [weak self] newSelectionBoxFrame in
             guard let newSelectionBoxFrame = newSelectionBoxFrame else {
                 DispatchQueue.main.async {
                     self?.selectionBoxView?.removeFromSuperview()
@@ -116,7 +116,7 @@ class DocumentView: UIView {
         }
 
         if sender.state == .ended {
-            viewModel.addAnnotation(bounds: pdfInnerDocumentView.bounds)
+            presenter.addAnnotation(bounds: pdfInnerDocumentView.bounds)
             selectionBoxView?.removeFromSuperview()
         }
 
@@ -128,17 +128,17 @@ class DocumentView: UIView {
         }
 
         if sender.state == .began {
-            viewModel.setSelectionBoxStartPoint(point: pointInPdf)
+            presenter.setSelectionBoxStartPoint(point: pointInPdf)
         }
 
         if sender.state != .cancelled {
-            viewModel.setSelectionBoxEndPoint(point: pointInPdf)
+            presenter.setSelectionBoxEndPoint(point: pointInPdf)
         }
     }
 
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
-        viewModel.setAllAnnotationsOutOfFocus()
+        presenter.setAllAnnotationsOutOfFocus()
 
         guard let pdfInnerDocumentView = pdfView?.documentView else {
             return
@@ -151,16 +151,16 @@ class DocumentView: UIView {
             return
         }
 
-        viewModel.setSelectionBoxStartPoint(point: pointInPdf)
-        viewModel.setSelectionBoxEndPoint(point: pointInPdf)
-        viewModel.addAnnotation(bounds: pdfInnerDocumentView.bounds)
+        presenter.setSelectionBoxStartPoint(point: pointInPdf)
+        presenter.setSelectionBoxEndPoint(point: pointInPdf)
+        presenter.addAnnotation(bounds: pdfInnerDocumentView.bounds)
     }
 }
 
 // MARK: Adding new annotations, removing annotations
 extension DocumentView {
-    private func renderNewAnnotation(viewModel: AnnotationPresenter) {
-        let annotationView = AnnotationView(parentView: pdfView?.documentView, viewModel: viewModel)
+    private func renderNewAnnotation(presenter: AnnotationPresenter) {
+        let annotationView = AnnotationView(parentView: pdfView?.documentView, presenter: presenter)
         annotationViews.append(annotationView)
         pdfView?.documentView?.addSubview(annotationView)
     }

@@ -3,7 +3,7 @@ import Combine
 import WebKit
 
 class AnnotationMarkdownView: UIView, AnnotationPartView {
-    private(set) var viewModel: AnnotationMarkdownPresenter
+    private(set) var presenter: AnnotationMarkdownPresenter
     private(set) var editView: UITextView
     private(set) var previewView: UIView
     private var cancellables: Set<AnyCancellable> = []
@@ -16,7 +16,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     }
 
     init(presenter: AnnotationMarkdownPresenter) {
-        self.viewModel = presenter
+        self.presenter = presenter
         self.editView = UITextView(frame: presenter.editFrame)
         self.previewView = UIView()
         self.isEditable = false
@@ -46,7 +46,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
 
         if isEditing {
             isEditable = true
-            editView.text = viewModel.content
+            editView.text = presenter.content
             addSubview(editView)
             editView.resizeFrameToFitContent()
             changeSize(to: editView.frame.size)
@@ -67,7 +67,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
         )
 
         let markdownView = AnnotatoMarkdown()
-            .renderMarkdown(from: viewModel.content, frame: markdownFrame)
+            .renderMarkdown(from: presenter.content, frame: markdownFrame)
         markdownView.backgroundColor = .white
 
         return markdownView
@@ -76,17 +76,17 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
     private func changeSize(to size: CGSize) {
         self.frame.size = size
         self.heightConstraint.constant = self.frame.height
-        viewModel.setHeight(to: size.height)
+        presenter.setHeight(to: size.height)
     }
 
     private func setUpSubscribers() {
-        viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+        presenter.$isEditing.sink(receiveValue: { [weak self] isEditing in
             DispatchQueue.main.async {
                 self?.switchView(basedOn: isEditing)
             }
         }).store(in: &cancellables)
 
-        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+        presenter.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 DispatchQueue.main.async {
                     self?.removeFromSuperview()
@@ -94,7 +94,7 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
             }
         }).store(in: &cancellables)
 
-        viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
+        presenter.$isSelected.sink(receiveValue: { [weak self] isSelected in
             if isSelected {
                 DispatchQueue.main.async {
                     self?.editView.becomeFirstResponder()
@@ -115,7 +115,7 @@ extension AnnotationMarkdownView: UITextViewDelegate {
             return
         }
         editView.resizeFrameToFitContent()
-        viewModel.setContent(to: text)
+        presenter.setContent(to: text)
         changeSize(to: editView.frame.size)
     }
 }
@@ -135,7 +135,7 @@ extension AnnotationMarkdownView: UITextViewDelegate {
     @objc
     private func didTap() {
         if isEditable {
-            viewModel.didSelect()
+            presenter.didSelect()
         }
     }
  }

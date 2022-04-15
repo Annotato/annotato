@@ -77,26 +77,26 @@ class AnnotationPresenter: ObservableObject {
         setUpSubscribers()
     }
 
-    private func populatePartViewModels(model: Annotation) {
+    private func populatePartPresenters(model: Annotation) {
         for part in model.parts where !part.isDeleted {
-            let partViewModel: AnnotationPartPresenter
+            let partPresenter: AnnotationPartPresenter
 
             switch part {
             case let textPart as AnnotationText:
                 switch textPart.type {
                 case .plainText:
-                    partViewModel = AnnotationTextPresenter(model: textPart, width: model.width)
+                    partPresenter = AnnotationTextPresenter(model: textPart, width: model.width)
                 case .markdown:
-                    partViewModel = AnnotationMarkdownPresenter(model: textPart, width: model.width)
+                    partPresenter = AnnotationMarkdownPresenter(model: textPart, width: model.width)
                 }
             case let handwritingPart as AnnotationHandwriting:
-                partViewModel = AnnotationHandwritingPresenter(model: handwritingPart, width: model.width)
+                partPresenter = AnnotationHandwritingPresenter(model: handwritingPart, width: model.width)
             default:
                 continue
             }
 
-            partViewModel.parentPresenter = self
-            parts.append(partViewModel)
+            partPresenter.parentPresenter = self
+            parts.append(partPresenter)
         }
     }
 
@@ -375,7 +375,7 @@ extension AnnotationPresenter {
 
         if !updatedAnnotation.onlyPositionIsDifferent(from: previousModel) {
             self.parts = []
-            self.populatePartViewModels(model: updatedAnnotation)
+            self.populatePartPresenters(model: updatedAnnotation)
             self.modelWasUpdated = true
         }
     }

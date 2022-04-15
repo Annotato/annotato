@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AnnotationTextView: UITextView, AnnotationPartView {
-    private(set) var viewModel: AnnotationTextPresenter
+    private(set) var presenter: AnnotationTextPresenter
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -11,7 +11,7 @@ class AnnotationTextView: UITextView, AnnotationPartView {
     }
 
     init(presenter: AnnotationTextPresenter) {
-        self.viewModel = presenter
+        self.presenter = presenter
         super.init(frame: presenter.frame, textContainer: nil)
         self.text = presenter.content
         self.isEditable = presenter.isEditing
@@ -23,13 +23,13 @@ class AnnotationTextView: UITextView, AnnotationPartView {
     }
 
     private func setUpSubscribers() {
-        viewModel.$isEditing.sink(receiveValue: { [weak self] isEditing in
+        presenter.$isEditing.sink(receiveValue: { [weak self] isEditing in
             DispatchQueue.main.async {
                 self?.isEditable = isEditing
             }
         }).store(in: &cancellables)
 
-        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+        presenter.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 DispatchQueue.main.async {
                     self?.removeFromSuperview()
@@ -37,7 +37,7 @@ class AnnotationTextView: UITextView, AnnotationPartView {
             }
         }).store(in: &cancellables)
 
-        viewModel.$isSelected.sink(receiveValue: { [weak self] isSelected in
+        presenter.$isSelected.sink(receiveValue: { [weak self] isSelected in
             if isSelected {
                 DispatchQueue.main.async {
                     self?.becomeFirstResponder()
@@ -59,8 +59,8 @@ extension AnnotationTextView: UITextViewDelegate {
         }
 
         resizeFrameToFitContent()
-        viewModel.setContent(to: text)
-        viewModel.setHeight(to: frame.height)
+        presenter.setContent(to: text)
+        presenter.setHeight(to: frame.height)
     }
 }
 
@@ -75,7 +75,7 @@ extension AnnotationTextView {
     @objc
     private func didTap() {
         if isEditable {
-            viewModel.didSelect()
+            presenter.didSelect()
         }
     }
 }

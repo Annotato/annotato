@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let documentListViewController = DocumentListViewController.instantiateFullScreenFromStoryboard(.document)
         documentListViewController?.webSocketManager = webSocketManager
-        documentListViewController?.viewModel = DocumentListPresenter(webSocketManager: webSocketManager)
+        documentListViewController?.presenter = DocumentListPresenter(webSocketManager: webSocketManager)
 
         window?.rootViewController = AuthPresenter().currentUser != nil
             ? documentListViewController
@@ -43,7 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         if let newRootViewController = newRootViewController as? DocumentListViewController {
             newRootViewController.webSocketManager = webSocketManager
-            newRootViewController.viewModel = DocumentListPresenter(webSocketManager: webSocketManager)
+            newRootViewController.presenter = DocumentListPresenter(webSocketManager: webSocketManager)
             webSocketManager.setUpSocket()
         }
 
