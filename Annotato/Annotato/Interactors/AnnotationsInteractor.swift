@@ -2,10 +2,10 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class AnnotationsPersistenceManager {
+class AnnotationsInteractor {
     private let webSocketManager: WebSocketManager?
-    private let rootPersistenceManager: RootPersistenceManager
-    private let usersPersistenceManager: UsersPersistenceManager
+    private let rootInteractor: RootInteractor
+    private let usersInteractor: UsersInteractor
 
     private let remoteAnnotationsPersistence: RemoteAnnotationsPersistence
     private let localAnnotationsPersistence = LocalAnnotationsPersistence()
@@ -18,8 +18,8 @@ class AnnotationsPersistenceManager {
 
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
-        self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
-        self.usersPersistenceManager = UsersPersistenceManager()
+        self.rootInteractor = RootInteractor(webSocketManager: webSocketManager)
+        self.usersInteractor = UsersInteractor()
         self.remoteAnnotationsPersistence = RemoteAnnotationsPersistence(
             webSocketManager: webSocketManager
         )
@@ -28,7 +28,7 @@ class AnnotationsPersistenceManager {
     }
 
     func createAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return nil
         }
 
@@ -39,7 +39,7 @@ class AnnotationsPersistenceManager {
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return nil
         }
 
@@ -50,7 +50,7 @@ class AnnotationsPersistenceManager {
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return nil
         }
 
@@ -61,7 +61,7 @@ class AnnotationsPersistenceManager {
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return nil
         }
 
@@ -76,9 +76,9 @@ class AnnotationsPersistenceManager {
 }
 
 // MARK: Websocket
-extension AnnotationsPersistenceManager {
+extension AnnotationsInteractor {
     private func setUpSubscribers() {
-        rootPersistenceManager.$crudAnnotationMessage.sink { [weak self] message in
+        rootInteractor.$crudAnnotationMessage.sink { [weak self] message in
             guard let message = message else {
                 return
             }
@@ -98,7 +98,7 @@ extension AnnotationsPersistenceManager {
 
         _ = localAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
 
-        guard senderId != usersPersistenceManager.fetchSessionUser()?.id else {
+        guard senderId != usersInteractor.fetchSessionUser()?.id else {
             return
         }
 
@@ -148,7 +148,7 @@ extension AnnotationsPersistenceManager {
 }
 
 // MARK: Conflict Resolution Persistence
-extension AnnotationsPersistenceManager {
+extension AnnotationsInteractor {
     func persistConflictResolution(conflictResolution: ConflictResolution<Annotation>) async {
         for localCreateAnnotation in conflictResolution.localCreate {
             _ = localAnnotationsPersistence.createAnnotation(annotation: localCreateAnnotation)
@@ -162,7 +162,7 @@ extension AnnotationsPersistenceManager {
             _ = localAnnotationsPersistence.deleteAnnotation(annotation: localDeleteAnnotation)
         }
 
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return
         }
 

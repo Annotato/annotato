@@ -3,8 +3,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentListPresenter {
-    private let documentsPersistenceManager: DocumentsPersistenceManager
-    private let documentSharesPersistenceManager: DocumentSharesPersistenceManager
+    private let documentsInteractor: DocumentsInteractor
+    private let documentSharesInteractor: DocumentSharesInteractor
     private let pdfStorageManager = PDFStorageManager()
 
     private(set) var documents: [DocumentListCellPresenter] = []
@@ -13,15 +13,15 @@ class DocumentListPresenter {
     @Published private(set) var hasDeletedDocument = false
 
     init(webSocketManager: WebSocketManager?) {
-        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
-        self.documentSharesPersistenceManager = DocumentSharesPersistenceManager()
+        self.documentsInteractor = DocumentsInteractor(webSocketManager: webSocketManager)
+        self.documentSharesInteractor = DocumentSharesInteractor()
 
         setUpSubscribers()
     }
 
     func loadAllDocuments(userId: String) async {
-        let ownDocuments = await documentsPersistenceManager.getOwnDocuments(userId: userId) ?? []
-        let sharedDocuments = await documentsPersistenceManager.getSharedDocuments(userId: userId) ?? []
+        let ownDocuments = await documentsInteractor.getOwnDocuments(userId: userId) ?? []
+        let sharedDocuments = await documentsInteractor.getSharedDocuments(userId: userId) ?? []
 
         let ownDocumentPresenters = ownDocuments.filter { !$0.isDeleted }
             .map { DocumentListCellPresenter(document: $0, isShared: false) }
@@ -48,7 +48,7 @@ class DocumentListPresenter {
                 fileSystemUrl: selectedFileUrl, fileName: document.id.uuidString
             )
 
-            let createdDocument = await documentsPersistenceManager.createDocument(document: document)
+            let createdDocument = await documentsInteractor.createDocument(document: document)
 
             completion(createdDocument)
         }
@@ -56,7 +56,7 @@ class DocumentListPresenter {
 
     func deleteDocumentForEveryone(presenter: DocumentListCellPresenter) {
         Task {
-            _ = await documentsPersistenceManager.deleteDocument(document: presenter.document)
+            _ = await documentsInteractor.deleteDocument(document: presenter.document)
             hasDeletedDocument = true
         }
     }
@@ -67,7 +67,7 @@ class DocumentListPresenter {
         }
 
         Task {
-            _ = await documentSharesPersistenceManager.deleteDocumentShare(
+            _ = await documentSharesInteractor.deleteDocumentShare(
                 document: presenter.document, recipientId: recipientId)
             hasDeletedDocument = true
         }
@@ -76,7 +76,7 @@ class DocumentListPresenter {
 
 extension DocumentListPresenter {
     private func setUpSubscribers() {
-        documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] _ in
+        documentsInteractor.$deletedDocument.sink(receiveValue: { [weak self] _ in
             self?.hasDeletedDocument = true
         }).store(in: &cancellables)
     }

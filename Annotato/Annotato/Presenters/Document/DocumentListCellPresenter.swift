@@ -2,7 +2,7 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class DocumentListCellPresenter {
-    private let usersPersistenceManager = UsersPersistenceManager()
+    private let usersInteractor = UsersInteractor()
     private(set) var usersSharingDocument: [UserPresenter] = []
 
     let document: Document
@@ -26,7 +26,7 @@ class DocumentListCellPresenter {
     }
 
     func canFindUsersSharingDocument() async -> Bool {
-        let usersSharingDocumentModels = await usersPersistenceManager
+        let usersSharingDocumentModels = await usersInteractor
             .getUsersSharingDocument(documentId: document.id) ?? []
 
         usersSharingDocument = usersSharingDocumentModels.map { UserPresenter(model: $0) }

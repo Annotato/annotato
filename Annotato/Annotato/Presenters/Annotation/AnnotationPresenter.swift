@@ -6,7 +6,7 @@ import AnnotatoSharedLibrary
 import Combine
 
 class AnnotationPresenter: ObservableObject {
-    private let annotationsPersistenceManager: AnnotationsPersistenceManager?
+    private let annotationsInteractor: AnnotationsInteractor?
     private let webSocketManager: WebSocketManager?
 
     private weak var document: DocumentPresenter?
@@ -69,7 +69,7 @@ class AnnotationPresenter: ObservableObject {
         self.parts = []
         self.selectionBox = SelectionBoxPresenter(model: model.selectionBox)
         self.webSocketManager = webSocketManager
-        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
+        self.annotationsInteractor = AnnotationsInteractor(webSocketManager: webSocketManager)
         self.palette.parentPresenter = self
         self.mergeConflictPalette?.parentPresenter = self
 
@@ -108,7 +108,7 @@ class AnnotationPresenter: ObservableObject {
         }
 
         Task {
-            await annotationsPersistenceManager?.updateAnnotation(annotation: model)
+            await annotationsInteractor?.updateAnnotation(annotation: model)
         }
     }
 
@@ -243,7 +243,7 @@ extension AnnotationPresenter {
         }
 
         Task {
-            await annotationsPersistenceManager?.updateAnnotation(annotation: model)
+            await annotationsInteractor?.updateAnnotation(annotation: model)
         }
     }
 
@@ -336,7 +336,7 @@ extension AnnotationPresenter {
             return
         }
         Task {
-            _ = await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
+            _ = await annotationsInteractor?.createOrUpdateAnnotation(annotation: model)
         }
         resolveBySave = true
         self.conflictIdx = nil
@@ -352,7 +352,7 @@ extension AnnotationPresenter {
         document?.removeAnnotation(annotation: self)
         model.setDeletedAt(to: Date())
         Task {
-            _ = await annotationsPersistenceManager?.createOrUpdateAnnotation(annotation: model)
+            _ = await annotationsInteractor?.createOrUpdateAnnotation(annotation: model)
         }
         isRemoved = true
         self.conflictIdx = nil

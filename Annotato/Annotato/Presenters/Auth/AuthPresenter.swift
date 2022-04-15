@@ -4,7 +4,7 @@ import Combine
 
 class AuthPresenter {
     private var authService: AnnotatoAuthService
-    private let usersPersistenceManager = UsersPersistenceManager()
+    private let usersInteractor = UsersInteractor()
     private(set) var currentUser: AnnotatoUser?
     private var cancellables: Set<AnyCancellable> = []
 
@@ -15,7 +15,7 @@ class AuthPresenter {
 
     init() {
         self.authService = FirebaseAuthService()
-        self.currentUser = usersPersistenceManager.fetchSessionUser()
+        self.currentUser = usersInteractor.fetchSessionUser()
 
         setUpSubscribers()
     }
@@ -30,12 +30,12 @@ class AuthPresenter {
 
     func logOut() {
         authService.logOut()
-        usersPersistenceManager.purgeSessionUser()
+        usersInteractor.purgeSessionUser()
     }
 
     private func createUser(user: AnnotatoUser) {
         Task {
-            guard await usersPersistenceManager.createUser(user: user) != nil else {
+            guard await usersInteractor.createUser(user: user) != nil else {
                 return
             }
 
@@ -51,10 +51,10 @@ class AuthPresenter {
     }
 
     private func setUser(userId: String) async {
-        self.currentUser = await usersPersistenceManager.getUser(userId: userId)
+        self.currentUser = await usersInteractor.getUser(userId: userId)
 
         if let currentUser = currentUser {
-            usersPersistenceManager.saveSessionUser(user: currentUser)
+            usersInteractor.saveSessionUser(user: currentUser)
         }
     }
 

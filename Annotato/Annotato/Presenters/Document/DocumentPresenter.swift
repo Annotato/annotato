@@ -4,8 +4,8 @@ import AnnotatoSharedLibrary
 import Combine
 
 class DocumentPresenter: ObservableObject {
-    private let documentsPersistenceManager: DocumentsPersistenceManager
-    private let annotationsPersistenceManager: AnnotationsPersistenceManager
+    private let documentsInteractor: DocumentsInteractor
+    private let annotationsInteractor: AnnotationsInteractor
     private let webSocketManager: WebSocketManager?
 
     private(set) var model: Document?
@@ -25,8 +25,8 @@ class DocumentPresenter: ObservableObject {
 
     init(webSocketManager: WebSocketManager?, model: Document? = nil) {
         self.webSocketManager = webSocketManager
-        self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
-        self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
+        self.documentsInteractor = DocumentsInteractor(webSocketManager: webSocketManager)
+        self.annotationsInteractor = AnnotationsInteractor(webSocketManager: webSocketManager)
 
         self.model = model
         if let model = model {
@@ -123,7 +123,7 @@ extension DocumentPresenter {
         addedAnnotation = annotationViewModel
 
         Task {
-            await annotationsPersistenceManager.createAnnotation(annotation: newAnnotation)
+            await annotationsInteractor.createAnnotation(annotation: newAnnotation)
         }
     }
 
@@ -163,7 +163,7 @@ extension DocumentPresenter {
     func deleteAnnotation(annotation: AnnotationPresenter) {
         removeAnnotation(annotation: annotation)
         Task {
-            await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model)
+            await annotationsInteractor.deleteAnnotation(annotation: annotation.model)
         }
     }
 
@@ -218,7 +218,7 @@ extension DocumentPresenter {
             return
         }
 
-        guard let model = await documentsPersistenceManager.getDocument(documentId: documentId) else {
+        guard let model = await documentsInteractor.getDocument(documentId: documentId) else {
             return
         }
 
@@ -226,7 +226,7 @@ extension DocumentPresenter {
     }
 
     private func loadResolvedDocument(documentId: UUID) async -> Document? {
-        let localAndRemoteDocumentPair = await documentsPersistenceManager
+        let localAndRemoteDocumentPair = await documentsInteractor
             .getLocalAndRemoteDocument(documentId: documentId)
         guard let localDocument = localAndRemoteDocumentPair.local,
               let serverDocument = localAndRemoteDocumentPair.remote else {
@@ -237,7 +237,7 @@ extension DocumentPresenter {
         let resolvedAnnotations = ConflictResolver(localModels: localDocument.annotations,
                                                    serverModels: serverDocument.annotations).resolve()
 
-        await annotationsPersistenceManager.persistConflictResolution(conflictResolution: resolvedAnnotations)
+        await annotationsInteractor.persistConflictResolution(conflictResolution: resolvedAnnotations)
 
         serverDocument.setAnnotations(annotations: resolvedAnnotations.nonConflictingModels)
 
@@ -257,7 +257,7 @@ extension DocumentPresenter {
             return
         }
 
-        guard let updatedModel = await documentsPersistenceManager.updateDocument(document: model) else {
+        guard let updatedModel = await documentsInteractor.updateDocument(document: model) else {
             return
         }
 
@@ -272,9 +272,9 @@ extension DocumentPresenter {
         model.ownerId = newOwnerId
 
         Task {
-            let deletedDocument = await documentsPersistenceManager.updateDocument(document: model)
+            let deletedDocument = await documentsInteractor.updateDocument(document: model)
             if let deletedDocument = deletedDocument {
-                _ = documentsPersistenceManager.deleteDocumentLocally(document: deletedDocument)
+                _ = documentsInteractor.deleteDocumentLocally(document: deletedDocument)
                 updateOwnerIsSuccess = true
                 return
             }
@@ -287,7 +287,7 @@ extension DocumentPresenter {
 // MARK: Websocket
 extension DocumentPresenter {
     private func setUpSubscribers() {
-        annotationsPersistenceManager.$newAnnotation.sink { [weak self] newAnnotation in
+        annotationsInteractor.$newAnnotation.sink { [weak self] newAnnotation in
             guard let newAnnotation = newAnnotation,
                   newAnnotation.documentId == self?.model?.id else {
                 return
@@ -296,7 +296,7 @@ extension DocumentPresenter {
             self?.receiveNewAnnotation(newAnnotation: newAnnotation)
         }.store(in: &cancellables)
 
-        annotationsPersistenceManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
+        annotationsInteractor.$updatedAnnotation.sink { [weak self] updatedAnnotation in
             guard let updatedAnnotation = updatedAnnotation,
                   updatedAnnotation.documentId == self?.model?.id else {
                 return
@@ -305,7 +305,7 @@ extension DocumentPresenter {
             self?.receiveUpdateAnnotation(updatedAnnotation: updatedAnnotation)
         }.store(in: &cancellables)
 
-        annotationsPersistenceManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
+        annotationsInteractor.$deletedAnnotation.sink { [weak self] deletedAnnotation in
             guard let deletedAnnotation = deletedAnnotation,
                   deletedAnnotation.documentId == self?.model?.id else {
                 return
@@ -314,7 +314,7 @@ extension DocumentPresenter {
             self?.receiveDeleteAnnotation(deletedAnnotation: deletedAnnotation)
         }.store(in: &cancellables)
 
-        annotationsPersistenceManager.$createdOrUpdatedAnnotation.sink { [weak self] savedAnnotation in
+        annotationsInteractor.$createdOrUpdatedAnnotation.sink { [weak self] savedAnnotation in
             guard let savedAnnotation = savedAnnotation,
                   savedAnnotation.documentId == self?.model?.id else {
                 return
@@ -322,7 +322,7 @@ extension DocumentPresenter {
             self?.receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: savedAnnotation)
         }.store(in: &cancellables)
 
-        documentsPersistenceManager.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in
+        documentsInteractor.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in
             guard let updatedDocument = updatedDocument,
                   updatedDocument.id == self?.model?.id else {
                 return
@@ -331,7 +331,7 @@ extension DocumentPresenter {
             self?.receiveUpdateDocument(updatedDocument: updatedDocument)
         }).store(in: &cancellables)
 
-        documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
+        documentsInteractor.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
             guard let deletedDocument = deletedDocument,
                   deletedDocument.id == self?.model?.id else {
                 return

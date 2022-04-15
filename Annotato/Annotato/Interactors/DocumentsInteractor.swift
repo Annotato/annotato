@@ -2,10 +2,10 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class DocumentsPersistenceManager {
+class DocumentsInteractor {
     private let webSocketManager: WebSocketManager?
-    private let rootPersistenceManager: RootPersistenceManager
-    private let usersPersistenceManager: UsersPersistenceManager
+    private let rootInteractor: RootInteractor
+    private let usersInteractor: UsersInteractor
 
     private let remoteDocumentsPersistence: RemoteDocumentsPersistence
     private let localDocumentsPersistence = LocalDocumentsPersistence()
@@ -18,8 +18,8 @@ class DocumentsPersistenceManager {
 
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
-        self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
-        self.usersPersistenceManager = UsersPersistenceManager()
+        self.rootInteractor = RootInteractor(webSocketManager: webSocketManager)
+        self.usersInteractor = UsersInteractor()
         self.remoteDocumentsPersistence = RemoteDocumentsPersistence(
             webSocketManager: webSocketManager
         )
@@ -46,7 +46,7 @@ class DocumentsPersistenceManager {
             localModels: localDocuments, serverModels: serverDocuments)
         let documentsConflictResolution = conflictResolver.resolve()
 
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return
         }
         let serverDelete = documentsConflictResolution.serverDelete
@@ -68,7 +68,7 @@ class DocumentsPersistenceManager {
     }
 
     private func pruneRemoteDocumentShares(localDocuments: [Document], serverDocuments: [Document]) async {
-        guard let recipientId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let recipientId = usersInteractor.fetchSessionUser()?.id else {
             return
         }
 
@@ -102,7 +102,7 @@ class DocumentsPersistenceManager {
     }
 
     func updateDocument(document: Document) async -> Document? {
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return nil
         }
 
@@ -113,7 +113,7 @@ class DocumentsPersistenceManager {
     }
 
     func deleteDocument(document: Document) async -> Document? {
-        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+        guard let senderId = usersInteractor.fetchSessionUser()?.id else {
             return nil
         }
 
@@ -135,9 +135,9 @@ class DocumentsPersistenceManager {
 }
 
 // MARK: Websocket
-extension DocumentsPersistenceManager {
+extension DocumentsInteractor {
     private func setUpSubscribers() {
-        rootPersistenceManager.$crudDocumentMessage.sink { [weak self] message in
+        rootInteractor.$crudDocumentMessage.sink { [weak self] message in
             guard let message = message else {
                 return
             }
@@ -162,7 +162,7 @@ extension DocumentsPersistenceManager {
             _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
         }
 
-        guard senderId != usersPersistenceManager.fetchSessionUser()?.id else {
+        guard senderId != usersInteractor.fetchSessionUser()?.id else {
             return
         }
 

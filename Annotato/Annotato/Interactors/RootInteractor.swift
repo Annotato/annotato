@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import AnnotatoSharedLibrary
 
-class RootPersistenceManager: ObservableObject {
+class RootInteractor: ObservableObject {
     private let webSocketManager: WebSocketManager?
     private var cancellables: Set<AnyCancellable> = []
 
