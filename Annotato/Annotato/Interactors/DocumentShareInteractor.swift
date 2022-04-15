@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-struct DocumentShareController {
+class DocumentShareInteractor {
     private let documentSharesPersistenceManager = DocumentSharesPersistenceManager()
 
     func createDocumentShare(documentId: UUID) async -> Document? {

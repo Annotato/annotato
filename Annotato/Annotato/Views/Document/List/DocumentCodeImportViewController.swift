@@ -1,7 +1,7 @@
 import UIKit
 
 class DocumentCodeImportViewController: UIViewController, AlertPresentable, Navigable {
-    private let documentShareController = DocumentShareController()
+    private let documentShareController = DocumentShareInteractor()
 
     @IBOutlet private var documentCodeField: UITextField!
 
