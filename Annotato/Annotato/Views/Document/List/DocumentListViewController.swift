@@ -202,8 +202,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     }
 
     func didTapChangeOwnerButton(document: DocumentListCellViewModel) {
-        let documentViewModel = DocumentViewModel(
-            model: document.document, webSocketManager: webSocketManager)
+        let documentViewModel = DocumentViewModel(webSocketManager: webSocketManager, model: document.document)
         goToUsersSharingDocumentList(document: documentViewModel, users: document.usersSharingDocument)
     }
 

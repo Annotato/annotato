@@ -7,7 +7,7 @@ class DocumentView: UIView {
     private var viewModel: DocumentViewModel
     private var cancellables: Set<AnyCancellable> = []
 
-    private var pdfView: DocumentPdfView
+    private var pdfView: DocumentPdfView?
     private var annotationViews: [AnnotationView]
     private var selectionBoxView: UIView?
 
@@ -19,10 +19,13 @@ class DocumentView: UIView {
     init(frame: CGRect, documentViewModel: DocumentViewModel) {
         self.viewModel = documentViewModel
         self.annotationViews = []
-        self.pdfView = DocumentPdfView(
-            frame: .zero,
-            documentPdfViewModel: documentViewModel.pdfDocument
-        )
+
+        if let pdfDocument = documentViewModel.pdfDocument {
+            self.pdfView = DocumentPdfView(
+                frame: .zero,
+                documentPdfViewModel: pdfDocument
+            )
+        }
 
         super.init(frame: frame)
 
@@ -40,6 +43,10 @@ class DocumentView: UIView {
     }
 
     private func initializePdfView() {
+        guard let pdfView = pdfView else {
+            return
+        }
+
         addSubview(pdfView)
         pdfView.translatesAutoresizingMaskIntoConstraints = false
         pdfView.topAnchor.constraint(equalTo: topAnchor).isActive = true
@@ -78,7 +85,7 @@ class DocumentView: UIView {
         newSelectionBoxView.layer.borderWidth = 2.0
         newSelectionBoxView.layer.borderColor = UIColor.systemGray2.cgColor
         selectionBoxView = newSelectionBoxView
-        pdfView.documentView?.addSubview(newSelectionBoxView)
+        pdfView?.documentView?.addSubview(newSelectionBoxView)
     }
 
     private func addObservers() {
@@ -104,7 +111,7 @@ class DocumentView: UIView {
 
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        guard let pdfInnerDocumentView = pdfView.documentView else {
+        guard let pdfInnerDocumentView = pdfView?.documentView else {
             return
         }
 
@@ -133,7 +140,7 @@ class DocumentView: UIView {
     private func didTap(_ sender: UITapGestureRecognizer) {
         viewModel.setAllAnnotationsOutOfFocus()
 
-        guard let pdfInnerDocumentView = pdfView.documentView else {
+        guard let pdfInnerDocumentView = pdfView?.documentView else {
             return
         }
 
@@ -153,9 +160,9 @@ class DocumentView: UIView {
 // MARK: Adding new annotations, removing annotations
 extension DocumentView {
     private func renderNewAnnotation(viewModel: AnnotationViewModel) {
-        let annotationView = AnnotationView(parentView: pdfView.documentView, viewModel: viewModel)
+        let annotationView = AnnotationView(parentView: pdfView?.documentView, viewModel: viewModel)
         annotationViews.append(annotationView)
-        pdfView.documentView?.addSubview(annotationView)
+        pdfView?.documentView?.addSubview(annotationView)
     }
 }
 
@@ -164,6 +171,10 @@ extension DocumentView {
     // Note: Subviews in PdfView get shifted to the back after scrolling away
     // for a certain distance, therefore they must be brought forward
     private func showAnnotationsOfVisiblePages() {
+        guard let pdfView = pdfView else {
+            return
+        }
+
         let annotationsToShow = annotationViews.filter({
             pdfView.visiblePagesContains(view: $0)
         })

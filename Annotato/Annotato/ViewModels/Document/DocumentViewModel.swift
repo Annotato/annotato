@@ -8,10 +8,10 @@ class DocumentViewModel: ObservableObject {
     private let annotationsPersistenceManager: AnnotationsPersistenceManager
     private let webSocketManager: WebSocketManager?
 
-    private(set) var model: Document
+    private(set) var model: Document?
 
     private(set) var annotations: [AnnotationViewModel] = []
-    private(set) var pdfDocument: PdfViewModel
+    private(set) var pdfDocument: PdfViewModel?
     private var selectionStartPoint: CGPoint?
     private var selectionEndPoint: CGPoint?
 
@@ -23,16 +23,18 @@ class DocumentViewModel: ObservableObject {
     @Published private(set) var hasUpdatedDocument = false
     @Published private(set) var hasDeletedDocument = false
 
-    init(model: Document, webSocketManager: WebSocketManager?) {
-        self.model = model
-        self.pdfDocument = PdfViewModel(document: model)
+    init(webSocketManager: WebSocketManager?, model: Document? = nil) {
         self.webSocketManager = webSocketManager
         self.documentsPersistenceManager = DocumentsPersistenceManager(webSocketManager: webSocketManager)
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
 
-        self.annotations = model.annotations
-            .filter { !$0.isDeleted }
-            .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
+        self.model = model
+        if let model = model {
+            self.pdfDocument = PdfViewModel(document: model)
+            self.annotations = model.annotations
+                .filter { !$0.isDeleted }
+                .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
+        }
 
         setUpSubscribers()
     }
@@ -81,7 +83,8 @@ extension DocumentViewModel {
         guard let selectionStartPoint = selectionStartPoint,
               let selectionEndPoint = selectionEndPoint,
               let selectionBoxFrame = selectionBoxFrame,
-              let currentUser = AuthViewModel().currentUser else {
+              let currentUser = AuthViewModel().currentUser,
+              let model = model else {
             return
         }
 
@@ -129,7 +132,7 @@ extension DocumentViewModel {
             return
         }
 
-        self.model.addAnnotation(annotation: newAnnotation)
+        self.model?.addAnnotation(annotation: newAnnotation)
         let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self,
                                                       webSocketManager: webSocketManager)
         self.annotations.append(annotationViewModel)
@@ -141,7 +144,7 @@ extension DocumentViewModel {
             if updatedAnnotation.isDeleted {
                 receiveDeleteAnnotation(deletedAnnotation: updatedAnnotation)
             } else {
-                model.updateAnnotation(updatedAnnotation: updatedAnnotation)
+                model?.updateAnnotation(updatedAnnotation: updatedAnnotation)
                 annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
             }
         } else {
@@ -150,7 +153,7 @@ extension DocumentViewModel {
     }
 
     private func receiveRestoreDeletedAnnotation(annotation: Annotation) {
-        model.receiveRestoreDeletedAnnotation(annotation: annotation)
+        model?.receiveRestoreDeletedAnnotation(annotation: annotation)
         let annotationViewModel = AnnotationViewModel(model: annotation, document: self,
                                                       webSocketManager: webSocketManager)
         self.annotations.append(annotationViewModel)
@@ -173,14 +176,14 @@ extension DocumentViewModel {
             return
         }
 
-        model.updateAnnotation(updatedAnnotation: deletedAnnotation)
+        model?.updateAnnotation(updatedAnnotation: deletedAnnotation)
         let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
         annotationViewModel?.receiveDelete()
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
     }
 
     func receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: Annotation) {
-        if model.contains(annotation: createdOrUpdatedAnnotation) {
+        if model?.contains(annotation: createdOrUpdatedAnnotation) ?? false {
             AnnotatoLogger.info("Updated annotation from the createOrUpdate path: \(createdOrUpdatedAnnotation)")
             receiveUpdateAnnotation(updatedAnnotation: createdOrUpdatedAnnotation)
         } else {
@@ -190,7 +193,13 @@ extension DocumentViewModel {
     }
 
     func receiveUpdateDocument(updatedDocument: Document) {
-        model = updatedDocument
+        self.pdfDocument = PdfViewModel(document: updatedDocument)
+        self.annotations = updatedDocument.annotations
+            .filter { !$0.isDeleted }
+            .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
+
+        self.model = updatedDocument
+        self.hasUpdatedDocument = true
     }
 
     func receiveDeleteDocument(deletedDocument: Document) {
@@ -203,7 +212,63 @@ extension DocumentViewModel {
 }
 
 extension DocumentViewModel {
+    func loadDocumentWithDeleted(documentId: UUID) async {
+        if let resultDocumentWithConflictResolution = await loadResolvedDocument(documentId: documentId) {
+            receiveUpdateDocument(updatedDocument: resultDocumentWithConflictResolution)
+            return
+        }
+
+        guard let model = await documentsPersistenceManager.getDocument(documentId: documentId) else {
+            return
+        }
+
+        receiveUpdateDocument(updatedDocument: model)
+    }
+
+    private func loadResolvedDocument(documentId: UUID) async -> Document? {
+        let localAndRemoteDocumentPair = await documentsPersistenceManager
+            .getLocalAndRemoteDocument(documentId: documentId)
+        guard let localDocument = localAndRemoteDocumentPair.local,
+              let serverDocument = localAndRemoteDocumentPair.remote else {
+            AnnotatoLogger.error("Could not load from local and remote for conflict resolution")
+            return nil
+        }
+
+        let resolvedAnnotations = ConflictResolver(localModels: localDocument.annotations,
+                                                   serverModels: serverDocument.annotations).resolve()
+
+        await annotationsPersistenceManager.persistConflictResolution(conflictResolution: resolvedAnnotations)
+
+        serverDocument.setAnnotations(annotations: resolvedAnnotations.nonConflictingModels)
+
+        for (conflictIdx, (localAnnotation, serverAnnotation)) in resolvedAnnotations.conflictingModels.enumerated() {
+            let newLocalAnnotation = localAnnotation.clone()
+            newLocalAnnotation.conflictIdx = conflictIdx
+            serverAnnotation.conflictIdx = conflictIdx
+            serverDocument.addAnnotation(annotation: newLocalAnnotation)
+            serverDocument.addAnnotation(annotation: serverAnnotation)
+        }
+
+        return serverDocument
+    }
+
+    func updateDocumentWithDeleted() async {
+        guard let model = self.model else {
+            return
+        }
+
+        guard let updatedModel = await documentsPersistenceManager.updateDocument(document: model) else {
+            return
+        }
+
+        receiveUpdateDocument(updatedDocument: updatedModel)
+    }
+
     func updateOwner(newOwnerId: String) {
+        guard let model = model else {
+            return
+        }
+
         model.ownerId = newOwnerId
 
         Task {
@@ -211,6 +276,7 @@ extension DocumentViewModel {
             if let deletedDocument = deletedDocument {
                 _ = documentsPersistenceManager.deleteDocumentLocally(document: deletedDocument)
                 updateOwnerIsSuccess = true
+                return
             }
 
             updateOwnerIsSuccess = false
@@ -223,7 +289,7 @@ extension DocumentViewModel {
     private func setUpSubscribers() {
         annotationsPersistenceManager.$newAnnotation.sink { [weak self] newAnnotation in
             guard let newAnnotation = newAnnotation,
-                  newAnnotation.documentId == self?.model.id else {
+                  newAnnotation.documentId == self?.model?.id else {
                 return
             }
 
@@ -232,7 +298,7 @@ extension DocumentViewModel {
 
         annotationsPersistenceManager.$updatedAnnotation.sink { [weak self] updatedAnnotation in
             guard let updatedAnnotation = updatedAnnotation,
-                  updatedAnnotation.documentId == self?.model.id else {
+                  updatedAnnotation.documentId == self?.model?.id else {
                 return
             }
 
@@ -241,7 +307,7 @@ extension DocumentViewModel {
 
         annotationsPersistenceManager.$deletedAnnotation.sink { [weak self] deletedAnnotation in
             guard let deletedAnnotation = deletedAnnotation,
-                  deletedAnnotation.documentId == self?.model.id else {
+                  deletedAnnotation.documentId == self?.model?.id else {
                 return
             }
 
@@ -250,7 +316,7 @@ extension DocumentViewModel {
 
         annotationsPersistenceManager.$createdOrUpdatedAnnotation.sink { [weak self] savedAnnotation in
             guard let savedAnnotation = savedAnnotation,
-                  savedAnnotation.documentId == self?.model.id else {
+                  savedAnnotation.documentId == self?.model?.id else {
                 return
             }
             self?.receiveCreatedOrUpdatedAnnotation(createdOrUpdatedAnnotation: savedAnnotation)
@@ -258,7 +324,7 @@ extension DocumentViewModel {
 
         documentsPersistenceManager.$updatedDocument.sink(receiveValue: { [weak self] updatedDocument in
             guard let updatedDocument = updatedDocument,
-                  updatedDocument.id == self?.model.id else {
+                  updatedDocument.id == self?.model?.id else {
                 return
             }
 
@@ -267,7 +333,7 @@ extension DocumentViewModel {
 
         documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] deletedDocument in
             guard let deletedDocument = deletedDocument,
-                  deletedDocument.id == self?.model.id else {
+                  deletedDocument.id == self?.model?.id else {
                 return
             }
 

@@ -2,7 +2,6 @@ import UIKit
 import Combine
 
 class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
-    private var documentController: DocumentController?
     var webSocketManager: WebSocketManager?
 
     let spinner = UIActivityIndicatorView(style: .large)
@@ -21,7 +20,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNetworkSubscriber()
-        self.documentController = DocumentController(webSocketManager: webSocketManager)
     }
 
     func initializeSubviews() {
@@ -35,7 +33,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documentViewModel = await documentController?.loadDocumentWithDeleted(documentId: documentId)
+            await documentViewModel?.loadDocumentWithDeleted(documentId: documentId)
             setUpSubscribers()
             stopSpinner()
 
@@ -91,7 +89,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
                 return
             }
 
-            await documentController?.updateDocumentWithDeleted(document: documentViewModel)
+            await documentViewModel.updateDocumentWithDeleted()
         }
     }
 
