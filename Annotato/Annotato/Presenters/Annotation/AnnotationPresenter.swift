@@ -387,6 +387,6 @@ extension AnnotationPresenter {
 
     func outOfFocus() {
         isInFocus = false
-        enterMinimizedMode()
+        enterViewMode()
     }
 }
