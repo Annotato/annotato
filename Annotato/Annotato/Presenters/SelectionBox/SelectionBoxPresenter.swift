@@ -3,7 +3,7 @@ import Foundation
 import AnnotatoSharedLibrary
 import Combine
 
-class SelectionBoxViewModel: ObservableObject {
+class SelectionBoxPresenter: ObservableObject {
     private(set) var model: SelectionBox
     private var cancellables: Set<AnyCancellable> = []
 
@@ -30,7 +30,7 @@ class SelectionBoxViewModel: ObservableObject {
     }
 }
 
-extension SelectionBoxViewModel {
+extension SelectionBoxPresenter {
     var frame: CGRect {
         CGRect(startPoint: startPoint, endPoint: endPoint)
     }

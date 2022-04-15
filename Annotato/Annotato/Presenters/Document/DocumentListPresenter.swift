@@ -2,12 +2,12 @@ import Foundation
 import AnnotatoSharedLibrary
 import Combine
 
-class DocumentListViewModel {
+class DocumentListPresenter {
     private let documentsPersistenceManager: DocumentsPersistenceManager
     private let documentSharesPersistenceManager: DocumentSharesPersistenceManager
     private let pdfStorageManager = PDFStorageManager()
 
-    private(set) var documents: [DocumentListCellViewModel] = []
+    private(set) var documents: [DocumentListCellPresenter] = []
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var hasDeletedDocument = false
@@ -19,14 +19,14 @@ class DocumentListViewModel {
         setUpSubscribers()
     }
 
-    func loadAllDocuments(userId: String) async -> [DocumentListCellViewModel] {
+    func loadAllDocuments(userId: String) async -> [DocumentListCellPresenter] {
         let ownDocuments = await documentsPersistenceManager.getOwnDocuments(userId: userId) ?? []
         let sharedDocuments = await documentsPersistenceManager.getSharedDocuments(userId: userId) ?? []
 
         let ownDocumentViewModels = ownDocuments.filter { !$0.isDeleted }
-            .map { DocumentListCellViewModel(document: $0, isShared: false) }
+            .map { DocumentListCellPresenter(document: $0, isShared: false) }
         let sharedDocumentViewModels = sharedDocuments.filter { !$0.isDeleted }
-            .map { DocumentListCellViewModel(document: $0, isShared: true) }
+            .map { DocumentListCellPresenter(document: $0, isShared: true) }
 
         let allDocumentViewModels = ownDocumentViewModels + sharedDocumentViewModels
         documents = allDocumentViewModels.sorted(by: { $0.name < $1.name })
@@ -55,14 +55,14 @@ class DocumentListViewModel {
         }
     }
 
-    func deleteDocumentForEveryone(viewModel: DocumentListCellViewModel) {
+    func deleteDocumentForEveryone(viewModel: DocumentListCellPresenter) {
         Task {
             _ = await documentsPersistenceManager.deleteDocument(document: viewModel.document)
             hasDeletedDocument = true
         }
     }
 
-    func deleteDocumentAsNonOwner(viewModel: DocumentListCellViewModel) {
+    func deleteDocumentAsNonOwner(viewModel: DocumentListCellPresenter) {
         guard let recipientId = AuthViewModel().currentUser?.id else {
             return
         }
@@ -75,7 +75,7 @@ class DocumentListViewModel {
     }
 }
 
-extension DocumentListViewModel {
+extension DocumentListPresenter {
     private func setUpSubscribers() {
         documentsPersistenceManager.$deletedDocument.sink(receiveValue: { [weak self] _ in
             self?.hasDeletedDocument = true

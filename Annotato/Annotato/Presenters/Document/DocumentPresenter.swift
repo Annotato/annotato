@@ -3,7 +3,7 @@ import Foundation
 import AnnotatoSharedLibrary
 import Combine
 
-class DocumentViewModel: ObservableObject {
+class DocumentPresenter: ObservableObject {
     private let documentsPersistenceManager: DocumentsPersistenceManager
     private let annotationsPersistenceManager: AnnotationsPersistenceManager
     private let webSocketManager: WebSocketManager?
@@ -52,7 +52,7 @@ class DocumentViewModel: ObservableObject {
     }
 }
 
-extension DocumentViewModel {
+extension DocumentPresenter {
     func setSelectionBoxStartPoint(point: CGPoint) {
         selectionStartPoint = point
         updateSelectionBoxFrame()
@@ -211,7 +211,7 @@ extension DocumentViewModel {
     }
 }
 
-extension DocumentViewModel {
+extension DocumentPresenter {
     func loadDocumentWithDeleted(documentId: UUID) async {
         if let resultDocumentWithConflictResolution = await loadResolvedDocument(documentId: documentId) {
             receiveUpdateDocument(updatedDocument: resultDocumentWithConflictResolution)
@@ -285,7 +285,7 @@ extension DocumentViewModel {
 }
 
 // MARK: Websocket
-extension DocumentViewModel {
+extension DocumentPresenter {
     private func setUpSubscribers() {
         annotationsPersistenceManager.$newAnnotation.sink { [weak self] newAnnotation in
             guard let newAnnotation = newAnnotation,

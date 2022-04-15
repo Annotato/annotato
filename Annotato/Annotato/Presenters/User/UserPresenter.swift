@@ -1,6 +1,6 @@
 import AnnotatoSharedLibrary
 
-class UserViewModel {
+class UserPresenter {
     let model: AnnotatoUser
 
     var id: String {

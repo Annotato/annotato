@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-class DocumentListCellViewModel {
+class DocumentListCellPresenter {
     private let usersPersistenceManager = UsersPersistenceManager()
     private(set) var usersSharingDocument: [UserViewModel] = []
 

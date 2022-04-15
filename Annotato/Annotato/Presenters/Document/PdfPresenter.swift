@@ -1,7 +1,7 @@
 import PDFKit
 import AnnotatoSharedLibrary
 
-class PdfViewModel {
+class PdfPresenter {
     let autoScales = true
     let document: PDFDocument
 
