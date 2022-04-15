@@ -3,7 +3,7 @@ import Combine
 import WebKit
 
 class AnnotationMarkdownView: UIView, AnnotationPartView {
-    private(set) var viewModel: AnnotationMarkdownViewModel
+    private(set) var viewModel: AnnotationMarkdownPresenter
     private(set) var editView: UITextView
     private(set) var previewView: UIView
     private var cancellables: Set<AnyCancellable> = []
@@ -15,18 +15,18 @@ class AnnotationMarkdownView: UIView, AnnotationPartView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationMarkdownViewModel) {
-        self.viewModel = viewModel
-        self.editView = UITextView(frame: viewModel.editFrame)
+    init(presenter: AnnotationMarkdownPresenter) {
+        self.viewModel = presenter
+        self.editView = UITextView(frame: presenter.editFrame)
         self.previewView = UIView()
         self.isEditable = false
-        super.init(frame: viewModel.frame)
+        super.init(frame: presenter.frame)
 
         setUpEditView()
         setUpStyle()
         setUpSubscribers()
         addGestureRecognizers()
-        switchView(basedOn: viewModel.isEditing)
+        switchView(basedOn: presenter.isEditing)
     }
 
     private func setUpEditView() {

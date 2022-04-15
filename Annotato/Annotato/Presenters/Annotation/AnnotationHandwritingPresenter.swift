@@ -4,7 +4,7 @@ import Combine
 import AnnotatoSharedLibrary
 import PencilKit
 
-class AnnotationHandwritingViewModel: AnnotationPartViewModel {
+class AnnotationHandwritingPresenter: AnnotationPartPresenter {
     private var handwritingModel: AnnotationHandwriting
 
     var handwritingDrawing: PKDrawing {
@@ -29,6 +29,6 @@ class AnnotationHandwritingViewModel: AnnotationPartViewModel {
     }
 
     override func toView() -> AnnotationPartView {
-        AnnotationHandwritingView(viewModel: self)
+        AnnotationHandwritingView(presenter: self)
     }
 }

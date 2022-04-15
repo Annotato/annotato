@@ -1,7 +1,7 @@
 import UIKit
 
 class AnnotationMergeConflictsPaletteView: UIToolbar {
-    private(set) var viewModel: AnnotationMergeConflictsPaletteViewModel
+    private(set) var viewModel: AnnotationMergeConflictsPalettePresenter
     private(set) var saveMergeConflictsButton: UIButton
     private(set) var discardMergeConflictsButton: UIButton
     private(set) var conflictIdxButton: UIButton
@@ -11,7 +11,7 @@ class AnnotationMergeConflictsPaletteView: UIToolbar {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationMergeConflictsPaletteViewModel) {
+    init(viewModel: AnnotationMergeConflictsPalettePresenter) {
         self.viewModel = viewModel
         self.saveMergeConflictsButton = AnnotationMergeConflictsPaletteView.makeSaveButton()
         self.discardMergeConflictsButton = AnnotationMergeConflictsPaletteView.makeDiscardButton()

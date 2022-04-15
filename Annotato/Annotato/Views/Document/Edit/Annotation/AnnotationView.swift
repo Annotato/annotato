@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AnnotationView: UIView {
-    private(set) var viewModel: AnnotationViewModel
+    private(set) var viewModel: AnnotationPresenter
 
     private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
@@ -18,7 +18,7 @@ class AnnotationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(parentView: UIView?, viewModel: AnnotationViewModel) {
+    init(parentView: UIView?, viewModel: AnnotationPresenter) {
         self.viewModel = viewModel
         self.parentView = parentView
         self.palette = AnnotationPaletteView(viewModel: viewModel.palette)

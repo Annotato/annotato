@@ -2,8 +2,8 @@ import Foundation
 import Combine
 import CoreGraphics
 
-class AnnotationMergeConflictsPaletteViewModel: ObservableObject {
-    weak var parentViewModel: AnnotationViewModel?
+class AnnotationMergeConflictsPalettePresenter: ObservableObject {
+    weak var parentPresenter: AnnotationPresenter?
 
     private(set) var origin: CGPoint
     private(set) var width: Double
@@ -18,15 +18,15 @@ class AnnotationMergeConflictsPaletteViewModel: ObservableObject {
     }
 
     func didTapSaveMergeConflictsButton() {
-        parentViewModel?.didSaveMergeConflicts()
+        parentPresenter?.didSaveMergeConflicts()
     }
 
     func didTapDiscardMergeConflictsButton() {
-        parentViewModel?.didDiscardMergeConflicts()
+        parentPresenter?.didDiscardMergeConflicts()
     }
 }
 
-extension AnnotationMergeConflictsPaletteViewModel {
+extension AnnotationMergeConflictsPalettePresenter {
     var size: CGSize {
         CGSize(width: width, height: height)
     }

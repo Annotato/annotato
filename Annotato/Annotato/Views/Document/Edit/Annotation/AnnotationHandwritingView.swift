@@ -3,7 +3,7 @@ import PencilKit
 import Combine
 
 class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
-    private var viewModel: AnnotationHandwritingViewModel
+    private var viewModel: AnnotationHandwritingPresenter
     private var cancellables: Set<AnyCancellable> = []
     // swiftlint:disable:next weak_delegate
     private var customDelegate: AnnotationHandwritingViewDelegate
@@ -14,12 +14,12 @@ class AnnotationHandwritingView: PKCanvasView, AnnotationPartView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationHandwritingViewModel) {
-        self.viewModel = viewModel
-        self.customDelegate = AnnotationHandwritingViewDelegate(viewModel: viewModel)
-        super.init(frame: viewModel.frame)
+    init(presenter: AnnotationHandwritingPresenter) {
+        self.viewModel = presenter
+        self.customDelegate = AnnotationHandwritingViewDelegate(viewModel: presenter)
+        super.init(frame: presenter.frame)
         self.delegate = customDelegate
-        self.drawing = viewModel.handwritingDrawing
+        self.drawing = presenter.handwritingDrawing
         initializeSubviews()
         setUpSubscribers()
         addGestureRecognizers()
@@ -78,9 +78,9 @@ extension AnnotationHandwritingView {
 }
 
 class AnnotationHandwritingViewDelegate: NSObject, PKCanvasViewDelegate {
-    private var viewModel: AnnotationHandwritingViewModel
+    private var viewModel: AnnotationHandwritingPresenter
 
-    init(viewModel: AnnotationHandwritingViewModel) {
+    init(viewModel: AnnotationHandwritingPresenter) {
         self.viewModel = viewModel
     }
 

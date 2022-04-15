@@ -1,8 +1,8 @@
 import CoreGraphics
 import Combine
 
-class AnnotationPaletteViewModel: ObservableObject {
-    weak var parentViewModel: AnnotationViewModel? {
+class AnnotationPalettePresenter: ObservableObject {
+    weak var parentPresenter: AnnotationPresenter? {
         didSet {
             setUpSubscribers()
         }
@@ -55,47 +55,47 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 
     private func setUpSubscribers() {
-        parentViewModel?.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
+        parentPresenter?.$isMinimized.sink(receiveValue: { [weak self] isMinimized in
             self?.isMinimized = isMinimized
         }).store(in: &cancellables)
     }
 
     func didSelectTextButton() {
-        guard parentViewModel?.isEditing ?? false else {
+        guard parentPresenter?.isEditing ?? false else {
             return
         }
         textIsSelected = true
-        parentViewModel?.appendTextPartIfNecessary()
+        parentPresenter?.appendTextPartIfNecessary()
     }
 
     func didSelectMarkdownButton() {
-        guard parentViewModel?.isEditing ?? false else {
+        guard parentPresenter?.isEditing ?? false else {
             return
         }
         markdownIsSelected = true
-        parentViewModel?.appendMarkdownPartIfNecessary()
+        parentPresenter?.appendMarkdownPartIfNecessary()
     }
 
     func didSelectHandwritingButton() {
-        guard parentViewModel?.isEditing ?? false else {
+        guard parentPresenter?.isEditing ?? false else {
             return
         }
         handwritingIsSelected = true
-        parentViewModel?.appendHandwritingPartIfNecessary()
+        parentPresenter?.appendHandwritingPartIfNecessary()
     }
 
     func enterEditMode() {
         isEditing = true
-        parentViewModel?.enterEditMode()
+        parentPresenter?.enterEditMode()
     }
 
     func enterViewMode() {
         isEditing = false
-        parentViewModel?.enterViewMode()
+        parentPresenter?.enterViewMode()
     }
 
     func didSelectDeleteButton() {
-        parentViewModel?.didDelete()
+        parentPresenter?.didDelete()
     }
 
     func didSelectMinimizeOrMaximizeButton() {
@@ -108,20 +108,20 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 
     func enterMinimizedMode() {
-        parentViewModel?.enterMinimizedMode()
+        parentPresenter?.enterMinimizedMode()
     }
 
     func enterMaximizedMode() {
-        parentViewModel?.enterMaximizedMode()
+        parentPresenter?.enterMaximizedMode()
     }
 
-    func updatePalette(basedOn selectedPart: AnnotationPartViewModel) {
+    func updatePalette(basedOn selectedPart: AnnotationPartPresenter) {
         switch selectedPart {
-        case is AnnotationTextViewModel:
+        case is AnnotationTextPresenter:
             textIsSelected = true
-        case is AnnotationMarkdownViewModel:
+        case is AnnotationMarkdownPresenter:
             markdownIsSelected = true
-        case is AnnotationHandwritingViewModel:
+        case is AnnotationHandwritingPresenter:
             handwritingIsSelected = true
         default:
             return
@@ -129,7 +129,7 @@ class AnnotationPaletteViewModel: ObservableObject {
     }
 }
 
-extension AnnotationPaletteViewModel {
+extension AnnotationPalettePresenter {
     var size: CGSize {
         CGSize(width: width, height: height)
     }

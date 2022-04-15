@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AnnotationTextView: UITextView, AnnotationPartView {
-    private(set) var viewModel: AnnotationTextViewModel
+    private(set) var viewModel: AnnotationTextPresenter
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -10,11 +10,11 @@ class AnnotationTextView: UITextView, AnnotationPartView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationTextViewModel) {
-        self.viewModel = viewModel
-        super.init(frame: viewModel.frame, textContainer: nil)
-        self.text = viewModel.content
-        self.isEditable = viewModel.isEditing
+    init(presenter: AnnotationTextPresenter) {
+        self.viewModel = presenter
+        super.init(frame: presenter.frame, textContainer: nil)
+        self.text = presenter.content
+        self.isEditable = presenter.isEditing
         self.isScrollEnabled = false
         self.delegate = self
         setUpSubscribers()

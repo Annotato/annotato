@@ -10,14 +10,14 @@ class DocumentViewModel: ObservableObject {
 
     private(set) var model: Document?
 
-    private(set) var annotations: [AnnotationViewModel] = []
+    private(set) var annotations: [AnnotationPresenter] = []
     private(set) var pdfDocument: PdfViewModel?
     private var selectionStartPoint: CGPoint?
     private var selectionEndPoint: CGPoint?
 
     private var cancellables: Set<AnyCancellable> = []
 
-    @Published private(set) var addedAnnotation: AnnotationViewModel?
+    @Published private(set) var addedAnnotation: AnnotationPresenter?
     @Published private(set) var selectionBoxFrame: CGRect?
     @Published private(set) var updateOwnerIsSuccess: Bool?
     @Published private(set) var hasUpdatedDocument = false
@@ -33,7 +33,7 @@ class DocumentViewModel: ObservableObject {
             self.pdfDocument = PdfViewModel(document: model)
             self.annotations = model.annotations
                 .filter { !$0.isDeleted }
-                .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
+                .map { AnnotationPresenter(model: $0, document: self, webSocketManager: webSocketManager) }
         }
 
         setUpSubscribers()
@@ -45,7 +45,7 @@ class DocumentViewModel: ObservableObject {
         }
     }
 
-    func setAllOtherAnnotationsOutOfFocus(except annotationInFocus: AnnotationViewModel) {
+    func setAllOtherAnnotationsOutOfFocus(except annotationInFocus: AnnotationPresenter) {
         for annotation in annotations where annotation.id != annotationInFocus.id {
             annotation.outOfFocus()
         }
@@ -108,7 +108,7 @@ extension DocumentViewModel {
 
         model.addAnnotation(annotation: newAnnotation)
 
-        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self,
+        let annotationViewModel = AnnotationPresenter(model: newAnnotation, document: self,
                                                       webSocketManager: webSocketManager)
         if annotationViewModel.hasExceededBounds(bounds: bounds) {
             let boundsMidX = bounds.midX
@@ -133,7 +133,7 @@ extension DocumentViewModel {
         }
 
         self.model?.addAnnotation(annotation: newAnnotation)
-        let annotationViewModel = AnnotationViewModel(model: newAnnotation, document: self,
+        let annotationViewModel = AnnotationPresenter(model: newAnnotation, document: self,
                                                       webSocketManager: webSocketManager)
         self.annotations.append(annotationViewModel)
         self.addedAnnotation = annotationViewModel
@@ -154,20 +154,20 @@ extension DocumentViewModel {
 
     private func receiveRestoreDeletedAnnotation(annotation: Annotation) {
         model?.receiveRestoreDeletedAnnotation(annotation: annotation)
-        let annotationViewModel = AnnotationViewModel(model: annotation, document: self,
+        let annotationViewModel = AnnotationPresenter(model: annotation, document: self,
                                                       webSocketManager: webSocketManager)
         self.annotations.append(annotationViewModel)
         self.addedAnnotation = annotationViewModel
     }
 
-    func deleteAnnotation(annotation: AnnotationViewModel) {
+    func deleteAnnotation(annotation: AnnotationPresenter) {
         removeAnnotation(annotation: annotation)
         Task {
             await annotationsPersistenceManager.deleteAnnotation(annotation: annotation.model)
         }
     }
 
-    func removeAnnotation(annotation: AnnotationViewModel) {
+    func removeAnnotation(annotation: AnnotationPresenter) {
         annotations.removeAll(where: { $0.id == annotation.model.id })
     }
 
@@ -196,7 +196,7 @@ extension DocumentViewModel {
         self.pdfDocument = PdfViewModel(document: updatedDocument)
         self.annotations = updatedDocument.annotations
             .filter { !$0.isDeleted }
-            .map { AnnotationViewModel(model: $0, document: self, webSocketManager: webSocketManager) }
+            .map { AnnotationPresenter(model: $0, document: self, webSocketManager: webSocketManager) }
 
         self.model = updatedDocument
         self.hasUpdatedDocument = true

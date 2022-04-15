@@ -3,8 +3,8 @@ import CoreGraphics
 import Combine
 import AnnotatoSharedLibrary
 
-class AnnotationPartViewModel: ObservableObject {
-    weak var parentViewModel: AnnotationViewModel?
+class AnnotationPartPresenter: ObservableObject {
+    weak var parentPresenter: AnnotationPresenter?
 
     var cancellables: Set<AnyCancellable> = []
 
@@ -42,7 +42,7 @@ class AnnotationPartViewModel: ObservableObject {
     }
 }
 
-extension AnnotationPartViewModel {
+extension AnnotationPartPresenter {
     var size: CGSize {
         CGSize(width: width, height: height)
     }
@@ -53,7 +53,7 @@ extension AnnotationPartViewModel {
 
     func setHeight(to newHeight: Double) {
         model.setHeight(to: newHeight)
-        parentViewModel?.resize()
+        parentPresenter?.resize()
     }
 
     func didSelect() {
@@ -61,6 +61,6 @@ extension AnnotationPartViewModel {
             return
         }
 
-        parentViewModel?.setSelectedPart(to: self)
+        parentPresenter?.setSelectedPart(to: self)
     }
 }

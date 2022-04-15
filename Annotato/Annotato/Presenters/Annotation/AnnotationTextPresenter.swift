@@ -3,7 +3,7 @@ import CoreGraphics
 import Combine
 import AnnotatoSharedLibrary
 
-class AnnotationMarkdownViewModel: AnnotationPartViewModel {
+class AnnotationTextPresenter: AnnotationPartPresenter {
     private var textModel: AnnotationText
 
     var content: String {
@@ -28,12 +28,6 @@ class AnnotationMarkdownViewModel: AnnotationPartViewModel {
     }
 
     override func toView() -> AnnotationPartView {
-        AnnotationMarkdownView(viewModel: self)
-    }
-}
-
-extension AnnotationMarkdownViewModel {
-    var editFrame: CGRect {
-        CGRect(x: .zero, y: .zero, width: width, height: model.height)
+        AnnotationTextView(presenter: self)
     }
 }

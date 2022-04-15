@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AnnotationPaletteView: UIToolbar {
-    private(set) var viewModel: AnnotationPaletteViewModel
+    private(set) var viewModel: AnnotationPalettePresenter
     private(set) var textButton: ToggleableButton
     private(set) var markdownButton: ToggleableButton
     private(set) var handwritingButton: ToggleableButton
@@ -17,7 +17,7 @@ class AnnotationPaletteView: UIToolbar {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: AnnotationPaletteViewModel) {
+    init(viewModel: AnnotationPalettePresenter) {
         self.viewModel = viewModel
         self.textButton = AnnotationPaletteView.makeToggleableSystemButton(
             systemName: SystemImageName.textformat.rawValue, color: .darkGray)

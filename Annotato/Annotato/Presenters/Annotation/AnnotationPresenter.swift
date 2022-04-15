@@ -5,7 +5,7 @@ import PDFKit
 import AnnotatoSharedLibrary
 import Combine
 
-class AnnotationViewModel: ObservableObject {
+class AnnotationPresenter: ObservableObject {
     private let annotationsPersistenceManager: AnnotationsPersistenceManager?
     private let webSocketManager: WebSocketManager?
 
@@ -14,12 +14,12 @@ class AnnotationViewModel: ObservableObject {
     private(set) var model: Annotation
     private var cancellables: Set<AnyCancellable> = []
 
-    private(set) var parts: [AnnotationPartViewModel]
-    private(set) var palette: AnnotationPaletteViewModel
-    private(set) var mergeConflictPalette: AnnotationMergeConflictsPaletteViewModel?
+    private(set) var parts: [AnnotationPartPresenter]
+    private(set) var palette: AnnotationPalettePresenter
+    private(set) var mergeConflictPalette: AnnotationMergeConflictsPalettePresenter?
     private(set) var selectionBox: SelectionBoxViewModel
     private(set) var isEditing = false
-    private(set) var selectedPart: AnnotationPartViewModel?
+    private(set) var selectedPart: AnnotationPartPresenter?
     private var maxHeight = 300.0
     private(set) var isInFocus = false
 
@@ -33,7 +33,7 @@ class AnnotationViewModel: ObservableObject {
 
     @Published private(set) var positionDidChange = false
     @Published private(set) var isResizing = false
-    @Published private(set) var addedPart: AnnotationPartViewModel?
+    @Published private(set) var addedPart: AnnotationPartPresenter?
     @Published private(set) var isRemoved = false
     @Published private(set) var isMinimized = true
     @Published private(set) var modelWasUpdated = false
@@ -52,26 +52,26 @@ class AnnotationViewModel: ObservableObject {
         model: Annotation,
         document: DocumentViewModel,
         webSocketManager: WebSocketManager?,
-        palette: AnnotationPaletteViewModel? = nil
+        palette: AnnotationPalettePresenter? = nil
     ) {
         self.model = model
         self.document = document
 
         if let conflictIdx = model.conflictIdx {
             self.conflictIdx = conflictIdx
-            self.mergeConflictPalette = AnnotationMergeConflictsPaletteViewModel(
+            self.mergeConflictPalette = AnnotationMergeConflictsPalettePresenter(
                 origin: .zero, width: model.width, height: 50.0, conflictIdx: conflictIdx)
         }
 
-        self.palette = palette ?? AnnotationPaletteViewModel(
+        self.palette = palette ?? AnnotationPalettePresenter(
             origin: CGPoint(x: 0.0, y: mergeConflictPalette?.height ?? 0.0), width: model.width, height: 50.0)
 
         self.parts = []
         self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
         self.webSocketManager = webSocketManager
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
-        self.palette.parentViewModel = self
-        self.mergeConflictPalette?.parentViewModel = self
+        self.palette.parentPresenter = self
+        self.mergeConflictPalette?.parentPresenter = self
 
         populatePartViewModels(model: model)
         setUpSubscribers()
@@ -79,23 +79,23 @@ class AnnotationViewModel: ObservableObject {
 
     private func populatePartViewModels(model: Annotation) {
         for part in model.parts where !part.isDeleted {
-            let partViewModel: AnnotationPartViewModel
+            let partViewModel: AnnotationPartPresenter
 
             switch part {
             case let textPart as AnnotationText:
                 switch textPart.type {
                 case .plainText:
-                    partViewModel = AnnotationTextViewModel(model: textPart, width: model.width)
+                    partViewModel = AnnotationTextPresenter(model: textPart, width: model.width)
                 case .markdown:
-                    partViewModel = AnnotationMarkdownViewModel(model: textPart, width: model.width)
+                    partViewModel = AnnotationMarkdownPresenter(model: textPart, width: model.width)
                 }
             case let handwritingPart as AnnotationHandwriting:
-                partViewModel = AnnotationHandwritingViewModel(model: handwritingPart, width: model.width)
+                partViewModel = AnnotationHandwritingPresenter(model: handwritingPart, width: model.width)
             default:
                 continue
             }
 
-            partViewModel.parentViewModel = self
+            partViewModel.parentPresenter = self
             parts.append(partViewModel)
         }
     }
@@ -145,7 +145,7 @@ class AnnotationViewModel: ObservableObject {
     }
 }
 
-extension AnnotationViewModel {
+extension AnnotationPresenter {
     var center: CGPoint {
         get {
             CGPoint(x: origin.x + model.width / 2, y: origin.y + height / 2)
@@ -211,7 +211,7 @@ extension AnnotationViewModel {
 }
 
 // MARK: Parts
-extension AnnotationViewModel {
+extension AnnotationPresenter {
     func enterEditMode() {
         inFocus()
         isEditing = true
@@ -251,7 +251,7 @@ extension AnnotationViewModel {
         isResizing = true
     }
 
-    func setSelectedPart(to selectedPart: AnnotationPartViewModel) {
+    func setSelectedPart(to selectedPart: AnnotationPartPresenter) {
         deselectSelectedPart()
         self.selectedPart = selectedPart
         self.selectedPart?.isSelected = true
@@ -280,22 +280,22 @@ extension AnnotationViewModel {
     }
 
     private func addTextPart(part: AnnotationText) {
-        let partViewModel = AnnotationTextViewModel(model: part, width: model.width)
+        let partViewModel = AnnotationTextPresenter(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 
     private func addMarkdownPart(part: AnnotationText) {
-        let partViewModel = AnnotationMarkdownViewModel(model: part, width: model.width)
+        let partViewModel = AnnotationMarkdownPresenter(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 
     private func addHandwritingPart(part: AnnotationHandwriting) {
-        let partViewModel = AnnotationHandwritingViewModel(model: part, width: model.width)
+        let partViewModel = AnnotationHandwritingPresenter(model: part, width: model.width)
         addNewPart(newPart: partViewModel)
     }
 
-    private func addNewPart(newPart: AnnotationPartViewModel) {
-        newPart.parentViewModel = self
+    private func addNewPart(newPart: AnnotationPartPresenter) {
+        newPart.parentPresenter = self
         newPart.enterEditMode()
         parts.append(newPart)
         addedPart = newPart
@@ -303,7 +303,7 @@ extension AnnotationViewModel {
         resize()
     }
 
-    private func removePartIfPossible(part: AnnotationPartViewModel) {
+    private func removePartIfPossible(part: AnnotationPartPresenter) {
         model.removePartIfPossible(part: part.model)
     }
 
@@ -320,7 +320,7 @@ extension AnnotationViewModel {
     }
 }
 
-extension AnnotationViewModel {
+extension AnnotationPresenter {
     func didDelete() {
         guard !isResolving else {
             return
