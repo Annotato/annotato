@@ -5,7 +5,6 @@ import Combine
 class DocumentListPresenter {
     private let documentsInteractor: DocumentsInteractor
     private let documentSharesInteractor: DocumentSharesInteractor
-    private let pdfStorageManager = PDFStorageManager()
 
     private(set) var documents: [DocumentListCellPresenter] = []
     private var cancellables: Set<AnyCancellable> = []
@@ -44,11 +43,9 @@ class DocumentListPresenter {
 
         Task {
             let document = Document(name: selectedFileUrl.lastPathComponent, ownerId: ownerId)
-            pdfStorageManager.uploadPdf(
-                fileSystemUrl: selectedFileUrl, fileName: document.id.uuidString
-            )
 
-            let createdDocument = await documentsInteractor.createDocument(document: document)
+            let createdDocument = await documentsInteractor.createDocument(
+                document: document, selectedFileUrl: selectedFileUrl)
 
             completion(createdDocument)
         }

@@ -6,6 +6,7 @@ class DocumentsInteractor {
     private let webSocketManager: WebSocketManager?
     private let rootInteractor: RootInteractor
     private let usersInteractor: UsersInteractor
+    private let pdfStorageManager = PDFStorageManager()
 
     private let remoteDocumentsPersistence: RemoteDocumentsPersistence
     private let localDocumentsPersistence = LocalDocumentsPersistence()
@@ -90,7 +91,11 @@ class DocumentsInteractor {
         return remoteDocument
     }
 
-    func createDocument(document: Document) async -> Document? {
+    func createDocument(document: Document, selectedFileUrl: URL) async -> Document? {
+        pdfStorageManager.uploadPdf(
+            fileSystemUrl: selectedFileUrl, fileName: document.id.uuidString
+        )
+
         let remoteCreatedDocument = await remoteDocumentsPersistence
             .createDocument(document: document)
 
