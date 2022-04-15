@@ -3,15 +3,15 @@ import UIKit
 class ChangeOwnerListView: UITableView {
     let cellId = "ChangeOwnerListCell"
 
-    private var users: [UserViewModel]
-    private(set) var selectedUser: UserViewModel?
+    private var users: [UserPresenter]
+    private(set) var selectedUser: UserPresenter?
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(frame: CGRect, users: [UserViewModel]) {
+    required init(frame: CGRect, users: [UserPresenter]) {
         self.users = users
 
         super.init(frame: frame, style: .insetGrouped)

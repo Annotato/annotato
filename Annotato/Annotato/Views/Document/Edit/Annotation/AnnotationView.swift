@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class AnnotationView: UIView {
-    private(set) var viewModel: AnnotationViewModel
+    private(set) var presenter: AnnotationPresenter
 
     private unowned var parentView: UIView?
     private var palette: AnnotationPaletteView
@@ -18,20 +18,20 @@ class AnnotationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(parentView: UIView?, viewModel: AnnotationViewModel) {
-        self.viewModel = viewModel
+    init(parentView: UIView?, presenter: AnnotationPresenter) {
+        self.presenter = presenter
         self.parentView = parentView
-        self.palette = AnnotationPaletteView(viewModel: viewModel.palette)
+        self.palette = AnnotationPaletteView(presenter: presenter.palette)
 
-        if let mergeConflictPaletteViewModel = viewModel.mergeConflictPalette {
-            self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(viewModel: mergeConflictPaletteViewModel)
+        if let mergeConflictPaletteViewModel = presenter.mergeConflictPalette {
+            self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(presenter: mergeConflictPaletteViewModel)
         }
 
-        self.scroll = UIScrollView(frame: viewModel.scrollFrame)
-        self.parts = UIStackView(frame: viewModel.partsFrame)
-        self.selectionBox = SelectionBoxView(viewModel: viewModel.selectionBox)
+        self.scroll = UIScrollView(frame: presenter.scrollFrame)
+        self.parts = UIStackView(frame: presenter.partsFrame)
+        self.selectionBox = SelectionBoxView(presenter: presenter.selectionBox)
 
-        super.init(frame: viewModel.frame)
+        super.init(frame: presenter.frame)
         initializeSiblingViews()
         initializeSubviews()
         setUpSubscribers()
@@ -68,7 +68,7 @@ class AnnotationView: UIView {
     }
 
     private func populateParts() {
-        for partViewModel in viewModel.parts {
+        for partViewModel in presenter.parts {
             parts.addArrangedSubview(partViewModel.toView())
         }
     }
@@ -83,15 +83,15 @@ class AnnotationView: UIView {
     }
 
     private func initializeLine() {
-        let linkLine = Line(start: viewModel.selectionBox.startPoint, end: viewModel.origin)
+        let linkLine = Line(start: presenter.selectionBox.startPoint, end: presenter.origin)
         self.linkLine = linkLine
         parentView?.addSubview(linkLine)
     }
 
     // swiftlint:disable function_body_length
     private func setUpSubscribers() {
-        viewModel.$positionDidChange.sink(receiveValue: { [weak self] _ in
-            guard let origin = self?.viewModel.origin else {
+        presenter.$positionDidChange.sink(receiveValue: { [weak self] _ in
+            guard let origin = self?.presenter.origin else {
                 return
             }
 
@@ -101,13 +101,13 @@ class AnnotationView: UIView {
             }
         }).store(in: &cancellables)
 
-        viewModel.$isResizing.sink(receiveValue: { [weak self] _ in
+        presenter.$isResizing.sink(receiveValue: { [weak self] _ in
             DispatchQueue.main.async {
                 self?.resize()
             }
         }).store(in: &cancellables)
 
-        viewModel.$addedPart.sink(receiveValue: { [weak self] addedPart in
+        presenter.$addedPart.sink(receiveValue: { [weak self] addedPart in
             guard let addedPart = addedPart else {
                 return
             }
@@ -116,7 +116,7 @@ class AnnotationView: UIView {
             }
         }).store(in: &cancellables)
 
-        viewModel.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
+        presenter.$isRemoved.sink(receiveValue: { [weak self] isRemoved in
             if isRemoved {
                 DispatchQueue.main.async {
                     self?.removeFromSuperview()
@@ -125,7 +125,7 @@ class AnnotationView: UIView {
             }
         }).store(in: &cancellables)
 
-        viewModel.$modelWasUpdated.sink { [weak self] modelWasUpdated in
+        presenter.$modelWasUpdated.sink { [weak self] modelWasUpdated in
             if modelWasUpdated {
                 DispatchQueue.main.async {
                     self?.parts.arrangedSubviews.forEach({ $0.removeFromSuperview() })
@@ -137,14 +137,14 @@ class AnnotationView: UIView {
             }
         }.store(in: &cancellables)
 
-        viewModel.$conflictIdx.sink { [weak self] conflictIdx in
+        presenter.$conflictIdx.sink { [weak self] conflictIdx in
             guard conflictIdx == nil else {
                 return
             }
             guard let self = self else {
                 return
             }
-            guard self.viewModel.resolveBySave,
+            guard self.presenter.resolveBySave,
                 let mergeConflictsPalette = self.mergeConflictsPalette else {
                 return
             }
@@ -174,7 +174,7 @@ class AnnotationView: UIView {
 
     @objc
     private func didTap(_ sender: UITapGestureRecognizer) {
-        viewModel.inFocus()
+        presenter.inFocus()
     }
 
     @objc
@@ -182,19 +182,19 @@ class AnnotationView: UIView {
         guard let superview = superview else {
             return
         }
-        let previousCenter = viewModel.center
+        let previousCenter = presenter.center
         superview.bringSubviewToFront(self)
         let translation = sender.translation(in: superview)
-        viewModel.translateCenter(by: translation)
+        presenter.translateCenter(by: translation)
         sender.setTranslation(.zero, in: superview)
 
-        if viewModel.hasExceededBounds(bounds: superview.bounds) {
-            viewModel.center = previousCenter
+        if presenter.hasExceededBounds(bounds: superview.bounds) {
+            presenter.center = previousCenter
         }
     }
 
     private func resize() {
-        parts.frame = viewModel.partsFrame
-        self.frame = viewModel.frame
+        parts.frame = presenter.partsFrame
+        self.frame = presenter.frame
     }
 }

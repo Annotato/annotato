@@ -2,15 +2,13 @@ import UIKit
 import Combine
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
-    private var documentController: DocumentController?
     var webSocketManager: WebSocketManager?
+    var presenter: DocumentListPresenter?
 
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
     private var importMenu = DocumentListImportMenu()
     private var collectionView: DocumentListCollectionView?
-    private var viewModel: DocumentListViewModel?
-    private var documents: [DocumentListCellViewModel]?
     let toolbarHeight = 50.0
     private var cancellables: Set<AnyCancellable> = []
 
@@ -30,9 +28,6 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeSpinner()
 
         NetworkMonitor.shared.start()
-
-        self.documentController = DocumentController(webSocketManager: webSocketManager)
-        self.viewModel = DocumentListViewModel(webSocketManager: webSocketManager)
     }
 
     private func initializeToolbar() {
@@ -69,17 +64,15 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
     private func initializeDocumentsCollectionView(inDeleteMode: Bool = false) {
         Task {
-            guard let userId = AuthViewModel().currentUser?.id else {
+            guard let userId = AuthPresenter().currentUser?.id else {
                 AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
-
-                documents = []
                 addDocumentsSubview(inDeleteMode: false)
                 return
             }
 
             startSpinner()
-            documents = await documentController?.loadAllDocuments(userId: userId)
+            await presenter?.loadAllDocuments(userId: userId)
             stopSpinner()
 
             addDocumentsSubview(inDeleteMode: inDeleteMode)
@@ -87,21 +80,20 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     }
 
     private func addDocumentsSubview(inDeleteMode: Bool) {
-        guard let documents = documents else {
-            presentErrorAlert(errorMessage: "Failed to load documents.")
+        guard let presenter = presenter else {
             return
         }
 
         collectionView?.removeFromSuperview()
 
         var initializeInDeleteMode = inDeleteMode
-        if documents.isEmpty {
+        if presenter.documents.isEmpty {
             initializeInDeleteMode = false
             toolbar.exitDeleteMode()
         }
 
         collectionView = DocumentListCollectionView(
-            documents: documents,
+            documents: presenter.documents,
             frame: .zero,
             documentListCollectionCellViewDelegate: self,
             initializeInDeleteMode: initializeInDeleteMode
@@ -130,7 +122,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         presentWarningAlert(alertTitle: "Log Out",
                             warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
             self?.webSocketManager?.resetSocket()
-            AuthViewModel().logOut()
+            AuthPresenter().logOut()
             self?.goToAuth(asNewRootViewController: true)
         })
     }
@@ -157,7 +149,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             return
         }
 
-        viewModel?.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
+        presenter?.importDocument(selectedFileUrl: selectedFileUrl) { [weak self] document in
             guard let document = document else {
                 return
             }
@@ -168,7 +160,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         }
     }
 
-    func didSelectCellView(document: DocumentListCellViewModel) {
+    func didSelectCellView(document: DocumentListCellPresenter) {
         goToDocumentEdit(documentId: document.id, webSocketManager: webSocketManager)
     }
 
@@ -181,7 +173,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         toolbar.enterDeleteMode()
     }
 
-    func didTapDeleteForEveryoneButton(document: DocumentListCellViewModel) {
+    func didTapDeleteForEveryoneButton(document: DocumentListCellPresenter) {
         let warningMessage = "Are you sure you want to delete \(document.name)? " +
         "This deletes the document permanently for everyone"
 
@@ -189,12 +181,12 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.deleteDocumentForEveryone(viewModel: document)
+                self?.presenter?.deleteDocumentForEveryone(presenter: document)
             }
         )
     }
 
-    func didTapDeleteAsNonOwner(document: DocumentListCellViewModel) {
+    func didTapDeleteAsNonOwner(document: DocumentListCellPresenter) {
         let warningMessage = "Are you sure you want to delete \(document.name)? " +
         "This deletes the document permanently for you"
 
@@ -202,19 +194,18 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.deleteDocumentAsNonOwner(viewModel: document)
+                self?.presenter?.deleteDocumentAsNonOwner(presenter: document)
             }
         )
     }
 
-    func didTapChangeOwnerButton(document: DocumentListCellViewModel) {
-        let documentViewModel = DocumentViewModel(
-            model: document.document, webSocketManager: webSocketManager)
+    func didTapChangeOwnerButton(document: DocumentListCellPresenter) {
+        let documentViewModel = DocumentPresenter(webSocketManager: webSocketManager, model: document.document)
         goToUsersSharingDocumentList(document: documentViewModel, users: document.usersSharingDocument)
     }
 
     private func setUpSubscribers() {
-        viewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
+        presenter?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
             if hasDeletedDocument {
                 DispatchQueue.main.async {
                     guard let collectionView = self?.collectionView else {

@@ -2,13 +2,12 @@ import UIKit
 import Combine
 
 class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPresentable {
-    private var documentController: DocumentController?
     var webSocketManager: WebSocketManager?
 
     let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
     let toolbarHeight = 50.0
-    var documentViewModel: DocumentViewModel?
+    var presenter: DocumentPresenter?
     private var documentView: DocumentView?
     private var cancellables: Set<AnyCancellable> = []
 
@@ -21,7 +20,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNetworkSubscriber()
-        self.documentController = DocumentController(webSocketManager: webSocketManager)
     }
 
     func initializeSubviews() {
@@ -35,7 +33,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
             }
 
             startSpinner()
-            documentViewModel = await documentController?.loadDocumentWithDeleted(documentId: documentId)
+            await presenter?.loadDocumentWithDeleted(documentId: documentId)
             setUpSubscribers()
             stopSpinner()
 
@@ -59,7 +57,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     }
 
     private func initializeDocumentView() {
-        guard let documentViewModel = documentViewModel else {
+        guard let documentViewModel = presenter else {
             presentErrorAlert(errorMessage: "Failed to load document.")
             return
         }
@@ -68,7 +66,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
         documentView = DocumentView(
             frame: self.view.safeAreaLayoutGuide.layoutFrame,
-            documentViewModel: documentViewModel
+            documentPresenter: documentViewModel
         )
 
         guard let documentView = documentView else {
@@ -87,11 +85,11 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
     private func saveDocument() {
         Task {
-            guard let documentViewModel = documentViewModel else {
+            guard let documentViewModel = presenter else {
                 return
             }
 
-            await documentController?.updateDocumentWithDeleted(document: documentViewModel)
+            await documentViewModel.updateDocumentWithDeleted()
         }
     }
 
@@ -135,7 +133,7 @@ extension DocumentEditViewController {
     }
 
     private func setUpSubscribers() {
-        documentViewModel?.$hasUpdatedDocument.sink(receiveValue: { [weak self] hasUpdatedDocument in
+        presenter?.$hasUpdatedDocument.sink(receiveValue: { [weak self] hasUpdatedDocument in
             if hasUpdatedDocument {
                 DispatchQueue.main.async {
                     self?.initializeDocumentView()
@@ -143,7 +141,7 @@ extension DocumentEditViewController {
             }
         }).store(in: &cancellables)
 
-        documentViewModel?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
+        presenter?.$hasDeletedDocument.sink(receiveValue: { [weak self] hasDeletedDocument in
             if hasDeletedDocument {
                 DispatchQueue.main.async {
                     self?.alertUsersToLeaveDocument()

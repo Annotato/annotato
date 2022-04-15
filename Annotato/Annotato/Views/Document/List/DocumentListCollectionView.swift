@@ -2,7 +2,7 @@ import UIKit
 
 class DocumentListCollectionView: UICollectionView {
     let cellId = "DocumentListCollectionCell"
-    private var documents: [DocumentListCellViewModel]
+    private var documents: [DocumentListCellPresenter]
     private weak var documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate?
     private(set) var isInDeleteMode: Bool
 
@@ -12,7 +12,7 @@ class DocumentListCollectionView: UICollectionView {
     }
 
     required init(
-        documents: [DocumentListCellViewModel],
+        documents: [DocumentListCellPresenter],
         frame: CGRect,
         documentListCollectionCellViewDelegate: DocumentListCollectionCellViewDelegate,
         initializeInDeleteMode: Bool
