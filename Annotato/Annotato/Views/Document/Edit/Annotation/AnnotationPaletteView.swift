@@ -55,7 +55,7 @@ class AnnotationPaletteView: UIToolbar {
         let editOrViewBarButton = UIBarButtonItem(customView: editOrViewButton)
         let deleteBarButton = UIBarButtonItem(customView: deleteButton)
         let minimizeOrMaximizeBarButton = UIBarButtonItem(customView: minimizeOrMaximizeButton)
-        minimizeOrMaximizeButton.widthAnchor.constraint(equalToConstant: 20.0).isActive = true
+        setBarButtonSizes()
         minimizeOrMaximizeButton.isSelected = presenter.isMinimized
         self.items = [
             textBarButton,
@@ -70,6 +70,22 @@ class AnnotationPaletteView: UIToolbar {
             spaceBetween,
             minimizeOrMaximizeBarButton
         ]
+    }
+
+    private var buttons: [UIButton] {
+        [textButton, markdownButton, handwritingButton,
+         editOrViewButton, deleteButton, minimizeOrMaximizeButton]
+    }
+
+    private func setBarButtonSizes() {
+        let width = 30.0
+
+        for button in buttons {
+            button.widthAnchor.constraint(equalToConstant: width).isActive = true
+            button.heightAnchor.constraint(equalTo: button.widthAnchor).isActive = true
+            button.contentVerticalAlignment = .fill
+            button.contentHorizontalAlignment = .fill
+        }
     }
 
     private func setUpSubscribers() {
