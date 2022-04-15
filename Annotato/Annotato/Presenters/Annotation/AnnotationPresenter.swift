@@ -73,7 +73,7 @@ class AnnotationPresenter: ObservableObject {
         self.palette.parentPresenter = self
         self.mergeConflictPalette?.parentPresenter = self
 
-        populatePartViewModels(model: model)
+        populatePartPresenters(model: model)
         setUpSubscribers()
     }
 
