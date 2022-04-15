@@ -5,6 +5,7 @@ import Combine
 class DocumentsPersistenceManager {
     private let webSocketManager: WebSocketManager?
     private let rootPersistenceManager: RootPersistenceManager
+    private let usersPersistenceManager: UsersPersistenceManager
 
     private let remoteDocumentsPersistence: RemoteDocumentsPersistence
     private let localDocumentsPersistence = LocalDocumentsPersistence()
@@ -18,6 +19,7 @@ class DocumentsPersistenceManager {
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
         self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
+        self.usersPersistenceManager = UsersPersistenceManager()
         self.remoteDocumentsPersistence = RemoteDocumentsPersistence(
             webSocketManager: webSocketManager
         )
@@ -43,8 +45,12 @@ class DocumentsPersistenceManager {
         let conflictResolver = DocumentConflictResolver(
             localModels: localDocuments, serverModels: serverDocuments)
         let documentsConflictResolution = conflictResolver.resolve()
+
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return
+        }
         let serverDelete = documentsConflictResolution.serverDelete
-        _ = await remoteDocumentsPersistence.deleteDocuments(documents: serverDelete)
+        _ = await remoteDocumentsPersistence.deleteDocuments(documents: serverDelete, senderId: senderId)
     }
 
     func getSharedDocuments(userId: String) async -> [Document]? {
@@ -62,7 +68,7 @@ class DocumentsPersistenceManager {
     }
 
     private func pruneRemoteDocumentShares(localDocuments: [Document], serverDocuments: [Document]) async {
-        guard let recipientId = AuthViewModel().currentUser?.id else {
+        guard let recipientId = usersPersistenceManager.fetchSessionUser()?.id else {
             return
         }
 
@@ -96,14 +102,22 @@ class DocumentsPersistenceManager {
     }
 
     func updateDocument(document: Document) async -> Document? {
-        _ = await remoteDocumentsPersistence.updateDocument(document: document)
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return nil
+        }
+
+        _ = await remoteDocumentsPersistence.updateDocument(document: document, senderId: senderId)
 
         document.setUpdatedAt()
         return localDocumentsPersistence.updateDocument(document: document)
     }
 
     func deleteDocument(document: Document) async -> Document? {
-        _ = await remoteDocumentsPersistence.deleteDocument(document: document)
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return nil
+        }
+
+        _ = await remoteDocumentsPersistence.deleteDocument(document: document, senderId: senderId)
 
         // NOTE: Documents are hard deleted from local storage
         return deleteDocumentLocally(document: document)
@@ -148,7 +162,7 @@ extension DocumentsPersistenceManager {
             _ = localDocumentsPersistence.createOrUpdateDocument(document: document)
         }
 
-        guard senderId != AuthViewModel().currentUser?.id else {
+        guard senderId != usersPersistenceManager.fetchSessionUser()?.id else {
             return
         }
 

@@ -2,8 +2,8 @@ import UIKit
 import Combine
 
 class ChangeOwnerViewController: UIViewController, AlertPresentable, Navigable {
-    var users: [UserViewModel]?
-    var document: DocumentViewModel?
+    var users: [UserPresenter]?
+    var document: DocumentPresenter?
     private var titleLabel = UILabel()
     private var confirmButton = UIButton()
     private var listView = ChangeOwnerListView(frame: .zero, users: [])

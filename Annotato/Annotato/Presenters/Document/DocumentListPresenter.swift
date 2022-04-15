@@ -23,13 +23,13 @@ class DocumentListPresenter {
         let ownDocuments = await documentsPersistenceManager.getOwnDocuments(userId: userId) ?? []
         let sharedDocuments = await documentsPersistenceManager.getSharedDocuments(userId: userId) ?? []
 
-        let ownDocumentViewModels = ownDocuments.filter { !$0.isDeleted }
+        let ownDocumentPresenters = ownDocuments.filter { !$0.isDeleted }
             .map { DocumentListCellPresenter(document: $0, isShared: false) }
-        let sharedDocumentViewModels = sharedDocuments.filter { !$0.isDeleted }
+        let sharedDocumentPresenters = sharedDocuments.filter { !$0.isDeleted }
             .map { DocumentListCellPresenter(document: $0, isShared: true) }
 
-        let allDocumentViewModels = ownDocumentViewModels + sharedDocumentViewModels
-        documents = allDocumentViewModels.sorted(by: { $0.name < $1.name })
+        let allDocumentPresenters = ownDocumentPresenters + sharedDocumentPresenters
+        documents = allDocumentPresenters.sorted(by: { $0.name < $1.name })
         return documents
     }
 
@@ -55,21 +55,21 @@ class DocumentListPresenter {
         }
     }
 
-    func deleteDocumentForEveryone(viewModel: DocumentListCellPresenter) {
+    func deleteDocumentForEveryone(presenter: DocumentListCellPresenter) {
         Task {
-            _ = await documentsPersistenceManager.deleteDocument(document: viewModel.document)
+            _ = await documentsPersistenceManager.deleteDocument(document: presenter.document)
             hasDeletedDocument = true
         }
     }
 
-    func deleteDocumentAsNonOwner(viewModel: DocumentListCellPresenter) {
+    func deleteDocumentAsNonOwner(presenter: DocumentListCellPresenter) {
         guard let recipientId = AuthViewModel().currentUser?.id else {
             return
         }
 
         Task {
             _ = await documentSharesPersistenceManager.deleteDocumentShare(
-                document: viewModel.document, recipientId: recipientId)
+                document: presenter.document, recipientId: recipientId)
             hasDeletedDocument = true
         }
     }

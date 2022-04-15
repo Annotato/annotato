@@ -3,7 +3,7 @@ import AnnotatoSharedLibrary
 
 class DocumentListCellPresenter {
     private let usersPersistenceManager = UsersPersistenceManager()
-    private(set) var usersSharingDocument: [UserViewModel] = []
+    private(set) var usersSharingDocument: [UserPresenter] = []
 
     let document: Document
     let isShared: Bool
@@ -29,7 +29,7 @@ class DocumentListCellPresenter {
         let usersSharingDocumentModels = await usersPersistenceManager
             .getUsersSharingDocument(documentId: document.id) ?? []
 
-        usersSharingDocument = usersSharingDocumentModels.map { UserViewModel(model: $0) }
+        usersSharingDocument = usersSharingDocumentModels.map { UserPresenter(model: $0) }
 
         return !usersSharingDocument.isEmpty
     }

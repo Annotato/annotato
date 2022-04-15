@@ -7,11 +7,7 @@ struct RemoteAnnotationsPersistence {
         self.webSocketManager = webSocketManager
     }
 
-    func createAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.id else {
-            return nil
-        }
-
+    func createAnnotation(annotation: Annotation, senderId: String) async -> Annotation? {
         let webSocketMessage = AnnotatoCudAnnotationMessage(
             senderId: senderId, subtype: .createAnnotation, annotation: annotation
         )
@@ -21,11 +17,7 @@ struct RemoteAnnotationsPersistence {
         return nil
     }
 
-    func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.id else {
-            return nil
-        }
-
+    func updateAnnotation(annotation: Annotation, senderId: String) async -> Annotation? {
         let webSocketMessage = AnnotatoCudAnnotationMessage(
             senderId: senderId, subtype: .updateAnnotation, annotation: annotation
         )
@@ -35,11 +27,7 @@ struct RemoteAnnotationsPersistence {
         return nil
     }
 
-    func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.id else {
-            return nil
-        }
-
+    func deleteAnnotation(annotation: Annotation, senderId: String) async -> Annotation? {
         let webSocketMessage = AnnotatoCudAnnotationMessage(
             senderId: senderId, subtype: .deleteAnnotation, annotation: annotation
         )
@@ -49,11 +37,7 @@ struct RemoteAnnotationsPersistence {
         return nil
     }
 
-    func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
-        guard let senderId = AuthViewModel().currentUser?.id else {
-            return nil
-        }
-
+    func createOrUpdateAnnotation(annotation: Annotation, senderId: String) async -> Annotation? {
         let webSocketMessage = AnnotatoCudAnnotationMessage(
             senderId: senderId,
             subtype: .createOrUpdateAnnotation,

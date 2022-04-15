@@ -7,7 +7,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     let spinner = UIActivityIndicatorView(style: .large)
     var documentId: UUID?
     let toolbarHeight = 50.0
-    var documentViewModel: DocumentViewModel?
+    var documentViewModel: DocumentPresenter?
     private var documentView: DocumentView?
     private var cancellables: Set<AnyCancellable> = []
 

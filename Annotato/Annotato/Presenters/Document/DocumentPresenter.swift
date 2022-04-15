@@ -11,7 +11,7 @@ class DocumentPresenter: ObservableObject {
     private(set) var model: Document?
 
     private(set) var annotations: [AnnotationPresenter] = []
-    private(set) var pdfDocument: PdfViewModel?
+    private(set) var pdfDocument: PdfPresenter?
     private var selectionStartPoint: CGPoint?
     private var selectionEndPoint: CGPoint?
 
@@ -30,7 +30,7 @@ class DocumentPresenter: ObservableObject {
 
         self.model = model
         if let model = model {
-            self.pdfDocument = PdfViewModel(document: model)
+            self.pdfDocument = PdfPresenter(document: model)
             self.annotations = model.annotations
                 .filter { !$0.isDeleted }
                 .map { AnnotationPresenter(model: $0, document: self, webSocketManager: webSocketManager) }
@@ -193,7 +193,7 @@ extension DocumentPresenter {
     }
 
     func receiveUpdateDocument(updatedDocument: Document) {
-        self.pdfDocument = PdfViewModel(document: updatedDocument)
+        self.pdfDocument = PdfPresenter(document: updatedDocument)
         self.annotations = updatedDocument.annotations
             .filter { !$0.isDeleted }
             .map { AnnotationPresenter(model: $0, document: self, webSocketManager: webSocketManager) }

@@ -1,7 +1,7 @@
 import UIKit
 
 class DocumentListCollectionCellView: UICollectionViewCell {
-    var document: DocumentListCellViewModel?
+    var document: DocumentListCellPresenter?
     let nameLabelHeight = 30.0
     let deleteIconHeight = 50.0
     let shareIconWidth = 25.0

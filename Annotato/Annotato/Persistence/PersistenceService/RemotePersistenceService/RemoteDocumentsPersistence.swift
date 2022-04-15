@@ -68,11 +68,7 @@ struct RemoteDocumentsPersistence {
     }
 
     // MARK: UPDATE
-    func updateDocument(document: Document) async -> Document? {
-        guard let senderId = AuthViewModel().currentUser?.id else {
-            return nil
-        }
-
+    func updateDocument(document: Document, senderId: String) async -> Document? {
         let webSocketMessage = AnnotatoCudDocumentMessage(
             senderId: senderId, subtype: .updateDocument, document: document)
 
@@ -82,11 +78,7 @@ struct RemoteDocumentsPersistence {
     }
 
     // MARK: DELETE
-    func deleteDocument(document: Document) async -> Document? {
-        guard let senderId = AuthViewModel().currentUser?.id else {
-            return nil
-        }
-
+    func deleteDocument(document: Document, senderId: String) async -> Document? {
         let webSocketMessage = AnnotatoCudDocumentMessage(
             senderId: senderId, subtype: .deleteDocument, document: document
         )
@@ -97,9 +89,9 @@ struct RemoteDocumentsPersistence {
     }
 
     // MARK: DELETE MANY
-    func deleteDocuments(documents: [Document]) async -> [Document]? {
+    func deleteDocuments(documents: [Document], senderId: String) async -> [Document]? {
         for document in documents {
-            _ = await deleteDocument(document: document)
+            _ = await deleteDocument(document: document, senderId: senderId)
         }
 
         return nil

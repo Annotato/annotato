@@ -49,7 +49,7 @@ extension Navigable {
         }
         viewController.documentId = documentId
         viewController.webSocketManager = webSocketManager
-        viewController.documentViewModel = DocumentViewModel(webSocketManager: webSocketManager)
+        viewController.documentViewModel = DocumentPresenter(webSocketManager: webSocketManager)
         present(viewController, animated: true, completion: nil)
     }
 
@@ -81,7 +81,7 @@ extension Navigable {
         present(viewController, animated: true, completion: nil)
     }
 
-    func goToUsersSharingDocumentList(document: DocumentViewModel, users: [UserViewModel]) {
+    func goToUsersSharingDocumentList(document: DocumentPresenter, users: [UserPresenter]) {
         guard let viewController = ChangeOwnerViewController
             .instantiatePartialScreenFromStoryboard(.document) else {
             return

@@ -2,7 +2,7 @@ import UIKit
 import AnnotatoSharedLibrary
 
 class ChangeOwnerListCellView: UITableViewCell {
-    var user: UserViewModel?
+    var user: UserPresenter?
     private var radioButton = RadioButton()
 
     func initializeSubviews() {

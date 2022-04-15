@@ -5,6 +5,7 @@ import Combine
 class AnnotationsPersistenceManager {
     private let webSocketManager: WebSocketManager?
     private let rootPersistenceManager: RootPersistenceManager
+    private let usersPersistenceManager: UsersPersistenceManager
 
     private let remoteAnnotationsPersistence: RemoteAnnotationsPersistence
     private let localAnnotationsPersistence = LocalAnnotationsPersistence()
@@ -18,6 +19,7 @@ class AnnotationsPersistenceManager {
     init(webSocketManager: WebSocketManager?) {
         self.webSocketManager = webSocketManager
         self.rootPersistenceManager = RootPersistenceManager(webSocketManager: webSocketManager)
+        self.usersPersistenceManager = UsersPersistenceManager()
         self.remoteAnnotationsPersistence = RemoteAnnotationsPersistence(
             webSocketManager: webSocketManager
         )
@@ -26,28 +28,44 @@ class AnnotationsPersistenceManager {
     }
 
     func createAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remoteAnnotationsPersistence.createAnnotation(annotation: annotation)
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return nil
+        }
+
+        _ = await remoteAnnotationsPersistence.createAnnotation(annotation: annotation, senderId: senderId)
 
         annotation.setCreatedAt()
         return localAnnotationsPersistence.createAnnotation(annotation: annotation)
     }
 
     func updateAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remoteAnnotationsPersistence.updateAnnotation(annotation: annotation)
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return nil
+        }
+
+        _ = await remoteAnnotationsPersistence.updateAnnotation(annotation: annotation, senderId: senderId)
 
         annotation.setUpdatedAt()
         return localAnnotationsPersistence.updateAnnotation(annotation: annotation)
     }
 
     func deleteAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remoteAnnotationsPersistence.deleteAnnotation(annotation: annotation)
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return nil
+        }
+
+        _ = await remoteAnnotationsPersistence.deleteAnnotation(annotation: annotation, senderId: senderId)
 
         annotation.setDeletedAt()
         return localAnnotationsPersistence.deleteAnnotation(annotation: annotation)
     }
 
     func createOrUpdateAnnotation(annotation: Annotation) async -> Annotation? {
-        _ = await remoteAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return nil
+        }
+
+        _ = await remoteAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation, senderId: senderId)
 
         if annotation.createdAt == nil {
             annotation.setCreatedAt()
@@ -80,7 +98,7 @@ extension AnnotationsPersistenceManager {
 
         _ = localAnnotationsPersistence.createOrUpdateAnnotation(annotation: annotation)
 
-        guard senderId != AuthViewModel().currentUser?.id else {
+        guard senderId != usersPersistenceManager.fetchSessionUser()?.id else {
             return
         }
 
@@ -144,16 +162,23 @@ extension AnnotationsPersistenceManager {
             _ = localAnnotationsPersistence.deleteAnnotation(annotation: localDeleteAnnotation)
         }
 
+        guard let senderId = usersPersistenceManager.fetchSessionUser()?.id else {
+            return
+        }
+
         for serverCreateAnnotation in conflictResolution.serverCreate {
-            _ = await remoteAnnotationsPersistence.createAnnotation(annotation: serverCreateAnnotation)
+            _ = await remoteAnnotationsPersistence.createAnnotation(
+                annotation: serverCreateAnnotation, senderId: senderId)
         }
 
         for serverUpdateAnnotation in conflictResolution.serverUpdate {
-            _ = await remoteAnnotationsPersistence.updateAnnotation(annotation: serverUpdateAnnotation)
+            _ = await remoteAnnotationsPersistence.updateAnnotation(
+                annotation: serverUpdateAnnotation, senderId: senderId)
         }
 
         for serverDeleteAnnotation in conflictResolution.serverDelete {
-            _ = await remoteAnnotationsPersistence.deleteAnnotation(annotation: serverDeleteAnnotation)
+            _ = await remoteAnnotationsPersistence.deleteAnnotation(
+                annotation: serverDeleteAnnotation, senderId: senderId)
         }
     }
 }

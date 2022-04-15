@@ -2,7 +2,7 @@ import UIKit
 import Combine
 
 class SelectionBoxView: UIView {
-    private(set) var viewModel: SelectionBoxViewModel
+    private(set) var viewModel: SelectionBoxPresenter
     private var cancellables: Set<AnyCancellable> = []
 
     @available(*, unavailable)
@@ -10,7 +10,7 @@ class SelectionBoxView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(viewModel: SelectionBoxViewModel) {
+    init(viewModel: SelectionBoxPresenter) {
         self.viewModel = viewModel
         super.init(frame: viewModel.frame)
         setUpSubscribers()

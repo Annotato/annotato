@@ -4,7 +4,7 @@ import Combine
 import AnnotatoSharedLibrary
 
 class DocumentView: UIView {
-    private var viewModel: DocumentViewModel
+    private var viewModel: DocumentPresenter
     private var cancellables: Set<AnyCancellable> = []
 
     private var pdfView: DocumentPdfView?
@@ -16,7 +16,7 @@ class DocumentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(frame: CGRect, documentViewModel: DocumentViewModel) {
+    init(frame: CGRect, documentViewModel: DocumentPresenter) {
         self.viewModel = documentViewModel
         self.annotationViews = []
 

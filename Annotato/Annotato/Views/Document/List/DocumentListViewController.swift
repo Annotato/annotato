@@ -3,12 +3,12 @@ import Combine
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
     var webSocketManager: WebSocketManager?
+    var viewModel: DocumentListPresenter?
 
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
     private var importMenu = DocumentListImportMenu()
     private var collectionView: DocumentListCollectionView?
-    private var viewModel: DocumentListViewModel?
     let toolbarHeight = 50.0
     private var cancellables: Set<AnyCancellable> = []
 
@@ -28,8 +28,6 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
         initializeSpinner()
 
         NetworkMonitor.shared.start()
-
-        self.viewModel = DocumentListViewModel(webSocketManager: webSocketManager)
     }
 
     private func initializeToolbar() {
@@ -162,7 +160,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         }
     }
 
-    func didSelectCellView(document: DocumentListCellViewModel) {
+    func didSelectCellView(document: DocumentListCellPresenter) {
         goToDocumentEdit(documentId: document.id, webSocketManager: webSocketManager)
     }
 
@@ -175,7 +173,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         toolbar.enterDeleteMode()
     }
 
-    func didTapDeleteForEveryoneButton(document: DocumentListCellViewModel) {
+    func didTapDeleteForEveryoneButton(document: DocumentListCellPresenter) {
         let warningMessage = "Are you sure you want to delete \(document.name)? " +
         "This deletes the document permanently for everyone"
 
@@ -183,12 +181,12 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.deleteDocumentForEveryone(viewModel: document)
+                self?.viewModel?.deleteDocumentForEveryone(presenter: document)
             }
         )
     }
 
-    func didTapDeleteAsNonOwner(document: DocumentListCellViewModel) {
+    func didTapDeleteAsNonOwner(document: DocumentListCellPresenter) {
         let warningMessage = "Are you sure you want to delete \(document.name)? " +
         "This deletes the document permanently for you"
 
@@ -196,13 +194,13 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
             alertTitle: "Confirm",
             warningMessage: warningMessage,
             confirmHandler: { [weak self] in
-                self?.viewModel?.deleteDocumentAsNonOwner(viewModel: document)
+                self?.viewModel?.deleteDocumentAsNonOwner(presenter: document)
             }
         )
     }
 
-    func didTapChangeOwnerButton(document: DocumentListCellViewModel) {
-        let documentViewModel = DocumentViewModel(webSocketManager: webSocketManager, model: document.document)
+    func didTapChangeOwnerButton(document: DocumentListCellPresenter) {
+        let documentViewModel = DocumentPresenter(webSocketManager: webSocketManager, model: document.document)
         goToUsersSharingDocumentList(document: documentViewModel, users: document.usersSharingDocument)
     }
 

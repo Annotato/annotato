@@ -9,7 +9,7 @@ class AnnotationPresenter: ObservableObject {
     private let annotationsPersistenceManager: AnnotationsPersistenceManager?
     private let webSocketManager: WebSocketManager?
 
-    private weak var document: DocumentViewModel?
+    private weak var document: DocumentPresenter?
 
     private(set) var model: Annotation
     private var cancellables: Set<AnyCancellable> = []
@@ -17,7 +17,7 @@ class AnnotationPresenter: ObservableObject {
     private(set) var parts: [AnnotationPartPresenter]
     private(set) var palette: AnnotationPalettePresenter
     private(set) var mergeConflictPalette: AnnotationMergeConflictsPalettePresenter?
-    private(set) var selectionBox: SelectionBoxViewModel
+    private(set) var selectionBox: SelectionBoxPresenter
     private(set) var isEditing = false
     private(set) var selectedPart: AnnotationPartPresenter?
     private var maxHeight = 300.0
@@ -50,7 +50,7 @@ class AnnotationPresenter: ObservableObject {
 
     init(
         model: Annotation,
-        document: DocumentViewModel,
+        document: DocumentPresenter,
         webSocketManager: WebSocketManager?,
         palette: AnnotationPalettePresenter? = nil
     ) {
@@ -67,7 +67,7 @@ class AnnotationPresenter: ObservableObject {
             origin: CGPoint(x: 0.0, y: mergeConflictPalette?.height ?? 0.0), width: model.width, height: 50.0)
 
         self.parts = []
-        self.selectionBox = SelectionBoxViewModel(model: model.selectionBox)
+        self.selectionBox = SelectionBoxPresenter(model: model.selectionBox)
         self.webSocketManager = webSocketManager
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
         self.palette.parentPresenter = self
