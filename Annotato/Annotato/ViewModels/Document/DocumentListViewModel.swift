@@ -5,8 +5,9 @@ import Combine
 class DocumentListViewModel {
     private let documentsPersistenceManager: DocumentsPersistenceManager
     private let documentSharesPersistenceManager: DocumentSharesPersistenceManager
-
     private let pdfStorageManager = PDFStorageManager()
+
+    private(set) var documents: [DocumentListCellViewModel] = []
     private var cancellables: Set<AnyCancellable> = []
 
     @Published private(set) var hasDeletedDocument = false
@@ -16,6 +17,20 @@ class DocumentListViewModel {
         self.documentSharesPersistenceManager = DocumentSharesPersistenceManager()
 
         setUpSubscribers()
+    }
+
+    func loadAllDocuments(userId: String) async -> [DocumentListCellViewModel] {
+        let ownDocuments = await documentsPersistenceManager.getOwnDocuments(userId: userId) ?? []
+        let sharedDocuments = await documentsPersistenceManager.getSharedDocuments(userId: userId) ?? []
+
+        let ownDocumentViewModels = ownDocuments.filter { !$0.isDeleted }
+            .map { DocumentListCellViewModel(document: $0, isShared: true) }
+        let sharedDocumentViewModels = sharedDocuments.filter { !$0.isDeleted }
+            .map { DocumentListCellViewModel(document: $0, isShared: true) }
+
+        let allDocumentViewModels = ownDocumentViewModels + sharedDocumentViewModels
+        documents = allDocumentViewModels.sorted(by: { $0.name < $1.name })
+        return documents
     }
 
     func importDocument(selectedFileUrl: URL, completion: @escaping (Document?) -> Void) {

@@ -11,36 +11,6 @@ struct DocumentController {
         self.annotationsPersistenceManager = AnnotationsPersistenceManager(webSocketManager: webSocketManager)
     }
 
-    func loadOwnDocuments(userId: String) async -> [DocumentListCellViewModel] {
-        let documents = await documentsPersistenceManager.getOwnDocuments(userId: userId)
-        guard let documents = documents else {
-            return []
-        }
-
-        return documents
-            .filter { !$0.isDeleted }
-            .map { DocumentListCellViewModel(document: $0, isShared: false) }
-    }
-
-    func loadSharedDocuments(userId: String) async -> [DocumentListCellViewModel] {
-        let documents = await documentsPersistenceManager.getSharedDocuments(userId: userId)
-        guard let documents = documents else {
-            return []
-        }
-
-        return documents
-            .filter { !$0.isDeleted }
-            .map { DocumentListCellViewModel(document: $0, isShared: true) }
-    }
-
-    func loadAllDocuments(userId: String) async -> [DocumentListCellViewModel] {
-        let ownDocuments = await loadOwnDocuments(userId: userId)
-        let sharedDocuments = await loadSharedDocuments(userId: userId)
-        let allDocuments = ownDocuments + sharedDocuments
-        let sortedDocuments = allDocuments.sorted(by: { $0.name < $1.name })
-        return sortedDocuments
-    }
-
     func loadDocumentWithDeleted(documentId: UUID) async -> DocumentViewModel? {
         if let resultDocumentWithConflictResolution = await loadResolvedDocument(documentId: documentId) {
             return resultDocumentWithConflictResolution

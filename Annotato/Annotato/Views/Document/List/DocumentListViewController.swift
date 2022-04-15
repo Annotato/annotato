@@ -2,7 +2,6 @@ import UIKit
 import Combine
 
 class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPresentable {
-    private var documentController: DocumentController?
     var webSocketManager: WebSocketManager?
 
     let spinner = UIActivityIndicatorView(style: .large)
@@ -10,7 +9,6 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     private var importMenu = DocumentListImportMenu()
     private var collectionView: DocumentListCollectionView?
     private var viewModel: DocumentListViewModel?
-    private var documents: [DocumentListCellViewModel]?
     let toolbarHeight = 50.0
     private var cancellables: Set<AnyCancellable> = []
 
@@ -31,7 +29,6 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
         NetworkMonitor.shared.start()
 
-        self.documentController = DocumentController(webSocketManager: webSocketManager)
         self.viewModel = DocumentListViewModel(webSocketManager: webSocketManager)
     }
 
@@ -72,14 +69,12 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
             guard let userId = AuthViewModel().currentUser?.id else {
                 AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
-
-                documents = []
                 addDocumentsSubview(inDeleteMode: false)
                 return
             }
 
             startSpinner()
-            documents = await documentController?.loadAllDocuments(userId: userId)
+            await viewModel?.loadAllDocuments(userId: userId)
             stopSpinner()
 
             addDocumentsSubview(inDeleteMode: inDeleteMode)
@@ -87,21 +82,20 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     }
 
     private func addDocumentsSubview(inDeleteMode: Bool) {
-        guard let documents = documents else {
-            presentErrorAlert(errorMessage: "Failed to load documents.")
+        guard let viewModel = viewModel else {
             return
         }
 
         collectionView?.removeFromSuperview()
 
         var initializeInDeleteMode = inDeleteMode
-        if documents.isEmpty {
+        if viewModel.documents.isEmpty {
             initializeInDeleteMode = false
             toolbar.exitDeleteMode()
         }
 
         collectionView = DocumentListCollectionView(
-            documents: documents,
+            documents: viewModel.documents,
             frame: .zero,
             documentListCollectionCellViewDelegate: self,
             initializeInDeleteMode: initializeInDeleteMode
