@@ -145,7 +145,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
 
         Task {
             let canFindUsersSharingDocument = await document.canFindUsersSharingDocument()
-            let isOwner = AuthViewModel().currentUser?.id == document.ownerId
+            let isOwner = AuthPresenter().currentUser?.id == document.ownerId
 
             if isOwner && canFindUsersSharingDocument {
                 deleteMenu.isHidden.toggle()

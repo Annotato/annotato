@@ -19,7 +19,7 @@ class DocumentListPresenter {
         setUpSubscribers()
     }
 
-    func loadAllDocuments(userId: String) async -> [DocumentListCellPresenter] {
+    func loadAllDocuments(userId: String) async {
         let ownDocuments = await documentsPersistenceManager.getOwnDocuments(userId: userId) ?? []
         let sharedDocuments = await documentsPersistenceManager.getSharedDocuments(userId: userId) ?? []
 
@@ -30,7 +30,6 @@ class DocumentListPresenter {
 
         let allDocumentPresenters = ownDocumentPresenters + sharedDocumentPresenters
         documents = allDocumentPresenters.sorted(by: { $0.name < $1.name })
-        return documents
     }
 
     func importDocument(selectedFileUrl: URL, completion: @escaping (Document?) -> Void) {
@@ -39,7 +38,7 @@ class DocumentListPresenter {
             return
         }
 
-        guard let ownerId = AuthViewModel().currentUser?.id else {
+        guard let ownerId = AuthPresenter().currentUser?.id else {
             return
         }
 
@@ -63,7 +62,7 @@ class DocumentListPresenter {
     }
 
     func deleteDocumentAsNonOwner(presenter: DocumentListCellPresenter) {
-        guard let recipientId = AuthViewModel().currentUser?.id else {
+        guard let recipientId = AuthPresenter().currentUser?.id else {
             return
         }
 

@@ -4,7 +4,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     private let webSocketManager = WebSocketManager(urlStringProducer: {
-        guard let userId = AuthViewModel().currentUser?.id else {
+        guard let userId = AuthPresenter().currentUser?.id else {
             return nil
         }
 
@@ -31,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         documentListViewController?.webSocketManager = webSocketManager
         documentListViewController?.viewModel = DocumentListPresenter(webSocketManager: webSocketManager)
 
-        window?.rootViewController = AuthViewModel().currentUser != nil
+        window?.rootViewController = AuthPresenter().currentUser != nil
             ? documentListViewController
             : AuthViewController.instantiateFullScreenFromStoryboard(.main)
     }

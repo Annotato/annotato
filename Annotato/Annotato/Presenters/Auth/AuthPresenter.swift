@@ -2,7 +2,7 @@ import AnnotatoSharedLibrary
 import Foundation
 import Combine
 
-class AuthViewModel {
+class AuthPresenter {
     private var authService: AnnotatoAuthService
     private let usersPersistenceManager = UsersPersistenceManager()
     private(set) var currentUser: AnnotatoUser?

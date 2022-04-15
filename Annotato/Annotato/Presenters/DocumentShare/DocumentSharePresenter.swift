@@ -5,7 +5,7 @@ class DocumentSharePresenter {
     private let documentSharesPersistenceManager = DocumentSharesPersistenceManager()
 
     func createDocumentShare(documentId: UUID) async -> Bool {
-        guard let currentUser = AuthViewModel().currentUser else {
+        guard let currentUser = AuthPresenter().currentUser else {
             return false
         }
 

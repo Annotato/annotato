@@ -64,7 +64,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
     private func initializeDocumentsCollectionView(inDeleteMode: Bool = false) {
         Task {
-            guard let userId = AuthViewModel().currentUser?.id else {
+            guard let userId = AuthPresenter().currentUser?.id else {
                 AnnotatoLogger.info("Could not get current user.",
                                     context: "DocumentListViewController::initializeSubviews")
                 addDocumentsSubview(inDeleteMode: false)
@@ -122,7 +122,7 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
         presentWarningAlert(alertTitle: "Log Out",
                             warningMessage: "Are you sure you want to log out?", confirmHandler: { [weak self] in
             self?.webSocketManager?.resetSocket()
-            AuthViewModel().logOut()
+            AuthPresenter().logOut()
             self?.goToAuth(asNewRootViewController: true)
         })
     }

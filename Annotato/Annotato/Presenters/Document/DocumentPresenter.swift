@@ -83,7 +83,7 @@ extension DocumentPresenter {
         guard let selectionStartPoint = selectionStartPoint,
               let selectionEndPoint = selectionEndPoint,
               let selectionBoxFrame = selectionBoxFrame,
-              let currentUser = AuthViewModel().currentUser,
+              let currentUser = AuthPresenter().currentUser,
               let model = model else {
             return
         }
