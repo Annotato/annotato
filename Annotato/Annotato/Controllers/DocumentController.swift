@@ -75,6 +75,7 @@ struct DocumentController {
             newLocalAnnotation.conflictIdx = conflictIdx
             serverAnnotation.conflictIdx = conflictIdx
             serverDocument.addAnnotation(annotation: newLocalAnnotation)
+            serverDocument.addAnnotation(annotation: serverAnnotation)
         }
 
         return DocumentViewModel(model: serverDocument, webSocketManager: webSocketManager)
