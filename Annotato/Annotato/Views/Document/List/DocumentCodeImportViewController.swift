@@ -1,7 +1,7 @@
 import UIKit
 
 class DocumentCodeImportViewController: UIViewController, AlertPresentable, Navigable {
-    private let documentShareController = DocumentShareInteractor()
+    private let documentSharePresenter = DocumentSharePresenter()
 
     @IBOutlet private var documentCodeField: UITextField!
 
@@ -23,8 +23,8 @@ class DocumentCodeImportViewController: UIViewController, AlertPresentable, Navi
         }
 
         Task {
-            let documentShare = await documentShareController.createDocumentShare(documentId: documentId)
-            if documentShare != nil {
+            let didCreateDocumentShare = await documentSharePresenter.createDocumentShare(documentId: documentId)
+            if didCreateDocumentShare {
                 presentSuccessAlert(
                     successMessage: "Successfully imported document!",
                     completion: goBackWithRefresh

@@ -24,7 +24,7 @@ class DocumentListViewModel {
         let sharedDocuments = await documentsPersistenceManager.getSharedDocuments(userId: userId) ?? []
 
         let ownDocumentViewModels = ownDocuments.filter { !$0.isDeleted }
-            .map { DocumentListCellViewModel(document: $0, isShared: true) }
+            .map { DocumentListCellViewModel(document: $0, isShared: false) }
         let sharedDocumentViewModels = sharedDocuments.filter { !$0.isDeleted }
             .map { DocumentListCellViewModel(document: $0, isShared: true) }
 
