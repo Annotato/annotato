@@ -79,3 +79,6 @@ fastlane/test_output
 *.xcodeproj/
 *.xcworkspace/
 settings.yml
+
+# Ignore .idea files in plantuml directory
+docs/diagrams/plantuml/.idea/

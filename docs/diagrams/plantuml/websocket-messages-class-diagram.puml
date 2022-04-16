@@ -1,0 +1,56 @@
+@startuml logger-class-diagram
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor ENTITY_COLOR
+skinparam classBackgroundColor ENTITY_COLOR
+
+package WebSocketMessages {
+    Enum AnnotatoMessageType <<enum>> {
+        crudDocument
+        crudAnnotation
+    }
+
+    Enum AnnotatoCudDocumentMessageType <<enum>> {
+        createDocument
+        updateDocument
+        deleteDocument
+    }
+
+    Enum AnnotatoCudAnnotationMessageType <<enum>> {
+        createAnnotation
+        updateAnnotation
+        deleteAnnotation
+        createOrUpdateAnnotation
+    }
+
+    class AnnotatoMessage {
+        type: AnnotatoMessageType
+        senderId: String
+    }
+
+    class AnnotatoCudAnnotationMessage {
+        type: AnnotatoMessageType
+        senderId: String
+        subtype: AnnotatoCudAnnotationMessageType
+        annotation: Annotation
+    }
+
+    class AnnotatoCudDocumentMessage {
+        type: AnnotatoMessageType
+        senderId: String
+        subtype: AnnotatoCudDocumentMessageType
+        document: Document
+    }
+
+    AnnotatoMessage *-down-> AnnotatoMessageType
+
+    AnnotatoCudAnnotationMessage *-down-> AnnotatoMessageType
+
+    AnnotatoCudDocumentMessage *-down-> AnnotatoMessageType
+
+    AnnotatoCudAnnotationMessage *-down-> AnnotatoCudAnnotationMessageType
+
+    AnnotatoCudDocumentMessage *-down-> AnnotatoCudDocumentMessageType
+}
+
+@enduml
