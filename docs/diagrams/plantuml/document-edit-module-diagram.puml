@@ -1,0 +1,68 @@
+@startuml
+
+package "Document Edit" {
+    Class DocumentEditViewController {
+        documentView: DocumentView
+        presenter: DocumentPresenter
+        --
+        didTapBackButton()
+        didTapShareButton()
+        saveDocument()
+    }
+
+    Class DocumentView {
+        pdfView: DocumentPdfView
+        annotationViews: [AnnotationView]
+    }
+
+    Class DocumentPresenter {
+    }
+
+    Class AnnotationsPresenter {
+    }
+
+    Class DocumentsInteractor {
+        @Published newDocument: Document
+        @Published updatedDocument: Document
+        @Published deletedDocument: Document
+    }
+
+    Class AnnotationsInteractor {
+        @Published newAnnotation: Annotation
+        @Published updatedAnnotation: Annotation
+        @Published deletedAnnotation: Annotation
+        ...
+    }
+
+    Class RootInteractor {
+        @Published crudDocumentMessage: Data
+        @Published crudAnnotationMessage: Data
+    }
+
+    Class WebSocketManager {
+        @Published message: Data
+        --
+        setUpSocket()
+        listen() // Listen for websocket messages
+        send(message)
+        publishResponseData(data)
+    }
+
+    note "Directs data between view and interactor" as N1
+    note "Mediates between persisted data and presenter" as N2
+}
+DocumentPresenter ..left N1
+AnnotationsInteractor .. N2
+
+DocumentPresenter --right> "*" AnnotationsPresenter
+DocumentEditViewController --down> "1" DocumentView
+DocumentView --down> "1" DocumentPresenter
+DocumentPresenter --down> "1 | subscribes to" DocumentsInteractor
+DocumentPresenter --down> "1 | subscribes to" AnnotationsInteractor
+AnnotationsPresenter --down> "1 | subscribes to" AnnotationsInteractor
+
+DocumentsInteractor --down> "1 | subscribes to" RootInteractor
+AnnotationsInteractor --down> "1 | subscribes to" RootInteractor
+
+RootInteractor --down> "1 | subscribes to" WebSocketManager
+@enduml

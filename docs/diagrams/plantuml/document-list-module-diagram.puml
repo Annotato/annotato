@@ -1,0 +1,41 @@
+@startuml
+
+package "Document List" {
+    Class DocumentListViewController {
+        toolbar: DocumentListToolbarView
+        importMenu: DocumentListImportMenu
+        --
+        // Navigating between views
+        didTapLogOutButton()
+        didTapImportFromIpadButton()
+        didTapImportFromCodeButton()
+        didSelectCellView(document)
+
+        // Delete document functionality
+        didLongPressCellView() // Enters delete mode
+        didTapExitDeleteModeButton()
+        didTapDeleteForEveryoneButton(document)
+        didTapDeleteAsNonOwner(document)
+        didTapChangeOwnerButton(document)
+    }
+
+    Class DocumentListCollectionView {
+        isInDeleteMode: Bool
+        --
+        enterDeleteMode()
+        exitDeleteMode()
+    }
+
+    Class DocumentListCollectionCellView { }
+
+    Class DocumentListCellPresenter {
+        document: Document
+    }
+}
+
+DocumentListViewController --down> "1" DocumentListCollectionView
+DocumentListCollectionView --down> "*" DocumentListCellPresenter
+DocumentListCollectionView ..left> "*" DocumentListCollectionCellView
+DocumentListCollectionCellView --down> "1" DocumentListCellPresenter
+
+@enduml
