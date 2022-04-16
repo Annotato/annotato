@@ -34,7 +34,6 @@ activate AnnotationsInteractor
 AnnotationsInteractor -> LocalAnnotationsPersistence : createOrUpdateAnnotation(annotation)
 activate LocalAnnotationsPersistence
 
-LocalAnnotationsPersistence --> AnnotationsInteractor
 deactivate LocalAnnotationsPersistence
 
 AnnotationsInteractor -> AnnotationsInteractor : publishAnnotation(messageSubtype, annotation)
@@ -46,25 +45,18 @@ activate DocumentPresenter
 DocumentPresenter -> AnnotationPresenter : receiveUpdate(annotation)
 activate AnnotationPresenter
 
-AnnotationPresenter --> DocumentPresenter
 deactivate AnnotationPresenter
 
-DocumentPresenter --> AnnotationsInteractor
 deactivate DocumentPresenter
 
-AnnotationsInteractor --> AnnotationsInteractor
 deactivate AnnotationsInteractor
 
-AnnotationsInteractor --> RootInteractor
 deactivate AnnotationsInteractor
 
-RootInteractor --> RootInteractor
 deactivate RootInteractor
 
-RootInteractor --> WebSocketManager
 deactivate RootInteractor
 
-WebSocketManager -->[
 deactivate WebSocketManager
 
 @enduml
