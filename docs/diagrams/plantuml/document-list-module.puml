@@ -1,6 +1,4 @@
 @startuml
-'https://plantuml.com/component-diagram
-
 
 package "Document List" {
     Class DocumentListViewController {
