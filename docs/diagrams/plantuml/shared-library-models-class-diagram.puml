@@ -1,0 +1,138 @@
+@startuml
+
+package "Shared Library Models Class Diagram" {
+    Class Document {
+        id
+        name
+        ownerId
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        // Modify annotations array
+        addAnnotation(annotation)
+        updateAnnotation(updatedAnnotation)
+        setAnnotations(annotations: [Annotation])
+
+        receiveRestoreDeletedAnnotation(annotation)
+        contains(annotation)
+
+        // Timestamps
+        setCreatedAt(date)
+        setUpdatedAt(date)
+        setDeletedAt(date)
+    }
+
+    Class Annotation {
+        id
+        originX
+        originY
+        width
+        ownerId
+        createdAt
+        updatedAt
+        deletedAt
+
+        // Computed properties
+        texts: []AnnotationText]
+        handwritings: [AnnotationHandwriting]
+        nonDeletedParts: [AnnotationPart]
+        --
+        // Adding parts
+        - addInitialPart()
+        addPlainTextPart()
+        addMarkdownPart()
+        addHandwritingPart()
+        appendTextPartIfNecessary()
+        appendMarkdownPartIfNecessary()
+        appendHandwritingPartIfNecessary()
+
+        // Removing parts
+        removePart(part: AnnotationPart)
+        removePartIfPossible(part: AnnotationPart)
+
+        // Timestamps
+        setCreatedAt(date)
+        setUpdatedAt(date)
+        setDeletedAt(date)
+
+        clone() -> Annotation
+    }
+
+    Interface AnnotationPart {
+        id
+        order
+        height
+        createdAt
+        updatedAt
+        deletedAt
+
+        // Computed properties
+        isEmpty: Bool
+        isDeleted: Bool
+        --
+        remove()
+    }
+
+    Class AnnotationHandwriting {
+        handwriting: Data
+        --
+        setHandwriting(newHandwriting: Data)
+        clone(clonedAnnotationId: UUID) -> AnnotationHandwriting
+    }
+
+    Class AnnotationText {
+        content: String
+        --
+        setContent(newContent: String)
+        clone(clonedAnnotationId: UUID) -> AnnotationText
+    }
+
+    Enum TextType {
+        plainText
+        markdown
+    }
+    AnnotationText -> TextType
+
+    Class SelectionBox {
+        id
+        startPoint: CGPoint
+        endPoint: CGPoint
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        setEndPoint(newEndPoint: CGPoint)
+        clone(clonedAnnotationId: UUID)
+    }
+
+    Class AnnotatoUser {
+        id
+        email
+        displayName
+        createdAt
+        updatedAt
+        deletedAt
+    }
+
+    Class DocumentShare {
+        id
+        documentId
+        recipientId
+        createdAt
+        updatedAt
+        deletedAt
+    }
+
+    Annotation --> "1" Document
+    Annotation --> "*" AnnotationPart
+    Annotation --> "1" SelectionBox
+
+    Document --> "*" Annotation
+    AnnotationPart ..> "References id of" Annotation
+    SelectionBox ..> "References id of" Annotation
+    AnnotationHandwriting --up|> AnnotationPart
+    AnnotationText --up|> AnnotationPart
+}
+
+@enduml
