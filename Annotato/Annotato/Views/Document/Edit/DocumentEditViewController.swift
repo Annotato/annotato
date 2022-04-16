@@ -57,7 +57,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     }
 
     private func initializeDocumentView() {
-        guard let documentViewModel = presenter else {
+        guard let documentPresenter = presenter else {
             presentErrorAlert(errorMessage: "Failed to load document.")
             return
         }
@@ -66,7 +66,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
         documentView = DocumentView(
             frame: self.view.safeAreaLayoutGuide.layoutFrame,
-            documentPresenter: documentViewModel
+            documentPresenter: documentPresenter
         )
 
         guard let documentView = documentView else {
@@ -85,11 +85,11 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
     private func saveDocument() {
         Task {
-            guard let documentViewModel = presenter else {
+            guard let documentPresenter = presenter else {
                 return
             }
 
-            await documentViewModel.updateDocumentWithDeleted()
+            await documentPresenter.updateDocumentWithDeleted()
         }
     }
 

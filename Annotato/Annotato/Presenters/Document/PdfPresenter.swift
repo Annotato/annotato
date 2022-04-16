@@ -14,6 +14,6 @@ class PdfPresenter {
 
         self.document = pdfDocument
         AnnotatoLogger.info("Loaded PDFDocument with document URL: \(String(describing: pdfDocument.documentURL))",
-                            context: "PdfViewModel::init")
+                            context: "PdfPresenter::init")
     }
 }

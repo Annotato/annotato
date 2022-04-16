@@ -23,8 +23,8 @@ class AnnotationView: UIView {
         self.parentView = parentView
         self.palette = AnnotationPaletteView(presenter: presenter.palette)
 
-        if let mergeConflictPaletteViewModel = presenter.mergeConflictPalette {
-            self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(presenter: mergeConflictPaletteViewModel)
+        if let mergeConflictPalettePresenter = presenter.mergeConflictPalette {
+            self.mergeConflictsPalette = AnnotationMergeConflictsPaletteView(presenter: mergeConflictPalettePresenter)
         }
 
         self.scroll = UIScrollView(frame: presenter.scrollFrame)
@@ -68,8 +68,8 @@ class AnnotationView: UIView {
     }
 
     private func populateParts() {
-        for partViewModel in presenter.parts {
-            parts.addArrangedSubview(partViewModel.toView())
+        for partPresenter in presenter.parts {
+            parts.addArrangedSubview(partPresenter.toView())
         }
     }
 
