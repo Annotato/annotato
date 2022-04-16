@@ -30,12 +30,32 @@ package "Document List" {
 
     Class DocumentListCellPresenter {
         document: Document
+        --
+        canFindUsersSharingDocument() -> Bool
+    }
+
+    Class UsersInteractor {
+        --
+        createUser(user: AnnotatoUser)
+        getUser(userId)
+        getUsersSharingDocument(documentId)
+        saveSessionUser(user: AnnotatoUser)
+        fetchSessionUser()
+        purgeSessionUser()
+    }
+
+    Class AnnotatoUser {
+        email
+        displayName
+        id
     }
 }
 
-DocumentListViewController --down> "1" DocumentListCollectionView
+DocumentListViewController --down> "1 " DocumentListCollectionView
 DocumentListCollectionView --down> "*" DocumentListCellPresenter
 DocumentListCollectionView ..left> "*" DocumentListCollectionCellView
-DocumentListCollectionCellView --down> "1" DocumentListCellPresenter
+DocumentListCollectionCellView --down> "1 " DocumentListCellPresenter
+DocumentListCellPresenter --down> "1" UsersInteractor
+UsersInteractor ..right> AnnotatoUser
 
 @enduml

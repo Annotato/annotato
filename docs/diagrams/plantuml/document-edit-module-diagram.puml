@@ -25,12 +25,22 @@ package "Document Edit" {
         @Published newDocument: Document
         @Published updatedDocument: Document
         @Published deletedDocument: Document
+        --
+        getDocument(documentId)
+        createDocument(document, selectedFileUrl)
+        updateDocument(document)
+        ...
     }
 
     Class AnnotationsInteractor {
         @Published newAnnotation: Annotation
         @Published updatedAnnotation: Annotation
         @Published deletedAnnotation: Annotation
+        ...
+        --
+        createAnnotation(annotation)
+        updateAnnotation(annotation)
+        deleteAnnotation(annotation)
         ...
     }
 

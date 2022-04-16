@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+
+package "Document Shares" {
+    Class DocumentCodeImportViewController {
+        --
+        didTapImportButton()
+        importDocument()
+    }
+
+    Class DocumentSharesPresenter {
+        --
+        createDocumentShare(documentId)
+    }
+
+    Class AuthPresenter {
+        currentUser: AnnotatoUser
+    }
+
+    Class DocumentSharesInteractor {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(document, receipendId)
+    }
+
+    Class DocumentShare {
+        id
+        documentId
+        receipendId
+    }
+
+    Class RemoteDocumentSharesPersistence {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(documentId, receipendId)
+        ...
+    }
+
+    Class localDocumentSharesPersistence {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(documentId, receipendId)
+        ...
+    }
+}
+
+DocumentSharesInteractor ..left> DocumentShare
+DocumentSharesInteractor --down> "1" RemoteDocumentSharesPersistence
+DocumentSharesInteractor --down> "1  " localDocumentSharesPersistence
+
+DocumentSharesPresenter ..left> AuthPresenter
+DocumentCodeImportViewController --down> "1" DocumentSharesPresenter
+DocumentSharesPresenter --down> "1" DocumentSharesInteractor
+
+@enduml
