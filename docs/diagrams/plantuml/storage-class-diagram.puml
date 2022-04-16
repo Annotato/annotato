@@ -6,40 +6,40 @@ skinparam classBackgroundColor ENTITY_COLOR
 
 Package Storage {
     Interface AnnotatoStorageService <<protocol>> {
-        delegate: AnnotatoStorageDelegate?
         --
-        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
-        deletePdf(document: Document, completion: Document -> Void)
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        deletePdf(fileName: String)
     }
 
-    Class AnnotatoPdfStorageManager {
+    Class PDFStorageManager {
         --
-        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
-        deletePdf(document: Document, completion: Document -> Void)
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        deletePdf(fileName: String)
     }
 
     Class FirebaseStorage {
         ( - ) storage: Firebase.Storage
         ( - ) storageRef: Firebase.StorageReference
         --
-        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
-        deletePdf(document: Document, completion: Document -> Void)
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        deletePdf(fileName: String)
+        getDownloadURL(documentId: UUID)
     }
 
-    Class AnnotatoStorageDelegate {
-        uploadDidFail(error: Error)
-        deleteDidFail(error: Error)
-        uploadDidSucceed()
-        deleteDidSucceed()
+    Class LocalStorage {
+        appDocumentsDirectory: URL
+        --
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        uploadPdf(pdfData: Data, fileName: String)
+        deletePdf(fileName: String))
     }
 }
 
-AnnotatoPdfStorageManager *--> AnnotatoStorageService
-FirebaseStorage .up.|> AnnotatoStorageService
-FirebaseStorage *-> AnnotatoStorageDelegate
+PDFStorageManager *--> "localStorageService" AnnotatoStorageService
+PDFStorageManager *--> "remoteStorageService" AnnotatoStorageService
 
-'Represents clients of the StorageService'
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> AnnotatoPdfStorageManager
+FirebaseStorage .up.|> AnnotatoStorageService
+LocalStorage .up.|> AnnotatoStorageService
+LocalStorage -[hidden]right-> FirebaseStorage
 
 @enduml
