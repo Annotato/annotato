@@ -1,4 +1,4 @@
-@startuml logger-class-diagram
+@startuml websocket-messages-class-diagram
 !include style.puml
 skinparam arrowThickness 1.1
 skinparam arrowColor ENTITY_COLOR
