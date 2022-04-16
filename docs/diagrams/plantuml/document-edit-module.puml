@@ -1,0 +1,23 @@
+@startuml
+
+package "Document Edit" {
+    Class DocumentEditViewController {
+        documentView: DocumentView
+        presenter: DocumentPresenter
+        --
+        didTapBackButton()
+        didTapShareButton()
+        saveDocument()
+    }
+
+    Class DocumentView {
+
+    }
+
+    Class DocumentPresenter {
+
+    }
+}
+
+DocumentView --down> DocumentPresenter
+@enduml
