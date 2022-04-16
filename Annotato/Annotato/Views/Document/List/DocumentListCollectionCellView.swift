@@ -6,7 +6,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     let deleteIconHeight = 50.0
     let shareIconWidth = 25.0
     private var deleteButton = UIButton()
-    private var deleteMenu = DocumentListDeleteMenu()
+    private var deleteMenu = DocumentListDeleteMenuView()
     weak var actionDelegate: DocumentListCollectionCellViewDelegate?
 
     @available(*, unavailable)
@@ -70,7 +70,7 @@ class DocumentListCollectionCellView: UICollectionViewCell {
     private func initializeDeleteMenu() {
         let width = 120.0
         let height = 80.0
-        deleteMenu = DocumentListDeleteMenu(frame: .zero)
+        deleteMenu = DocumentListDeleteMenuView(frame: .zero)
 
         addSubview(deleteMenu)
 
