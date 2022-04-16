@@ -1,0 +1,100 @@
+@startuml
+
+package "Fluent Entities" {
+    Class DocumentEntity {
+        id
+        name
+        ownerId
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: Document) -> Self
+    }
+
+    Class AnnotationEntity {
+        id
+        originX
+        originY
+        width
+        ownerId
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: Annotation) -> Self
+    }
+
+    Class AnnotationHandwritingEntity {
+        id
+        order
+        height
+        handwriting: Data
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: AnnotationHandwriting) -> Self
+    }
+
+    Class AnnotationTextEntity {
+        id
+        type
+        order
+        height
+        content: String
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: AnnotationText) -> Self
+    }
+
+    Class SelectionBoxEntity {
+        id
+        startPointX
+        startPointY
+        endPointX
+        endPointY
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: SelectionBox) -> Self
+    }
+
+    Class DocumentShareEntity {
+        id
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: DocumentShare) -> Self
+    }
+
+    Class UserEntity {
+        id
+        email
+        displayName
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} fromModel(model: AnnotatoUser) -> Self
+    }
+
+    AnnotationEntity --> "1" DocumentEntity
+    AnnotationEntity --> "*" AnnotationHandwritingEntity
+    AnnotationEntity --> "*" AnnotationTextEntity
+    AnnotationEntity --> "1" SelectionBoxEntity
+
+    DocumentEntity --> "*" AnnotationEntity
+    AnnotationHandwritingEntity --> "1" AnnotationEntity
+    AnnotationTextEntity --> "1" AnnotationEntity
+    SelectionBoxEntity --> "1" AnnotationEntity
+
+    DocumentShareEntity --up> "1" DocumentEntity
+    DocumentShareEntity --right> "1" UserEntity
+}
+
+@enduml
