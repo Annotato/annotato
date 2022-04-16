@@ -1,0 +1,165 @@
+@startuml
+
+' Shared
+Class WebSocketManager {
+    socket
+    @Published message
+    --
+    setUpSocket()
+    resetSocket()
+    listen()
+    send(message)
+    publishResponseData(data)
+}
+
+Class RootInteractor {
+    @Published crudDocumentMessage
+    @Published crudAnnotationMessage
+    --
+    publishMessage(decodedMessageType, message)
+}
+Interface AnnotatoHTTPService {
+}
+
+' Documents
+package "Documents Persistence" {
+    Class DocumentsInteractor {
+        --
+        getOwnDocuments(userId)
+        getSharedDocuments(userId)
+        getDocument(documentId)
+        createDocument(document, selectedfFileUrl)
+        updateDocument(document)
+        deleteDocument(document)
+        deleteDocumentLocally(document)
+        getLocalAndRemoteDocument(documentId)
+    }
+
+    RootInteractor --down> "1 | subscribes to" WebSocketManager
+    DocumentsInteractor --down> "1 | subscribes to" RootInteractor
+
+    package "Remote Documents Persistence Service" {
+        Class RemoteDocumentsPersistence {
+            --
+            // Through HTTP
+            getOwnDocuments(userId)
+            getSharedDocuments(userId)
+            getDocument(documentId)
+            createDocument(document)
+
+            // Through Web Socket
+            updateDocument(document, senderId)
+            deleteDocument(document, senderId)
+            deleteDocuments(documents, senderId)
+        }
+    }
+    RemoteDocumentsPersistence --down> AnnotatoHTTPService
+    RemoteDocumentsPersistence --down> WebSocketManager
+
+    package "Local Documents Persistence Service" {
+        Class LocalDocumentsPersistence {
+            --
+            getOwnDocuments(userId)
+            getSharedDocuments(userId)
+            getDocument(documentId)
+            createDocument(document)
+            updateDocument(document)
+            deleteDocument(document)
+            createOrUpdateDocument(document)
+        }
+
+        Class LocalDocumentEntityDataAccess {
+            context
+            --
+            listOwn(userId)
+            listShared(userId)
+            listCreatedAfterDate(date)
+            listUpdatedAfterDate(date)
+            create(document)
+            read(documentId, withDeleted)
+            readInCurrentContext(documentId, withDeleted)
+            update(documentId, document)
+            delete(documentId, document)
+        }
+
+        entity "Document Core Data Entities"
+        note "Shown in a separate diagram" as N1
+        "Document Core Data Entities" ..left N1
+
+        LocalDocumentEntityDataAccess ..down> "Document Core Data Entities"
+        LocalDocumentsPersistence --down> "1" LocalDocumentEntityDataAccess
+    }
+
+    package "Remote Document Shares Service" {
+        Class RemoteDocumentSharesPersistence {
+            --
+            // Through HTTP
+            createDocumentShare(documentShare)
+            deleteDocumentShare(documentId, recipientId)
+            deleteDocumentShares(documentIds, recipientId)
+        }
+        RemoteDocumentSharesPersistence --> AnnotatoHTTPService
+    }
+
+    DocumentsInteractor --down> RemoteDocumentsPersistence
+    DocumentsInteractor --down> LocalDocumentsPersistence
+    DocumentsInteractor --down> RemoteDocumentSharesPersistence
+}
+
+' Annotations
+package "Annotations Persistence" {
+    Class AnnotationsInteractor {
+        --
+        createAnnotation(annotation)
+        updateAnnotation(annotation)
+        deleteAnnotation(annotation)
+        createOrUpdateAnnotation(annotation)
+
+        // Conflict resolution persistence
+        persistConflictResolution(conflictResolution: ConflictResolution<Annotation>)
+    }
+
+    package "Remote Annotations Persistence Service" {
+        Class RemoteAnnotationsPersistenceService {
+            --
+            createAnnotation(annotation, senderId)
+            updateAnnotation(annotation, senderId)
+            deleteAnnotation(annotation, senderId)
+            createOrUpdateAnnotation(annotation, senderId)
+        }
+        RemoteAnnotationsPersistenceService --down> WebSocketManager
+    }
+
+    package "Local Annotations Persistence Service" {
+        Class LocalAnnotationsPersistence {
+            --
+            createAnnotation(annotation)
+            updateAnnotation(annotation)
+            deleteAnnotation(annotation)
+            createOrUpdateAnnotation(annotation)
+        }
+
+        Class LocalAnnotationsEntityDataAccess {
+            context
+            --
+            listCreatedAfterDate(date)
+            listUpdatedAfterDate(date)
+            create(annotation)
+            read(annotationId, withDeleted)
+            readInCurrentContext(annotationId, withDeleted)
+            update(annotationId, annotation)
+            delete(annotationId, annotation)
+        }
+
+        entity "Annotations Core Data Entities"
+        note "Shown in a separate diagram" as N2
+        "Annotations Core Data Entities" ..left N2
+
+        LocalAnnotationsEntityDataAccess ..down> "Annotations Core Data Entities"
+        LocalAnnotationsPersistence --down> "1" LocalAnnotationsEntityDataAccess
+    }
+    AnnotationsInteractor --down> "1" RemoteAnnotationsPersistenceService
+    AnnotationsInteractor --down> "1" LocalAnnotationsPersistence
+    AnnotationsInteractor --down> "1 | subscribes to" RootInteractor
+}
+@enduml
