@@ -1,0 +1,54 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor ENTITY_COLOR
+skinparam classBackgroundColor ENTITY_COLOR
+
+Package "Conflict Resolution" {
+    Class "ConflictResolution<T: ConflictResolvable> " as ConflictResolution {
+        localCreate: [T]
+        localUpdate: [T]
+        localDelete: [T]
+
+        serverCreate: [T]
+        serverUpdate: [T]
+        serverDelete: [T]
+    }
+
+    Class Document {}
+    Class Annotation {}
+
+    Interface Identifiable <<protocol>> {}
+    Interface Equatable <<protocol>> {}
+    Interface Timestampable <<protocol>> {}
+    Interface ConflictResolvable <<protocol>> {}
+
+    Class "ConflictResolver<Model: ConflictResolvable> " as ConflictResolver {
+        localModels: [Model]
+        serverModels: [Model]
+        --
+        resolve(): ConflictResolution<Model>
+        handleExclusiveToLocal(localModel: Model, resolution: ConflictResolution<Model>)
+        handleExclusiveToServer(serverModel: Model, resolution: ConflictResolution<Model>)
+        handleCommonToLocalAndServer(localModel: Model, serverModel: Model, resolution: ConflictResolution<Model>)
+    }
+
+    Class DocumentConflictResolver {
+        handleExclusiveToServer(serverModel: Document, resolution: ConflictResolution<Document>)
+    }
+
+    DocumentConflictResolver -|> ConflictResolver
+
+    ConflictResolvable -up-|> Identifiable
+    ConflictResolvable -up-|> Equatable
+    ConflictResolvable -up-|> Timestampable
+
+    ConflictResolver ..> ConflictResolution
+    ConflictResolution ..> ConflictResolvable
+    ConflictResolver ..> ConflictResolvable
+
+    Annotation -up-|> ConflictResolvable
+    Document -up-|> ConflictResolvable
+}
+
+@enduml
