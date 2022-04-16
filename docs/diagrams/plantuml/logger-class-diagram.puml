@@ -1,0 +1,40 @@
+@startuml logger-class-diagram
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor ENTITY_COLOR
+skinparam classBackgroundColor ENTITY_COLOR
+
+package Logger {
+    Interface AnnotatoLoggerService <<protocol>> {
+        func verbose(_ message: String, context: String?)
+        func debug(_ message: String, context: String?)
+        func info(_ message: String, context: String?)
+        func warning(_ message: String, context: String?)
+        func error(_ message: String, context: String?)
+    }
+
+    class Logger {
+            func verbose(_ message: String, context: String?)
+            func debug(_ message: String, context: String?)
+            func info(_ message: String, context: String?)
+            func warning(_ message: String, context: String?)
+            func error(_ message: String, context: String?)
+        }
+
+    class AnnotatoLogger {
+        ( - ) logService: AnnotatoLoggerService
+        {static} ( - ) shared: AnnotatoLogger
+        --
+        {static} func verbose(_ message: String, context: String?)
+        {static} func debug(_ message: String, context: String?)
+        {static} func info(_ message: String, context: String?)
+        {static} func warning(_ message: String, context: String?)
+        {static} func error(_ message: String, context: String?)
+    }
+
+    AnnotatoLogger -up-> Logger
+
+    Logger .up.|> AnnotatoLoggerService
+}
+
+@enduml
