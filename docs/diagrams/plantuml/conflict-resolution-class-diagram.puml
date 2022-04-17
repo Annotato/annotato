@@ -37,7 +37,7 @@ Package "Conflict Resolution" {
         handleExclusiveToServer(serverModel: Document, resolution: ConflictResolution<Document>)
     }
 
-    DocumentConflictResolver -|> ConflictResolver
+    DocumentConflictResolver --|> ConflictResolver
 
     ConflictResolvable -up-|> Identifiable
     ConflictResolvable -up-|> Equatable
