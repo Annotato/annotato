@@ -1,0 +1,87 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor ENTITY_COLOR
+skinparam classBackgroundColor ENTITY_COLOR
+
+Package Auth {
+    Package Views {
+        Class AuthViewController {
+            emailTextField: UITextField
+            passwordTextField: UITextField
+            displayNameTextField: UITextField
+            submitButton: UIButton
+            --
+            ( - ) onSubmitButtonTapped()
+        }
+    }
+
+    Package Presenters {
+        Class AuthPresenter {
+            currentUser: AnnotatoUser?
+
+            @Published signUpIsSuccess: Bool
+            @Published logInIsSuccess: Bool
+            @Published signUpError: Error?
+            @Published logInError: Error?
+            --
+            signUp(email: String, password: String, displayName: String)
+            logIn(email: String, password: String)
+            logOut()
+
+            ( - ) createUser(user: AnnotatoUser)
+            ( - ) handleLoginSuccess(userId: String)
+            ( - ) setUser(userId: String)
+        }
+    }
+
+    Package Interactors {
+        Class UsersInteractor {
+            --
+            createUser(user: AnnotatoUser)
+            getUser(userId: String)
+            saveSessionUser(user: AnnotatoUser)
+            fetchSessionUser(): AnnotatoUser?
+            purgeSessionUser()
+        }
+    }
+
+    Package Persistence/Entities {
+        Class RemoteUsersPersistence {
+            httpService: AnnotatoHTTPService
+            --
+            createUser(user: AnnotatoUser)
+            getUser(userId: String)
+        }
+    }
+
+    Interface AnnotatoAuthService <<protocol>> {
+        @Published newUser: AnnotatoUser?
+        @Published loggedInUser: AnnotatoUser?
+        @Published signUpError: Error?
+        @Published logInError: Error?
+        --
+        signUp(email: String, password: String, displayName: String)
+        logIn(email: String, password: String)
+        logOut()
+    }
+
+    Class FirebaseAuthService {
+        currentFirebaseUser: Firebase.User?
+        --
+        signUp(email: String, password: String, displayName: String)
+        logIn(email: String, password: String)
+        logOut()
+        ( - ) setDisplayName(displayName: String, email: String)
+        toAnnotatoUser(): AnnotatoUser
+    }
+
+    AuthViewController *-down-> AuthPresenter
+    AuthPresenter *-down-> UsersInteractor
+    UsersInteractor *-down-> RemoteUsersPersistence
+
+    AuthPresenter *-> AnnotatoAuthService
+    FirebaseAuthService .up.|> AnnotatoAuthService
+}
+
+@enduml
