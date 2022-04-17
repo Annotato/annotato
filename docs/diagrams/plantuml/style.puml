@@ -8,15 +8,16 @@
 'T1 through T4 are shades of the original color from lightest to darkest
 
 ' To be used for both views and view controllers
-!define VIEW_COLOR #1D8900
-!define VIEW_BACKGROUND_COLOR #83E769
+!define VIEW_COLOR #205F7E
+!define VIEW_BACKGROUND_COLOR #A3C6D5
 
-!define INTERACTOR_COLOR #3333C4
-!define INTERACTOR_BACKGROUND_COLOR #C8C8FA
+!define INTERACTOR_COLOR #9238a4
+!define INTERACTOR_BACKGROUND_COLOR #E1A2EE
 
-!define PRESENTER_COLOR #3333C4
-!define PRESENTER_BACKGROUND_COLOR #C8C8FA
+!define PRESENTER_COLOR #5D79E0
+!define PRESENTER_BACKGROUND_COLOR #B0C6FA
 
+<<<<<<< HEAD
 !define ENTITY_COLOR #9D0012
 !define ENTITY_BACKGROUND_COLOR #F97181
 
@@ -25,32 +26,41 @@
 
 !define BACKEND_COLOR #A38300
 !define BACKEND_BACKGROUND_COLOR #FFE374
+=======
+!define MODEL_COLOR #9F1652
+!define MODEL_BACKGROUND_COLOR #E79AB9
+
+!define ENTITY_COLOR #9F1652
+!define ENTITY_BACKGROUND_COLOR #E79AB9
+
+!define BACKEND_COLOR #1e212b
+!define BACKEND_BACKGROUND_COLOR #ADAACC
+>>>>>>> 268d3ce... Add delete document sequence diagrams and change style
 
 ' To be used for authentication and storage things
-!define FIREBASE_COLOR #7F5200
-!define FIREBASE_BACKGROUND_COLOR #E59400
+!define FIREBASE_COLOR #9F1652
+!define FIREBASE_BACKGROUND_COLOR #E79AB9
 
-!define OTHER_COLOR #121f15
-!define OTHER_BACKGROUND_COLOR #569466
+!define OTHER_COLOR #1e212b
+!define OTHER_BACKGROUND_COLOR #ADAACC
 
 !define USER_COLOR #000000
 
 skinparam BackgroundColor #FFFFFFF
-
-skinparam Shadowing false
 
 skinparam Class {
     FontColor #FFFFFF
     BorderThickness 1
     BorderColor #FFFFFF
     StereotypeFontColor #FFFFFF
-    FontName Arial
+    FontName Courier
 }
 
 skinparam Actor {
     BorderColor USER_COLOR
+    BorderThickness 2
     Color USER_COLOR
-    FontName Arial
+    FontName Courier
 }
 
 skinparam Sequence {
@@ -58,19 +68,20 @@ skinparam Sequence {
     BoxFontSize 15
     BoxPadding 0
     BoxFontColor #FFFFFF
-    FontName Arial
+    FontName Courier
 }
 
 skinparam Participant {
-    FontColor #FFFFFFF
+    FontColor #FFFFFF
     Padding 20
+    FontName Courier
 }
 
 skinparam MinClassWidth 50
 skinparam ParticipantPadding 10
-skinparam Shadowing false
 skinparam DefaultTextAlignment center
 skinparam packageStyle Rectangle
+skinparam defaultFontName Courier
 
 ' this makes the visibility + - ~, etc. instead of using icons
 skinparam classAttributeIconSize 0
