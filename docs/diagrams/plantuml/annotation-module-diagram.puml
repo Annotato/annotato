@@ -3,6 +3,7 @@
 skinparam arrowThickness 1.1
 skinparam arrowColor ENTITY_COLOR
 skinparam classBackgroundColor ENTITY_COLOR
+skinparam dpi 1200
 
 Package Annotation {
     Package Views {
@@ -227,8 +228,8 @@ Package Annotation {
             fetchSessionUser(): AnnotatoUser?
         }
 
-        AnnotationsInteractor *-left-> RootInteractor
-        AnnotationsInteractor *-right-> UsersInteractor
+        AnnotationsInteractor *--> RootInteractor
+        AnnotationsInteractor *--> UsersInteractor
     }
 
     Package Persistence/Entities {
@@ -263,8 +264,8 @@ Package Annotation {
     AnnotationPresenter *-down--> AnnotationsInteractor
 
     ' Interactor -> Persistence
-    AnnotationsInteractor *-down--> RemoteAnnotationsPersistence
-    AnnotationsInteractor *-down--> LocalAnnotationsPersistence
+    AnnotationsInteractor *-> RemoteAnnotationsPersistence
+    AnnotationsInteractor *-> LocalAnnotationsPersistence
 
 
 }
