@@ -1,5 +1,4 @@
 import Foundation
-import AnnotatoSharedLibrary
 
 class LocalStorage: AnnotatoLocalStorageService {
     var appDocumentsDirectory: URL {

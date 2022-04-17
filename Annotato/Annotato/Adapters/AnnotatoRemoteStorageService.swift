@@ -1,5 +1,4 @@
 import Foundation
-import AnnotatoSharedLibrary
 
 protocol AnnotatoRemoteStorageService {
     func getDownloadUrl(fileName: String) async -> URL?

@@ -1,5 +1,4 @@
 import Foundation
-import AnnotatoSharedLibrary
 
 protocol AnnotatoLocalStorageService {
     func getUrl(fileName: String) -> URL

@@ -1,6 +1,5 @@
 import Firebase
 import FirebaseStorage
-import AnnotatoSharedLibrary
 
 class FirebaseStorage: AnnotatoRemoteStorageService {
     private let storage = Storage.storage()
