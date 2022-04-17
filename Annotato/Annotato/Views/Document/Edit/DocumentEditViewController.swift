@@ -14,6 +14,7 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        presenter = DocumentPresenter(webSocketManager: webSocketManager)
         initializeSubviews()
     }
 

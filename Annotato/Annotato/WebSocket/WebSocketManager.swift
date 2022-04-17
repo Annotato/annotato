@@ -104,6 +104,8 @@ class WebSocketManager: ObservableObject {
         NetworkMonitor.shared.$isConnected.sink { [weak self] isConnected in
             if isConnected {
                 self?.setUpSocket()
+            } else {
+                self?.resetSocket()
             }
         }.store(in: &cancellables)
     }

@@ -58,7 +58,6 @@ class ConflictResolver<Model: ConflictResolvable> {
     }
 
     func handleExclusiveToServer(serverModel: Model, resolution: inout ConflictResolution<Model>) {
-
         resolution.localCreate.append(serverModel)
         resolution.nonConflictingModels.append(serverModel)
     }
