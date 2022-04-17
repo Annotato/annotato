@@ -1,19 +1,16 @@
 @startuml
 !include style.puml
-skinparam arrowThickness 1.1
-skinparam arrowColor ENTITY_COLOR
-skinparam classBackgroundColor ENTITY_COLOR
-skinparam dpi 1200
+skinparam arrowColor #000000
 
 Package Annotation {
     Package Views {
-        Class AnnotationView {
+        Class AnnotationView VIEW_COLOR {
             --
             didTap()
             didPan()
             resize()
         }
-        Class AnnotationPaletteView {
+        Class AnnotationPaletteView VIEW_COLOR {
             textButton: ToggleableButton
             markdownButton: ToggleableButton
             handwritingButton: ToggleableButton
@@ -26,7 +23,7 @@ Package Annotation {
             didTapDeleteButton()
             didTapMinimizeOrMaximizeButton()
         }
-        Class AnnotationMergeConflictsPaletteView {
+        Class AnnotationMergeConflictsPaletteView VIEW_COLOR {
             saveMergeConflictsButton: UIButton
             discardMergeConflictsButton: UIButton
             conflictIdxButton: UIButton
@@ -34,19 +31,19 @@ Package Annotation {
             didTapSaveMergeConflictsButton()
             didTapDiscardMergeConflictsButton()
         }
-        Interface AnnotationPartView <<protocol>> {
+        Interface AnnotationPartView <<protocol>> VIEW_COLOR {
             --
             addAnnotationPartBorders()
         }
-        Class SelectionBoxView {
+        Class SelectionBoxView VIEW_COLOR {
 
         }
-        Class AnnotationTextView {
+        Class AnnotationTextView VIEW_COLOR {
             --
             textViewDidChange()
             didTap()
         }
-        Class AnnotationMarkdownView {
+        Class AnnotationMarkdownView VIEW_COLOR {
             editView: UITextView
             previewView: UIView
             --
@@ -54,13 +51,19 @@ Package Annotation {
             didTap()
             ( - ) makeMarkdownView(): UIView
         }
-        Class AnnotationHandwritingView {
+        Class AnnotationHandwritingView VIEW_COLOR {
             toolPicker: PKToolPicker
 
             --
             initializeToolPicker()
             canvasViewDrawingDidChange()
             didTap()
+        }
+
+        Class UITextView VIEW_COLOR {
+        }
+
+        Class PKCanvasView VIEW_COLOR {
         }
 
         AnnotationTextView -up-|> UITextView
@@ -76,7 +79,7 @@ Package Annotation {
         AnnotationView *-down-> AnnotationMergeConflictsPaletteView
     }
     Package Presenters {
-        Class AnnotationPresenter {
+        Class AnnotationPresenter PRESENTER_COLOR {
             @Published conflictIdx: Int
             @Published positionDidChange: Bool
             @Published isResizing: Bool
@@ -114,11 +117,11 @@ Package Annotation {
             receiveDelete()
             receiveUpdate(updatedAnnotation: Annotation)
         }
-        Class DocumentPresenter {
+        Class DocumentPresenter PRESENTER_COLOR {
             deleteAnnotation(annotation: Annotation)
             setAllOtherAnnotationsOutOfFocus(annotationInFocus: Annotation)
         }
-        Interface AnnotationPartPresenter <<protocol>> {
+        Interface AnnotationPartPresenter <<protocol>> PRESENTER_COLOR {
             @Published isEditing: Bool
             @Published isSelected: Bool
             @Published isRemoved: Bool
@@ -132,33 +135,33 @@ Package Annotation {
 
             toView(): AnnotationPartView
         }
-        Class AnnotationHandwritingPresenter {
+        Class AnnotationHandwritingPresenter PRESENTER_COLOR {
             handwritingDrawing: PKDrawing
             --
             setHandwritingDrawing(newHandwritingDrawing: PKDrawing)
             toView(): AnnotationPartView
         }
-        Class AnnotationTextPresenter {
+        Class AnnotationTextPresenter PRESENTER_COLOR {
             content: String
             --
             setContent(newContent: String)
             toView(): AnnotationPartView
         }
-        Class AnnotationMarkdownPresenter {
+        Class AnnotationMarkdownPresenter PRESENTER_COLOR {
             content: String
             editFrame: CGRect
             --
             setContent(newContent: String)
             toView(): AnnotationPartView
         }
-        Class AnnotationMergeConflictsPalettePresenter {
+        Class AnnotationMergeConflictsPalettePresenter PRESENTER_COLOR {
             conflictIdx: Int
             frame: CGRect
             --
             didTapSaveMergeConflictsButton()
             didTapDiscardMergeConflictsButton()
         }
-        Class AnnotationPalettePresenter {
+        Class AnnotationPalettePresenter PRESENTER_COLOR {
             @Published isMinimized: Bool
             @Published isEditing: Bool
             @Published textIsSelected: Bool
@@ -178,7 +181,7 @@ Package Annotation {
             enterMaximizedMode()
             updatePalette(selectedPart: AnnotationPartPresenter)
         }
-        Class SelectionBoxPresenter {
+        Class SelectionBoxPresenter PRESENTER_COLOR {
             startPoint: CGPoint
             endPoint: CGPoint
             frame: CGRect
@@ -200,7 +203,7 @@ Package Annotation {
     }
 
     Package Interactors {
-        Class AnnotationsInteractor {
+        Class AnnotationsInteractor INTERACTOR_COLOR {
             @Published newAnnotation: Annotation?
             @Published updatedAnnotation: Annotation?
             @Published deletedAnnotation: Annotation?
@@ -215,7 +218,7 @@ Package Annotation {
             ( - ) decodeData(data: Data): AnnotatoCudAnnotationMessage?
             ( - ) publishAnnotation(messageSubtype: AnnotationCudAnnotationMessageType, annotation: Annotation)
         }
-        Class RootInteractor {
+        Class RootInteractor INTERACTOR_COLOR {
             @Published crudAnnotationMessage: Data?
             @Published crudDocumentMessage: Data?
             --
@@ -223,7 +226,7 @@ Package Annotation {
             ( - ) decodeData(data: Data): AnnotatoMessage?
             ( - ) publishAnnotation(decodedMessageType: AnnotationCudAnnotationMessageType, message: Data)
         }
-        Class UsersInteractor {
+        Class UsersInteractor INTERACTOR_COLOR {
             --
             fetchSessionUser(): AnnotatoUser?
         }
@@ -233,7 +236,7 @@ Package Annotation {
     }
 
     Package Persistence/Entities {
-        Class RemoteAnnotationsPersistence {
+        Class RemoteAnnotationsPersistence ENTITY_COLOR {
             ( - ) webSocketManager: WebSocketManager?
             __
             createAnnotation(annotation: Annotation, senderId: String): Annotation?
@@ -241,7 +244,7 @@ Package Annotation {
             deleteAnnotation(annotation: Annotation, senderId: String): Annotation?
             createOrUpdateAnnotation(annotation: Annotation, senderId: String): Annotation?
         }
-        Class LocalAnnotationsPersistence {
+        Class LocalAnnotationsPersistence ENTITY_COLOR {
             localAnnotationEntityDataAccess: LocalAnnotationEntityDataAccess
             --
             createAnnotation(annotation: Annotation): Annotation?
@@ -264,8 +267,8 @@ Package Annotation {
     AnnotationPresenter *-down--> AnnotationsInteractor
 
     ' Interactor -> Persistence
-    AnnotationsInteractor *-> RemoteAnnotationsPersistence
-    AnnotationsInteractor *-> LocalAnnotationsPersistence
+    AnnotationsInteractor *-down-> RemoteAnnotationsPersistence
+    AnnotationsInteractor *-down-> LocalAnnotationsPersistence
 
 
 }

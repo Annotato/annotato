@@ -70,11 +70,11 @@ Package "Shared Library Models" {
     User "owner" *-> "*" Document
     User "recipient\n0..*" -- "0..*" Document
     (Document, User) . DocumentShare
-    Document *-down-> "*" Annotation
-    Annotation *-down> "*" AnnotationPart
+    Document *-right> "*" Annotation
+    Annotation *-left> "*" AnnotationPart
     AnnotationHandwriting .up.|> AnnotationPart
     AnnotationText .up.|> AnnotationPart
-    Annotation *-> "1" SelectionBox
+    Annotation *--right> "1" SelectionBox
 
     User .up|> Timestampable
     DocumentShare .up|> Timestampable

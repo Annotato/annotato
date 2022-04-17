@@ -1,12 +1,9 @@
 @startuml
 !include style.puml
-skinparam arrowThickness 1.1
-skinparam arrowColor ENTITY_COLOR
-skinparam classBackgroundColor ENTITY_COLOR
 
 Package Auth {
     Package Views {
-        Class AuthViewController {
+        Class AuthViewController VIEW_COLOR {
             emailTextField: UITextField
             passwordTextField: UITextField
             displayNameTextField: UITextField
@@ -17,7 +14,7 @@ Package Auth {
     }
 
     Package Presenters {
-        Class AuthPresenter {
+        Class AuthPresenter PRESENTER_COLOR {
             currentUser: AnnotatoUser?
 
             @Published signUpIsSuccess: Bool
@@ -36,7 +33,7 @@ Package Auth {
     }
 
     Package Interactors {
-        Class UsersInteractor {
+        Class UsersInteractor INTERACTOR_COLOR {
             --
             createUser(user: AnnotatoUser)
             getUser(userId: String)
@@ -47,7 +44,7 @@ Package Auth {
     }
 
     Package Persistence/Entities {
-        Class RemoteUsersPersistence {
+        Class RemoteUsersPersistence ENTITY_COLOR {
             httpService: AnnotatoHTTPService
             --
             createUser(user: AnnotatoUser)
@@ -56,7 +53,7 @@ Package Auth {
     }
 
     Package "Authentication Service" {
-        Interface AnnotatoAuthService <<protocol>> {
+        Interface AnnotatoAuthService <<protocol>> FIREBASE_COLOR {
             @Published newUser: AnnotatoUser?
             @Published loggedInUser: AnnotatoUser?
             @Published signUpError: Error?
@@ -67,7 +64,7 @@ Package Auth {
             logOut()
         }
 
-        Class FirebaseAuthService {
+        Class FirebaseAuthService FIREBASE_COLOR {
             currentFirebaseUser: Firebase.User?
             --
             signUp(email: String, password: String, displayName: String)
