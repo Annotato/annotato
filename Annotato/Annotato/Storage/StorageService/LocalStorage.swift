@@ -1,7 +1,7 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-class LocalStorage {
+class LocalStorage: AnnotatoLocalStorageService {
     var appDocumentsDirectory: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }

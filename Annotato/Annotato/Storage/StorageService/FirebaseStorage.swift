@@ -2,7 +2,7 @@ import Firebase
 import FirebaseStorage
 import AnnotatoSharedLibrary
 
-class FirebaseStorage: AnnotatoStorageService {
+class FirebaseStorage: AnnotatoRemoteStorageService {
     private let storage = Storage.storage()
     private var storageRef: StorageReference {
         storage.reference()

@@ -1,8 +1,9 @@
 import Foundation
 import AnnotatoSharedLibrary
 
-protocol AnnotatoStorageService {
-    func getDownloadUrl(fileName: String) async -> URL?
+protocol AnnotatoLocalStorageService {
+    func getUrl(fileName: String) -> URL
     func uploadPdf(fileSystemUrl: URL, fileName: String)
+    func uploadPdf(pdfData: Data, fileName: String)
     func deletePdf(fileName: String)
 }

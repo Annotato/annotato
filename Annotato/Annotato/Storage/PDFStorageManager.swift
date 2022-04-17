@@ -2,10 +2,11 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class PDFStorageManager {
-    private var localStorageService = LocalStorage()
-    private var remoteStorageService: AnnotatoStorageService
+    private var localStorageService: AnnotatoLocalStorageService
+    private var remoteStorageService: AnnotatoRemoteStorageService
 
     init() {
+        localStorageService = LocalStorage()
         remoteStorageService = FirebaseStorage()
     }
 
