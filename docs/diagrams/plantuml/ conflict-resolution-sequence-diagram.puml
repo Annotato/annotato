@@ -53,7 +53,7 @@ DocumentsInteractor ---> DocumentPresenter : (localDocument, remoteDocument)
 deactivate DocumentsInteractor
 
 create ConflictResolver
-DocumentPresenter --> ConflictResolver
+DocumentPresenter --> ConflictResolver : init(localAnnotations, remoteAnnotations)
 activate ConflictResolver
 
 ConflictResolver ---> DocumentPresenter
