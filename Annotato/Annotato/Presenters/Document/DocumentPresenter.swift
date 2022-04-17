@@ -213,7 +213,8 @@ extension DocumentPresenter {
 
 extension DocumentPresenter {
     func loadDocumentWithDeleted(documentId: UUID) async {
-        if let resultDocumentWithConflictResolution = await loadResolvedDocument(documentId: documentId) {
+        if let resultDocumentWithConflictResolution = await documentsInteractor
+            .loadResolvedDocument(documentId: documentId) {
             receiveUpdateDocument(updatedDocument: resultDocumentWithConflictResolution)
             return
         }
@@ -223,33 +224,6 @@ extension DocumentPresenter {
         }
 
         receiveUpdateDocument(updatedDocument: model)
-    }
-
-    private func loadResolvedDocument(documentId: UUID) async -> Document? {
-        let localAndRemoteDocumentPair = await documentsInteractor
-            .getLocalAndRemoteDocument(documentId: documentId)
-        guard let localDocument = localAndRemoteDocumentPair.local,
-              let serverDocument = localAndRemoteDocumentPair.remote else {
-            AnnotatoLogger.error("Could not load from local and remote for conflict resolution")
-            return nil
-        }
-
-        let resolvedAnnotations = ConflictResolver(localModels: localDocument.annotations,
-                                                   serverModels: serverDocument.annotations).resolve()
-
-        await annotationsInteractor.persistConflictResolution(conflictResolution: resolvedAnnotations)
-
-        serverDocument.setAnnotations(annotations: resolvedAnnotations.nonConflictingModels)
-
-        for (conflictIdx, (localAnnotation, serverAnnotation)) in resolvedAnnotations.conflictingModels.enumerated() {
-            let newLocalAnnotation = localAnnotation.clone()
-            newLocalAnnotation.conflictIdx = conflictIdx
-            serverAnnotation.conflictIdx = conflictIdx
-            serverDocument.addAnnotation(annotation: newLocalAnnotation)
-            serverDocument.addAnnotation(annotation: serverAnnotation)
-        }
-
-        return serverDocument
     }
 
     func updateDocumentWithDeleted() async {

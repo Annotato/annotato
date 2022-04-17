@@ -6,6 +6,7 @@ class DocumentsInteractor {
     private let webSocketManager: WebSocketManager?
     private let rootInteractor: RootInteractor
     private let usersInteractor: UsersInteractor
+    private let annotationsInteractor: AnnotationsInteractor
     private let pdfStorageManager = PDFStorageManager()
 
     private let remoteDocumentsPersistence: RemoteDocumentsPersistence
@@ -21,6 +22,7 @@ class DocumentsInteractor {
         self.webSocketManager = webSocketManager
         self.rootInteractor = RootInteractor(webSocketManager: webSocketManager)
         self.usersInteractor = UsersInteractor()
+        self.annotationsInteractor = AnnotationsInteractor(webSocketManager: webSocketManager)
         self.remoteDocumentsPersistence = RemoteDocumentsPersistence(
             webSocketManager: webSocketManager
         )
@@ -136,6 +138,32 @@ class DocumentsInteractor {
         let localDocument = localDocumentsPersistence.getDocument(documentId: documentId)
         let remoteDocument = await remoteDocumentsPersistence.getDocument(documentId: documentId)
         return (localDocument, remoteDocument)
+    }
+
+    func loadResolvedDocument(documentId: UUID) async -> Document? {
+        let localAndRemoteDocumentPair = await getLocalAndRemoteDocument(documentId: documentId)
+        guard let localDocument = localAndRemoteDocumentPair.local,
+              let serverDocument = localAndRemoteDocumentPair.remote else {
+            AnnotatoLogger.error("Could not load from local and remote for conflict resolution")
+            return nil
+        }
+
+        let resolvedAnnotations = ConflictResolver(localModels: localDocument.annotations,
+                                                   serverModels: serverDocument.annotations).resolve()
+
+        await annotationsInteractor.persistConflictResolution(conflictResolution: resolvedAnnotations)
+
+        serverDocument.setAnnotations(annotations: resolvedAnnotations.nonConflictingModels)
+
+        for (conflictIdx, (localAnnotation, serverAnnotation)) in resolvedAnnotations.conflictingModels.enumerated() {
+            let newLocalAnnotation = localAnnotation.clone()
+            newLocalAnnotation.conflictIdx = conflictIdx
+            serverAnnotation.conflictIdx = conflictIdx
+            serverDocument.addAnnotation(annotation: newLocalAnnotation)
+            serverDocument.addAnnotation(annotation: serverAnnotation)
+        }
+
+        return serverDocument
     }
 }
 
