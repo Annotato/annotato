@@ -55,32 +55,34 @@ Package Auth {
         }
     }
 
-    Interface AnnotatoAuthService <<protocol>> {
-        @Published newUser: AnnotatoUser?
-        @Published loggedInUser: AnnotatoUser?
-        @Published signUpError: Error?
-        @Published logInError: Error?
-        --
-        signUp(email: String, password: String, displayName: String)
-        logIn(email: String, password: String)
-        logOut()
-    }
+    Package "Authentication Service" {
+        Interface AnnotatoAuthService <<protocol>> {
+            @Published newUser: AnnotatoUser?
+            @Published loggedInUser: AnnotatoUser?
+            @Published signUpError: Error?
+            @Published logInError: Error?
+            --
+            signUp(email: String, password: String, displayName: String)
+            logIn(email: String, password: String)
+            logOut()
+        }
 
-    Class FirebaseAuthService {
-        currentFirebaseUser: Firebase.User?
-        --
-        signUp(email: String, password: String, displayName: String)
-        logIn(email: String, password: String)
-        logOut()
-        ( - ) setDisplayName(displayName: String, email: String)
-        toAnnotatoUser(): AnnotatoUser
+        Class FirebaseAuthService {
+            currentFirebaseUser: Firebase.User?
+            --
+            signUp(email: String, password: String, displayName: String)
+            logIn(email: String, password: String)
+            logOut()
+            ( - ) setDisplayName(displayName: String, email: String)
+            toAnnotatoUser(): AnnotatoUser
+        }
     }
 
     AuthViewController *-down-> AuthPresenter
     AuthPresenter *-down-> UsersInteractor
     UsersInteractor *-down-> RemoteUsersPersistence
 
-    AuthPresenter *-> AnnotatoAuthService
+    AuthPresenter *-down-> AnnotatoAuthService
     FirebaseAuthService .up.|> AnnotatoAuthService
 }
 
