@@ -1,7 +1,9 @@
 @startuml
 
+!include style.puml
+
 package "Document Edit" {
-    Class DocumentEditViewController {
+    Class DocumentEditViewController VIEW_COLOR {
         documentView: DocumentView
         presenter: DocumentPresenter
         --
@@ -10,18 +12,18 @@ package "Document Edit" {
         saveDocument()
     }
 
-    Class DocumentView {
+    Class DocumentView VIEW_COLOR {
         pdfView: DocumentPdfView
         annotationViews: [AnnotationView]
     }
 
-    Class DocumentPresenter {
+    Class DocumentPresenter PRESENTER_COLOR {
     }
 
-    Class AnnotationsPresenter {
+    Class AnnotationsPresenter PRESENTER_COLOR {
     }
 
-    Class DocumentsInteractor {
+    Class DocumentsInteractor INTERACTOR_COLOR {
         @Published newDocument: Document
         @Published updatedDocument: Document
         @Published deletedDocument: Document
@@ -32,7 +34,7 @@ package "Document Edit" {
         ...
     }
 
-    Class AnnotationsInteractor {
+    Class AnnotationsInteractor INTERACTOR_COLOR {
         @Published newAnnotation: Annotation
         @Published updatedAnnotation: Annotation
         @Published deletedAnnotation: Annotation
@@ -44,12 +46,12 @@ package "Document Edit" {
         ...
     }
 
-    Class RootInteractor {
+    Class RootInteractor INTERACTOR_COLOR {
         @Published crudDocumentMessage: Data
         @Published crudAnnotationMessage: Data
     }
 
-    Class WebSocketManager {
+    Class WebSocketManager WEBSOCKET_COLOR {
         @Published message: Data
         --
         setUpSocket()

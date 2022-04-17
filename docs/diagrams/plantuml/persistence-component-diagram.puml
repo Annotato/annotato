@@ -1,7 +1,9 @@
 @startuml
 
+!include style.puml
+
 ' Shared
-Class WebSocketManager {
+Class WebSocketManager WEBSOCKET_COLOR {
     socket
     @Published message
     --
@@ -12,18 +14,18 @@ Class WebSocketManager {
     publishResponseData(data)
 }
 
-Class RootInteractor {
+Class RootInteractor INTERACTOR_COLOR {
     @Published crudDocumentMessage
     @Published crudAnnotationMessage
     --
     publishMessage(decodedMessageType, message)
 }
-Interface AnnotatoHTTPService {
+Interface AnnotatoHTTPService OTHER_COLOR {
 }
 
 ' Documents
 package "Documents Persistence" {
-    Class DocumentsInteractor {
+    Class DocumentsInteractor INTERACTOR_COLOR {
         --
         getOwnDocuments(userId)
         getSharedDocuments(userId)
@@ -39,7 +41,7 @@ package "Documents Persistence" {
     DocumentsInteractor --down> "1 | subscribes to" RootInteractor
 
     package "Remote Documents Persistence Service" {
-        Class RemoteDocumentsPersistence {
+        Class RemoteDocumentsPersistence PERSISTENCE_COLOR {
             --
             // Through HTTP
             getOwnDocuments(userId)
@@ -57,7 +59,7 @@ package "Documents Persistence" {
     RemoteDocumentsPersistence --down> WebSocketManager
 
     package "Local Documents Persistence Service" {
-        Class LocalDocumentsPersistence {
+        Class LocalDocumentsPersistence PERSISTENCE_COLOR {
             --
             getOwnDocuments(userId)
             getSharedDocuments(userId)
@@ -68,7 +70,7 @@ package "Documents Persistence" {
             createOrUpdateDocument(document)
         }
 
-        Class LocalDocumentEntityDataAccess {
+        Class LocalDocumentEntityDataAccess DATAACCESS_COLOR {
             context
             --
             listOwn(userId)
@@ -82,7 +84,7 @@ package "Documents Persistence" {
             delete(documentId, document)
         }
 
-        entity "Document Core Data Entities"
+        entity "Document Core Data Entities" ENTITY_COLOR
         note "Shown in a separate diagram" as N1
         "Document Core Data Entities" ..left N1
 
@@ -91,7 +93,7 @@ package "Documents Persistence" {
     }
 
     package "Remote Document Shares Service" {
-        Class RemoteDocumentSharesPersistence {
+        Class RemoteDocumentSharesPersistence PERSISTENCE_COLOR {
             --
             // Through HTTP
             createDocumentShare(documentShare)
@@ -108,7 +110,7 @@ package "Documents Persistence" {
 
 ' Annotations
 package "Annotations Persistence" {
-    Class AnnotationsInteractor {
+    Class AnnotationsInteractor INTERACTOR_COLOR {
         --
         createAnnotation(annotation)
         updateAnnotation(annotation)
@@ -120,18 +122,18 @@ package "Annotations Persistence" {
     }
 
     package "Remote Annotations Persistence Service" {
-        Class RemoteAnnotationsPersistenceService {
+        Class RemoteAnnotationsPersistence PERSISTENCE_COLOR {
             --
             createAnnotation(annotation, senderId)
             updateAnnotation(annotation, senderId)
             deleteAnnotation(annotation, senderId)
             createOrUpdateAnnotation(annotation, senderId)
         }
-        RemoteAnnotationsPersistenceService --down> WebSocketManager
+        RemoteAnnotationsPersistence --down> WebSocketManager
     }
 
     package "Local Annotations Persistence Service" {
-        Class LocalAnnotationsPersistence {
+        Class LocalAnnotationsPersistence PERSISTENCE_COLOR {
             --
             createAnnotation(annotation)
             updateAnnotation(annotation)
@@ -139,7 +141,7 @@ package "Annotations Persistence" {
             createOrUpdateAnnotation(annotation)
         }
 
-        Class LocalAnnotationsEntityDataAccess {
+        Class LocalAnnotationsEntityDataAccess DATAACCESS_COLOR {
             context
             --
             listCreatedAfterDate(date)
@@ -151,14 +153,14 @@ package "Annotations Persistence" {
             delete(annotationId, annotation)
         }
 
-        entity "Annotations Core Data Entities"
+        entity "Annotations Core Data Entities" ENTITY_COLOR
         note "Shown in a separate diagram" as N2
         "Annotations Core Data Entities" ..left N2
 
         LocalAnnotationsEntityDataAccess ..down> "Annotations Core Data Entities"
         LocalAnnotationsPersistence --down> "1" LocalAnnotationsEntityDataAccess
     }
-    AnnotationsInteractor --down> "1" RemoteAnnotationsPersistenceService
+    AnnotationsInteractor --down> "1" RemoteAnnotationsPersistence
     AnnotationsInteractor --down> "1" LocalAnnotationsPersistence
     AnnotationsInteractor --down> "1 | subscribes to" RootInteractor
 }

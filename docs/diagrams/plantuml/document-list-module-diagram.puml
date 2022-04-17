@@ -1,7 +1,9 @@
 @startuml
 
+!include style.puml
+
 package "Document List" {
-    Class DocumentListViewController {
+    Class DocumentListViewController VIEW_COLOR {
         toolbar: DocumentListToolbarView
         importMenu: DocumentListImportMenu
         --
@@ -19,22 +21,22 @@ package "Document List" {
         didTapChangeOwnerButton(document)
     }
 
-    Class DocumentListCollectionView {
+    Class DocumentListCollectionView VIEW_COLOR {
         isInDeleteMode: Bool
         --
         enterDeleteMode()
         exitDeleteMode()
     }
 
-    Class DocumentListCollectionCellView { }
+    Class DocumentListCollectionCellView VIEW_COLOR { }
 
-    Class DocumentListCellPresenter {
+    Class DocumentListCellPresenter PRESENTER_COLOR {
         document: Document
         --
         canFindUsersSharingDocument() -> Bool
     }
 
-    Class UsersInteractor {
+    Class UsersInteractor INTERACTOR_COLOR {
         --
         createUser(user: AnnotatoUser)
         getUser(userId)
@@ -44,7 +46,7 @@ package "Document List" {
         purgeSessionUser()
     }
 
-    Class AnnotatoUser {
+    Class AnnotatoUser MODEL_COLOR {
         email
         displayName
         id

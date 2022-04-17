@@ -1,7 +1,9 @@
 @startuml
 
-package "Core Data Entities" {
-    Class DocumentEntity {
+!include style.puml
+
+package "Core Data Entities" ENTITY_BACKGROUND_COLOR {
+    Class DocumentEntity ENTITY_COLOR {
         id
         name
         ownerId
@@ -16,7 +18,7 @@ package "Core Data Entities" {
         copyPropertiesOf(updatedModel)
     }
 
-    Class AnnotationEntity {
+    Class AnnotationEntity ENTITY_COLOR {
         id
         width
         ownerId
@@ -34,7 +36,7 @@ package "Core Data Entities" {
     }
 
 
-    Class AnnotationHandwritingEntity {
+    Class AnnotationHandwritingEntity ENTITY_COLOR {
         id
         order
         height
@@ -50,7 +52,7 @@ package "Core Data Entities" {
         copyPropertiesOf(updatedModel)
     }
 
-    Class AnnotationTextEntity {
+    Class AnnotationTextEntity ENTITY_COLOR {
         id
         type
         order
@@ -67,7 +69,7 @@ package "Core Data Entities" {
         copyPropertiesOf(updatedModel)
     }
 
-    Class SelectionBoxEntity {
+    Class SelectionBoxEntity ENTITY_COLOR {
         id
         startPointX
         startPointY

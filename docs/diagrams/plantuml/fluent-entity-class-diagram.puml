@@ -1,7 +1,9 @@
 @startuml
 
-package "Fluent Entities" {
-    Class DocumentEntity {
+!include style.puml
+
+package "Fluent Entities" ENTITY_BACKGROUND_COLOR {
+    Class DocumentEntity ENTITY_COLOR {
         id
         name
         ownerId
@@ -12,7 +14,7 @@ package "Fluent Entities" {
         {static} fromModel(model: Document) -> Self
     }
 
-    Class AnnotationEntity {
+    Class AnnotationEntity ENTITY_COLOR {
         id
         originX
         originY
@@ -25,7 +27,7 @@ package "Fluent Entities" {
         {static} fromModel(model: Annotation) -> Self
     }
 
-    Class AnnotationHandwritingEntity {
+    Class AnnotationHandwritingEntity ENTITY_COLOR {
         id
         order
         height
@@ -37,7 +39,7 @@ package "Fluent Entities" {
         {static} fromModel(model: AnnotationHandwriting) -> Self
     }
 
-    Class AnnotationTextEntity {
+    Class AnnotationTextEntity ENTITY_COLOR {
         id
         type
         order
@@ -50,7 +52,7 @@ package "Fluent Entities" {
         {static} fromModel(model: AnnotationText) -> Self
     }
 
-    Class SelectionBoxEntity {
+    Class SelectionBoxEntity ENTITY_COLOR {
         id
         startPointX
         startPointY
@@ -63,7 +65,7 @@ package "Fluent Entities" {
         {static} fromModel(model: SelectionBox) -> Self
     }
 
-    Class DocumentShareEntity {
+    Class DocumentShareEntity ENTITY_COLOR {
         id
         createdAt
         updatedAt
@@ -72,7 +74,7 @@ package "Fluent Entities" {
         {static} fromModel(model: DocumentShare) -> Self
     }
 
-    Class UserEntity {
+    Class UserEntity ENTITY_COLOR {
         id
         email
         displayName

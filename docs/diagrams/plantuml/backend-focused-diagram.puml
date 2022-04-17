@@ -1,9 +1,11 @@
 @startuml
 
+!include style.puml
+
 node "Web Socket Entry" as N1
 node "HTTP Entry" as N2
 
-package "Backend" {
+package "Backend" BACKEND_BACKGROUND_COLOR {
     package "HTTP Routers" {
         [DocumentsRouter]
         [DocumentSharesRouter]

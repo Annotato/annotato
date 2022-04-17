@@ -1,43 +1,43 @@
 @startuml
-'https://plantuml.com/component-diagram
 
+!include style.puml
 
 package "Document Shares" {
-    Class DocumentCodeImportViewController {
+    Class DocumentCodeImportViewController VIEW_COLOR {
         --
         didTapImportButton()
         importDocument()
     }
 
-    Class DocumentSharesPresenter {
+    Class DocumentSharesPresenter PRESENTER_COLOR {
         --
         createDocumentShare(documentId)
     }
 
-    Class AuthPresenter {
+    Class AuthPresenter PRESENTER_COLOR {
         currentUser: AnnotatoUser
     }
 
-    Class DocumentSharesInteractor {
+    Class DocumentSharesInteractor INTERACTOR_COLOR {
         --
         createDocumentShare(documentShare)
         deleteDocumentShare(document, receipendId)
     }
 
-    Class DocumentShare {
+    Class DocumentShare MODEL_COLOR {
         id
         documentId
         receipendId
     }
 
-    Class RemoteDocumentSharesPersistence {
+    Class RemoteDocumentSharesPersistence PERSISTENCE_COLOR {
         --
         createDocumentShare(documentShare)
         deleteDocumentShare(documentId, receipendId)
         ...
     }
 
-    Class localDocumentSharesPersistence {
+    Class localDocumentSharesPersistence PERSISTENCE_COLOR {
         --
         createDocumentShare(documentShare)
         deleteDocumentShare(documentId, receipendId)
