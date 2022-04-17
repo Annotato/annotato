@@ -21,33 +21,32 @@ package "Document Shares" {
     Class DocumentSharesInteractor INTERACTOR_COLOR {
         --
         createDocumentShare(documentShare)
-        deleteDocumentShare(document, receipendId)
+        deleteDocumentShare(document, recipientId)
     }
 
     Class DocumentShare MODEL_COLOR {
         id
         documentId
-        receipendId
+        recipientId
     }
 
-    Class RemoteDocumentSharesPersistence PERSISTENCE_COLOR {
+    Class RemoteDocumentSharesPersistence ENTITY_COLOR {
         --
         createDocumentShare(documentShare)
-        deleteDocumentShare(documentId, receipendId)
-        ...
+        deleteDocumentShare(documentId, recipientId)
     }
 
-    Class localDocumentSharesPersistence PERSISTENCE_COLOR {
+    Class LocalDocumentsPersistence ENTITY_COLOR {
         --
-        createDocumentShare(documentShare)
-        deleteDocumentShare(documentId, receipendId)
-        ...
+        getDocument(documentId)
+        createDocument(document)
+        updateDocument(document)
     }
 }
 
 DocumentSharesInteractor ..left> DocumentShare
 DocumentSharesInteractor --down> "1" RemoteDocumentSharesPersistence
-DocumentSharesInteractor --down> "1  " localDocumentSharesPersistence
+DocumentSharesInteractor --down> "1  " LocalDocumentsPersistence
 
 DocumentSharesPresenter ..left> AuthPresenter
 DocumentCodeImportViewController --down> "1" DocumentSharesPresenter
