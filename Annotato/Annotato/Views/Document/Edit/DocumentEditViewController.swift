@@ -126,7 +126,7 @@ extension DocumentEditViewController {
         presenter?.$hasUpdatedDocument.sink(receiveValue: { [weak self] hasUpdatedDocument in
             if hasUpdatedDocument {
                 DispatchQueue.main.async {
-                    self?.viewWillAppear(false)
+                    self?.initializeDocumentView()
                 }
             }
         }).store(in: &cancellables)
