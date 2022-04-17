@@ -31,10 +31,10 @@ activate DocumentEditViewController
 DocumentEditViewController --> DocumentPresenter : loadDocumentWithDeleted(documentId)
 activate DocumentPresenter
 
-DocumentPresenter --> DocumentPresenter : loadResolvedDocument(documentId)
-activate DocumentPresenter
+DocumentPresenter --> DocumentsInteractor : loadResolvedDocument(documentId)
+activate DocumentsInteractor
 
-DocumentPresenter --> DocumentsInteractor : getLocalAndRemoteDocument(documentId)
+DocumentsInteractor --> DocumentsInteractor : getLocalAndRemoteDocument(documentId)
 activate DocumentsInteractor
 
 DocumentsInteractor --> LocalDocumentsPersistence : getDocument(documentId)
@@ -49,26 +49,26 @@ activate RemoteDocumentsPersistence
 RemoteDocumentsPersistence ---> DocumentsInteractor : localDocument
 deactivate RemoteDocumentsPersistence
 
-DocumentsInteractor ---> DocumentPresenter : (localDocument, remoteDocument)
+DocumentsInteractor ---> DocumentsInteractor : (localDocument, remoteDocument)
 deactivate DocumentsInteractor
 
 create ConflictResolver
-DocumentPresenter --> ConflictResolver : init(localAnnotations, remoteAnnotations)
+DocumentsInteractor --> ConflictResolver : init(localAnnotations, remoteAnnotations)
 activate ConflictResolver
 
-ConflictResolver ---> DocumentPresenter
+ConflictResolver ---> DocumentsInteractor
 deactivate ConflictResolver
 
-DocumentPresenter --> ConflictResolver : resolve()
+DocumentsInteractor --> ConflictResolver : resolve()
 activate ConflictResolver
 
 ref over ConflictResolver : Conflict Resolution
 
-ConflictResolver ---> DocumentPresenter
+ConflictResolver ---> DocumentsInteractor
 deactivate ConflictResolver
 
-DocumentPresenter ---> DocumentPresenter
-deactivate DocumentPresenter
+DocumentsInteractor ---> DocumentPresenter
+deactivate DocumentsInteractor
 
 DocumentPresenter ---> DocumentEditViewController
 deactivate DocumentPresenter
