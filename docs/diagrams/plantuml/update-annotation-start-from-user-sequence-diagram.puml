@@ -1,9 +1,7 @@
 @startuml update-annotation-start-from-user-sequence-diagram
 !include style.puml
 
-box Actor
 actor User as User USER_COLOR
-end box
 
 box View VIEW_BACKGROUND_COLOR
 participant ":AnnotationPaletteView" as AnnotationPaletteView VIEW_COLOR

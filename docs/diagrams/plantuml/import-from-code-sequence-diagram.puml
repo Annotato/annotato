@@ -1,9 +1,7 @@
 @startuml import-from-ipad-sequence-diagram
 !include style.puml
 
-box Actor
 actor User as User USER_COLOR
-end box
 
 box View VIEW_BACKGROUND_COLOR
 participant ":DocumentListViewController" as DocumentListViewController VIEW_COLOR
@@ -18,14 +16,13 @@ box Model MODEL_BACKGROUND_COLOR
 participant ":DocumentShare" as DocumentShare MODEL_COLOR
 end box
 
-
 box Interactor INTERACTOR_BACKGROUND_COLOR
 participant ":DocumentSharesInteractor" as DocumentSharesInteractor INTERACTOR_COLOR
 end box
 
-box Persistence OTHER_BACKGROUND_COLOR
-participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence OTHER_COLOR
-participant ":RemoteDocumentSharesPersistence" as RemoteDocumentSharesPersistence OTHER_COLOR
+box Persistence ENTITY_BACKGROUND_COLOR
+participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence ENTITY_COLOR
+participant ":RemoteDocumentSharesPersistence" as RemoteDocumentSharesPersistence ENTITY_COLOR
 end box
 
 User -> DocumentListViewController : didTapFromCodeButton()
