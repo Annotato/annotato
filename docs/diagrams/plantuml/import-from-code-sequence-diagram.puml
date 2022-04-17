@@ -1,4 +1,4 @@
-@startuml import-from-ipad-sequence-diagram
+@startuml import-from-code-sequence-diagram
 !include style.puml
 
 actor User as User USER_COLOR
