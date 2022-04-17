@@ -4,42 +4,55 @@ skinparam arrowThickness 1.1
 skinparam arrowColor ENTITY_COLOR
 skinparam classBackgroundColor ENTITY_COLOR
 
-Package Storage {
-    Interface AnnotatoStorageService <<protocol>> {
-        delegate: AnnotatoStorageDelegate?
+Package "PDF Storage" {
+    Interface AnnotatoRemoteStorageService <<protocol>> {
         --
-        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
-        deletePdf(document: Document, completion: Document -> Void)
+        getDownloadUrl(fileName: String): URL?
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        deletePdf(fileName: String)
     }
 
-    Class AnnotatoPdfStorageManager {
+    Interface AnnotatoLocalStorageService <<protocol>> {
         --
-        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
-        deletePdf(document: Document, completion: Document -> Void)
+        getUrl(fileName: String): URL
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        uploadPdf(pdfData: Data, fileName: String)
+        deletePdf(fileName: String)
+    }
+
+    Class PDFStorageManager {
+        --
+        getLocalUrl(fileName: String): URL
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        downloadPdfToLocalStorage(fileName: String)
+        deletePdf(fileName: String)
     }
 
     Class FirebaseStorage {
         ( - ) storage: Firebase.Storage
         ( - ) storageRef: Firebase.StorageReference
         --
-        uploadPdf(fileSystemUrl: URL, name: String, completion: Document -> Void)
-        deletePdf(document: Document, completion: Document -> Void)
+        getDownloadUrl(fileName: String): URL?
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        deletePdf(fileName: String)
     }
 
-    Class AnnotatoStorageDelegate {
-        uploadDidFail(error: Error)
-        deleteDidFail(error: Error)
-        uploadDidSucceed()
-        deleteDidSucceed()
+    Class LocalStorage {
+        appDocumentsDirectory: URL
+        --
+        getUrl(fileName: String): URL
+        uploadPdf(fileSystemUrl: URL, fileName: String)
+        uploadPdf(pdfData: Data, fileName: String)
+        deletePdf(fileName: String)
     }
 }
 
-AnnotatoPdfStorageManager *--> AnnotatoStorageService
-FirebaseStorage .up.|> AnnotatoStorageService
-FirebaseStorage *-> AnnotatoStorageDelegate
+PDFStorageManager *--> "localStorageService" AnnotatoLocalStorageService
+PDFStorageManager *--> "remoteStorageService" AnnotatoRemoteStorageService
 
-'Represents clients of the StorageService'
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> AnnotatoPdfStorageManager
+FirebaseStorage .up.|> AnnotatoRemoteStorageService
+LocalStorage .up.|> AnnotatoLocalStorageService
+
+LocalStorage -[hidden]right-> FirebaseStorage
 
 @enduml

@@ -1,0 +1,86 @@
+@startuml
+!include style.puml
+
+Package Auth {
+    Package Views {
+        Class AuthViewController VIEW_COLOR {
+            emailTextField: UITextField
+            passwordTextField: UITextField
+            displayNameTextField: UITextField
+            submitButton: UIButton
+            --
+            ( - ) onSubmitButtonTapped()
+        }
+    }
+
+    Package Presenters {
+        Class AuthPresenter PRESENTER_COLOR {
+            currentUser: AnnotatoUser?
+
+            @Published signUpIsSuccess: Bool
+            @Published logInIsSuccess: Bool
+            @Published signUpError: Error?
+            @Published logInError: Error?
+            --
+            signUp(email: String, password: String, displayName: String)
+            logIn(email: String, password: String)
+            logOut()
+
+            ( - ) createUser(user: AnnotatoUser)
+            ( - ) handleLoginSuccess(userId: String)
+            ( - ) setUser(userId: String)
+        }
+    }
+
+    Package Interactors {
+        Class UsersInteractor INTERACTOR_COLOR {
+            --
+            createUser(user: AnnotatoUser)
+            getUser(userId: String)
+            saveSessionUser(user: AnnotatoUser)
+            fetchSessionUser(): AnnotatoUser?
+            purgeSessionUser()
+        }
+    }
+
+    Package Persistence/Entities {
+        Class RemoteUsersPersistence ENTITY_COLOR {
+            httpService: AnnotatoHTTPService
+            --
+            createUser(user: AnnotatoUser)
+            getUser(userId: String)
+        }
+    }
+
+    Package "Authentication Service" {
+        Interface AnnotatoAuthService <<protocol>> FIREBASE_COLOR {
+            @Published newUser: AnnotatoUser?
+            @Published loggedInUser: AnnotatoUser?
+            @Published signUpError: Error?
+            @Published logInError: Error?
+            --
+            signUp(email: String, password: String, displayName: String)
+            logIn(email: String, password: String)
+            logOut()
+        }
+
+        Class FirebaseAuthService FIREBASE_COLOR {
+            currentFirebaseUser: Firebase.User?
+            --
+            signUp(email: String, password: String, displayName: String)
+            logIn(email: String, password: String)
+            logOut()
+            ( - ) setDisplayName(displayName: String, email: String)
+            toAnnotatoUser(): AnnotatoUser
+        }
+    }
+
+    AuthViewController *-down-> AuthPresenter
+    AuthPresenter *-down-> UsersInteractor
+    UsersInteractor *-down-> RemoteUsersPersistence
+
+    AuthPresenter *-down-> AnnotatoAuthService
+    FirebaseAuthService .up.|> AnnotatoAuthService
+}
+
+@enduml

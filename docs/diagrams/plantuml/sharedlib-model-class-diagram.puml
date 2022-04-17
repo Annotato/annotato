@@ -4,7 +4,7 @@ skinparam arrowThickness 1.1
 skinparam arrowColor ENTITY_COLOR
 skinparam classBackgroundColor ENTITY_COLOR
 
-Package Models {
+Package "Shared Library Models" {
     Class User {
         uid: String
         email: String
@@ -58,14 +58,30 @@ Package Models {
         recipientId: String
     }
 
-    User "owner" *--> "*" Document
+    Interface Timestampable <<protocol>> {
+        createdAt: Date?
+        updatedAt: Date?
+        deletedAt: Date?
+        --
+        wasCreatedAfter(date: Date): Bool
+        wasUpdatedAfter(date: Date): Bool
+    }
+
+    User "owner" *-> "*" Document
     User "recipient\n0..*" -- "0..*" Document
     (Document, User) . DocumentShare
-    Document *-> "*" Annotation
-    Annotation *-> "*" AnnotationPart
+    Document *-right> "*" Annotation
+    Annotation *-left> "*" AnnotationPart
     AnnotationHandwriting .up.|> AnnotationPart
     AnnotationText .up.|> AnnotationPart
-    Annotation *-> "1" SelectionBox
+    Annotation *--right> "1" SelectionBox
+
+    User .up|> Timestampable
+    DocumentShare .up|> Timestampable
+    Document .up|> Timestampable
+    Annotation .up|> Timestampable
+    SelectionBox .up|> Timestampable
+    AnnotationPart -up|> Timestampable
 }
 
 
