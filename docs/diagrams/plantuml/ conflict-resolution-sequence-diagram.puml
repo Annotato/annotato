@@ -28,7 +28,7 @@ activate DocumentEditViewController
 DocumentEditViewController --> DocumentEditViewController : initializeSubviews()
 activate DocumentEditViewController
 
-DocumentEditViewController --> DocumentPresenter : loadDocumentWithDeleted(documentId)
+DocumentEditViewController --> DocumentPresenter : loadDocument(documentId)
 activate DocumentPresenter
 
 DocumentPresenter --> DocumentsInteractor : loadResolvedDocument(documentId)
