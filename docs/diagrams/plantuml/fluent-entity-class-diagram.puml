@@ -2,7 +2,7 @@
 
 !include style.puml
 
-package "Fluent Entities" ENTITY_BACKGROUND_COLOR {
+package "Fluent Entities" {
     Class DocumentEntity ENTITY_COLOR {
         id
         name

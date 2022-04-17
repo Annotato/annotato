@@ -51,6 +51,31 @@ package "Document List" {
         displayName
         id
     }
+
+    Class DocumentListPresenter PRESENTER_COLOR {
+        --
+        loadAllDocuments(userId)
+        importDocument(selectionFileUrl, completionCallBack)
+        deleteDocumentForEveryone(presenter: DocumentListCellPresenter)
+        deleteDocumentAsNonOwner(presenter: DocumentListCellPresenter)
+    }
+
+    Class DocumentsInteractor INTERACTOR_COLOR {
+        --
+        getOwnDocuments(userId)
+        getSharedDocuments(userId)
+        getDocument(documentId)
+        createDocument(document, selectedFileUrl)
+        updateDocument(document)
+        deleteDocument(document)
+        getLocalAndRemoteDocument(documentId)
+    }
+
+    Class DocumentSharesInteractor INTERACTOR_COLOR {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(document, reciepientId)
+    }
 }
 
 DocumentListViewController --down> "1 " DocumentListCollectionView
@@ -59,5 +84,10 @@ DocumentListCollectionView ..left> "*" DocumentListCollectionCellView
 DocumentListCollectionCellView --down> "1 " DocumentListCellPresenter
 DocumentListCellPresenter --down> "1" UsersInteractor
 UsersInteractor ..right> AnnotatoUser
+
+DocumentListPresenter --down> "1" DocumentsInteractor
+DocumentListPresenter --down> "1" DocumentSharesInteractor
+DocumentListViewController ---down> "1" DocumentListPresenter
+
 
 @enduml
