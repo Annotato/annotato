@@ -1,4 +1,4 @@
-@startuml update-annotation-sequence-diagram
+@startuml update-annotation-sequence-start-from-websocket-diagram
 !include style.puml
 
 box Actor
