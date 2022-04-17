@@ -1,0 +1,82 @@
+@startuml conflict-resolution-sequence-diagram
+!include style.puml
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentEditViewController" as DocumentEditViewController VIEW_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":DocumentPresenter" as DocumentPresenter PRESENTER_COLOR
+end box
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":DocumentsInteractor" as DocumentsInteractor INTERACTOR_COLOR
+end box
+
+box ConflictResolver OTHER_BACKGROUND_COLOR
+participant ":ConflictResolver" as ConflictResolver OTHER_COLOR
+end box
+
+box Persistence OTHER_BACKGROUND_COLOR
+participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence OTHER_COLOR
+participant ":RemoteDocumentsPersistence" as RemoteDocumentsPersistence OTHER_COLOR
+end box
+
+[-> DocumentEditViewController : viewWillAppear(animated)
+activate DocumentEditViewController
+
+DocumentEditViewController --> DocumentEditViewController : initializeSubviews()
+activate DocumentEditViewController
+
+DocumentEditViewController --> DocumentPresenter : loadDocumentWithDeleted(documentId)
+activate DocumentPresenter
+
+DocumentPresenter --> DocumentPresenter : loadResolvedDocument(documentId)
+activate DocumentPresenter
+
+DocumentPresenter --> DocumentsInteractor : getLocalAndRemoteDocument(documentId)
+activate DocumentsInteractor
+
+DocumentsInteractor --> LocalDocumentsPersistence : getDocument(documentId)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence ---> DocumentsInteractor : localDocument
+deactivate LocalDocumentsPersistence
+
+DocumentsInteractor --> RemoteDocumentsPersistence : getDocument(documentId)
+activate RemoteDocumentsPersistence
+
+RemoteDocumentsPersistence ---> DocumentsInteractor : localDocument
+deactivate RemoteDocumentsPersistence
+
+DocumentsInteractor ---> DocumentPresenter : (localDocument, remoteDocument)
+deactivate DocumentsInteractor
+
+create ConflictResolver
+DocumentPresenter --> ConflictResolver
+activate ConflictResolver
+
+ConflictResolver ---> DocumentPresenter
+deactivate ConflictResolver
+
+DocumentPresenter --> ConflictResolver : resolve()
+activate ConflictResolver
+
+ref over ConflictResolver : Conflict Resolution
+
+ConflictResolver ---> DocumentPresenter
+deactivate ConflictResolver
+
+DocumentPresenter ---> DocumentPresenter
+deactivate DocumentPresenter
+
+DocumentPresenter ---> DocumentEditViewController
+deactivate DocumentPresenter
+
+DocumentEditViewController ---> DocumentEditViewController
+deactivate DocumentEditViewController
+
+DocumentEditViewController --->[
+deactivate DocumentEditViewController
+
+@enduml
