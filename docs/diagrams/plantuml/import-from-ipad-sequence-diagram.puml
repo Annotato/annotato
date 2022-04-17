@@ -55,7 +55,7 @@ activate DocumentListPresenter
 opt ifFileExists
 
 create Document
-DocumentListPresenter -> Document
+DocumentListPresenter -> Document : init(name, ownerId)
 activate Document
 
 Document --> DocumentListPresenter : document
