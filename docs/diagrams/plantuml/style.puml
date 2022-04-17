@@ -17,16 +17,6 @@
 !define PRESENTER_COLOR #5D79E0
 !define PRESENTER_BACKGROUND_COLOR #B0C6FA
 
-<<<<<<< HEAD
-!define ENTITY_COLOR #9D0012
-!define ENTITY_BACKGROUND_COLOR #F97181
-
-!define MODEL_COLOR #9D0012
-!define MODEL_BACKGROUND_COLOR #F97181
-
-!define BACKEND_COLOR #A38300
-!define BACKEND_BACKGROUND_COLOR #FFE374
-=======
 !define MODEL_COLOR #9F1652
 !define MODEL_BACKGROUND_COLOR #E79AB9
 
@@ -35,7 +25,6 @@
 
 !define BACKEND_COLOR #1e212b
 !define BACKEND_BACKGROUND_COLOR #ADAACC
->>>>>>> 268d3ce... Add delete document sequence diagrams and change style
 
 ' To be used for authentication and storage things
 !define FIREBASE_COLOR #9F1652
