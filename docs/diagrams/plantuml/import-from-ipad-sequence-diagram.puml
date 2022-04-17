@@ -1,0 +1,125 @@
+@startuml import-from-ipad-sequence-diagram
+!include style.puml
+
+box Actor
+actor User as User USER_COLOR
+end box
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentListViewController" as DocumentListViewController VIEW_COLOR
+participant ":UIDocumentPickerViewController" as UIDocumentPickerViewController VIEW_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":DocumentListPresenter" as DocumentListPresenter PRESENTER_COLOR
+end box
+
+box Model MODEL_BACKGROUND_COLOR
+participant ":Document" as Document MODEL_COLOR
+end box
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":DocumentsInteractor" as DocumentsInteractor INTERACTOR_COLOR
+end box
+
+box Persistence OTHER_BACKGROUND_COLOR
+participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence OTHER_COLOR
+participant ":RemoteDocumentsPersistence" as RemoteDocumentsPersistence OTHER_COLOR
+end box
+
+box Storage FIREBASE_BACKGROUND_COLOR
+participant ":PDFStorageManager" as PDFStorageManager FIREBASE_COLOR
+participant "localStorageService:LocalStorage" as LocalStorage FIREBASE_COLOR
+participant "remoteStorageService:FirebaseStorage" as FirebaseStorage FIREBASE_COLOR
+end box
+
+User -> DocumentListViewController : didTapFromIpadButton()
+activate DocumentListViewController
+
+DocumentListViewController -> DocumentListViewController : goToImportingFiles()
+activate DocumentListViewController
+
+create UIDocumentPickerViewController
+DocumentListViewController -> UIDocumentPickerViewController
+activate UIDocumentPickerViewController
+
+UIDocumentPickerViewController --> DocumentListViewController
+deactivate UIDocumentPickerViewController
+
+UIDocumentPickerViewController -> DocumentListViewController : documentPicker(controller, baseFileUrls)
+activate DocumentListViewController
+
+DocumentListViewController -> DocumentListPresenter : importDocument(selectedFileUrl, completion)
+activate DocumentListPresenter
+
+opt ifFileExists
+
+create Document
+DocumentListPresenter -> Document
+activate Document
+
+Document --> DocumentListPresenter : document
+deactivate Document
+
+DocumentListPresenter -> DocumentsInteractor : createDocument(document, selectedFileUrl)
+activate DocumentsInteractor
+
+DocumentsInteractor -> PDFStorageManager : uploadPdf(selectedFileUrl, fileName)
+activate PDFStorageManager
+
+PDFStorageManager -> LocalStorage : uploadPdf(selectedFileUrl, fileName)
+activate LocalStorage
+
+LocalStorage --> PDFStorageManager
+deactivate LocalStorage
+
+PDFStorageManager -> FirebaseStorage : uploadPdf(selectedFileUrl, fileName)
+activate FirebaseStorage
+
+FirebaseStorage --> PDFStorageManager
+deactivate FirebaseStorage
+
+PDFStorageManager --> DocumentsInteractor
+deactivate PDFStorageManager
+
+DocumentsInteractor -> RemoteDocumentsPersistence : createDocument(document)
+activate RemoteDocumentsPersistence
+
+RemoteDocumentsPersistence --> DocumentsInteractor : remoteCreatedDocument
+deactivate RemoteDocumentsPersistence
+
+alt remoteCreatedDocument is not nil
+
+DocumentsInteractor -> LocalDocumentsPersistence : createDocument(remoteCreatedDocument)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence --> DocumentsInteractor
+deactivate LocalDocumentsPersistence
+
+else else
+
+DocumentsInteractor -> LocalDocumentsPersistence : createDocument(document)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence --> DocumentsInteractor
+deactivate LocalDocumentsPersistence
+
+end alt
+
+DocumentsInteractor -> DocumentListPresenter
+deactivate DocumentsInteractor
+
+end opt
+
+DocumentListPresenter --> DocumentListViewController
+deactivate DocumentListPresenter
+
+deactivate DocumentListViewController
+
+DocumentListViewController --> DocumentListViewController
+deactivate DocumentListViewController
+
+DocumentListViewController --> User
+deactivate DocumentListViewController
+
+@enduml

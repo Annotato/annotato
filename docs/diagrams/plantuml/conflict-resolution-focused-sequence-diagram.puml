@@ -53,7 +53,7 @@ loop for model common in localModels and remoteModels
         activate ConflictResolver
         ConflictResolver ---> ConflictResolver
         deactivate ConflictResolver
-    else
+    else else
         ConflictResolver ---> ConflictResolver : handleConflictingLocalAndServer(localModel, serverModel, resolution)
         activate ConflictResolver
         ConflictResolver ---> ConflictResolver
