@@ -6,7 +6,8 @@ class PdfPresenter {
     let document: PDFDocument
 
     init(document: Document) {
-        guard let pdfDocument = PDFDocument(url: document.localFileUrl) else {
+        guard let pdfDocument = PDFDocument(url: PDFStorageManager()
+            .getLocalUrl(fileName: document.id.uuidString)) else {
             AnnotatoLogger.error("Could not load document")
             // TODO: Handle failed init more gracefully
             fatalError("No such document")
