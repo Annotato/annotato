@@ -8,7 +8,7 @@ class FirebaseStorage: AnnotatoStorageService {
         storage.reference()
     }
 
-    func getUrl(fileName: String) async -> URL? {
+    func getDownloadUrl(fileName: String) async -> URL? {
         let pdfRef = storageRef.child(documentId.uuidString)
         do {
             return try await pdfRef.downloadURL()
@@ -32,22 +32,6 @@ class FirebaseStorage: AnnotatoStorageService {
             }
 
             AnnotatoLogger.info("Uploaded to Firebase - PDF with fileSystemUrl: \(fileSystemUrl)")
-        }
-    }
-
-    func uploadPdf(pdfData: Data, fileName: String) {
-        let pdfRef = storageRef.child(fileName)
-
-        _ = pdfRef.putData(pdfData, metadata: nil) { _, error in
-            if let error = error {
-                AnnotatoLogger.error(
-                    "When uploading PDF data to FB. \(error.localizedDescription)",
-                    context: "FirebaseStorage::uploadPdf"
-                )
-                return
-            }
-
-            AnnotatoLogger.info("Uploaded to Firebase - PDF data with fileName: \(fileName)")
         }
     }
 

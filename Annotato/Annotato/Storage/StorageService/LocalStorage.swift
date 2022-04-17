@@ -23,11 +23,10 @@ class LocalStorage: AnnotatoStorageService {
         }
     }
 
-    /// Returns whether the PDF data was successfully written to the documents directory.
-    func uploadPdf(pdfData: Data, fileName: String) -> Bool {
+    func uploadPdf(pdfData: Data, fileName: String) {
         let urlInDocumentsDirectory = getUrl(fileName: fileName)
 
-        return FileManager.default.createFile(atPath: urlInDocumentsDirectory.path, contents: pdfData)
+       FileManager.default.createFile(atPath: urlInDocumentsDirectory.path, contents: pdfData)
     }
 
     func deletePdf(fileName: String) {

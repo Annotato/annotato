@@ -2,12 +2,15 @@ import Foundation
 import AnnotatoSharedLibrary
 
 class PDFStorageManager {
-    private var localStorageService: AnnotatoStorageService
+    private var localStorageService = LocalStorage()
     private var remoteStorageService: AnnotatoStorageService
 
     init() {
-        localStorageService = LocalStorage()
         remoteStorageService = FirebaseStorage()
+    }
+
+    func getLocalUrl(fileName: String) -> URL {
+        localStorageService.getUrl(fileName: fileName)
     }
 
     func uploadPdf(fileSystemUrl: URL, fileName: String) {
@@ -16,27 +19,20 @@ class PDFStorageManager {
         remoteStorageService.uploadPdf(fileSystemUrl: fileSystemUrl, fileName: fileName)
     }
 
-    func downloadPdfToLocalStorage(fileName: String) async -> Bool {
+    func downloadPdfToLocalStorage(fileName: String) async {
         guard let downloadURL = await remoteStorageService.getUrl(fileName: fileName) else {
             AnnotatoLogger.error("Could not get download URL for document",
                                  context: "PDFStorageManager::downloadPdfToLocalStorage")
-            return false
+            return
         }
 
         guard let documentPDFData = try? await URLSessionHTTPService().get(url: downloadURL.absoluteString) else {
             AnnotatoLogger.error("Could not retrieve document PDF data using HTTP",
                                  context: "PDFStorageManager::downloadPdfToLocalStorage")
-            return false
+            return
         }
 
-        let wasPDFSavedLocally = localStorageService.uploadPdf(pdfData: documentPDFData, fileName: document.id.uuidString)
-        guard wasPDFSavedLocally else {
-            AnnotatoLogger.error("Could not save document PDF to local file system",
-                                 context: "PDFStorageManager::downloadPdfToLocalStorage")
-            return false
-        }
-
-        return true
+        localStorageService.uploadPdf(pdfData: documentPDFData, fileName: document.id.uuidString)
     }
 
     func deletePdf(fileName: String) {
