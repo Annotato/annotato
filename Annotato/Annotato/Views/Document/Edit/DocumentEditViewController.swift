@@ -84,16 +84,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
         documentView.rightAnchor.constraint(equalTo: margins.rightAnchor).isActive = true
     }
 
-    private func saveDocument() {
-        Task {
-            guard let documentPresenter = presenter else {
-                return
-            }
-
-            await documentPresenter.updateDocumentWithDeleted()
-        }
-    }
-
     private func alertUsersToLeaveDocument() {
         presentInfoAlert(
             alertTitle: "Notice",
@@ -108,7 +98,6 @@ class DocumentEditViewController: UIViewController, AlertPresentable, SpinnerPre
 
 extension DocumentEditViewController: DocumentEditToolbarDelegate, Navigable {
     func didTapBackButton() {
-        saveDocument()
         goBack()
     }
 
@@ -128,7 +117,7 @@ extension DocumentEditViewController {
             }
 
             DispatchQueue.main.async {
-                self.viewWillAppear(true)
+                self.viewWillAppear(false)
             }
         }).store(in: &cancellables)
     }
@@ -137,7 +126,7 @@ extension DocumentEditViewController {
         presenter?.$hasUpdatedDocument.sink(receiveValue: { [weak self] hasUpdatedDocument in
             if hasUpdatedDocument {
                 DispatchQueue.main.async {
-                    self?.initializeDocumentView()
+                    self?.viewWillAppear(false)
                 }
             }
         }).store(in: &cancellables)
