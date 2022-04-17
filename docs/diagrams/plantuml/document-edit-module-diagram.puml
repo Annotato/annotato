@@ -1,0 +1,80 @@
+@startuml
+
+!include style.puml
+
+package "Document Edit" {
+    Class DocumentEditViewController VIEW_COLOR {
+        documentView: DocumentView
+        presenter: DocumentPresenter
+        --
+        didTapBackButton()
+        didTapShareButton()
+        saveDocument()
+    }
+
+    Class DocumentView VIEW_COLOR {
+        pdfView: DocumentPdfView
+        annotationViews: [AnnotationView]
+    }
+
+    Class DocumentPresenter PRESENTER_COLOR {
+    }
+
+    Class AnnotationsPresenter PRESENTER_COLOR {
+    }
+
+    Class DocumentsInteractor INTERACTOR_COLOR {
+        @Published newDocument: Document
+        @Published updatedDocument: Document
+        @Published deletedDocument: Document
+        --
+        getDocument(documentId)
+        createDocument(document, selectedFileUrl)
+        updateDocument(document)
+        ...
+    }
+
+    Class AnnotationsInteractor INTERACTOR_COLOR {
+        @Published newAnnotation: Annotation
+        @Published updatedAnnotation: Annotation
+        @Published deletedAnnotation: Annotation
+        ...
+        --
+        createAnnotation(annotation)
+        updateAnnotation(annotation)
+        deleteAnnotation(annotation)
+        ...
+    }
+
+    Class RootInteractor INTERACTOR_COLOR {
+        @Published crudDocumentMessage: Data
+        @Published crudAnnotationMessage: Data
+    }
+
+    Class WebSocketManager WEBSOCKET_COLOR {
+        @Published message: Data
+        --
+        setUpSocket()
+        listen() // Listen for websocket messages
+        send(message)
+        publishResponseData(data)
+    }
+
+    note "Directs data between view and interactor" as N1
+    note "Mediates between persisted data and presenter" as N2
+}
+DocumentPresenter ..left N1
+AnnotationsInteractor .. N2
+
+DocumentPresenter --right> "*" AnnotationsPresenter
+DocumentEditViewController --down> "1" DocumentView
+DocumentView --down> "1" DocumentPresenter
+DocumentPresenter --down> "1 | subscribes to" DocumentsInteractor
+DocumentPresenter --down> "1 | subscribes to" AnnotationsInteractor
+AnnotationsPresenter --down> "1 | subscribes to" AnnotationsInteractor
+
+DocumentsInteractor --down> "1 | subscribes to" RootInteractor
+AnnotationsInteractor --down> "1 | subscribes to" RootInteractor
+
+RootInteractor --down> "1 | subscribes to" WebSocketManager
+@enduml

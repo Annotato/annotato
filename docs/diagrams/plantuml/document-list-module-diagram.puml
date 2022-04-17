@@ -1,0 +1,93 @@
+@startuml
+
+!include style.puml
+
+package "Document List" {
+    Class DocumentListViewController VIEW_COLOR {
+        toolbar: DocumentListToolbarView
+        importMenu: DocumentListImportMenu
+        --
+        // Navigating between views
+        didTapLogOutButton()
+        didTapImportFromIpadButton()
+        didTapImportFromCodeButton()
+        didSelectCellView(document)
+
+        // Delete document functionality
+        didLongPressCellView() // Enters delete mode
+        didTapExitDeleteModeButton()
+        didTapDeleteForEveryoneButton(document)
+        didTapDeleteAsNonOwner(document)
+        didTapChangeOwnerButton(document)
+    }
+
+    Class DocumentListCollectionView VIEW_COLOR {
+        isInDeleteMode: Bool
+        --
+        enterDeleteMode()
+        exitDeleteMode()
+    }
+
+    Class DocumentListCollectionCellView VIEW_COLOR { }
+
+    Class DocumentListCellPresenter PRESENTER_COLOR {
+        document: Document
+        --
+        canFindUsersSharingDocument() -> Bool
+    }
+
+    Class UsersInteractor INTERACTOR_COLOR {
+        --
+        createUser(user: AnnotatoUser)
+        getUser(userId)
+        getUsersSharingDocument(documentId)
+        saveSessionUser(user: AnnotatoUser)
+        fetchSessionUser()
+        purgeSessionUser()
+    }
+
+    Class AnnotatoUser MODEL_COLOR {
+        email
+        displayName
+        id
+    }
+
+    Class DocumentListPresenter PRESENTER_COLOR {
+        --
+        loadAllDocuments(userId)
+        importDocument(selectionFileUrl, completionCallBack)
+        deleteDocumentForEveryone(presenter: DocumentListCellPresenter)
+        deleteDocumentAsNonOwner(presenter: DocumentListCellPresenter)
+    }
+
+    Class DocumentsInteractor INTERACTOR_COLOR {
+        --
+        getOwnDocuments(userId)
+        getSharedDocuments(userId)
+        getDocument(documentId)
+        createDocument(document, selectedFileUrl)
+        updateDocument(document)
+        deleteDocument(document)
+        getLocalAndRemoteDocument(documentId)
+    }
+
+    Class DocumentSharesInteractor INTERACTOR_COLOR {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(document, reciepientId)
+    }
+}
+
+DocumentListViewController --down> "1 " DocumentListCollectionView
+DocumentListCollectionView --down> "*" DocumentListCellPresenter
+DocumentListCollectionView ..left> "*" DocumentListCollectionCellView
+DocumentListCollectionCellView --down> "1 " DocumentListCellPresenter
+DocumentListCellPresenter --down> "1" UsersInteractor
+UsersInteractor ..right> AnnotatoUser
+
+DocumentListPresenter --down> "1" DocumentsInteractor
+DocumentListPresenter --down> "1" DocumentSharesInteractor
+DocumentListViewController ---down> "1" DocumentListPresenter
+
+
+@enduml

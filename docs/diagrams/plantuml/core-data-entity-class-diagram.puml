@@ -1,0 +1,98 @@
+@startuml
+
+!include style.puml
+
+package "Core Data Entities" {
+    Class DocumentEntity ENTITY_COLOR {
+        id
+        name
+        ownerId
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} removeDeletedDocumentEntities(entities: [DocumentEntity]) -> [DocumentEntity]
+
+        // Custom CRUD functions for cascading updates
+        customUpdate(document)
+        copyPropertiesOf(updatedModel)
+    }
+
+    Class AnnotationEntity ENTITY_COLOR {
+        id
+        width
+        ownerId
+        originX
+        originY
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} removeDeletedAnnotationEntites(entities: [AnnotationEntity]) -> [AnnotationEntity]
+
+        // Custom CRUD functions for cascading updates
+        customUpdate(annotation)
+        copyPropertiesOf(updatedModel)
+    }
+
+
+    Class AnnotationHandwritingEntity ENTITY_COLOR {
+        id
+        order
+        height
+        handwriting: Data
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} removeDeletedAnnotationHandwritingEntites(entities: [AnnotationHandwritingEntity]) -> [AnnotationHandwritingEntity]
+
+        // Custom CRUD functions for cascading updates
+        customUpdate(annotationHandwriting)
+        copyPropertiesOf(updatedModel)
+    }
+
+    Class AnnotationTextEntity ENTITY_COLOR {
+        id
+        type
+        order
+        height
+        content: String
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        {static} removeDeletedAnnotationTextEntities(entities: [AnnotationTextEntity]) -> [AnnotationTextEntity]
+
+        // Custom CRUD functions for cascading updates
+        customUpdate(annotationText)
+        copyPropertiesOf(updatedModel)
+    }
+
+    Class SelectionBoxEntity ENTITY_COLOR {
+        id
+        startPointX
+        startPointY
+        endPointX
+        endPointY
+        createdAt
+        updatedAt
+        deletedAt
+        --
+        // Custom CRUD function for cascading updates
+        customUpdate(selectionBox)
+        copyPropertiesOf(updatedModel)
+    }
+
+    AnnotationEntity --> "1" DocumentEntity
+    AnnotationEntity --> "*" AnnotationHandwritingEntity
+    AnnotationEntity --> "*" AnnotationTextEntity
+    AnnotationEntity --> "1" SelectionBoxEntity
+
+    DocumentEntity --> "*" AnnotationEntity
+    AnnotationHandwritingEntity --> "1" AnnotationEntity
+    AnnotationTextEntity --> "1" AnnotationEntity
+    SelectionBoxEntity --> "1" AnnotationEntity
+}
+
+@enduml

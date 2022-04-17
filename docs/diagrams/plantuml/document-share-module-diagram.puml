@@ -1,0 +1,55 @@
+@startuml
+
+!include style.puml
+
+package "Document Shares" {
+    Class DocumentCodeImportViewController VIEW_COLOR {
+        --
+        didTapImportButton()
+        importDocument()
+    }
+
+    Class DocumentSharesPresenter PRESENTER_COLOR {
+        --
+        createDocumentShare(documentId)
+    }
+
+    Class AuthPresenter PRESENTER_COLOR {
+        currentUser: AnnotatoUser
+    }
+
+    Class DocumentSharesInteractor INTERACTOR_COLOR {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(document, recipientId)
+    }
+
+    Class DocumentShare MODEL_COLOR {
+        id
+        documentId
+        recipientId
+    }
+
+    Class RemoteDocumentSharesPersistence ENTITY_COLOR {
+        --
+        createDocumentShare(documentShare)
+        deleteDocumentShare(documentId, recipientId)
+    }
+
+    Class LocalDocumentsPersistence ENTITY_COLOR {
+        --
+        getDocument(documentId)
+        createDocument(document)
+        updateDocument(document)
+    }
+}
+
+DocumentSharesInteractor ..left> DocumentShare
+DocumentSharesInteractor --down> "1" RemoteDocumentSharesPersistence
+DocumentSharesInteractor --down> "1  " LocalDocumentsPersistence
+
+DocumentSharesPresenter ..left> AuthPresenter
+DocumentCodeImportViewController --down> "1" DocumentSharesPresenter
+DocumentSharesPresenter --down> "1" DocumentSharesInteractor
+
+@enduml

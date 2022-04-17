@@ -1,0 +1,111 @@
+@startuml
+
+!include style.puml
+
+' Shared
+Class WebSocketManager WEBSOCKET_COLOR {
+    socket
+    @Published message
+    --
+    setUpSocket()
+    resetSocket()
+    listen()
+    send(message)
+    publishResponseData(data)
+}
+
+Class RootInteractor INTERACTOR_COLOR {
+    @Published crudDocumentMessage
+    @Published crudAnnotationMessage
+    --
+    publishMessage(decodedMessageType, message)
+}
+Interface AnnotatoHTTPService OTHER_COLOR {
+}
+
+' Documents
+package "Documents Persistence" {
+    Class DocumentsInteractor INTERACTOR_COLOR {
+        --
+        getOwnDocuments(userId)
+        getSharedDocuments(userId)
+        getDocument(documentId)
+        createDocument(document, selectedfFileUrl)
+        updateDocument(document)
+        deleteDocument(document)
+        deleteDocumentLocally(document)
+        getLocalAndRemoteDocument(documentId)
+    }
+
+    RootInteractor --down> "1 | subscribes to" WebSocketManager
+    DocumentsInteractor --down> "1 | subscribes to" RootInteractor
+
+    package "Remote Documents Persistence Service" {
+        Class RemoteDocumentsPersistence PERSISTENCE_COLOR {
+            --
+            // Through HTTP
+            getOwnDocuments(userId)
+            getSharedDocuments(userId)
+            getDocument(documentId)
+            createDocument(document)
+
+            // Through Web Socket
+            updateDocument(document, senderId)
+            deleteDocument(document, senderId)
+            deleteDocuments(documents, senderId)
+        }
+    }
+    RemoteDocumentsPersistence --down> AnnotatoHTTPService
+    RemoteDocumentsPersistence --down> WebSocketManager
+
+    package "Local Documents Persistence Service" {
+        Class LocalDocumentsPersistence PERSISTENCE_COLOR {
+            --
+            getOwnDocuments(userId)
+            getSharedDocuments(userId)
+            getDocument(documentId)
+            createDocument(document)
+            updateDocument(document)
+            deleteDocument(document)
+            createOrUpdateDocument(document)
+        }
+
+        Class LocalDocumentEntityDataAccess DATAACCESS_COLOR {
+            context
+            --
+            listOwn(userId)
+            listShared(userId)
+            listCreatedAfterDate(date)
+            listUpdatedAfterDate(date)
+            create(document)
+            read(documentId, withDeleted)
+            readInCurrentContext(documentId, withDeleted)
+            update(documentId, document)
+            delete(documentId, document)
+        }
+
+        entity "Document Core Data Entities" ENTITY_COLOR
+        note "Shown in a separate diagram" as N1
+        "Document Core Data Entities" ..left N1
+
+        LocalDocumentEntityDataAccess ..down> "Document Core Data Entities"
+        LocalDocumentsPersistence --down> "1" LocalDocumentEntityDataAccess
+    }
+
+    package "Remote Document Shares Service" {
+        Class RemoteDocumentSharesPersistence PERSISTENCE_COLOR {
+            --
+            // Through HTTP
+            createDocumentShare(documentShare)
+            deleteDocumentShare(documentId, recipientId)
+            deleteDocumentShares(documentIds, recipientId)
+        }
+        RemoteDocumentSharesPersistence --> AnnotatoHTTPService
+    }
+
+    DocumentsInteractor --down> RemoteDocumentsPersistence
+    DocumentsInteractor --down> LocalDocumentsPersistence
+    DocumentsInteractor --down> RemoteDocumentSharesPersistence
+}
+
+@enduml

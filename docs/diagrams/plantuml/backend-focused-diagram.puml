@@ -1,0 +1,88 @@
+@startuml
+
+!include style.puml
+
+node "Web Socket Entry" as N1
+node "HTTP Entry" as N2
+
+package "Backend" BACKEND_BACKGROUND_COLOR {
+    package "HTTP Routers" {
+        [DocumentsRouter]
+        [DocumentSharesRouter]
+        [UsersRouter]
+    }
+
+    package "HTTP Controllers" {
+        [DocumentsController]
+        [DocumentSharesController]
+        [UsersController]
+    }
+
+    package "Data Access" {
+        [DocumentsDataAccess]
+        [DocumentSharesDataAccess]
+        [UsersDataAccess]
+        [AnnotationDataAccess]
+    }
+
+    package "Web Socket Router" {
+        [WebSocketRouter]
+    }
+
+    package "Web Socket Controllers" {
+        [WebSocketController]
+        [DocumentWebSocketController]
+        [AnnotationWebSocketController]
+
+        WebSocketController --> DocumentWebSocketController
+        WebSocketController --> AnnotationWebSocketController
+    }
+
+    database "Fluent" {
+        [PersistedData]
+    }
+    DocumentsDataAccess --> PersistedData
+    AnnotationDataAccess --> PersistedData
+    DocumentSharesDataAccess --> PersistedData
+    UsersDataAccess --> PersistedData
+}
+N2 -down-> DocumentsRouter
+N2 -down-> DocumentSharesRouter
+N2 -down-> UsersRouter
+note as router
+Routers routes the HTTP routes to the
+correct methods in the controllers
+end note
+router .. UsersRouter
+
+DocumentsRouter --> DocumentsController
+DocumentSharesRouter --> DocumentSharesController
+UsersRouter --> UsersController
+note as controller
+Controllers use the data access
+methods in the data access classes to
+interact with persisted data
+end note
+controller .. UsersController
+
+DocumentsController --> DocumentsDataAccess
+DocumentsController --> DocumentSharesDataAccess
+DocumentSharesController --> DocumentsDataAccess
+DocumentSharesController --> DocumentSharesDataAccess
+UsersController --> UsersDataAccess
+
+N1 -down-> WebSocketRouter
+note as webSocketNote
+Web socket router routes the end point to
+the specific user's web socket
+end note
+webSocketNote .. WebSocketRouter
+WebSocketRouter --> WebSocketController
+
+DocumentWebSocketController -down-> DocumentsDataAccess
+DocumentWebSocketController -> DocumentSharesDataAccess
+AnnotationWebSocketController -> DocumentsDataAccess
+AnnotationWebSocketController -> DocumentSharesDataAccess
+AnnotationWebSocketController --> AnnotationDataAccess
+
+@enduml
