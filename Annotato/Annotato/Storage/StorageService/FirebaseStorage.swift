@@ -8,6 +8,17 @@ class FirebaseStorage: AnnotatoStorageService {
         storage.reference()
     }
 
+    func getUrl(fileName: String) async -> URL? {
+        let pdfRef = storageRef.child(documentId.uuidString)
+        do {
+            return try await pdfRef.downloadURL()
+        } catch {
+            AnnotatoLogger.error("Could not get download URL for file \(fileName)",
+                                 context: "FirebaseStorage::getUrl")
+            return nil
+        }
+    }
+
     func uploadPdf(fileSystemUrl: URL, fileName: String) {
         let pdfRef = storageRef.child(fileName)
 
@@ -24,6 +35,22 @@ class FirebaseStorage: AnnotatoStorageService {
         }
     }
 
+    func uploadPdf(pdfData: Data, fileName: String) {
+        let pdfRef = storageRef.child(fileName)
+
+        _ = pdfRef.putData(pdfData, metadata: nil) { _, error in
+            if let error = error {
+                AnnotatoLogger.error(
+                    "When uploading PDF data to FB. \(error.localizedDescription)",
+                    context: "FirebaseStorage::uploadPdf"
+                )
+                return
+            }
+
+            AnnotatoLogger.info("Uploaded to Firebase - PDF data with fileName: \(fileName)")
+        }
+    }
+
     func deletePdf(fileName: String) {
         let pdfRef = storageRef.child(fileName)
         pdfRef.delete { error in
@@ -36,17 +63,6 @@ class FirebaseStorage: AnnotatoStorageService {
             }
 
             AnnotatoLogger.info("Deleted PDF: \(fileName) from FB.")
-        }
-    }
-
-    func getDownloadURL(documentId: UUID) async -> URL? {
-        let pdfRef = storageRef.child(documentId.uuidString)
-        do {
-            return try await pdfRef.downloadURL()
-        } catch {
-            AnnotatoLogger.error("Could not get download URL for document with ID \(documentId)",
-                                 context: "FirebaseStorage::getDownloadURL")
-            return nil
         }
     }
 }
