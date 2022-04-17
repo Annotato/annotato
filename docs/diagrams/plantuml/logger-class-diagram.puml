@@ -1,8 +1,8 @@
 @startuml logger-class-diagram
 !include style.puml
 skinparam arrowThickness 1.1
-skinparam arrowColor ENTITY_COLOR
-skinparam classBackgroundColor ENTITY_COLOR
+skinparam arrowColor OTHER_COLOR
+skinparam classBackgroundColor OTHER_COLOR
 
 package Logger {
     Interface AnnotatoLoggerService <<protocol>> {

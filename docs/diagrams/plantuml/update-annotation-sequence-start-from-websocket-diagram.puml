@@ -15,8 +15,8 @@ participant ":DocumentPresenter" as DocumentPresenter PRESENTER_COLOR
 participant ":AnnotationPresenter" as AnnotationPresenter PRESENTER_COLOR
 end box
 
-box Persistence OTHER_BACKGROUND_COLOR
-participant ":LocalAnnotationsPersistence" as LocalAnnotationsPersistence OTHER_COLOR
+box Persistence ENTITY_BACKGROUND_COLOR
+participant ":LocalAnnotationsPersistence" as LocalAnnotationsPersistence ENTITY_COLOR
 end box
 
 [-> WebSocketManager : publishResponseData(message)
