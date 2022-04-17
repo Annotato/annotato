@@ -1,11 +1,10 @@
 import UIKit
 import Combine
 
-class DocumentListImportMenu: UIStackView {
-    weak var actionDelegate: DocumentListImportMenuDelegate?
+class DocumentListDeleteMenuView: UIStackView {
+    weak var actionDelegate: DocumentListDeleteMenuDelegate?
     private let buttonHeight = 30.0
     private var cancellables: Set<AnyCancellable> = []
-    private var fromCodeButton = UIButton()
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
@@ -20,17 +19,15 @@ class DocumentListImportMenu: UIStackView {
         self.layer.cornerRadius = 15.0
         self.distribution = .fillProportionally
 
-        setUpSubscribers()
         initializeSubviews()
     }
 
     private func initializeSubviews() {
-        let fromIpadButton = makeFromIpadButton()
+        let deleteForEveryoneButton = makeDeleteForEveryoneButton()
         let divider = makeDivider()
-        fromCodeButton = makeFromCodeButton()
-        fromCodeButton.isEnabled = NetworkMonitor.shared.isConnected
+        let fromCodeButton = makeDeleteForSelfOnlyButton()
 
-        self.addArrangedSubview(fromIpadButton)
+        self.addArrangedSubview(deleteForEveryoneButton)
         self.addArrangedSubview(divider)
         self.addArrangedSubview(fromCodeButton)
 
@@ -44,17 +41,17 @@ class DocumentListImportMenu: UIStackView {
         return button
     }
 
-    private func makeFromIpadButton() -> UIButton {
+    private func makeDeleteForEveryoneButton() -> UIButton {
         let button = makeImportMenuButton()
-        button.setTitle("From iPad", for: .normal)
-        button.addTarget(self, action: #selector(didTapFromIpadButton), for: .touchUpInside)
+        button.setTitle("For all", for: .normal)
+        button.addTarget(self, action: #selector(didTapDeleteForEveryoneButton), for: .touchUpInside)
         return button
     }
 
-    private func makeFromCodeButton() -> UIButton {
+    private func makeDeleteForSelfOnlyButton() -> UIButton {
         let button = makeImportMenuButton()
-        button.setTitle("From code", for: .normal)
-        button.addTarget(self, action: #selector(didTapFromCodeButton), for: .touchUpInside)
+        button.setTitle("For me only", for: .normal)
+        button.addTarget(self, action: #selector(didTapDeleteForSelfOnlyButton), for: .touchUpInside)
         return button
     }
 
@@ -65,22 +62,14 @@ class DocumentListImportMenu: UIStackView {
     }
 
     @objc
-    private func didTapFromIpadButton() {
-        actionDelegate?.didTapFromIpadButton()
+    private func didTapDeleteForEveryoneButton() {
+        actionDelegate?.didTapDeleteForEveryoneButton()
         self.isHidden = true
     }
 
     @objc
-    private func didTapFromCodeButton() {
-        actionDelegate?.didTapFromCodeButton()
+    private func didTapDeleteForSelfOnlyButton() {
+        actionDelegate?.didTapDeleteForSelfOnlyButton()
         self.isHidden = true
-    }
-
-    private func setUpSubscribers() {
-        NetworkMonitor.shared.$isConnected.sink(receiveValue: { [weak self] isConnected in
-            DispatchQueue.main.async {
-                self?.fromCodeButton.isEnabled = isConnected
-            }
-        }).store(in: &cancellables)
     }
 }

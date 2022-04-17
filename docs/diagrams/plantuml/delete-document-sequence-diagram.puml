@@ -1,0 +1,26 @@
+@startuml delete-document-sequence-diagram
+!include style.puml
+
+actor User as User USER_COLOR
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentListCollectionCellView" as DocumentListCollectionCellView VIEW_COLOR
+participant ":DocumentListView" as DocumentListView VIEW_COLOR
+participant ":DeleteMenu" as DeleteMenu VIEW_COLOR
+end box
+
+User -> DocumentListCollectionCellView : didTapDelete()
+alt #F9F0CF isOwner && canFindUsersSharingDocument
+    User -> DeleteMenu : didTapDeleteForEveryone()
+    ref over DocumentListView : Delete Document For Everyone
+    User -> DeleteMenu : didTapDeleteForSelf()
+    ref over DocumentListView : Change Owner
+else #FBF8EA isOwner
+    DocumentListCollectionCellView ->  DocumentListView: didTapDeleteForEveryone()
+    ref over DocumentListView : Delete Document For Everyone
+else #F9F0CF isNotOwner
+    DocumentListCollectionCellView ->  DocumentListView: didTapDeleteAsNonOwner()
+    ref over DocumentListView : Delete Document Share For Self
+end
+
+@enduml

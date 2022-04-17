@@ -7,7 +7,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
 
     let spinner = UIActivityIndicatorView(style: .large)
     private var toolbar = DocumentListToolbarView()
-    private var importMenu = DocumentListImportMenu()
+    private var importMenu = DocumentListImportMenuView()
     private var collectionView: DocumentListCollectionView?
     let toolbarHeight = 50.0
     private var cancellables: Set<AnyCancellable> = []
@@ -48,7 +48,7 @@ class DocumentListViewController: UIViewController, AlertPresentable, SpinnerPre
     private func initializeImportMenu() {
         let width = 120.0
         let height = 80.0
-        importMenu = DocumentListImportMenu(frame: .zero)
+        importMenu = DocumentListImportMenuView(frame: .zero)
 
         view.addSubview(importMenu)
 
@@ -200,8 +200,8 @@ extension DocumentListViewController: DocumentListToolbarDelegate,
     }
 
     func didTapChangeOwnerButton(document: DocumentListCellPresenter) {
-        let documentViewModel = DocumentPresenter(webSocketManager: webSocketManager, model: document.document)
-        goToUsersSharingDocumentList(document: documentViewModel, users: document.usersSharingDocument)
+        let documentPresenter = DocumentPresenter(webSocketManager: webSocketManager, model: document.document)
+        goToUsersSharingDocumentList(document: documentPresenter, users: document.usersSharingDocument)
     }
 
     private func setUpSubscribers() {

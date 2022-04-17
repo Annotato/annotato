@@ -1,0 +1,48 @@
+@startuml update-annotation-start-from-user-sequence-diagram
+!include style.puml
+
+box Actor
+actor User as User USER_COLOR
+end box
+
+box View VIEW_BACKGROUND_COLOR
+participant ":AnnotationPaletteView" as AnnotationPaletteView VIEW_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":AnnotationPalettePresenter" as AnnotationPalettePresenter PRESENTER_COLOR
+participant ":AnnotationPresenter" as AnnotationPresenter PRESENTER_COLOR
+end box
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":AnnotationsInteractor" as AnnotationsInteractor INTERACTOR_COLOR
+end box
+
+User -> AnnotationPaletteView : didTapEditOrViewButton(button)
+activate AnnotationPaletteView
+opt !isNowEditing
+
+AnnotationPaletteView -> AnnotationPalettePresenter : enterViewMode()
+activate AnnotationPalettePresenter
+
+AnnotationPalettePresenter -> AnnotationPresenter : enterViewMode()
+activate AnnotationPresenter
+
+AnnotationPresenter -> AnnotationsInteractor : updateAnnotation(annotation)
+activate AnnotationsInteractor
+
+AnnotationsInteractor --> AnnotationPresenter
+deactivate AnnotationsInteractor
+
+AnnotationPresenter --> AnnotationPalettePresenter
+deactivate AnnotationPresenter
+
+AnnotationPalettePresenter --> AnnotationPaletteView
+deactivate AnnotationPalettePresenter
+
+AnnotationPaletteView --> User
+deactivate AnnotationPaletteView
+
+end
+
+@enduml

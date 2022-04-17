@@ -108,19 +108,19 @@ extension DocumentPresenter {
 
         model.addAnnotation(annotation: newAnnotation)
 
-        let annotationViewModel = AnnotationPresenter(model: newAnnotation, document: self,
+        let annotationPresenter = AnnotationPresenter(model: newAnnotation, document: self,
                                                       webSocketManager: webSocketManager)
-        if annotationViewModel.hasExceededBounds(bounds: bounds) {
+        if annotationPresenter.hasExceededBounds(bounds: bounds) {
             let boundsMidX = bounds.midX
-            let annotationY = annotationViewModel.frame.midY
-            annotationViewModel.center = CGPoint(x: boundsMidX, y: annotationY)
+            let annotationY = annotationPresenter.frame.midY
+            annotationPresenter.center = CGPoint(x: boundsMidX, y: annotationY)
         }
 
-        annotationViewModel.enterEditMode()
-        annotationViewModel.enterMaximizedMode()
+        annotationPresenter.enterEditMode()
+        annotationPresenter.enterMaximizedMode()
 
-        annotations.append(annotationViewModel)
-        addedAnnotation = annotationViewModel
+        annotations.append(annotationPresenter)
+        addedAnnotation = annotationPresenter
 
         Task {
             await annotationsInteractor.createAnnotation(annotation: newAnnotation)
@@ -133,19 +133,19 @@ extension DocumentPresenter {
         }
 
         self.model?.addAnnotation(annotation: newAnnotation)
-        let annotationViewModel = AnnotationPresenter(model: newAnnotation, document: self,
+        let annotationPresenter = AnnotationPresenter(model: newAnnotation, document: self,
                                                       webSocketManager: webSocketManager)
-        self.annotations.append(annotationViewModel)
-        self.addedAnnotation = annotationViewModel
+        self.annotations.append(annotationPresenter)
+        self.addedAnnotation = annotationPresenter
     }
 
     func receiveUpdateAnnotation(updatedAnnotation: Annotation) {
-        if let annotationViewModel = annotations.first(where: { $0.id == updatedAnnotation.id }) {
+        if let annotationPresenter = annotations.first(where: { $0.id == updatedAnnotation.id }) {
             if updatedAnnotation.isDeleted {
                 receiveDeleteAnnotation(deletedAnnotation: updatedAnnotation)
             } else {
                 model?.updateAnnotation(updatedAnnotation: updatedAnnotation)
-                annotationViewModel.receiveUpdate(updatedAnnotation: updatedAnnotation)
+                annotationPresenter.receiveUpdate(updatedAnnotation: updatedAnnotation)
             }
         } else {
             receiveRestoreDeletedAnnotation(annotation: updatedAnnotation)
@@ -154,10 +154,10 @@ extension DocumentPresenter {
 
     private func receiveRestoreDeletedAnnotation(annotation: Annotation) {
         model?.receiveRestoreDeletedAnnotation(annotation: annotation)
-        let annotationViewModel = AnnotationPresenter(model: annotation, document: self,
+        let annotationPresenter = AnnotationPresenter(model: annotation, document: self,
                                                       webSocketManager: webSocketManager)
-        self.annotations.append(annotationViewModel)
-        self.addedAnnotation = annotationViewModel
+        self.annotations.append(annotationPresenter)
+        self.addedAnnotation = annotationPresenter
     }
 
     func deleteAnnotation(annotation: AnnotationPresenter) {
@@ -177,8 +177,8 @@ extension DocumentPresenter {
         }
 
         model?.updateAnnotation(updatedAnnotation: deletedAnnotation)
-        let annotationViewModel = annotations.first(where: { $0.id == deletedAnnotation.id })
-        annotationViewModel?.receiveDelete()
+        let annotationPresenter = annotations.first(where: { $0.id == deletedAnnotation.id })
+        annotationPresenter?.receiveDelete()
         annotations.removeAll(where: { $0.model.id == deletedAnnotation.id })
     }
 

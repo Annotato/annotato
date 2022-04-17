@@ -1,0 +1,70 @@
+@startuml change-owner-sequence-diagram
+!include style.puml
+
+actor User as User USER_COLOR
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentListViewController" as DocumentListViewController VIEW_COLOR
+participant ":ChangeOwnerViewController" as ChangeOwnerViewController VIEW_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":DocumentPresenter" as DocumentPresenter PRESENTER_COLOR
+end box
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":DocumentsInteractor" as DocumentsInteractor INTERACTOR_COLOR
+end box
+
+box Persistence ENTITY_BACKGROUND_COLOR
+participant ":RemoteDocumentsPersistence" as RemoteDocumentsPersistence ENTITY_COLOR
+participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence ENTITY_COLOR
+end box
+
+create ChangeOwnerViewController
+DocumentListViewController -> ChangeOwnerViewController : goToChangeOwnerViewController()
+activate ChangeOwnerViewController
+deactivate DocumentListViewController
+
+User -> ChangeOwnerViewController : didTapConfirmButton()
+
+ChangeOwnerViewController -> DocumentPresenter : updateOwner(newOwnerId)
+activate DocumentPresenter
+
+DocumentPresenter -> DocumentsInteractor : update(document)
+activate DocumentsInteractor
+
+DocumentsInteractor -> RemoteDocumentsPersistence : updateDocument(document)
+activate RemoteDocumentsPersistence
+
+RemoteDocumentsPersistence --> DocumentsInteractor
+deactivate RemoteDocumentsPersistence
+
+DocumentsInteractor -> LocalDocumentsPersistence : updateDocument(document)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence --> DocumentsInteractor
+deactivate LocalDocumentsPersistence
+
+DocumentsInteractor --> DocumentPresenter
+deactivate DocumentsInteractor
+
+DocumentPresenter -> DocumentsInteractor : deleteLocally(document)
+activate DocumentsInteractor
+
+DocumentsInteractor -> LocalDocumentsPersistence : deleteDocument(document)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence --> DocumentsInteractor
+deactivate LocalDocumentsPersistence
+
+DocumentsInteractor --> DocumentPresenter
+deactivate DocumentsInteractor
+
+DocumentPresenter --> ChangeOwnerViewController
+deactivate DocumentPresenter
+
+ChangeOwnerViewController --> User
+deactivate ChangeOwnerViewController
+
+@enduml

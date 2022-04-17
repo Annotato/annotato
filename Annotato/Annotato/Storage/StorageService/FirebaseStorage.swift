@@ -1,11 +1,21 @@
 import Firebase
 import FirebaseStorage
-import AnnotatoSharedLibrary
 
-class FirebaseStorage: AnnotatoStorageService {
+class FirebaseStorage: AnnotatoRemoteStorageService {
     private let storage = Storage.storage()
     private var storageRef: StorageReference {
         storage.reference()
+    }
+
+    func getDownloadUrl(fileName: String) async -> URL? {
+        let pdfRef = storageRef.child(fileName)
+        do {
+            return try await pdfRef.downloadURL()
+        } catch {
+            AnnotatoLogger.error("Could not get download URL for file \(fileName)",
+                                 context: "FirebaseStorage::getUrl")
+            return nil
+        }
     }
 
     func uploadPdf(fileSystemUrl: URL, fileName: String) {
@@ -36,17 +46,6 @@ class FirebaseStorage: AnnotatoStorageService {
             }
 
             AnnotatoLogger.info("Deleted PDF: \(fileName) from FB.")
-        }
-    }
-
-    func getDownloadURL(documentId: UUID) async -> URL? {
-        let pdfRef = storageRef.child(documentId.uuidString)
-        do {
-            return try await pdfRef.downloadURL()
-        } catch {
-            AnnotatoLogger.error("Could not get download URL for document with ID \(documentId)",
-                                 context: "FirebaseStorage::getDownloadURL")
-            return nil
         }
     }
 }

@@ -1,16 +1,17 @@
 import Foundation
-import AnnotatoSharedLibrary
 
-class LocalStorage: AnnotatoStorageService {
+class LocalStorage: AnnotatoLocalStorageService {
     var appDocumentsDirectory: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 
+    func getUrl(fileName: String) -> URL {
+        appDocumentsDirectory.appendingPathComponent(fileName).appendingPathExtension(for: .pdf)
+    }
+
     func uploadPdf(fileSystemUrl: URL, fileName: String) {
         do {
-            let urlInDocumentsDirectory = appDocumentsDirectory
-                .appendingPathComponent(fileName)
-                .appendingPathExtension(for: .pdf)
+            let urlInDocumentsDirectory = getUrl(fileName: fileName)
 
             try FileManager.default.copyItem(at: fileSystemUrl, to: urlInDocumentsDirectory)
 
@@ -21,16 +22,15 @@ class LocalStorage: AnnotatoStorageService {
         }
     }
 
-    /// Returns whether the PDF data was successfully written to the documents directory.
-    func uploadPdf(pdfData: Data, fileName: String) -> Bool {
-        let urlInDocumentsDirectory = getUrlInDocumentsDirectory(fileName: fileName)
+    func uploadPdf(pdfData: Data, fileName: String) {
+        let urlInDocumentsDirectory = getUrl(fileName: fileName)
 
-        return FileManager.default.createFile(atPath: urlInDocumentsDirectory.path, contents: pdfData)
+       FileManager.default.createFile(atPath: urlInDocumentsDirectory.path, contents: pdfData)
     }
 
     func deletePdf(fileName: String) {
         do {
-            let urlInDocumentsDirectory = getUrlInDocumentsDirectory(fileName: fileName)
+            let urlInDocumentsDirectory = getUrl(fileName: fileName)
 
             try FileManager.default.removeItem(at: urlInDocumentsDirectory)
 
@@ -39,11 +39,5 @@ class LocalStorage: AnnotatoStorageService {
             AnnotatoLogger.error("When trying to delete PDF. \(error.localizedDescription)",
                                  context: "LocalStorage::deletePdf")
         }
-    }
-
-    private func getUrlInDocumentsDirectory(fileName: String) -> URL {
-        appDocumentsDirectory
-            .appendingPathComponent(fileName)
-            .appendingPathExtension(for: .pdf)
     }
 }

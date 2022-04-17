@@ -1,0 +1,71 @@
+@startuml conflict-resolution-focused-sequence-diagram
+!include style.puml
+
+box ConflictResolver OTHER_BACKGROUND_COLOR
+participant ":ConflictResolver" as ConflictResolver OTHER_COLOR
+end box
+
+[-> ConflictResolver : resolve()
+activate ConflictResolver
+
+loop for localModel in localModels where localModel not in remoteModels
+
+    ConflictResolver -> ConflictResolver : handleExclusiveToLocal(localModel, resolution)
+    activate ConflictResolver
+
+    ConflictResolver ---> ConflictResolver
+    deactivate ConflictResolver
+
+end loop
+
+loop for remoteModel in remoteModels where remoteModel not in localModels
+
+    ConflictResolver -> ConflictResolver : handleExclusiveToRemote(remoteModel, resolution)
+    activate ConflictResolver
+
+    ConflictResolver ---> ConflictResolver
+    deactivate ConflictResolver
+
+end loop
+
+loop for model common in localModels and remoteModels
+
+    ConflictResolver -> ConflictResolver : handleCommonToLocalAndServer(localModel, serverModel, resolution)
+    activate ConflictResolver
+
+    alt localModel is deleted and serverModel not deleted
+        ConflictResolver ---> ConflictResolver : handleDeletedOnlyOnLocal(localModel, serverModel, resolution)
+        activate ConflictResolver
+        ConflictResolver ---> ConflictResolver
+        deactivate ConflictResolver
+    else localModel is not deleted and serverModel is deleted
+        ConflictResolver ---> ConflictResolver : handleDeletedOnlyOnServer(localModel, serverModel, resolution)
+        activate ConflictResolver
+        ConflictResolver ---> ConflictResolver
+        deactivate ConflictResolver
+    else localModel is deleted and serverModel is deleted
+        ConflictResolver ---> ConflictResolver : handleDeletedOnBothLocalAndServer(localModel, serverModel, resolution)
+        activate ConflictResolver
+        ConflictResolver ---> ConflictResolver
+        deactivate ConflictResolver
+    else localModel is same as serverModel
+        ConflictResolver ---> ConflictResolver : handleEqualLocalAndServer(localModel, serverModel, resolution)
+        activate ConflictResolver
+        ConflictResolver ---> ConflictResolver
+        deactivate ConflictResolver
+    else else
+        ConflictResolver ---> ConflictResolver : handleConflictingLocalAndServer(localModel, serverModel, resolution)
+        activate ConflictResolver
+        ConflictResolver ---> ConflictResolver
+        deactivate ConflictResolver
+    end alt
+
+    ConflictResolver ---> ConflictResolver
+    deactivate ConflictResolver
+
+end loop
+
+ConflictResolver --->[ : resolution
+deactivate ConflictResolver
+
+@enduml

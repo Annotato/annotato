@@ -1,0 +1,62 @@
+@startuml update-annotation-sequence-start-from-websocket-diagram
+!include style.puml
+
+box WebSocket OTHER_BACKGROUND_COLOR
+participant ":WebSocketManager" as WebSocketManager OTHER_COLOR
+end box
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":RootInteractor" as RootInteractor INTERACTOR_COLOR
+participant ":AnnotationsInteractor" as AnnotationsInteractor INTERACTOR_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":DocumentPresenter" as DocumentPresenter PRESENTER_COLOR
+participant ":AnnotationPresenter" as AnnotationPresenter PRESENTER_COLOR
+end box
+
+box Persistence OTHER_BACKGROUND_COLOR
+participant ":LocalAnnotationsPersistence" as LocalAnnotationsPersistence OTHER_COLOR
+end box
+
+[-> WebSocketManager : publishResponseData(message)
+activate WebSocketManager
+
+WebSocketManager -> RootInteractor : handleIncomingMessage(message)
+activate RootInteractor
+
+RootInteractor -> RootInteractor : publishMessage(decodedMessageType, message)
+activate RootInteractor
+
+RootInteractor -> AnnotationsInteractor : handleIncomingMessage(message)
+activate AnnotationsInteractor
+
+AnnotationsInteractor -> LocalAnnotationsPersistence : createOrUpdateAnnotation(annotation)
+activate LocalAnnotationsPersistence
+
+deactivate LocalAnnotationsPersistence
+
+AnnotationsInteractor -> AnnotationsInteractor : publishAnnotation(messageSubtype, annotation)
+activate AnnotationsInteractor
+
+AnnotationsInteractor -> DocumentPresenter : receiveUpdateAnnotation(annotation)
+activate DocumentPresenter
+
+DocumentPresenter -> AnnotationPresenter : receiveUpdate(annotation)
+activate AnnotationPresenter
+
+deactivate AnnotationPresenter
+
+deactivate DocumentPresenter
+
+deactivate AnnotationsInteractor
+
+deactivate AnnotationsInteractor
+
+deactivate RootInteractor
+
+deactivate RootInteractor
+
+deactivate WebSocketManager
+
+@enduml

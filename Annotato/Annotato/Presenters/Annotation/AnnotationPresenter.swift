@@ -280,18 +280,18 @@ extension AnnotationPresenter {
     }
 
     private func addTextPart(part: AnnotationText) {
-        let partViewModel = AnnotationTextPresenter(model: part, width: model.width)
-        addNewPart(newPart: partViewModel)
+        let partPresenter = AnnotationTextPresenter(model: part, width: model.width)
+        addNewPart(newPart: partPresenter)
     }
 
     private func addMarkdownPart(part: AnnotationText) {
-        let partViewModel = AnnotationMarkdownPresenter(model: part, width: model.width)
-        addNewPart(newPart: partViewModel)
+        let partPresenter = AnnotationMarkdownPresenter(model: part, width: model.width)
+        addNewPart(newPart: partPresenter)
     }
 
     private func addHandwritingPart(part: AnnotationHandwriting) {
-        let partViewModel = AnnotationHandwritingPresenter(model: part, width: model.width)
-        addNewPart(newPart: partViewModel)
+        let partPresenter = AnnotationHandwritingPresenter(model: part, width: model.width)
+        addNewPart(newPart: partPresenter)
     }
 
     private func addNewPart(newPart: AnnotationPartPresenter) {
