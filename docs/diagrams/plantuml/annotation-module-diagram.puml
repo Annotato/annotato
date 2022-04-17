@@ -1,0 +1,272 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.1
+skinparam arrowColor ENTITY_COLOR
+skinparam classBackgroundColor ENTITY_COLOR
+
+Package Annotation {
+    Package Views {
+        Class AnnotationView {
+            --
+            didTap()
+            didPan()
+            resize()
+        }
+        Class AnnotationPaletteView {
+            textButton: ToggleableButton
+            markdownButton: ToggleableButton
+            handwritingButton: ToggleableButton
+            editOrViewButton: ToggleableButton
+            deleteButton: UIButton
+            minimizeOrMaximizeButton: ImageToggleableButton
+            --
+            didTap(toggleableButton: ToggleableButton)
+            didTapEditOrViewButton()
+            didTapDeleteButton()
+            didTapMinimizeOrMaximizeButton()
+        }
+        Class AnnotationMergeConflictsPaletteView {
+            saveMergeConflictsButton: UIButton
+            discardMergeConflictsButton: UIButton
+            conflictIdxButton: UIButton
+            --
+            didTapSaveMergeConflictsButton()
+            didTapDiscardMergeConflictsButton()
+        }
+        Interface AnnotationPartView <<protocol>> {
+            --
+            addAnnotationPartBorders()
+        }
+        Class SelectionBoxView {
+
+        }
+        Class AnnotationTextView {
+            --
+            textViewDidChange()
+            didTap()
+        }
+        Class AnnotationMarkdownView {
+            editView: UITextView
+            previewView: UIView
+            --
+            textViewDidChange()
+            didTap()
+            ( - ) makeMarkdownView(): UIView
+        }
+        Class AnnotationHandwritingView {
+            toolPicker: PKToolPicker
+
+            --
+            initializeToolPicker()
+            canvasViewDrawingDidChange()
+            didTap()
+        }
+
+        AnnotationTextView -up-|> UITextView
+        AnnotationHandwritingView -up-|> PKCanvasView
+
+        AnnotationTextView .|> AnnotationPartView
+        AnnotationMarkdownView .|> AnnotationPartView
+        AnnotationHandwritingView .|> AnnotationPartView
+
+        AnnotationView *-down-> SelectionBoxView
+        AnnotationView *-down-> AnnotationPartView
+        AnnotationView *-down-> AnnotationPaletteView
+        AnnotationView *-down-> AnnotationMergeConflictsPaletteView
+    }
+    Package Presenters {
+        Class AnnotationPresenter {
+            @Published conflictIdx: Int
+            @Published positionDidChange: Bool
+            @Published isResizing: Bool
+            @Published addedPart: AnnotationPartPresenter?
+            @Published isRemoved: Bool
+            @Published isMinimized: Bool
+            @Published modelWasUpdated: Bool
+
+            center: CGPoint
+            frame: CGRect
+            scrollFrame: CGRect
+            partsFrame: CGRect
+            --
+            translateCenter(translation: CGPoint)
+            inFocus()
+            outOfFocus()
+            enterEditMode()
+            enterViewMode()
+            resize()
+            enterMinimizedMode()
+            enterMaximizedMode()
+
+            setSelectedPart(selectedPart: AnnotationPartPresenter)
+            deselectSelectedPart()
+
+            addNewPart(newPart: AnnotationPartPresenter)
+            addTextPart(part: AnnotationText)
+            addMarkdownPart(part: AnnotationText)
+            addHandwritingPart(part: AnnotationHandwriting)
+
+            didDelete()
+            didSaveMergeConflicts()
+            didDiscardMergeConflicts()
+
+            receiveDelete()
+            receiveUpdate(updatedAnnotation: Annotation)
+        }
+        Class DocumentPresenter {
+            deleteAnnotation(annotation: Annotation)
+            setAllOtherAnnotationsOutOfFocus(annotationInFocus: Annotation)
+        }
+        Interface AnnotationPartPresenter <<protocol>> {
+            @Published isEditing: Bool
+            @Published isSelected: Bool
+            @Published isRemoved: Bool
+
+            origin: CGPoint
+            frame: CGRect
+            --
+            enterEditMode()
+            enterViewMode()
+            didSelect()
+
+            toView(): AnnotationPartView
+        }
+        Class AnnotationHandwritingPresenter {
+            handwritingDrawing: PKDrawing
+            --
+            setHandwritingDrawing(newHandwritingDrawing: PKDrawing)
+            toView(): AnnotationPartView
+        }
+        Class AnnotationTextPresenter {
+            content: String
+            --
+            setContent(newContent: String)
+            toView(): AnnotationPartView
+        }
+        Class AnnotationMarkdownPresenter {
+            content: String
+            editFrame: CGRect
+            --
+            setContent(newContent: String)
+            toView(): AnnotationPartView
+        }
+        Class AnnotationMergeConflictsPalettePresenter {
+            conflictIdx: Int
+            frame: CGRect
+            --
+            didTapSaveMergeConflictsButton()
+            didTapDiscardMergeConflictsButton()
+        }
+        Class AnnotationPalettePresenter {
+            @Published isMinimized: Bool
+            @Published isEditing: Bool
+            @Published textIsSelected: Bool
+            @Published markdownIsSelected: Bool
+            @Published handwritingIsSelected: Bool
+
+            frame: CGRect
+            --
+            didSelectTextButton()
+            didSelectMarkdownButton()
+            didSelectHandwritingButton()
+            didSelectMinimizeOrMaximizeButton()
+
+            enterEditMode()
+            enterViewMode()
+            enterMinimizedMode()
+            enterMaximizedMode()
+            updatePalette(selectedPart: AnnotationPartPresenter)
+        }
+        Class SelectionBoxPresenter {
+            startPoint: CGPoint
+            endPoint: CGPoint
+            frame: CGRect
+            --
+            didDelete()
+            receiveDelete()
+        }
+
+        AnnotationPresenter -> DocumentPresenter
+        AnnotationPresenter *-left> AnnotationPartPresenter
+        AnnotationPresenter *-> SelectionBoxPresenter
+        AnnotationPresenter *-> AnnotationMergeConflictsPalettePresenter
+        AnnotationPresenter *-> AnnotationPalettePresenter
+
+        AnnotationPartPresenter -[hidden]up> DocumentPresenter
+        AnnotationMarkdownPresenter .up|> AnnotationPartPresenter
+        AnnotationTextPresenter .up|> AnnotationPartPresenter
+        AnnotationHandwritingPresenter .up|> AnnotationPartPresenter
+    }
+
+    Package Interactors {
+        Class AnnotationsInteractor {
+            @Published newAnnotation: Annotation?
+            @Published updatedAnnotation: Annotation?
+            @Published deletedAnnotation: Annotation?
+            @Pubished createdOrUpdatedAnnotation: Annotation?
+            --
+            createAnnotation(annotation: Annotation): Annotation?
+            updateAnnotation(annotation: Annotation): Annotation?
+            deleteAnnotation(annotation: Annotation): Annotation?
+            createOrUpdateAnnotation(annotation: Annotation): Annotation?
+
+            ( - ) handleIncomingMEssage(message: Data)
+            ( - ) decodeData(data: Data): AnnotatoCudAnnotationMessage?
+            ( - ) publishAnnotation(messageSubtype: AnnotationCudAnnotationMessageType, annotation: Annotation)
+        }
+        Class RootInteractor {
+            @Published crudAnnotationMessage: Data?
+            @Published crudDocumentMessage: Data?
+            --
+            ( - ) handleIncomingMEssage(message: Data)
+            ( - ) decodeData(data: Data): AnnotatoMessage?
+            ( - ) publishAnnotation(decodedMessageType: AnnotationCudAnnotationMessageType, message: Data)
+        }
+        Class UsersInteractor {
+            --
+            fetchSessionUser(): AnnotatoUser?
+        }
+
+        AnnotationsInteractor *-left-> RootInteractor
+        AnnotationsInteractor *-right-> UsersInteractor
+    }
+
+    Package Persistence/Entities {
+        Class RemoteAnnotationsPersistence {
+            ( - ) webSocketManager: WebSocketManager?
+            __
+            createAnnotation(annotation: Annotation, senderId: String): Annotation?
+            updateAnnotation(annotation: Annotation, senderId: String): Annotation?
+            deleteAnnotation(annotation: Annotation, senderId: String): Annotation?
+            createOrUpdateAnnotation(annotation: Annotation, senderId: String): Annotation?
+        }
+        Class LocalAnnotationsPersistence {
+            localAnnotationEntityDataAccess: LocalAnnotationEntityDataAccess
+            --
+            createAnnotation(annotation: Annotation): Annotation?
+            updateAnnotation(annotation: Annotation): Annotation?
+            deleteAnnotation(annotation: Annotation): Annotation?
+            createOrUpdateAnnotation(annotation: Annotation): Annotation?
+        }
+    }
+
+    ' View -> Presenter
+    AnnotationView *-down--> AnnotationPresenter
+    AnnotationTextView *-down--> AnnotationTextPresenter
+    AnnotationMarkdownView *-down--> AnnotationMarkdownPresenter
+    AnnotationHandwritingView *-down--> AnnotationHandwritingPresenter
+    AnnotationMergeConflictsPaletteView *-down--> AnnotationMergeConflictsPalettePresenter
+    AnnotationPaletteView *-down--> AnnotationPalettePresenter
+    SelectionBoxView *-down--> SelectionBoxPresenter
+
+    ' Presenter -> Interactor
+    AnnotationPresenter *-down--> AnnotationsInteractor
+
+    ' Interactor -> Persistence
+    AnnotationsInteractor *-down--> RemoteAnnotationsPersistence
+    AnnotationsInteractor *-down--> LocalAnnotationsPersistence
+
+
+}
+
+@enduml
