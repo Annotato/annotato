@@ -1,0 +1,51 @@
+@startuml delete-document-for-everyone-sequence-diagram
+!include style.puml
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentListViewController" as DocumentListViewController VIEW_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":DocumentListPresenter" as DocumentListPresenter PRESENTER_COLOR
+end box
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":DocumentsInteractor" as DocumentsInteractor INTERACTOR_COLOR
+end box
+
+box Persistence ENTITY_BACKGROUND_COLOR
+participant ":RemoteDocumentsPersistence" as RemoteDocumentsPersistence ENTITY_COLOR
+participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence ENTITY_COLOR
+end box
+
+[->  DocumentListViewController : didTapDeleteForEveryone()
+activate DocumentListViewController
+
+DocumentListViewController -> DocumentListPresenter : deleteDocumentForEveryone(document)
+activate DocumentListPresenter
+
+DocumentListPresenter -> DocumentsInteractor : deleteDocument(document)
+activate DocumentsInteractor
+
+DocumentsInteractor -> RemoteDocumentsPersistence : deleteDocument(document, sender)
+activate RemoteDocumentsPersistence
+
+RemoteDocumentsPersistence --> DocumentsInteractor
+deactivate RemoteDocumentsPersistence
+
+DocumentsInteractor -> LocalDocumentsPersistence : deleteDocument(document)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence --> DocumentsInteractor
+deactivate LocalDocumentsPersistence
+
+DocumentsInteractor --> DocumentListPresenter
+deactivate DocumentsInteractor
+
+DocumentListPresenter --> DocumentListViewController
+deactivate DocumentListPresenter
+
+[<-- DocumentListViewController 
+deactivate DocumentListViewController
+
+@enduml
