@@ -9,7 +9,7 @@ class FirebaseStorage: AnnotatoStorageService {
     }
 
     func getDownloadUrl(fileName: String) async -> URL? {
-        let pdfRef = storageRef.child(documentId.uuidString)
+        let pdfRef = storageRef.child(fileName)
         do {
             return try await pdfRef.downloadURL()
         } catch {

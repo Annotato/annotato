@@ -20,7 +20,7 @@ class PDFStorageManager {
     }
 
     func downloadPdfToLocalStorage(fileName: String) async {
-        guard let downloadURL = await remoteStorageService.getUrl(fileName: fileName) else {
+        guard let downloadURL = await remoteStorageService.getDownloadUrl(fileName: fileName) else {
             AnnotatoLogger.error("Could not get download URL for document",
                                  context: "PDFStorageManager::downloadPdfToLocalStorage")
             return
@@ -32,7 +32,7 @@ class PDFStorageManager {
             return
         }
 
-        localStorageService.uploadPdf(pdfData: documentPDFData, fileName: document.id.uuidString)
+        localStorageService.uploadPdf(pdfData: documentPDFData, fileName: fileName)
     }
 
     func deletePdf(fileName: String) {

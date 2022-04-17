@@ -11,11 +11,7 @@ class DocumentSharesInteractor {
             return nil
         }
 
-        let wasDocumentCopied = await PDFStorageManager()
-            .downloadPdfToLocalStorage(fileName: remoteDocument.id.uuidString)
-        guard wasDocumentCopied else {
-            return nil
-        }
+        await PDFStorageManager().downloadPdfToLocalStorage(fileName: remoteDocument.id.uuidString)
 
         let localSharedDocument = localDocumentsPersistence.createDocument(document: remoteDocument)
         return localSharedDocument
