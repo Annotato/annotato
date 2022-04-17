@@ -1,0 +1,93 @@
+@startuml import-from-ipad-sequence-diagram
+!include style.puml
+
+box Actor
+actor User as User USER_COLOR
+end box
+
+box View VIEW_BACKGROUND_COLOR
+participant ":DocumentListViewController" as DocumentListViewController VIEW_COLOR
+participant ":DocumentCodeImportViewController" as DocumentCodeImportViewController VIEW_COLOR
+end box
+
+box Presenter PRESENTER_BACKGROUND_COLOR
+participant ":DocumentSharePresenter" as DocumentSharePresenter PRESENTER_COLOR
+end box
+
+box Model MODEL_BACKGROUND_COLOR
+participant ":DocumentShare" as DocumentShare MODEL_COLOR
+end box
+
+
+box Interactor INTERACTOR_BACKGROUND_COLOR
+participant ":DocumentSharesInteractor" as DocumentSharesInteractor INTERACTOR_COLOR
+end box
+
+box Persistence OTHER_BACKGROUND_COLOR
+participant ":LocalDocumentsPersistence" as LocalDocumentsPersistence OTHER_COLOR
+participant ":RemoteDocumentSharesPersistence" as RemoteDocumentSharesPersistence OTHER_COLOR
+end box
+
+User -> DocumentListViewController : didTapFromCodeButton()
+activate DocumentListViewController
+
+DocumentListViewController -> DocumentListViewController : goToImportByCode()
+activate DocumentListViewController
+
+create DocumentCodeImportViewController
+DocumentListViewController -> DocumentCodeImportViewController
+activate DocumentCodeImportViewController
+
+DocumentCodeImportViewController --> DocumentListViewController
+deactivate DocumentCodeImportViewController
+
+User -> DocumentCodeImportViewController : didTapImportButton(sender)
+activate DocumentCodeImportViewController
+
+DocumentCodeImportViewController -> DocumentCodeImportViewController : importDocument()
+activate DocumentCodeImportViewController
+
+DocumentCodeImportViewController -> DocumentSharePresenter : createDocumentShare(documentId)
+activate DocumentSharePresenter
+
+create DocumentShare
+DocumentSharePresenter -> DocumentShare : init(documentId, currentUserId)
+activate DocumentShare
+
+DocumentShare --> DocumentSharePresenter : documentShare
+deactivate DocumentShare
+
+DocumentSharePresenter -> DocumentSharesInteractor : createDocumentShare(documentShare)
+activate DocumentSharesInteractor
+
+DocumentSharesInteractor -> RemoteDocumentSharesPersistence : createDocumentShare(documentShare)
+activate RemoteDocumentSharesPersistence
+
+RemoteDocumentSharesPersistence --> DocumentSharesInteractor : remoteDocument
+deactivate RemoteDocumentSharesPersistence
+
+DocumentSharesInteractor -> LocalDocumentsPersistence : createDocument(remoteDocument)
+activate LocalDocumentsPersistence
+
+LocalDocumentsPersistence --> DocumentSharesInteractor : localSharedDocument
+deactivate LocalDocumentsPersistence
+
+DocumentSharesInteractor --> DocumentSharePresenter : localSharedDocument
+deactivate DocumentSharesInteractor
+
+DocumentSharePresenter --> DocumentCodeImportViewController
+deactivate DocumentSharePresenter
+
+DocumentCodeImportViewController --> DocumentCodeImportViewController
+deactivate DocumentCodeImportViewController
+
+DocumentCodeImportViewController --> User
+deactivate DocumentCodeImportViewController
+
+DocumentListViewController --> DocumentListViewController
+deactivate DocumentListViewController
+
+DocumentListViewController --> User
+deactivate DocumentListViewController
+
+@enduml
