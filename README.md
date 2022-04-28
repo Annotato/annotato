@@ -27,7 +27,7 @@ This iPadOS app is made as a final project in CS3217. Made with ❤️ by:
 
 The demo video can be found [here](https://www.youtube.com/embed/Yn8lnJn2OEs).
 
-## STePs
+## STePS
 
 Annotato [won the second place](https://uvents.nus.edu.sg/event/20th-steps/faq) for the 20th SoC Term Project Showcase (STePS).
 
