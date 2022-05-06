@@ -31,6 +31,10 @@ The demo video can be found [here](https://www.youtube.com/embed/Yn8lnJn2OEs).
 
 Annotato [won the second place](https://uvents.nus.edu.sg/event/20th-steps/faq) for the 20th SoC Term Project Showcase (STePS).
 
+<p align="center">
+<img src="./docs/images/steps.jpg" />
+</p>
+
 ## Getting started
 
 The following workflow was inspired from https://github.com/Dynavity/dynavity.
